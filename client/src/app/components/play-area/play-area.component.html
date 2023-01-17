@@ -1,0 +1,18 @@
+<div class="play-area-flex-container">
+    <input name="selectSize" [(ngModel)]="letterRatio" type="range" min="1.4" max="2" step="0.0001" (input)="editLetterSize()" />
+    <div id="grid-container" #gridContainer>
+        <canvas id="board-canvas" #boardCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="view-placement-canvas" #viewPlacementCanvas [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas id="letter-tiles-canvas" (click)="mouseHitDetect($event)" #letterTilesCanvas [attr.width]="width" [attr.height]="height"></canvas>
+    </div>
+
+    <div class="flex-container">
+        <div class="side-button-container">
+            <button class="button" (click)="changePlayerTurn()" [disabled]="!isActivePlayer || isGameOver">Passer</button>
+        </div>
+        <app-rack id="rack"></app-rack>
+        <div class="side-button-container">
+            <button [disabled]="!isPlayerTurn()" class="button" (click)="confirmPlacement()">Jouer</button>
+        </div>
+    </div>
+</div>

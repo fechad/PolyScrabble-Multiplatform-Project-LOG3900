@@ -1,0 +1,19 @@
+<app-hearder></app-hearder>
+
+<body>
+    <p class="title">Création d'une partie {{ room.roomInfo.gameType }}</p>
+    <div class="container justified">
+        <div class="error-message-container" *ngIf="room.roomInfo.gameType !== 'log2990' && room.roomInfo.gameType !== 'classic'">
+            <mat-icon>error_outline</mat-icon>
+            <div class="error-message">Votre mode de jeu est invalide, veuillez revenir en arrière</div>
+        </div>
+        <section id="game_creation">
+            <div class="justified gray-box">
+                <button class="button" routerLink="/game/multiplayer/create/solo">Jouer une partie en solo</button>
+                <button class="button" routerLink="/game/multiplayer/create/multi">créer une partie multijoueur</button>
+                <button class="button" routerLink="/game/multiplayer/join">Joindre une partie multijoueur</button>
+                <button class="button important-button" routerLink="/home">Retour</button>
+            </div>
+        </section>
+    </div>
+</body>

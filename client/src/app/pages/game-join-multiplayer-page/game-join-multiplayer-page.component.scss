@@ -1,0 +1,81 @@
+$primary-color: #222831;
+$contrast-color: rgba(0, 0, 0, 0.486);
+$row-border: 1px solid black;
+$row-border-radius: 8px;
+div,
+li {
+    color: black;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    height: 100%;
+}
+
+.join-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    width: fit-content;
+    padding-bottom: 100px;
+}
+
+.gray-box {
+    min-width: fit-content;
+}
+
+#main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+    gap: 30px;
+}
+
+.stylish-input {
+    width: 430px;
+}
+
+.confirm-buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 25px;
+    border-radius: 50px;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+.confirm-buttons-container > button.button,
+.confirm-buttons-container > #join-random-div {
+    width: 40%;
+}
+
+#join-random-div > button {
+    max-width: 100%;
+}
+
+.table-container {
+    text-align: center;
+    width: 100%;
+}
+
+.information-message-container,
+.error-message-container {
+    width: 100%;
+}
+
+.random-join-button {
+    width: auto;
+}
+
+.important-button {
+    margin-top: 30px;
+    align-items: center;
+}

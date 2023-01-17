@@ -1,0 +1,104 @@
+<app-hearder></app-hearder>
+
+<body>
+    <p class="title">Configuration de la partie {{ room.roomInfo.gameType }}</p>
+    <div class="flex-container">
+        <form [formGroup]="gameForm">
+            <div class="error-message-container" *ngIf="isServerUnreachable">
+                <mat-icon>error_outline</mat-icon>
+                <div class="error-message">Serveur indisponible, veuillez réessayer plus tard</div>
+            </div>
+            <div class="error-message-container" *ngIf="room.roomInfo.gameType !== 'log2990' && room.roomInfo.gameType !== 'classic'">
+                <mat-icon>error_outline</mat-icon>
+                <div class="error-message">Votre mode de jeu est invalide, veuillez revenir en arrière</div>
+            </div>
+
+            <div *ngIf="isSolo">
+                <div class="gray-box" *ngIf="isSolo">
+                    <div class="stylish-input">
+                        <label> Nom du Bot </label>
+                        <input class="input" type="text" id="pseudo" name="pseudo" [value]="botName" disabled />
+                    </div>
+                    <div class="stylish-input">
+                        <label> Difficulté </label>
+                        <select class="input" formControlName="level" (change)="changeBotName()">
+                            <option value="beginner">Débutant</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gray-box">
+                <div class="stylish-input">
+                    <label> Pseudo </label>
+                    <input
+                        class="input"
+                        placeholder="ex. username"
+                        type="text"
+                        id="pseudo"
+                        name="pseudo"
+                        formControlName="pseudo"
+                        autocomplete="off"
+                    />
+                </div>
+                <div class="error-message-container" *ngIf="isPseudoTooLong()">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="error-message">Votre pseudo doit avoir moins de {{ maxPseudoLength }} caractères</div>
+                </div>
+                <div class="stylish-input">
+                    <label>Minuterie par tour </label>
+                    <input
+                        onkeydown="return false"
+                        class="input"
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        min="30"
+                        max="300"
+                        step="30"
+                        formControlName="timerPerTurn"
+                    />
+                </div>
+                <mat-radio-group aria-label="Select an option">
+                    <h2>Dictionnaires</h2>
+                    <div class="dictionaries-container">
+                        <div *ngFor="let dictionary of dictionaries" class="dictionary-info-container">
+                            <mat-radio-button
+                                value="{{ dictionary.title }}"
+                                (click)="handleDictionarySelection(dictionary.title)"
+                                [checked]="isSelectedDictionary(dictionary.title)"
+                            ></mat-radio-button>
+                            <div class="dictionary-info">
+                                <p>{{ dictionary.title }}</p>
+                                <p>{{ dictionary.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </mat-radio-group>
+
+                <div class="confirm-buttons-container">
+                    <button class="button important-button" routerLink="/game/option ">Retour</button>
+                    <div *ngIf="isSolo">
+                        <app-start-game-solo
+                            class="start-game"
+                            [gameForm]="gameForm"
+                            [gameData]="gameData"
+                            [botName]="botName"
+                            (dictionaryDeleted)="handleDictionaryDeleted()"
+                            (httpError)="handleHttpError()"
+                        ></app-start-game-solo>
+                    </div>
+                    <div *ngIf="!isSolo">
+                        <app-start-game
+                            type="submit "
+                            [gameForm]="gameForm"
+                            (dictionaryDeleted)="handleDictionaryDeleted()"
+                            (httpError)="handleHttpError()"
+                        ></app-start-game>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>

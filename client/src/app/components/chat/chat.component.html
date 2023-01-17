@@ -1,0 +1,24 @@
+<div (click)="updateFocus($event)" class="chat-container">
+    <form [formGroup]="chatForm" (ngSubmit)="handleSubmit()" ngClass="chatForm">
+        <app-messages-display [messages]="chatHistory.controls" (click)="closeEmojiPicker()"></app-messages-display>
+        <div class="emoji-input-container">
+            <app-emojis-picker class="emoji-picker" [isOpen]="isEmojiPickerActive" (emojiEvent)="handleEmojiEvent($event)"></app-emojis-picker>
+            <div class="input-message-container">
+                <mat-icon class="icon" (click)="openEmojiPicker()" [ngStyle]="{ color: isEmojiPickerActive ? '#838383' : 'black' }" class="icon"
+                    >tag_faces</mat-icon
+                >
+                <input
+                    #messageInput
+                    id="message-input"
+                    type="text"
+                    formControlName="message"
+                    placeholder="Entrez un message..."
+                    autocomplete="off"
+                    (click)="closeEmojiPicker()"
+                />
+                <mat-icon class="icon" (click)="handleSubmit()">send</mat-icon>
+                <mat-icon class="icon" (click)="sendScrabbleMessage()">whatshot</mat-icon>
+            </div>
+        </div>
+    </form>
+</div>

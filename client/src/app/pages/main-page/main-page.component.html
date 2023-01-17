@@ -1,0 +1,19 @@
+<app-hearder></app-hearder>
+
+<body>
+    <p class="title">Bienvenue!</p>
+    <div class="main-container">
+        <div class="gray-box">
+            <button class="button" (click)="setGameType('classic')" routerLink="/game/option">Scrabble classique</button>
+            <button class="button" (click)="setGameType('log2990')" routerLink="/game/option">Scrabble LOG2990</button>
+            <button class="button" (click)="showLeaderboard()">Meilleurs scores</button>
+            <button class="button" (click)="showAllScores()">Tous les scores</button>
+        </div>
+        <div class="footer-item">
+            <p>
+                <span>Aymen #1</span>, <span>David Potvin #2</span>, <span>Fani #3</span>, <span>Ahmed #4</span>, <span>Hamza #5</span>,
+                <span>Homer #6</span>
+            </p>
+        </div>
+    </div>
+</body>

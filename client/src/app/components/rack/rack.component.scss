@@ -1,0 +1,35 @@
+#mouse-position-display {
+    border-radius: 10px;
+    border: 3px solid #515151;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 10px;
+    height: 150px;
+}
+
+#rackCanvas {
+    cursor: default;
+}
+#rackCanvas[contenteditable] {
+    outline: 0px solid transparent;
+}
+
+.button-container {
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 40px;
+    min-height: 35px;
+    min-width: 320px;
+    padding: 10px;
+}
+
+.button-container .button {
+    height: 50px;
+}
+
+#mouse-position-display .button {
+    max-width: 150px;
+}

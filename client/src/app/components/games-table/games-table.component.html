@@ -1,0 +1,42 @@
+<div class="container">
+    <h1>Historique des parties</h1>
+
+    <div class="success-container" *ngIf="successMessage">
+        <mat-icon>check_circle_ouline</mat-icon>
+        <div class="success">{{ successMessage }}</div>
+    </div>
+
+    <div class="admin-table-actions">
+        <mat-icon class="black-icon" (click)="handleRefresh()" matTooltip="Rafraîchir la table">refresh icon</mat-icon>
+        <button mat-flat-button class="reset-button" (click)="handleReinitializeHistory()" matTooltip="Réinitialiser les parties ">
+            Réinitialiser les parties
+        </button>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Début</th>
+                <th>Durée</th>
+                <th>Joueur 1</th>
+                <th>Score J1</th>
+                <th>Joueur 2</th>
+                <th>Score J2</th>
+                <th>Type de jeu</th>
+                <th>Informations</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let game of games.reverse()">
+                <td>{{ game.date }}</td>
+                <td>{{ game.period }}</td>
+                <td>{{ game.player1 }}</td>
+                <td>{{ game.scorePlayer1 }}</td>
+                <td>{{ game.player2 }}</td>
+                <td>{{ game.scorePlayer2 }}</td>
+                <td>{{ game.gameType }}</td>
+                <td class="red-text">{{ game.surrender }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,45 @@
+<div class="side-container" class="flex-column">
+    <div id="main-container">
+        <div id="letters-bank-view">
+            <div>lettres restantes</div>
+            <div id="number-container">
+                <div>{{ lettersBankCount }}</div>
+            </div>
+        </div>
+        <div id="goals-container">
+            <div *ngIf="is2990GameType === false" class="goal-title">Scrabble Classique</div>
+            <div *ngIf="is2990GameType === true" class="goal-title">Objectifs - Scrabble LOG2990</div>
+            <app-goal
+                *ngIf="is2990GameType === true"
+                class="private-goal"
+                [title]="privateGoal.title"
+                [description]="privateGoal.description"
+                [reward]="privateGoal.reward"
+                [reached]="privateGoal.reached"
+                [isPublic]="privateGoal.isPublic"
+            ></app-goal>
+            <div *ngIf="is2990GameType === true" id="public-goals-container">
+                <app-goal
+                    *ngFor="let goal of publicGoals"
+                    class="public-goal"
+                    [title]="goal.title"
+                    [description]="goal.description"
+                    [reward]="goal.reward"
+                    [reached]="goal.reached"
+                    [isPublic]="goal.isPublic"
+                ></app-goal>
+            </div>
+        </div>
+    </div>
+    <div class="commands-container flex-row">
+        <app-goal
+            *ngIf="is2990GameType === true"
+            class="private-goal"
+            [title]="otherPlayerPrivateGoal.title"
+            [description]="otherPlayerPrivateGoal.description"
+            [reward]="otherPlayerPrivateGoal.reward"
+            [reached]="otherPlayerPrivateGoal.reached"
+            [isPublic]="otherPlayerPrivateGoal.isPublic"
+        ></app-goal>
+    </div>
+</div>

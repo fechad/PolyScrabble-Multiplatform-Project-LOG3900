@@ -1,0 +1,15 @@
+<div (click)="updateFocus($event)" #rackContainer id="mouse-position-display">
+    <canvas
+        id="rackCanvas"
+        #rackCanvas
+        (click)="mouseHitDetect($event)"
+        (contextmenu)="onRightClick($event.offsetX, $event.offsetY)"
+        oncontextmenu="return false"
+        [attr.width]="width"
+        [attr.height]="height + 12"
+    ></canvas>
+    <div class="button-container">
+        <button *ngIf="areTilesSelectedForExchange()" class="button" (click)="cancelExchange()">Annuler</button>
+        <button *ngIf="areTilesSelectedForExchange()" class="button" (click)="exchangeLetters()" [disabled]="!isExchangeAllowed()">Echanger</button>
+    </div>
+</div>

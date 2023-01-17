@@ -1,0 +1,58 @@
+$primary-color: #222831;
+$contrast-color: rgba(0, 0, 0, 0.486);
+$row-border-radius: 8px;
+div,
+li {
+    color: black;
+}
+
+#create-game-container {
+    padding-bottom: 100px;
+}
+
+.container-loading {
+    display: flex;
+    justify-content: center;
+    padding: 0 50px 50px 50px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    min-width: 550px;
+    max-width: 75vh;
+    margin: auto;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.table-container {
+    text-align: center;
+    width: 100%;
+}
+
+.information {
+    margin: auto;
+    width: 350px - 28px;
+}
+
+.center {
+    display: flex;
+    width: 100%;
+    height: 80vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.gray-box {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}

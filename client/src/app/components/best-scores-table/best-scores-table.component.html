@@ -1,0 +1,34 @@
+<div class="container">
+    <h1 style="color: black;">Les meilleurs scores</h1>
+
+    <div class="success-container" *ngIf="successMessage">
+        <mat-icon>check_circle_ouline</mat-icon>
+        <div class="success">{{ successMessage }}</div>
+    </div>
+
+    <div class="admin-table-actions">
+        <mat-icon class="black-icon" (click)="handleRefresh()" matTooltip="Rafraîchir la table">refresh icon</mat-icon>
+        <button mat-flat-button class="reset-button" (click)="handleReinitializeScores()" matTooltip="Réinitialiser les scores à leurs valeurs par défaut">
+            Réinitialiser les scores
+        </button>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Points</th>
+                <th>Dictionnaire</th>
+                <th>Type de jeu</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let score of scores">
+                <td>{{ score.author }}</td>
+                <td>{{ score.points }}</td>
+                <td>{{ score.dictionary }}</td>
+                <td>{{ score.gameType }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

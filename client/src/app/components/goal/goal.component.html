@@ -1,0 +1,6 @@
+<button (click)="showGoalComponent()" class="goal-container" [class.goal-reached]="reached === true" [class.goal-private]="isPublic === false">
+    <div>{{ title }}</div>
+    <div class="reward" *ngIf="reward > 0">+{{ reward }}</div>
+    <div class="reward" *ngIf="reward === undefined">+?</div>
+    <div class="reward" *ngIf="reward === 0">x2</div>
+</button>

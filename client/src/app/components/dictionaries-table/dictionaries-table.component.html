@@ -1,0 +1,33 @@
+<div class="container">
+    <h1>Dictionnaires disponibles</h1>
+
+    <div class="success-container" *ngIf="successMessage">
+        <mat-icon>check_circle_ouline</mat-icon>
+        <div class="success">{{successMessage}}</div>
+    </div>
+    <div class="admin-table-actions">
+        <div>
+            <button mat-flat-button color="primary" (click)="openUploadDictionaryPopup()" matTooltip="Ajouter un nouveau dictionnaire">Téléverser</button>
+            <mat-icon class="icon refresh-icon" (click)="handleRefresh()" matTooltip="Rafraîchir la table">refresh icon</mat-icon>
+        </div>
+        <button mat-flat-button class="reset-button" (click)="handleResetDictionaries()" matTooltip="Effacer tous les dictionnaires sauf celui par défaut">Réinitialiser les dictionnaires</button>
+    </div>
+    <table class="admin-table">
+
+        <tr>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        <tr *ngFor="let dictionary of dictionaries">
+            <td>{{dictionary.title}}</td>
+            <td>{{dictionary.description}}</td>
+            <td>
+                <mat-icon class="icon" (click)="downloadDictionary(dictionary)" matTooltip="Télécharger le dictionnaire">file_download</mat-icon>
+                <mat-icon *ngIf="canBeDeleted(dictionary.title)" class="icon" (click)="openDictionaryModificationPopup(dictionary)" matTooltip="Modifier le dictionnaire">edit</mat-icon>
+                <mat-icon *ngIf="canBeDeleted(dictionary.title)" class="red-icon" (click)="validateDictionaryDeletionWithUser(dictionary)" matTooltip="Supprimer le dictionnaire">clear</mat-icon>
+            </td>
+        </tr>
+    </table>
+</div>
+<a id="downloadAnchorElem" style="display:none"></a>

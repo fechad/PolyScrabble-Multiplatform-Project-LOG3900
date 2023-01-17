@@ -1,0 +1,46 @@
+.file-selection-container {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+}
+
+.file-selected {
+    border: 1px dotted white;
+    padding: 8px;
+}
+
+.file-upload {
+    display: flex;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.87);
+    border-radius: 4px;
+}
+
+.file-input {
+    display: none;
+}
+
+mat-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 8px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.spinner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-container {
+    display: inline-block;
+    position: relative;
+}

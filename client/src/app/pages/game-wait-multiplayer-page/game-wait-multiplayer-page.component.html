@@ -1,0 +1,66 @@
+<app-hearder></app-hearder>
+<body>
+    <div *ngIf="dictionaryExistsOnServer">
+        <div class="container-loading">
+            <app-game-wait-loading></app-game-wait-loading>
+        </div>
+
+        <div class="container gray-box">
+            <div class="information-message-container information" *ngIf="roomStatusText">
+                <mat-icon>error_outline</mat-icon>
+                <div class="information-message">{{ roomStatusText }}</div>
+            </div>
+            <div class="button-container">
+                <div>
+                    <button class="button" (click)="leaveRoom()" routerLink="/game/multiplayer/create">Quitter la file d'attente</button>
+                </div>
+                <div>
+                    <button class="button" routerLink="/game/multiplayer/create/solo" [disabled]="otherPlayerExist" (click)="onGoToSolo()">
+                        Jouer en solo
+                    </button>
+                </div>
+                <div>
+                    <button class="button" [disabled]="!otherPlayerExist" (click)="acceptPlayer()">Demarrer</button>
+                </div>
+                <div>
+                    <button class="button important-button" [disabled]="!otherPlayerExist" (click)="rejectPlayer()">Rejeter</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="games">
+                    <tr>
+                        <th>Nom salle</th>
+                        <th>Nom du créateur</th>
+                        <th>Nom du second Joueur</th>
+                        <th>Temps par tour</th>
+                        <th>Dictionnaire</th>
+                        <th>Type partie</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>{{ room.roomInfo.name }}</td>
+                        <td>{{ firstPlayerPseudo }}</td>
+                        <td>{{ secondPlayerPseudo }}</td>
+                        <td>{{ room.roomInfo.timerPerTurn }}</td>
+                        <td>{{ room.roomInfo.dictionary }}</td>
+                        <td>{{ room.roomInfo.gameType }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="center" *ngIf="!dictionaryExistsOnServer">
+        <div class="gray-box">
+            <div class="error-message-container">
+                <mat-icon>error_outline</mat-icon>
+                <div class="error-message">Votre partie n'existe plus car votre dictionnaire a été effacé</div>
+            </div>
+            <div class="button-container">
+                <div>
+                    <button class="button important-button" routerLink="/home">Retour à la page d'accueil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

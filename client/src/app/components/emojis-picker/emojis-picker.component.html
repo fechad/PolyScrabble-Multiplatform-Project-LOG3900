@@ -1,0 +1,11 @@
+<div class="intercom-emoji-picker">
+    <div class="intercom-composer-popover-body-container">
+        <div class="intercom-composer-popover-body" [hidden]="!isOpen">
+            <div class="emoji-groups">
+                <div class="emoji-group" *ngFor="let emojiGroup of allEmojis">
+                    <div class="emoji-group-title">{{emojiGroup.category}}</div>
+                    <span *ngFor="let emoji of emojiGroup.emojis" class="emoji" title="{{emoji.title}}" (click)="emitEmoji(emoji.symbol)">{{emoji.symbol}}</span>
+                </div>
+            </div>
+        </div>
+    </div>

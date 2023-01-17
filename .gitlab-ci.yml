@@ -1,0 +1,189 @@
+image: xwiillz/node-chromium-mongo:lts-bionic
+
+cache:
+    key: "${CI_COMMIT_REF_SLUG}-client"
+    paths:
+        - client/node_modules/
+        - server/node_modules/
+    policy: pull
+
+.only-client: &only-client
+    only:
+        refs:
+            - master
+            - merge_requests
+        changes:
+            - client/**/*
+    cache:
+        key: "${CI_COMMIT_REF_SLUG}-client"
+        paths:
+            - client/node_modules/
+        policy: pull
+
+.only-server: &only-server
+    only:
+        refs:
+            - master
+            - merge_requests
+        changes:
+            - server/**/*
+    cache:
+        key: "${CI_COMMIT_REF_SLUG}-server"
+        paths:
+            - server/node_modules/
+        policy: pull
+
+stages:
+    - install
+    - lint
+    - build
+    - test
+    - deploy
+
+install:client:
+    stage: install
+    <<: *only-client
+    script:
+        - cd client
+        - npm ci --cache .npm --prefer-offline
+    cache:
+        key: "${CI_COMMIT_REF_SLUG}-client"
+        paths:
+            - client/node_modules/
+            - client/.npm/
+        policy: pull-push
+
+install:server:
+    stage: install
+    <<: *only-server
+    script:
+        - cd server
+        - npm ci --cache .npm --prefer-offline
+    cache:
+        key: "${CI_COMMIT_REF_SLUG}-server"
+        paths:
+            - server/node_modules/
+            - server/.npm/
+        policy: pull-push
+
+lint:client:
+    stage: lint
+    allow_failure: true
+    <<: *only-client
+    script:
+        - cd client
+        - npm run lint
+
+lint:server:
+    stage: lint
+    allow_failure: true
+    <<: *only-server
+    script:
+        - cd server
+        - npm run lint
+
+build:client:
+    stage: build
+    <<: *only-client
+    script:
+        - cd client
+        - npm run build
+    artifacts:
+        paths:
+            - client/dist/
+
+build:server:
+    stage: build
+    <<: *only-server
+    script:
+        - cd server
+        - npm run build
+    artifacts:
+        paths:
+            - server/out/
+
+test:client:
+    stage: test
+    <<: *only-client
+    script:
+        - Xvfb :99 -ac -screen 0 1920x1080x24 &
+        - cd client
+        - npm run coverage -- --browsers=ChromeHeadlessNoSandbox --watch=false
+    dependencies:
+        - build:client
+    artifacts:
+        paths:
+            - client/coverage/
+
+test:server:
+    stage: test
+    <<: *only-server
+    script:
+        - cd server
+        - npm run coverage
+    dependencies:
+        - build:server
+    artifacts:
+        paths:
+            - server/coverage/
+
+pages:
+    image: node:14.15.0
+    stage: deploy
+    rules:
+        - if: "$CI_COMMIT_TAG =~ /deploy/"
+          when: manual
+    script:
+        - cd client
+        - npm ci --cache .npm --prefer-offline
+        - npm run deploy -- --base-href $BASE_HREF
+        - mkdir ../public
+        - mv dist/client/* ../public/
+    artifacts:
+        paths:
+            - public
+
+variables:
+    EC2_USER: ec2-user
+    ORIGIN: 'https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}'
+
+deploy:server:
+    stage: deploy
+    rules:
+        - if: "$CI_COMMIT_TAG =~ /deploy/"
+          when: manual
+    script:
+        - "which ssh-agent || (apt-get update -qq && apt-get install -qq openssh-client )"
+        - eval $(ssh-agent -s)
+        - ssh-add <(echo "$EC2_PEM_FILE_CONTENT")
+        - mkdir -p ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - |
+            timeout 600 ssh -t -o ServerAliveInterval=15 -o ServerAliveCountMax=5 "${EC2_USER}@${EC2_HOST}" "
+                set -x -ev
+
+                # Force kill any node app or any app running on the server port
+                forever stopall && sudo fuser -k '${SERVER_PORT}/tcp' && sudo killall node
+
+                # Clone the repository
+                git clone ${ORIGIN} repo || echo Git repository already exist
+                cd repo
+
+                # Update the remote origin
+                # This action is important because the CI_JOB_TOKEN become invalid after each pipeline
+                git remote remove origin
+                git remote add origin ${ORIGIN}
+
+                # Checkout to the targeted commit 
+                git fetch --all
+                git checkout ${CI_COMMIT_SHA}
+
+                # Build the project
+                cd server
+                npm ci
+                npm run build
+
+
+                # Launch the server in background and append output to /var/log/messages for CloudWatch
+                PORT=${SERVER_PORT} forever start -a -l /var/log/messages out/index.js
+            "

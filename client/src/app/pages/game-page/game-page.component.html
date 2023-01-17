@@ -1,0 +1,23 @@
+<div (click)="updateFocus($event)" style="min-width: fit-content; padding: 10px">
+    <div id="main-page-container" class="flex-row">
+        <div class="side-container" class="flex-column">
+            <div id="button-container" class="flex-row">
+                <button class="button quit-button" (click)="confirmLeaving()" *ngIf="!isGameOver">Abandonner</button>
+                <button class="button quit-button" (click)="goBackToHome()" *ngIf="isGameOver">Quitter</button>
+            </div>
+            <app-chat style="width: 400px"></app-chat>
+            <div class="commands-container flex-row">
+                <button class="command" (click)="helpCommand()">AIDE</button>
+                <button class="command" (click)="hintCommand()">INDICE</button>
+                <button class="command" (click)="letterBankCommand()">RÉSERVE</button>
+            </div>
+        </div>
+        <div id="board-rack" class="flex-column">
+            <app-play-area></app-play-area>
+        </div>
+        <div class="side-container" class="flex-column">
+            <app-players-infos></app-players-infos>
+            <app-goals-container></app-goals-container>
+        </div>
+    </div>
+</div>

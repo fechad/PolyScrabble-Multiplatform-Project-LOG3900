@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Téléverser Dictionnaire</h2>
+<hr>
+<mat-dialog-content>
+    <div class="information-message-container" *ngIf="isProcessing">
+        <mat-icon>error_outline</mat-icon>
+        <div class=" information-message ">Votre demande est en cours de traitement...</div>
+        <mat-spinner [diameter]="20"></mat-spinner>
+    </div>
+    <div class="error-message-container" *ngIf="errorMessage">
+        <mat-icon>error_outline</mat-icon>
+        <div class="erro-messager">{{errorMessage}}</div>
+    </div>
+    <div class="file-selection-container">
+        <div>
+            <input type="file" class="file-input" (change)="onFileSelected($any($event.target).files)" #fileUpload accept='application/json'>
+            <div class="file-upload">
+                <button class="upload-btn" mat-flat-button color="primary" (click)="fileUpload.click()">Choisir un fichier</button>
+                <span class="file-selected"> {{getFilename() || "Aucun fichier choisi"}}</span>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions class="popup-actions">
+    <button mat-stroked-button mat-dialog-close>Annuler</button>
+    <button mat-flat-button color="primary" (click)="uploadDictionary()" [disabled]="!isTypeOfFileToUploadValid() || isProcessing">Téléverser</button>
+</mat-dialog-actions>

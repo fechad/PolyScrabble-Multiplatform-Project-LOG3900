@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>{{description.header}}</h2>
+<hr>
+
+<mat-dialog-content>
+    <p class="popup-body">{{description.body}}</p>
+</mat-dialog-content>
+<mat-dialog-actions class="popup-actions">
+    <button mat-stroked-button mat-dialog-close (click)="handleUserAnswer(false)">Non</button>
+    <button mat-flat-button color="primary" style="background-color:#e86070;" (click)="handleUserAnswer(true)">Oui</button>
+</mat-dialog-actions>

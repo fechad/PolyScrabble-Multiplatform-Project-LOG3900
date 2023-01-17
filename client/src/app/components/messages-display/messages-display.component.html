@@ -1,0 +1,11 @@
+<div class="message-container-wrapper">
+    <div class="message-container" #scrollMe (click)="updateFocus($event)" [scrollTop]="scrollMe.scrollHeight">
+        <div (click)="updateFocus($event)" *ngFor="let message of messages; let i = index" class="message" [ngStyle]="{ 'background-color': message.value.color }">
+            <div class="message-box">
+                <p class="message-sender">{{ message.value.sender }}</p>
+                <p class="message-content">{{message.value.text}}</p>
+            </div>
+        </div>
+    </div>
+
+</div>

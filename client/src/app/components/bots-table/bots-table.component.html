@@ -1,0 +1,52 @@
+<div class="container">
+    <h1>Bots disponibles</h1>
+
+    <div class="success-container" *ngIf="successMessage">
+        <mat-icon>check_circle_ouline</mat-icon>
+        <div class="success">{{successMessage}}</div>
+    </div>
+
+    <button mat-flat-button class="reset-button" (click)="handleResetBots()" matTooltip="Effacer tous les joueurs sauf ceux par défaut">Réinitialiser les joueurs</button>
+
+
+    <div class="columns-2">
+        <div class="col-1">
+            <h2>Débutants</h2>
+            <table class="admin-table">
+                <button mat-flat-button color="primary" (click)="addBot('débutant')">Ajouter un joueur débutant</button>
+                <mat-icon class="black-icon" (click)="handleRefresh()" matTooltip="Rafraîchir la table">refresh icon</mat-icon>
+                <tr>
+                    <th>Noms</th>
+                    <th style="width:100px">Actions</th>
+                </tr>
+                <tr *ngFor="let bot of beginners">
+                    <td>{{bot.name}}</td>
+                    <td>
+                        <mat-icon *ngIf="canBeDeleted(bot.name)" class="black-icon" (click)="openBotModificationPopup(bot.name)" matTooltip="Modifier le joueur virtuel">edit</mat-icon>
+                        <mat-icon *ngIf="canBeDeleted(bot.name)" class="red-icon" (click)="validateBotDeletionWithUser(bot)" matTooltip="Supprimer le joueur virtuel">clear</mat-icon>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-2">
+            <h2>Experts</h2>
+            <table class="admin-table">
+                <button mat-flat-button color="primary" (click)="addBot('expert')">Ajouter un joueur expert</button>
+                <mat-icon class="black-icon" (click)="handleRefresh()" matTooltip="Rafraîchir la table">refresh icon</mat-icon>
+                <tr>
+                    <th>Noms</th>
+                    <th style="width:100px">Actions</th>
+                </tr>
+                <tr *ngFor="let bot of experts">
+                    <td>{{bot.name}}</td>
+                    <td>
+                        <mat-icon *ngIf="canBeDeleted(bot.name)" class="black-icon" (click)="openBotModificationPopup(bot.name)" matTooltip="Modifier le joueur virtuel">edit</mat-icon>
+                        <mat-icon *ngIf="canBeDeleted(bot.name)" class="red-icon" (click)="validateBotDeletionWithUser(bot)" matTooltip="Supprimer le joueur virtuel">clear</mat-icon>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>

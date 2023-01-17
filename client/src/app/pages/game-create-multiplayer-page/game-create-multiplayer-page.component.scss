@@ -1,0 +1,111 @@
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    padding-bottom: 100px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    height: 100%;
+    width: fit-content;
+}
+
+.gray-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    color: black;
+}
+
+.confirm-buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 400px;
+}
+
+.confirm-buttons-container > button,
+.confirm-buttons-container > div {
+    width: 50%;
+}
+
+.start-game {
+    max-width: 50px;
+}
+
+select {
+    width: 220px;
+}
+
+.dictionary-info-container {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 90%;
+}
+
+.dictionary-info > p:nth-child(1) {
+    font-weight: 600;
+}
+
+p {
+    max-width: 100%;
+    word-break: break-all;
+    white-space: normal;
+    margin-bottom: 0px;
+}
+
+mat-radio-group {
+    width: 100%;
+}
+
+.dictionaries-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    max-height: 250px;
+    overflow-y: scroll;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid gray;
+    margin: auto;
+    max-height: 150px;
+    max-width: 400px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(187, 187, 187);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e4e4e4;
+    border-radius: 10px;
+}
+.error-message-container {
+    width: 100%;
+}
+
+.input {
+    &::-webkit-inner-spin-button {
+        opacity: 1;
+    }
+}

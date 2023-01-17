@@ -1,0 +1,42 @@
+.goal-container {
+    height: fit-content;
+    padding: 30px;
+}
+
+#goal-contents {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+#goal-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#dialog-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.goal-checkbox:disabled {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    border: 1px solid black;
+    background-color: white;
+}
+
+div {
+    font-family: 'Montserrat', sans-serif;
+}

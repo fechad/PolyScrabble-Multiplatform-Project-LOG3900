@@ -1,0 +1,19 @@
+<div id="dialog-header">
+    <h1 mat-dialog-title>{{ goal.title }}</h1>
+    <button mat-button (click)="closeDialog()">X</button>
+</div>
+<div mat-dialog-content class="goal-container">
+    <div id="goal-contents">
+        {{ goal.description }}
+        <div id="goal-info">
+            <div class="flex-row">
+                <input disabled class="goal-checkbox" type="checkbox" [checked]="goal.isPublic" />
+                <label>publique</label>
+            </div>
+            <div class="flex-row">
+                <input disabled class="goal-checkbox" type="checkbox" [checked]="goal.reached" />
+                <div>atteint</div>
+            </div>
+        </div>
+    </div>
+</div>

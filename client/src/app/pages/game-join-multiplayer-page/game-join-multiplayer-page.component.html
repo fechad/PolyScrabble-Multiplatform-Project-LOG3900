@@ -1,0 +1,115 @@
+<app-hearder></app-hearder>
+<body>
+    <p class="title">Rejoindre une partie {{ room.roomInfo.gameType }}</p>
+    <div class="flex-container">
+        <div class="join-container" *ngIf="websiteHasAvailableRooms() && !isInRoom">
+            <div class="gray-box" id="main-container">
+                <div class="information-message-container" *ngIf="room.roomInfo.gameType === 'log2990' || room.roomInfo.gameType === 'classic'">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="information-message">
+                        Veuillez entrez votre pseudo avant de rejoindre une partie scrabble {{ room.roomInfo.gameType }}
+                    </div>
+                </div>
+                <div class="error-message-container" *ngIf="room.roomInfo.gameType !== 'log2990' && room.roomInfo.gameType !== 'classic'">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="error-message">Votre mode de jeu est invalide, veuillez revenir en arrière</div>
+                </div>
+                <div class="stylish-input">
+                    <label> Pseudo </label>
+                    <input
+                        class="input"
+                        type="text"
+                        id="pseudo"
+                        name="pseudo"
+                        [disabled]="isInRoom"
+                        [(ngModel)]="pseudo"
+                        placeholder="Pseudo"
+                        autocomplete="off"
+                    />
+                </div>
+
+                <div class="error-message-container" *ngIf="!isRoomStatusTextEmpty()">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="error-message">{{ roomStatusText }}</div>
+                </div>
+
+                <div class="table-container">
+                    <h2>Parties disponibles</h2>
+                    <table id="games">
+                        <tr>
+                            <th>Nom salle</th>
+                            <th>Nom du créateur</th>
+                            <th>Temps par tour</th>
+                            <th>Dictionnaire</th>
+                            <th>Type partie</th>
+                            <th>
+                                <button
+                                    *ngIf="roomsWithMyGameType.length > 0"
+                                    (click)="joinRandomRoom()"
+                                    [disabled]="isInRoom || roomsWithMyGameType.length === 1 || !hasValidName"
+                                    class="button random-join-button"
+                                >
+                                    Placement aléatoire
+                                </button>
+                            </th>
+                        </tr>
+                        <tr *ngFor="let availableRoom of availableRooms">
+                            <td>{{ availableRoom.roomInfo.name }}</td>
+                            <td>{{ availableRoom.players[0].pseudo }}</td>
+                            <td>{{ availableRoom.roomInfo.timerPerTurn }}</td>
+                            <td>{{ availableRoom.roomInfo.dictionary }}</td>
+                            <td>{{ availableRoom.roomInfo.gameType }}</td>
+                            <td>
+                                <button
+                                    class="button"
+                                    *ngIf="availableRoom.players"
+                                    (click)="askToJoin(availableRoom)"
+                                    [disabled]="
+                                        isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType || !validateName(availableRoom)
+                                    "
+                                >
+                                    Rejoindre la partie
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!availableRooms.length">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <button class="button" [disabled]="true">Rejoindre la partie</button>
+                            </td>
+                        </tr>
+                    </table>
+                    <button class="button important-button" (click)="leaveRoom(room.roomInfo.name)" routerLink="/game/option ">Retour</button>
+                </div>
+                <div *ngIf="!websiteHasAvailableRooms()"></div>
+            </div>
+        </div>
+
+        <div class="join-container" *ngIf="!websiteHasAvailableRooms() && !isInRoom">
+            <div class="gray-box" id="main-container">
+                <div class="information-message-container">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="information-message">Aucune partie disponible</div>
+                </div>
+                <div class="confirm-buttons-container">
+                    <button class="button important-button" (click)="leaveRoom(room.roomInfo.name)" routerLink="/game/option ">Retour</button>
+                </div>
+            </div>
+        </div>
+        <div class="join-container" *ngIf="isInRoom">
+            <div class="gray-box" id="main-container">
+                <div class="information-message-container">
+                    <mat-icon>error_outline</mat-icon>
+                    <div class="information-message">{{ roomStatusText }}</div>
+                </div>
+                <div class="back-button-container">
+                    <button class="button important-button" (click)="leaveRoom(room.roomInfo.name)" routerLink="/game/option ">Retour</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

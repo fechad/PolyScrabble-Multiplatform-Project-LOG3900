@@ -1,0 +1,29 @@
+<div class="leaderboard-title" style="text-align:center;">
+    <h1 mat-dialog-title class=" leaderboard-title ">Les meilleurs scores</h1>
+</div>
+
+<hr>
+<!-- https://codepen.io/Markshall/pen/ZEQBKpb -->
+<div mat-dialog-content class="table-container ">
+    <div *ngFor="let gameType of data " class="leaderboard ">
+        <h2 *ngIf="gameType.length > 0" class="game-mode" style="text-align:center;">Mode {{gameType[0].gameType}}</h2>
+        <div class="leaderboard">
+            <div mat-header-row class="score  leaderboard-description">
+                <span>rang</span>
+                <span>joueur</span>
+                <span>dictionnaire</span>
+                <span class="points">score</span>
+            </div>
+        </div>
+        <div mat-header-row *ngFor=" let score of gameType; index as i" class="score">
+            <span class="position" [class.first-place]="i === 0" [class.second-place]="i === 1" [class.third-place]="i === 2">{{i + 1}}</span>
+            <span>{{ score.author }}</span>
+            <span>{{ score.dictionary }}</span>
+            <span class="points">{{ score.points }}<mat-icon>auto_awesome</mat-icon></span>
+        </div>
+    </div>
+</div>
+<hr>
+<div mat-dialog-actions>
+    <button mat-stroked-button (click)="closeDialog() ">Fermer</button>
+</div>

@@ -1,0 +1,85 @@
+#dictionary-text {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+}
+
+.player-panel.player-active {
+    border: #38cb3e 5px solid;
+}
+
+.player-panel.player-winner {
+    background-color: #e9af4e;
+}
+
+.client-player.player-panel.player-active {
+    border: #38cb3e 5px solid;
+}
+
+.client-player.player-panel.player-winner {
+    background-color: #e9af4e;
+}
+
+.players-names {
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 10px;
+
+    background-color: #ffffff;
+    border: #515151 5px solid;
+    width: 100px;
+    height: 70px;
+    border-radius: 5px;
+    margin-right: 10px;
+
+    transition: box-shadow 0.5s, background-color 0.5s, transform 0.15s, border 0.15s;
+}
+.player-panel.client-player div {
+    font-weight: bold;
+}
+
+.player-panel:hover {
+    transform: translateY(-2px);
+}
+
+.player-panel div {
+    color: #515151;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 25px;
+}
+
+.timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin-right: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 25px;
+    align-items: center;
+    color: #515151;
+    min-width: 100px;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    color: #515151;
+}
+
+button {
+    padding: 8px;
+    border-radius: 5px;
+}

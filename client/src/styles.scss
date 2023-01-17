@@ -1,0 +1,478 @@
+// Import prebuilt-theme for mat-dialog pop up
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+$important-button-disabled-color: #ad8763;
+$important-button-color: #ecba8c;
+$important-button-shadow-color: #a37345;
+$row-border: 1px solid black;
+$row-border-radius: 8px;
+
+/* You can add global styles to this file, and also import other style files */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap');
+html,
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    height: auto;
+}
+
+/* CSS from https://getcssscan.com/css-buttons-examples button 29 example */
+
+.button {
+    align-items: center;
+    appearance: none;
+    background-color: #7daf6b;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: #4b733d 0 -7px 0px inset;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: 'Montserrat', sans-serif;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow 0.15s, transform 0.15s, background-color 0.15s, color 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow, transform;
+    font-size: 18px;
+    height: 50px;
+    width: 350px;
+}
+
+.input {
+    border-radius: 20px;
+    border-color: gray;
+    padding-left: 16px;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    height: 30px;
+    width: 200px;
+}
+
+.stylish-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 20px;
+    padding: 6px;
+    background-color: white;
+    border: 1px solid gray;
+    width: 400px;
+    color: black;
+    transition: transform 0.15s;
+}
+
+.stylish-input > label {
+    text-align: center;
+    color: black;
+}
+
+.button:disabled {
+    background-color: #9aaf92;
+    color: #333333;
+    box-shadow: #687465 0 -7px 0px inset;
+    cursor: default;
+}
+
+.button:disabled:hover {
+    box-shadow: #2c2c2c;
+}
+
+.button:focus {
+    box-shadow: #4b733d 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #4b733d 0 -3px 0 inset;
+}
+
+.button:enabled:hover {
+    box-shadow: rgba(45, 35, 66, 0.4) 0 -7px 0px inset;
+    transform: translateY(-2px);
+}
+
+.button:enabled:active {
+    box-shadow: #4b733d 0 3px 7px inset;
+    transform: translateY(2px);
+}
+
+.button.important-button {
+    align-items: center;
+    background-color: $important-button-color;
+    box-shadow: $important-button-shadow-color 0 -7px 0px inset;
+    color: black;
+}
+
+.button.important-button:disabled {
+    color: #333333;
+    background-color: #ad8763;
+    box-shadow: #70573f 0 -7px 0px inset;
+    cursor: default;
+}
+
+.button.cancel-button {
+    color: black;
+    align-items: center;
+    background-color: #fcaaaa;
+    box-shadow: #af6b6b 0 -7px 0px inset;
+}
+
+.button.cancel-button:disabled {
+    color: #333333;
+    background-color: #eadfdf;
+    box-shadow: #d9bdbd 0 -7px 0px inset;
+    cursor: default;
+}
+
+.button.cancel-button:enabled:hover {
+    box-shadow: rgba(179, 57, 93, 0.4) 0 -7px 0px inset;
+    transform: translateY(-2px);
+}
+
+.button.cancel-button:enabled:active {
+    box-shadow: #ff8989 0 3px 7px inset;
+    transform: translateY(2px);
+}
+
+.button.minor-button {
+    align-items: center;
+    background-color: #adbca8;
+    box-shadow: #798c73 0 -7px 0px inset;
+}
+
+.button.minor-button {
+    width: 200px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    place-items: center;
+    gap: 20px;
+}
+
+.container {
+    height: auto;
+    justify-content: center;
+}
+
+.justified {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* CSS from https://getcssscan.com/css-buttons-examples button 63*/
+
+.footer-item {
+    text-align: center;
+}
+
+.footer-item p :nth-child(even) {
+    color: #1b6fec;
+}
+
+.footer-item p :nth-child(odd) {
+    color: #29e0a3;
+}
+
+.icon {
+    color: white;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.title {
+    color: #000000;
+    font-size: 3rem;
+    text-align: center;
+    padding: 80px 0px;
+}
+
+.gray-box {
+    border-radius: 20px;
+    padding: 30px;
+    background-color: #f3f3f3;
+    box-shadow: 0px 20px 0px #c0c0c0;
+}
+
+.notification {
+    color: beige;
+    text-align: center;
+    width: 100%;
+    padding: 25px 0px;
+    transition: background-color 1s;
+    background-color: #b15656;
+}
+
+.error-notification {
+    color: #ffffff;
+    background-color: #b15656;
+}
+
+.primary-notification {
+    color: #ffffff;
+    background-color: #337ab7;
+}
+
+#games {
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    background-color: white;
+    border: 2px solid black;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#games td {
+    padding: 8px;
+}
+
+#games td:first-child {
+    border-left: $row-border;
+    border-top-left-radius: $row-border-radius;
+    border-bottom-left-radius: $row-border-radius;
+}
+
+#games td:last-child {
+    border-right: $row-border;
+    border-top-right-radius: $row-border-radius;
+    border-bottom-right-radius: $row-border-radius;
+}
+
+#games td {
+    border-top: $row-border;
+    border-bottom: $row-border;
+}
+
+#games th {
+    text-align: center;
+    color: black;
+}
+
+#games td button {
+    max-width: 200px;
+}
+
+.commands-container {
+    border-radius: 10px;
+    background-color: #f3f3f3;
+    width: 385px;
+    height: 140px;
+    justify-content: space-evenly;
+    gap: 0px;
+    padding-left: 10px;
+    box-shadow: 0px 20px 0px #c0c0c0;
+    transition: transform 0.15s;
+}
+
+.commands-container:hover {
+    transform: translateY(-4px);
+}
+
+.flex-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.flex-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.icon {
+    color: white;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.black-icon {
+    color: black;
+}
+
+.red-icon {
+    color: #e86070;
+}
+
+.icon:hover,
+.black-icon:hover,
+.red-icon:hover {
+    cursor: pointer;
+}
+
+.popup-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.error-message-container {
+    background-color: #ecc8c5;
+    border: 1px solid #c86665;
+    border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    white-space: pre-line;
+}
+
+.error-message {
+    color: black;
+    vertical-align: center;
+    white-space: pre-line;
+}
+
+.error-message-container mat-icon {
+    color: black;
+}
+
+.information-message-container {
+    background-color: #d8e3fa;
+    border: 1px solid #1952a7;
+    border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-height: 40px;
+    white-space: pre-line;
+}
+
+.information-message {
+    color: black;
+    vertical-align: center;
+    white-space: pre-line;
+}
+
+.information-message-container mat-icon {
+    color: black;
+}
+
+$contrast-color: rgb(255, 255, 255);
+$primary-color: #ffffff;
+.admin-table {
+    font-family: 'Montserrat', sans-serif;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    background-color: white;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 8px;
+    border: 1px solid black;
+}
+
+.admin-table td {
+    background-color: $primary-color;
+    padding: 8px;
+    color: rgb(0, 0, 0);
+}
+
+.admin-table td:first-child {
+    border-left: $row-border;
+    border-top-left-radius: $row-border-radius;
+    border-bottom-left-radius: $row-border-radius;
+}
+
+.admin-table td:last-child {
+    border-right: $row-border;
+    border-top-right-radius: $row-border-radius;
+    border-bottom-right-radius: $row-border-radius;
+}
+
+.admin-table td {
+    border-top: $row-border;
+    border-bottom: $row-border;
+}
+
+.admin-table th {
+    text-align: left;
+    padding-left: 8px;
+    color: black;
+}
+
+.admin-table td button {
+    padding: 8px;
+    background-color: #5c6dad; // #586cae;
+    border-radius: 4px;
+    color: white;
+    border: 0px;
+}
+
+.admin-table td button:hover {
+    cursor: pointer;
+    background-color: #6b7bb3;
+    transition: 0.5s;
+}
+
+.header {
+    background: #141834;
+    background: radial-gradient(circle, #141834 0%, #13162f 100%);
+    box-shadow: 0 8px 4px #0e0e23;
+    width: 100%;
+    padding: 0;
+    -webkit-animation: top 1s both;
+    animation: top 1s both;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    font-size: 15px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+}
+
+.header-link {
+    color: #9b9ca7;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    transition: 0.3s;
+    border-bottom: 3px solid transparent;
+    transition: 0.3s;
+}
+
+.header-link:hover,
+.active {
+    background: #11132c;
+    border-bottom: 3px solid #b0c7f3;
+}
+
+.admin-navigation-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

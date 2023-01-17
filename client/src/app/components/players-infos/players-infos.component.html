@@ -1,0 +1,28 @@
+<div class="player-info-container">
+    <div class="players-names">
+        <div
+            class="player-panel client-player"
+            [class.player-active]="getPlayerInfo(true, 'pseudo') === currentPlayerTurnPseudo"
+            [class.player-winner]="winnerPseudo === getPlayerInfo(true, 'pseudo') || numberOfWinner > 1"
+        >
+            <div>Vous</div>
+            <div>{{ getPlayerInfo(true, 'score') }}</div>
+        </div>
+
+        <div class="timer">{{ ('0' + min).slice(-2) }}:{{ ('0' + sec).slice(-2) }}</div>
+
+        <div
+            class="player-panel"
+            [class.player-active]="getPlayerInfo(false, 'pseudo') === currentPlayerTurnPseudo"
+            [class.player-winner]="winnerPseudo === getPlayerInfo(false, 'pseudo') || numberOfWinner > 1"
+        >
+            <div>{{ getPlayerInfo(false, 'pseudo') }}</div>
+            <div>{{ getPlayerInfo(false, 'score') }}</div>
+        </div>
+    </div>
+    <div *ngIf="isGameOver && numberOfWinner === 1" class="flex-center">Félicitation à: {{ winnerPseudo }}!</div>
+    <div *ngIf="isGameOver && numberOfWinner > 1" class="flex-center">
+        Félicitation à: {{ getPlayerInfo(true, 'pseudo') }} et {{ getPlayerInfo(false, 'pseudo') }}!
+    </div>
+    <div id="dictionary-text">Dictionnaire: {{ dictionary }}</div>
+</div>

@@ -1,0 +1,70 @@
+.command {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #ecba8c;
+    width: 100px;
+    height: 80px;
+    border-radius: 5px;
+    margin-right: 10px;
+
+    border: 0;
+
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+
+    box-shadow: 0px -10px 0px #bb9573 inset;
+    cursor: pointer;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.command:hover {
+    transform: translateY(-2px);
+}
+
+.command:enabled:active {
+    transform: translateY(2px);
+    box-shadow: 0px -7px 0px #bb9573 inset;
+}
+
+#main-page-container {
+    gap: 30px;
+}
+
+#button-container .button {
+    max-width: 185px;
+    max-height: 50px;
+}
+
+.side-container {
+    min-width: 350px;
+    max-width: 400px;
+    gap: 20px;
+}
+
+.button.quit-button {
+    color: black;
+    align-items: center;
+    background-color: #ffc7c7;
+    box-shadow: #ff8989 0 -7px 0px inset;
+}
+
+.button.quit-button:disabled {
+    color: #333333;
+    background-color: #eadfdf;
+    box-shadow: #d9bdbd 0 -7px 0px inset;
+    cursor: default;
+}
+
+.button.quit-button:enabled:hover {
+    box-shadow: rgba(179, 57, 93, 0.4) 0 -7px 0px inset;
+    transform: translateY(-2px);
+}
+
+.button.quit-button:enabled:active {
+    box-shadow: #ff8989 0 3px 7px inset;
+    transform: translateY(2px);
+}

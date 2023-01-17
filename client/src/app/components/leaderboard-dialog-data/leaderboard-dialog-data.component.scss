@@ -1,0 +1,87 @@
+.leaderboard {
+    margin-top: 8px;
+}
+
+.leaderboard h3 {
+    margin: 0px;
+    padding: 8px;
+}
+
+.score {
+    display: flex;
+    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 3px 5px -1px rgb(51 51 51 / 23%);
+    border-radius: 10px;
+    overflow-x: hidden;
+}
+
+.points {
+    color: #35d8ac;
+    font-weight: 500;
+    font-size: 20px;
+    text-align: right;
+    padding-left: 4px;
+}
+
+.position {
+    border-radius: 4px;
+    text-align: center;
+    width: 20px;
+}
+
+.first-place,
+.second-place,
+.third-place {
+    border-radius: 4px;
+    background-color: black;
+    color: black;
+    width: 20px;
+    text-align: center;
+    border: 1px solid black
+}
+
+.first-place {
+    background-color: #E8B923;
+}
+
+.second-place {
+    background-color: #bfc1c2;
+}
+
+.third-place {
+    background-color: #d6a676;
+}
+
+ ::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 10px;
+}
+
+ ::-webkit-scrollbar-thumb {
+    background: rgb(212, 209, 209);
+    border-radius: 10px;
+}
+
+ ::-webkit-scrollbar-track {
+    background: #666e7a;
+    border-radius: 10px;
+}
+
+.leader-board-title-container {}
+
+hr {
+    margin: 0;
+}
+
+.game-mode {
+    margin: 16px;
+}
+
+.leaderboard-description {
+    background-color: black;
+    color: white;
+}
