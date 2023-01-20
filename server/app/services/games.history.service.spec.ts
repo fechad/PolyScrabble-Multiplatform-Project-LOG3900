@@ -1,10 +1,10 @@
+import { Game } from '@app/interfaces/game';
+import { DatabaseServiceMock } from '@app/services/database.service.mock';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
 import { MongoClient } from 'mongodb';
-import { DatabaseServiceMock } from '@app/services/database.service.mock';
-import { Game } from '@app/interfaces/game';
 import { GamesHistoryService } from './games.history.service';
 chai.use(chaiAsPromised); // this allows us to test for rejection
 
@@ -22,7 +22,7 @@ describe('GamesHistoryService', () => {
         gamesHistoryService = new GamesHistoryService(databaseService as any);
     });
     beforeEach(() => {
-        gamesHistoryService.collection.remove({});
+        gamesHistoryService.collection.deleteMany({});
         game1 = {
             date: 'date1',
             period: '1h30',

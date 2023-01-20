@@ -67,6 +67,29 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
         this.boardService.initializeBoardService({ width: this.tileWidth, height: this.tileHeight, letterRatio: this.letterRatio });
     }
 
+    get width(): number {
+        return this.canvasSize.x;
+    }
+    get height(): number {
+        return this.canvasSize.y;
+    }
+
+    get isActivePlayer(): boolean {
+        return this.player.isItsTurn;
+    }
+
+    get isGameOver(): boolean {
+        return this.room.roomInfo.isGameOver as boolean;
+    }
+
+    private get tileWidth(): number {
+        return (this.width * this.ratioSize) / DEFAULT_CASE_COUNT;
+    }
+
+    private get tileHeight(): number {
+        return (this.height * this.ratioSize) / DEFAULT_CASE_COUNT;
+    }
+
     @HostListener('window:keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         switch (event.key) {
@@ -123,23 +146,8 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
         this.buildBoardArray();
     }
 
-    get width(): number {
-        return this.canvasSize.x;
-    }
-    get height(): number {
-        return this.canvasSize.y;
-    }
-
     changePlayerTurn() {
         this.socketService.send('message', '!passer');
-    }
-
-    get isActivePlayer(): boolean {
-        return this.player.isItsTurn;
-    }
-
-    get isGameOver(): boolean {
-        return this.room.roomInfo.isGameOver as boolean;
     }
 
     confirmPlacement() {
@@ -186,14 +194,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
             }
             secondPassed++;
         }, ONE_SECOND_IN_MS);
-    }
-
-    private get tileWidth(): number {
-        return (this.width * this.ratioSize) / DEFAULT_CASE_COUNT;
-    }
-
-    private get tileHeight(): number {
-        return (this.height * this.ratioSize) / DEFAULT_CASE_COUNT;
     }
 
     private cancelPlacement() {

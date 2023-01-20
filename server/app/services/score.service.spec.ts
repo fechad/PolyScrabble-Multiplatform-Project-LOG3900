@@ -1,4 +1,4 @@
-import { Score } from '@app/classes/score';
+import { Score } from '@app/interfaces/score';
 import { DatabaseServiceMock } from '@app/services/database.service.mock';
 import { ScoresService } from '@app/services/score.service';
 import * as chai from 'chai';
@@ -27,7 +27,7 @@ describe('ScoresService', () => {
         scoresService = new ScoresService(databaseService as any);
     });
     beforeEach(() => {
-        scoresService.collection.remove({});
+        scoresService.collection.deleteMany({});
         log2990Score1 = { points: 10, author: 'Alfred', gameType: 'LOG2990', dictionary: 'English', date: isoDate };
         log2990Score2 = { points: 20, author: 'Bob', gameType: 'LOG2990', dictionary: 'English', date: isoDate };
         classicScore1 = { points: 30, author: 'Carl', gameType: 'Classic', dictionary: 'English', date: isoDate };

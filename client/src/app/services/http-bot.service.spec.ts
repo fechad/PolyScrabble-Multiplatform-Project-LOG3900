@@ -1,8 +1,9 @@
 import { HttpHeaders } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Bot } from '@app/interfaces/bot';
+import { lastValueFrom } from 'rxjs';
 import { HttpService } from './http.service';
-import { Bot } from './interfaces/bot';
 
 describe('HttpService tests', () => {
     let httpMock: HttpTestingController;
@@ -33,7 +34,7 @@ describe('HttpService tests', () => {
     });
     describe('deleteBot tests', () => {
         it('The ressource should not be cached', () => {
-            service.deleteBot('BOTE').subscribe();
+            lastValueFrom(service.deleteBot('BOTE'));
             const req = httpMock.expectOne(`${baseUrl}/bots/BOTE`);
             const headers: HttpHeaders = req.request.headers;
             expect(headers.has('Cache-Control')).toBeTrue();
@@ -42,16 +43,16 @@ describe('HttpService tests', () => {
             req.flush({} as Bot);
         });
         it('should handle httpClientError safely', () => {
-            service.deleteBot('BOT').subscribe((response) => {
+            lastValueFrom(service.deleteBot('BOT')).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/bots/BOT`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.deleteBot('BOTE').subscribe((response) => {
+            lastValueFrom(service.deleteBot('BOTE')).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/bots/BOTE`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -81,16 +82,16 @@ describe('HttpService tests', () => {
             req.flush([] as Bot[]);
         });
         it('should handle httpClientError safely', () => {
-            service.deleteAllBots().subscribe((response) => {
+            lastValueFrom(service.deleteAllBots()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/bots`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.deleteAllBots().subscribe((response) => {
+            lastValueFrom(service.deleteAllBots()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/bots`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -106,16 +107,16 @@ describe('HttpService tests', () => {
             req.flush(fakeBot);
         });
         it('should handle httpClientError safely', () => {
-            service.updateBot(fakeBot.name, updatedBot).subscribe((response) => {
+            lastValueFrom(service.updateBot(fakeBot.name, updatedBot)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/bots/${fakeBot.name}`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.updateBot(fakeBot.name, updatedBot).subscribe((response) => {
+            lastValueFrom(service.updateBot(fakeBot.name, updatedBot)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/bots/${fakeBot.name}`);
             req.flush(updatedBot, { status: 500, statusText: 'Internal Server Error' });
         });

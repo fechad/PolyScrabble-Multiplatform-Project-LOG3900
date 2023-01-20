@@ -1,11 +1,11 @@
 import { Room } from '@app/classes/room-model/room';
-import { Score } from '@app/classes/score';
 import { COUNT_PLAYER_TURN, DEFAULT_ROOM_NAME, DISCONNECT_DELAY, END_TIMER_VALUE, SYSTEM_NAME } from '@app/constants/constants';
 import { CommandController } from '@app/controllers/command.controller';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { ChatMessage } from '@app/interfaces/chat-message';
 import { Game } from '@app/interfaces/game';
 import { PlayerData } from '@app/interfaces/player-data';
+import { Score } from '@app/interfaces/score';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';

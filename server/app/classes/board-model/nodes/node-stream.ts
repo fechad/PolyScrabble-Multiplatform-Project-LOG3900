@@ -1,5 +1,5 @@
-import { MultiplierType } from '@app/classes/classes-constants';
 import { Directions } from '@app/enums/directions';
+import { MultiplierType } from '@app/enums/multiplier-type';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { BoardNode } from './board-node';
 export class NodeStream {

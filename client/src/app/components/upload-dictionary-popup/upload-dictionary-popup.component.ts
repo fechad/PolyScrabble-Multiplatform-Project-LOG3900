@@ -11,9 +11,9 @@ import {
     MAX_FILE_LENGTH,
     NO_FILE_ERROR,
 } from '@app/constants/dictionary-constant';
-import { HttpService } from '@app/http.service';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionaryValidatorService } from '@app/services/dictionary-validator.service';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({

@@ -1,5 +1,5 @@
-import { Dictionary } from '@app/classes/dictionary';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { Dictionary } from '@app/interfaces/dictionary';
 import { DatabaseServiceMock } from '@app/services/database.service.mock';
 import * as chai from 'chai';
 import { expect } from 'chai';
@@ -23,7 +23,7 @@ describe('DictionariesService', () => {
         dictionariesService = new DictionariesService(databaseService as any);
     });
     beforeEach(() => {
-        dictionariesService.collection.remove({});
+        dictionariesService.collection.deleteMany({});
         dictionary1 = { title: 'anglais', description: 'langue de Shakespeare', words: ['hey'] };
         dictionary2 = { title: 'français', description: 'langue de Molière', words: ['you'] };
     });

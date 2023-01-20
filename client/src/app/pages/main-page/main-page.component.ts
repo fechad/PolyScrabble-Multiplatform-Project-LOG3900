@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Room } from '@app/classes/room';
 import { Score } from '@app/classes/score';
-import { LeaderboardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
+import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
+import { HttpService } from '@app/services/http.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
 export const LEADERBOARD_SIZE = 5;
@@ -32,7 +32,7 @@ export class MainPageComponent {
             this.showErrorDialog();
             return;
         }
-        this.dialog.open(LeaderboardDialogDataComponent, {
+        this.dialog.open(LeaderBoardDialogDataComponent, {
             width: DIALOG_WIDTH,
             autoFocus: true,
             data: scores,
@@ -45,7 +45,7 @@ export class MainPageComponent {
             this.showErrorDialog();
             return;
         }
-        this.dialog.open(LeaderboardDialogDataComponent, {
+        this.dialog.open(LeaderBoardDialogDataComponent, {
             width: DIALOG_WIDTH,
             autoFocus: true,
             data: [scores],

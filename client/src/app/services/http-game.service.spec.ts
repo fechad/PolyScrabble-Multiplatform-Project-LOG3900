@@ -1,8 +1,9 @@
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Game } from '@app/interfaces/game';
+import { lastValueFrom } from 'rxjs';
 import { HttpService } from './http.service';
-import { Game } from './interfaces/game';
 
 describe('HttpService tests', () => {
     let httpMock: HttpTestingController;
@@ -31,7 +32,7 @@ describe('HttpService tests', () => {
 
     describe('getAllGames() tests', () => {
         it('should return an Observable<Game[]>', () => {
-            service.getAllGames().subscribe((games) => {
+            lastValueFrom(service.getAllGames()).then((games) => {
                 expect(games).toEqual(expectedGames);
             });
             const req = httpMock.expectOne(`${baseUrl}/games`);
@@ -39,24 +40,24 @@ describe('HttpService tests', () => {
             req.flush(expectedGames);
         });
         it('should handle http error safely', () => {
-            service.getAllGames().subscribe((response: Game[]) => {
+            lastValueFrom(service.getAllGames()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/games`);
             expect(req.request.method).toBe('GET');
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle httpClientError safely', () => {
-            service.getAllGames().subscribe((response: Game[]) => {
+            lastValueFrom(service.getAllGames()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/games`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.getAllGames().subscribe((response: Game[]) => {
+            lastValueFrom(service.getAllGames()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/games`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });

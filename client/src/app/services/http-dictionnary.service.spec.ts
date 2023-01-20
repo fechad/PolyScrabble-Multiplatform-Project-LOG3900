@@ -2,9 +2,10 @@
 import { HttpHeaders, HttpStatusCode } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { DEFAULT_MESSAGE, FORBIDDEN_MESSAGE, GONE_RESSOURCE_MESSAGE, UNREACHABLE_SERVER_MESSAGE } from './constants/http-constants';
+import { DEFAULT_MESSAGE, FORBIDDEN_MESSAGE, GONE_RESSOURCE_MESSAGE, UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
+import { Dictionary } from '@app/interfaces/dictionary';
+import { lastValueFrom } from 'rxjs';
 import { HttpService } from './http.service';
-import { Dictionary } from './interfaces/dictionary';
 
 describe('HttpService tests', () => {
     let httpMock: HttpTestingController;
@@ -35,6 +36,7 @@ describe('HttpService tests', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
     describe('handleErrorStatusCode tests', () => {
         it('should set the error message to  UNREACHABLE_SERVER_MESSAGE when receiving code 0', () => {
             service['handleErrorStatusCode'](0);
@@ -53,42 +55,46 @@ describe('HttpService tests', () => {
             expect(service['errorMessage']).toEqual(DEFAULT_MESSAGE);
         });
     });
+
     describe('getAllDictionaries() tests', () => {
         it('should return an Observable<Dictionary[]>', () => {
-            service.getAllDictionaries().subscribe((dictionaries) => {
+            lastValueFrom(service.getAllDictionaries()).then((dictionaries) => {
                 expect(dictionaries.length).toBe(dictionaries.length);
                 expect(dictionaries).toEqual(expectedDictionaries);
             });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
             expect(req.request.method).toBe('GET');
             req.flush(expectedDictionaries);
         });
         it('should handle http error safely', () => {
-            service.getAllDictionaries().subscribe((response: Dictionary[]) => {
+            lastValueFrom(service.getAllDictionaries()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
             expect(req.request.method).toBe('GET');
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle httpClientError safely', () => {
-            service.getAllDictionaries().subscribe((response: Dictionary[]) => {
+            lastValueFrom(service.getAllDictionaries()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.getAllDictionaries().subscribe((response: Dictionary[]) => {
+            lastValueFrom(service.getAllDictionaries()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
     });
+
     describe('getDictionary tests', () => {
         it('should return an Observable<Dictionary>', () => {
-            service.getDictionary(fakeDictionary.title, false).subscribe((response) => {
+            lastValueFrom(service.getDictionary(fakeDictionary.title, false)).then((response) => {
                 expect(response).toEqual(fakeDictionary);
             });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${encodeURIComponent(fakeDictionary.title)}?includeWords=false`);
@@ -96,24 +102,27 @@ describe('HttpService tests', () => {
             req.flush(fakeDictionary);
         });
         it('should handle http error safely', () => {
-            service.getDictionary(fakeDictionary.title, true).subscribe((response: Dictionary) => {
+            lastValueFrom(service.getDictionary(fakeDictionary.title, true)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${encodeURIComponent(fakeDictionary.title)}?includeWords=true`);
             expect(req.request.method).toBe('GET');
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle httpClientError safely', () => {
-            service.getDictionary(fakeDictionary.title, false).subscribe((response: Dictionary) => {
+            lastValueFrom(service.getDictionary(fakeDictionary.title, false)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${encodeURIComponent(fakeDictionary.title)}?includeWords=false`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.getDictionary(fakeDictionary.title, false).subscribe((response: Dictionary) => {
+            lastValueFrom(service.getDictionary(fakeDictionary.title, false)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${encodeURIComponent(fakeDictionary.title)}?includeWords=false`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -137,20 +146,22 @@ describe('HttpService tests', () => {
             req.flush([] as Dictionary[]);
         });
         it('should handle httpClientError safely', () => {
-            service.deleteAllDictionariesExceptDefault().subscribe((response) => {
+            lastValueFrom(service.deleteAllDictionariesExceptDefault()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.deleteAllDictionariesExceptDefault().subscribe((response) => {
+            lastValueFrom(service.deleteAllDictionariesExceptDefault()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
     });
+
     describe('deleteDictionary tests', () => {
         it('The ressource should not be cached', () => {
             service.deleteDictionary('french').subscribe();
@@ -162,16 +173,17 @@ describe('HttpService tests', () => {
             req.flush({} as Dictionary);
         });
         it('should handle httpClientError safely', () => {
-            service.deleteDictionary('french').subscribe((response) => {
+            lastValueFrom(service.deleteDictionary('french')).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/french`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.deleteDictionary('french').subscribe((response) => {
+            lastValueFrom(service.deleteDictionary('french')).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/french`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -182,6 +194,7 @@ describe('HttpService tests', () => {
             req.flush(fakeDictionary);
         });
     });
+
     describe('getErrorMessage() tests', () => {
         it('should return the value of the attribute errorMessage', () => {
             // The attribute errorMessage is private and I need to set it to test the getter
@@ -190,6 +203,7 @@ describe('HttpService tests', () => {
             expect(service.getErrorMessage()).toEqual('Some error');
         });
     });
+
     describe('updateDictionary tests', () => {
         it('The ressource should not be cached', () => {
             service.updateDictionary(fakeDictionary.title, updatedDictionary).subscribe();
@@ -201,16 +215,16 @@ describe('HttpService tests', () => {
             req.flush(fakeDictionary);
         });
         it('should handle httpClientError safely', () => {
-            service.updateDictionary(fakeDictionary.title, updatedDictionary).subscribe((response) => {
+            lastValueFrom(service.updateDictionary(fakeDictionary.title, updatedDictionary)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${fakeDictionary.title}`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.updateDictionary(fakeDictionary.title, updatedDictionary).subscribe((response) => {
+            lastValueFrom(service.updateDictionary(fakeDictionary.title, updatedDictionary)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${fakeDictionary.title}`);
             req.flush(updatedDictionary, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -221,6 +235,7 @@ describe('HttpService tests', () => {
             req.flush(fakeDictionary);
         });
     });
+
     describe('addDictionary tests', () => {
         it('The ressource should not be cached', () => {
             service.addDictionary(fakeDictionary).subscribe();
@@ -240,16 +255,16 @@ describe('HttpService tests', () => {
             req.flush(fakeDictionary);
         });
         it('should handle httpClientError safely', () => {
-            service.addDictionary(fakeDictionary).subscribe((response) => {
+            lastValueFrom(service.addDictionary(fakeDictionary)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${fakeDictionary.title}`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.addDictionary(fakeDictionary).subscribe((response) => {
+            lastValueFrom(service.addDictionary(fakeDictionary)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/dictionaries/${fakeDictionary.title}`);
             req.flush(updatedDictionary, { status: 500, statusText: 'Internal Server Error' });
         });

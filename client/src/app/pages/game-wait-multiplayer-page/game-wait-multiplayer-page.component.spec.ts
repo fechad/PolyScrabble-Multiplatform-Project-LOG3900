@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { HttpService } from '@app/http.service';
-import { SocketClientService } from '@app/services/socket-client.service';
-import { Socket } from 'socket.io-client';
-import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
-import { GameWaitMultiplayerPageComponent } from './game-wait-multiplayer-page.component';
-import { of } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
 import { GONE_RESSOURCE_MESSAGE } from '@app/constants/http-constants';
-import { Router } from '@angular/router';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { HttpService } from '@app/services/http.service';
+import { SocketClientService } from '@app/services/socket-client.service';
+import { of } from 'rxjs';
+import { Socket } from 'socket.io-client';
+import { GameWaitMultiplayerPageComponent } from './game-wait-multiplayer-page.component';
 
 class SocketClientServiceMock extends SocketClientService {
     override connect() {

@@ -26,6 +26,34 @@ export class PlaceLetter extends Command {
         this.isFirstPlaced = isFirstPlaced;
     }
 
+    private get letter(): string {
+        return this.placeLetterInfo.letter;
+    }
+
+    private get tile(): Tile {
+        return this.placeLetterInfo.tile;
+    }
+
+    private get dimension(): Dimension {
+        return this.placeLetterInfo.dimension;
+    }
+
+    private get rack(): Rack {
+        return this.placeLetterInfo.rack;
+    }
+
+    private get lettersInBoard(): Tile[][] {
+        return this.placeLetterInfo.lettersInBoard;
+    }
+
+    private get xIndex(): number {
+        return this.placeLetterInfo.indexes.x;
+    }
+
+    private get yIndex(): number {
+        return this.placeLetterInfo.indexes.y;
+    }
+
     getNextPlaceInfo(): PlaceLetterInfo {
         return this.nextPlaceLetterInfo;
     }
@@ -200,33 +228,5 @@ export class PlaceLetter extends Command {
             nextTile.content = DOWN_ARROW;
         }
         this.nextPlaceLetterInfo.tile = nextTile;
-    }
-
-    private get letter(): string {
-        return this.placeLetterInfo.letter;
-    }
-
-    private get tile(): Tile {
-        return this.placeLetterInfo.tile;
-    }
-
-    private get dimension(): Dimension {
-        return this.placeLetterInfo.dimension;
-    }
-
-    private get rack(): Rack {
-        return this.placeLetterInfo.rack;
-    }
-
-    private get lettersInBoard(): Tile[][] {
-        return this.placeLetterInfo.lettersInBoard;
-    }
-
-    private get xIndex(): number {
-        return this.placeLetterInfo.indexes.x;
-    }
-
-    private get yIndex(): number {
-        return this.placeLetterInfo.indexes.y;
     }
 }

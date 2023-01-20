@@ -57,6 +57,11 @@ export class Room {
     get isSolo(): boolean | undefined {
         return this.roomInfo.isSolo;
     }
+
+    get letterBank(): LetterBank {
+        return this.gameManager.managerLetterBank;
+    }
+
     hasTimer(): boolean {
         return this.gameManager.hasTimeout;
     }
@@ -73,10 +78,6 @@ export class Room {
         this.gameManager.turnPassedCounter = 0;
     }
 
-    get letterBank(): LetterBank {
-        return this.gameManager.managerLetterBank;
-    }
-
     addPlayer(player: Player) {
         if (this.players.length < this.maxPlayers) {
             this.fillPlayerRack(player);
@@ -87,6 +88,7 @@ export class Room {
             this.startDate = new Date();
         }
     }
+
     createPlayerVirtual(socketId: string, name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
         this.bot = this.gameManager.getNewVirtualPlayer(socketId, name, this.gameManager.fetcher, desiredLevel);
         this.addPlayer(this.bot);
@@ -100,9 +102,11 @@ export class Room {
     getAllGoals(): Goal[] {
         return this.gameManager.allGoals;
     }
+
     getReachedGoals(): ReachedGoal[] {
         return this.gameManager.reachedGoals;
     }
+
     fillPlayerRack(player: Player) {
         this.gameManager.fillPlayerRack(player);
     }
@@ -169,6 +173,7 @@ export class Room {
     getWinner(): Player[] {
         return this.gameManager.getWinner(this.players);
     }
+
     getBotGreeting(): BotGreeting | undefined {
         if (!this.bot) return undefined;
         return this.bot.greeting;

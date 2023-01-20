@@ -1,12 +1,12 @@
-import { Score } from '@app/classes/score';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
-import { Db, MongoClient, MongoClientOptions } from 'mongodb';
+import { Score } from '@app/interfaces/score';
+import { Db, MongoClient } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
 
 const DB_USERNAME = 'firstUser';
 const DB_PASSWORD = 'a2MLZJUUH26ggA5y';
-const DATABASE_URL = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.llymw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const DATABASE_URI = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.llymw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 export const DATABASE_NAME = 'Cluster0';
 export const DATABASE_COLLECTION = 'scores';
 
@@ -15,14 +15,17 @@ export class DatabaseService {
     private db: Db;
     private client: MongoClient;
 
-    private options: MongoClientOptions = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    };
+    get database(): Db {
+        return this.db;
+    }
 
-    async start(url: string = DATABASE_URL): Promise<MongoClient | null> {
+    async start(dbURI: string = DATABASE_URI): Promise<MongoClient | null> {
         try {
-            const client = await MongoClient.connect(url, this.options);
+            const client = new MongoClient(dbURI);
+            await client.connect();
+            // Establish and verify connection
+            await client.db(DATABASE_NAME).command({ ping: 1 });
+
             this.client = client;
             this.db = client.db(DATABASE_NAME);
         } catch {
@@ -57,9 +60,5 @@ export class DatabaseService {
             }
         }
         await this.db.collection(DATABASE_COLLECTION).insertMany(scores);
-    }
-
-    get database(): Db {
-        return this.db;
     }
 }

@@ -1,13 +1,13 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
 import { EditBotPopupComponent } from '@app/components/edit-bot-popup/edit-bot-popup.component';
-import { ConfirmationPopupComponent } from '@app/confirmation-popup/confirmation-popup.component';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { DEFAULT_BOTS_NAME } from '@app/constants/constants';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 export const SUCCESSFUL_DELETE_MESSAGE = 'Votre joueur a été effacé';

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { LeaderboardDialogDataComponent } from './leaderboard-dialog-data.component';
+import { LeaderBoardDialogDataComponent } from './leaderboard-dialog-data.component';
 export class MatDialogRefMock {
     close() {
         return;
     }
 }
 describe('LeaderboardDialogDataComponent', () => {
-    let component: LeaderboardDialogDataComponent;
-    let fixture: ComponentFixture<LeaderboardDialogDataComponent>;
+    let component: LeaderBoardDialogDataComponent;
+    let fixture: ComponentFixture<LeaderBoardDialogDataComponent>;
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [LeaderboardDialogDataComponent],
+            declarations: [LeaderBoardDialogDataComponent],
             providers: [
                 { provide: MAT_DIALOG_DATA, useValue: [] },
                 { provide: MatDialogRef, useClass: MatDialogRefMock },
@@ -21,7 +21,7 @@ describe('LeaderboardDialogDataComponent', () => {
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(LeaderboardDialogDataComponent);
+        fixture = TestBed.createComponent(LeaderBoardDialogDataComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -5,8 +5,8 @@ export class SuccessMessageBuilder {
         const answer: BoardMessage = {
             title: BoardMessageTitle.SuccessfulPlacement,
             content: ` a effectué le placement suivant: \n
-                Nouvelles lettres: ${letters} \n 
-                Depuis: ${row.toUpperCase()}${column} \n 
+                Nouvelles lettres: ${letters} \n
+                Depuis: ${row.toUpperCase()}${column} \n
                 Direction: ${direction?.toUpperCase()} \n
                 Nouveaux points: `,
         };

@@ -5,7 +5,7 @@ import { GameData } from '@app/classes/game-data';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { GONE_RESSOURCE_MESSAGE } from '@app/constants/http-constants';
-import { HttpService } from '@app/http.service';
+import { HttpService } from '@app/services/http.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { lastValueFrom } from 'rxjs';
@@ -32,6 +32,15 @@ export class StartGameSoloComponent implements OnInit {
     ) {
         this.dictionaryDeleted = new EventEmitter<void>();
         this.httpError = new EventEmitter<void>();
+    }
+
+    get hasValidGameType(): boolean {
+        return ['classic', 'log2990'].includes(this.room.roomInfo.gameType);
+    }
+
+    get isFormValid(): boolean {
+        if (!this.gameForm) return false;
+        return this.gameForm.valid && this.isDictionarySelected();
     }
 
     ngOnInit() {
@@ -98,15 +107,6 @@ export class StartGameSoloComponent implements OnInit {
         this.setPlayerInfo(pseudo);
         this.onProcess = true;
         this.socketService.send('joinRoomSolo', this.room);
-    }
-
-    get hasValidGameType(): boolean {
-        return ['classic', 'log2990'].includes(this.room.roomInfo.gameType);
-    }
-
-    get isFormValid(): boolean {
-        if (!this.gameForm) return false;
-        return this.gameForm.valid && this.isDictionarySelected();
     }
 
     private dictionaryExists(): boolean {

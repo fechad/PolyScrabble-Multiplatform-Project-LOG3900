@@ -8,10 +8,10 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { TIMER_TEST_DELAY } from '@app/constants/constants';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { HttpService } from '@app/services/http.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -359,7 +359,7 @@ describe('PlayersInfosComponent', () => {
         });
         it('should clear the bots when an error has occurred', async () => {
             component.bots = [botExpert1];
-            spyOn(httpService, 'getAllBots').and.returnValue(of());
+            spyOn(httpService, 'getAllBots').and.returnValue(of(undefined as unknown as Bot[]));
             spyOn(httpService, 'anErrorOccurred').and.returnValue(true);
             await component.handleRefresh();
             expect(component.bots).toEqual([]);

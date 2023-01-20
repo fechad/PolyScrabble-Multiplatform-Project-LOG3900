@@ -1,5 +1,5 @@
 import { Bot } from '@app/interfaces/bot';
-import { Collection, FindAndModifyWriteOpResultObject, UpdateWriteOpResult, WriteOpResult } from 'mongodb';
+import { Collection, DeleteResult, UpdateResult } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
@@ -22,13 +22,13 @@ export class BotsService {
             });
     }
 
-    async deleteBot(nameToDelete: string): Promise<FindAndModifyWriteOpResultObject<Bot>> {
+    async deleteBot(nameToDelete: string) {
         return await this.collection.findOneAndDelete({ name: nameToDelete }).then((result) => {
             return result;
         });
     }
-    async deleteAllBots(): Promise<WriteOpResult> {
-        const returned = this.collection.remove({});
+    async deleteAllBots(): Promise<DeleteResult> {
+        const returned = this.collection.deleteMany({});
         await this.collection.insertMany([
             { name: 'Trump', gameType: 'débutant' },
             { name: 'Zemmour', gameType: 'débutant' },
@@ -40,7 +40,7 @@ export class BotsService {
         return returned;
     }
 
-    async updateBot(nameToUpdate: string, updatedBot: Bot): Promise<UpdateWriteOpResult> {
+    async updateBot(nameToUpdate: string, updatedBot: Bot): Promise<UpdateResult> {
         const filter = { name: nameToUpdate };
         const setQuery = { $set: { name: updatedBot.name, gameType: updatedBot.gameType } };
         return this.collection.updateOne(filter, setQuery, { upsert: true });

@@ -1,4 +1,4 @@
-import { DIRECT_PLACEMENT_HISTORY_MAX_LENGTH } from './word-history-constants';
+import { DIRECT_PLACEMENT_HISTORY_MAX_LENGTH } from '@app/constants/word-history-constants';
 
 export class WordHistory {
     wordsFormed: string[];

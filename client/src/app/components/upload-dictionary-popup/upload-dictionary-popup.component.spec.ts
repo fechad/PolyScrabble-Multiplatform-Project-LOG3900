@@ -1,11 +1,12 @@
+// need custom json for the test
+/* eslint-disable @typescript-eslint/naming-convention */
 // Some methods/attributes are private and I needed to access them to test them
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
-import { UploadDictionaryPopupComponent } from './upload-dictionary-popup.component';
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpService } from '@app/http.service';
-import { of } from 'rxjs';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
 import {
     FILE_QUANTITY_ERROR,
     FILE_TOO_BIG,
@@ -14,10 +15,11 @@ import {
     JSON_PARSING_ERROR,
     NO_FILE_ERROR,
 } from '@app/constants/dictionary-constant';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionaryValidatorService } from '@app/services/dictionary-validator.service';
+import { HttpService } from '@app/services/http.service';
+import { of } from 'rxjs';
+import { UploadDictionaryPopupComponent } from './upload-dictionary-popup.component';
 
 describe('UploadDictionaryPopupComponent', () => {
     let component: UploadDictionaryPopupComponent;

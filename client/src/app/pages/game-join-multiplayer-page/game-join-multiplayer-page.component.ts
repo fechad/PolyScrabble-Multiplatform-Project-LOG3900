@@ -35,11 +35,6 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         this.availableRooms = [];
     }
 
-    ngOnInit() {
-        this.connect();
-        this.getAvailableRooms();
-    }
-
     get roomStatusText(): string {
         if (this.isInRoom) return WAITING_FOR_CONFIRMATION;
         if (this.isRejected) return GAME_REJECTION_BY_ADVERSARY;
@@ -47,6 +42,19 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         if (!this.isPseudoValid) return INVALID_PSEUDO;
         if (!this.canJoinRoom) return ROOM_ERROR;
         return '';
+    }
+
+    get roomsWithMyGameType(): Room[] {
+        return this.availableRooms.filter((room) => room.roomInfo.gameType === this.room.roomInfo.gameType);
+    }
+
+    get hasValidName(): boolean {
+        return this.pseudo.length >= MIN_LENGTH_PSEUDO && this.pseudo.length <= MAX_LENGTH_PSEUDO;
+    }
+
+    ngOnInit() {
+        this.connect();
+        this.getAvailableRooms();
     }
 
     isRoomStatusTextEmpty(): boolean {
@@ -90,14 +98,6 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
 
     validateName(room: Room): boolean {
         return this.pseudoIsDifferentFromAdversary(room) && this.isPseudoLengthValid();
-    }
-
-    get roomsWithMyGameType(): Room[] {
-        return this.availableRooms.filter((room) => room.roomInfo.gameType === this.room.roomInfo.gameType);
-    }
-
-    get hasValidName(): boolean {
-        return this.pseudo.length >= MIN_LENGTH_PSEUDO && this.pseudo.length <= MAX_LENGTH_PSEUDO;
     }
 
     websiteHasAvailableRooms(): boolean {

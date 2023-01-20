@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 import { Player } from '@app/classes/player';
+import { AT_LEAST_5_GOAL, NEED_OR_GOAL, NO_CHANGE_NO_PASS_GOAL, PALINDROME_GOAL, TARGET_GOAL_COUNT } from '@app/constants/goals-constants';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { expect } from 'chai';
 import { assert } from 'console';
@@ -9,7 +10,6 @@ import { describe } from 'mocha';
 import * as sinon from 'sinon';
 import { Goal } from './goal';
 import { GoalManager } from './goal-manager';
-import { AT_LEAST_5_GOAL, NEED_OR_GOAL, NO_CHANGE_NO_PASS_GOAL, PALINDROME_GOAL, TARGET_GOAL_COUNT } from './goals-constants';
 import { Matcher } from './matcher';
 
 describe('GoalManager tests', () => {

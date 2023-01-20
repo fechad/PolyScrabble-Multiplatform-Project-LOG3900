@@ -1,10 +1,10 @@
 import { BoardMessage } from '@app/classes/board-model/board-message';
 import { DirectionHandler } from '@app/classes/board-model/handlers/direction-handler';
-import { THIRTY_POINTS_NEEDED_FOR_REWARD, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/classes/goals/goals-constants';
 import { Matcher } from '@app/classes/goals/matcher';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { RACK_CAPACITY } from '@app/constants/constants';
+import { THIRTY_POINTS_NEEDED_FOR_REWARD, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/constants/goals-constants';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { CommandResult } from '@app/interfaces/command-result';

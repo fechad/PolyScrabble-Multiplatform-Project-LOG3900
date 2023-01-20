@@ -1,11 +1,11 @@
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
 import { Application } from '@app/app';
-import { Dictionary } from '@app/classes/dictionary';
 import { ScoreMapper } from '@app/classes/virtual-placement-logic/score-mapper';
 import { WordCollection } from '@app/classes/virtual-placement-logic/word-collection';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
 import { BotsController } from '@app/controllers/bots.controller';
 import { GamesHistoryController } from '@app/controllers/game.history.controller';
+import { Dictionary } from '@app/interfaces/dictionary';
 import { BotsService } from '@app/services/bot.service';
 import { DatabaseServiceMock } from '@app/services/database.service.mock';
 import { DictionariesService } from '@app/services/dictionaries.service';
@@ -14,7 +14,7 @@ import { ScoresService } from '@app/services/score.service';
 import { assert, expect } from 'chai';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import { describe } from 'mocha';
-import { UpdateWriteOpResult, WriteOpResult } from 'mongodb';
+import { DeleteResult, UpdateResult } from 'mongodb';
 import * as sinon from 'sinon';
 import * as request from 'supertest';
 import { DictionariesController } from './dictionaries.controller';
@@ -80,7 +80,7 @@ describe('DictionariesController', () => {
     });
     describe('DELETE /api/dictionaries route', () => {
         it('should call deleteAllDictionariesExceptDefault and return status 200 when is resolves', async () => {
-            const stub = sinon.stub(dictionariesService, 'deleteAllDictionariesExceptDefault').resolves({} as WriteOpResult);
+            const stub = sinon.stub(dictionariesService, 'deleteAllDictionariesExceptDefault').resolves({} as DeleteResult);
             sinon.stub(dictionariesService, 'getAllDictionaries').resolves([] as Dictionary[]);
             const fileServiceStub = sinon.stub(dictionariesController.fileService, 'deleteAllDictionariesExceptDefault');
             return request(application.app)
@@ -236,7 +236,7 @@ describe('DictionariesController', () => {
         });
         it('should return status INTERNAL_SERVER_ERROR when no modification was made to the database', async () => {
             sinon.stub(dictionariesService, 'getDictionary').resolves(null);
-            const stub = sinon.stub(dictionariesService, 'updateDictionary').resolves({ modifiedCount: 0 } as UpdateWriteOpResult);
+            const stub = sinon.stub(dictionariesService, 'updateDictionary').resolves({ modifiedCount: 0 } as UpdateResult);
             return request(application.app)
                 .patch('/api/dictionaries/hola')
                 .expect(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -247,7 +247,7 @@ describe('DictionariesController', () => {
         });
         it('should return status OK when the update is successful', async () => {
             sinon.stub(dictionariesService, 'getDictionary').resolves(null);
-            const stub = sinon.stub(dictionariesService, 'updateDictionary').resolves({ modifiedCount: 1 } as UpdateWriteOpResult);
+            const stub = sinon.stub(dictionariesService, 'updateDictionary').resolves({ modifiedCount: 1 } as UpdateResult);
             return request(application.app)
                 .patch('/api/dictionaries/hola')
                 .expect(StatusCodes.OK)
@@ -260,7 +260,7 @@ describe('DictionariesController', () => {
         it('should return http status 201 (Created) and an empty body when the ressource is added successfully', async () => {
             sinon.stub(ScoreMapper, 'createMap').returns(new Map<number, WordCollection>());
             sinon.stub(dictionariesController.fileService, 'createDictionaryFile').resolves();
-            sinon.stub(dictionariesService, 'addDictionary').resolves({ upsertedCount: 1 } as UpdateWriteOpResult);
+            sinon.stub(dictionariesService, 'addDictionary').resolves({ upsertedCount: 1 } as UpdateResult);
             return request(application.app)
                 .post('/api/dictionaries/english')
                 .send({ title: 'yes', description: 'no', words: ['yeno'] } as Dictionary)
@@ -281,7 +281,7 @@ describe('DictionariesController', () => {
                 });
         });
         it('should return Status 403 (forbidden) when trying to add a dictionary that exist already', async () => {
-            const stub = sinon.stub(dictionariesService, 'addDictionary').resolves({ upsertedCount: 0 } as UpdateWriteOpResult);
+            const stub = sinon.stub(dictionariesService, 'addDictionary').resolves({ upsertedCount: 0 } as UpdateResult);
             return request(application.app)
                 .post('/api/dictionaries/english')
                 .send({ title: 'yes', description: 'no', words: ['yeno'] } as Dictionary)

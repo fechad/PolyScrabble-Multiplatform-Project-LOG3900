@@ -3,8 +3,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { CurrentFocus } from '@app/classes/current-focus';
 import { MAX_MESSAGE_LENGTH, MAX_RECONNECTION_DELAY, MIN_MESSAGE_LENGTH, ONE_SECOND_IN_MS, SERVER_RESPONSE_DELAY } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
+import { ChatMessage } from '@app/interfaces/message';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
-import { ChatMessage } from '@app/services/message';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { DEFAULT_USER_NAME, UNRESPONSIVE_SERVER_ERROR } from './constants';
 export const SCRABBLE_MESSAGE = '(っ◔◡◔)っ 👑 scrabble 👑';
@@ -30,6 +30,14 @@ export class ChatComponent implements OnInit {
         this.isEmojiPickerActive = false;
     }
 
+    get chatHistory(): FormArray {
+        return this.chatForm.get('chatHistory') as FormArray;
+    }
+
+    get message(): FormControl {
+        return this.chatForm.controls.message as FormControl;
+    }
+
     ngOnInit() {
         let isFirstReload = true;
 
@@ -49,13 +57,6 @@ export class ChatComponent implements OnInit {
             }
             this.addMessage({ text: message, sender: DEFAULT_USER_NAME, color: this.messageColor });
         });
-    }
-    get chatHistory(): FormArray {
-        return this.chatForm.get('chatHistory') as FormArray;
-    }
-
-    get message(): FormControl {
-        return this.chatForm.controls.message as FormControl;
     }
 
     addMessage(message: ChatMessage) {

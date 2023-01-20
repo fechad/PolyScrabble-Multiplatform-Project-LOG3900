@@ -1,7 +1,7 @@
 import { DirectionHandler } from '@app/classes/board-model/handlers/direction-handler';
-import { SpecialCaseInfo } from '@app/classes/special-case-info';
 import { Directions } from '@app/enums/directions';
 import { PlacementDirections } from '@app/enums/placement-directions';
+import { SpecialCaseInfo } from '@app/interfaces/special-case-info';
 import { NodeLink } from './node-link';
 
 export class BoardNode {

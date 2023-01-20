@@ -6,9 +6,9 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
 import { FORBIDDEN_MESSAGE } from '@app/constants/http-constants';
-import { HttpService } from '@app/http.service';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionaryValidatorService } from '@app/services/dictionary-validator.service';
+import { HttpService } from '@app/services/http.service';
 import { of } from 'rxjs';
 import { EditDictionaryPopupComponent } from './edit-dictionary-popup.component';
 
@@ -124,7 +124,7 @@ describe('EditDictionaryPopupComponent', () => {
             spyOn(dictionaryValidator, 'isDescriptionValid').and.returnValue(true);
             spyOn(httpService, 'updateDictionary').and.returnValue(of(fakeDictionary));
             spyOn(httpService, 'anErrorOccurred').and.returnValue(true);
-            const spy = spyOn(component, 'handleSuccessfulmodification' as any);
+            const spy = spyOn(component, 'handleSuccessfulModification' as any);
             await component.modifyDictionary();
             expect(spy).not.toHaveBeenCalled();
         });

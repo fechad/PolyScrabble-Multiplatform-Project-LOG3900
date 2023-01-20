@@ -5,15 +5,15 @@ import { ActivatedRoute } from '@angular/router';
 import { GameData } from '@app/classes/game-data';
 import { Room } from '@app/classes/room';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { MAX_LENGTH_PSEUDO, MINUTE_IN_SECOND, MIN_LENGTH_PSEUDO, TIMER_MULTIPLE } from '@app/constants/constants';
 import { UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
 import { GameMode } from '@app/enums/game-mode';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { GameDataService } from '@app/services/game-data.service';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -60,9 +60,7 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
     get maxPseudoLength(): number {
         return MAX_LENGTH_PSEUDO;
     }
-    isPseudoTooLong(): boolean {
-        return this.pseudo.value.length > this.maxPseudoLength;
-    }
+
     get isSolo(): boolean {
         return this.mode === GameMode.Solo;
     }
@@ -73,6 +71,18 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
 
     get experts(): Bot[] {
         return this.bots.filter((bot) => bot.gameType === 'expert');
+    }
+
+    get selectedDictionary(): string {
+        return (this.gameForm.controls.dictionary as FormControl).value;
+    }
+
+    get isServerUnreachable(): boolean {
+        return this.httpService.getErrorMessage() === UNREACHABLE_SERVER_MESSAGE;
+    }
+
+    isPseudoTooLong(): boolean {
+        return this.pseudo.value.length > this.maxPseudoLength;
     }
 
     async ngAfterViewInit() {
@@ -168,9 +178,6 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
         };
     }
 
-    get selectedDictionary(): string {
-        return (this.gameForm.controls.dictionary as FormControl).value;
-    }
     isSelectedDictionary(title: string): boolean {
         return this.selectedDictionary === title;
     }
@@ -182,10 +189,6 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
 
     handleHttpError() {
         this.showErrorDialog(this.httpService.getErrorMessage());
-    }
-
-    get isServerUnreachable(): boolean {
-        return this.httpService.getErrorMessage() === UNREACHABLE_SERVER_MESSAGE;
     }
 
     private showErrorDialog(message: string) {

@@ -1,6 +1,5 @@
 import { BoardManipulator2990 } from '@app/classes/board-model/board-manipulator-2990';
 import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
-import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
 import { BoardNode } from '@app/classes/board-model/nodes/board-node';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
@@ -8,6 +7,7 @@ import { Player } from '@app/classes/player';
 import { Randomiser } from '@app/classes/randomiser';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { WordFetcher } from '@app/classes/virtual-placement-logic/word-fetcher';
+import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { MAX_RANDOM, RACK_CAPACITY, WEIGHT_10, WEIGHT_30, WEIGHT_40 } from '@app/constants/constants';
 import { SCORE_INTERVALS } from '@app/constants/virtual-player-constants';
 import { BotGreeting } from '@app/enums/bot-greetings';

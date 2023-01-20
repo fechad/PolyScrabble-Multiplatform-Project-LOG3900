@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -35,6 +35,14 @@ export class EditBotPopupComponent {
         this.isProcessing = false;
     }
 
+    private get name(): string {
+        return (this.botForm.controls.name as FormControl).value;
+    }
+
+    private get gameType(): string {
+        return (this.botForm.controls.gameType as FormControl).value;
+    }
+
     canModifyBot(): boolean {
         return this.hasBeenModified() && this.botForm.valid;
     }
@@ -61,6 +69,7 @@ export class EditBotPopupComponent {
     isClosedByEditing(): boolean {
         return this.botHasBeenEdited;
     }
+
     private handleDuplicateBot(updatedBot: Bot) {
         this.isProcessing = false;
         if (this.httpService.anErrorOccurred()) {
@@ -73,10 +82,12 @@ export class EditBotPopupComponent {
         this.errorMessage = '';
         this.isProcessing = true;
     }
+
     private generateDuplicateBotMessage(updatedBot: Bot): string {
         const verb = this.modeEdit ? 'éditer' : 'ajouter';
         return `Nous ne pouvons pas ${verb} ce bot car il y a déjà un bot avec le nom "${updatedBot.name}"`;
     }
+
     private handleHttpError() {
         this.isProcessing = false;
         this.errorMessage = this.httpService.getErrorMessage();
@@ -96,14 +107,6 @@ export class EditBotPopupComponent {
 
     private hasBeenModified(): boolean {
         return this.nameHasBeenModified() || this.gameTypeHasBeenModified();
-    }
-
-    private get name(): string {
-        return (this.botForm.controls.name as FormControl).value;
-    }
-
-    private get gameType(): string {
-        return (this.botForm.controls.gameType as FormControl).value;
     }
 
     private nameHasBeenModified(): boolean {

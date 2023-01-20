@@ -20,6 +20,7 @@ export class MessagesDisplayComponent implements OnInit, AfterViewChecked {
             return;
         });
     }
+
     updateFocus(event: MouseEvent) {
         event.stopPropagation();
         this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);

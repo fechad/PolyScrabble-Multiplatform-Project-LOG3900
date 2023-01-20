@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/naming-convention */ // we want to create custom name for a mock
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
-import { Dictionary } from '@app/classes/dictionary';
 import { WordCollection } from '@app/classes/virtual-placement-logic/word-collection';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { Dictionary } from '@app/interfaces/dictionary';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';

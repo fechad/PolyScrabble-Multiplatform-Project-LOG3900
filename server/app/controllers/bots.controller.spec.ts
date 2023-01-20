@@ -8,13 +8,13 @@ import { ScoresService } from '@app/services/score.service';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import { describe } from 'mocha';
+import { DeleteResult } from 'mongodb';
 import * as sinon from 'sinon';
 import * as request from 'supertest';
 import { BotsController } from './bots.controller';
 import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
 import { ScoresController } from './scores.controller';
-import { WriteOpResult } from 'mongodb';
 
 describe('BotsController', () => {
     let scoresController: ScoresController;
@@ -165,7 +165,7 @@ describe('BotsController', () => {
                 return request(application.app).delete('/api/bots').expect(StatusCodes.NOT_FOUND);
             });
             it('should call deleteAllBots and return status 200 when is resolves', async () => {
-                const stub = sinon.stub(botsService, 'deleteAllBots').resolves({} as WriteOpResult);
+                const stub = sinon.stub(botsService, 'deleteAllBots').resolves({} as DeleteResult);
                 sinon.stub(botsService, 'getAllBots').resolves([] as Bot[]);
                 return request(application.app)
                     .delete('/api/bots')

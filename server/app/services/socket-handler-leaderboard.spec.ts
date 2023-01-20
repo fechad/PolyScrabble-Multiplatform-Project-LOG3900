@@ -2,10 +2,10 @@
 /* eslint-disable dot-notation */ // we need to access some private attributes for the tests
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
-import { Score } from '@app/classes/score';
 import { SocketMock } from '@app/classes/socket-mock';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { CommandResult } from '@app/interfaces/command-result';
+import { Score } from '@app/interfaces/score';
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';

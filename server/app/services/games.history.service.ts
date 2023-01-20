@@ -1,5 +1,5 @@
 import { Game } from '@app/interfaces/game';
-import { Collection, UpdateWriteOpResult, WriteOpResult } from 'mongodb';
+import { Collection, DeleteResult, UpdateResult } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
@@ -21,10 +21,10 @@ export class GamesHistoryService {
                 return games;
             });
     }
-    async deleteGames(): Promise<WriteOpResult> {
-        return this.collection.remove({});
+    async deleteGames(): Promise<DeleteResult> {
+        return this.collection.deleteMany({});
     }
-    async updateGame(dateToUpdate: string, updatedGame: Game): Promise<UpdateWriteOpResult> {
+    async updateGame(dateToUpdate: string, updatedGame: Game): Promise<UpdateResult> {
         const filter = { date: dateToUpdate };
         const setQuery = {
             $set: {
