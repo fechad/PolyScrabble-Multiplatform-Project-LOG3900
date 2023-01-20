@@ -1,0 +1,39 @@
+{
+    "project_info": {
+        "project_number": "925622096737",
+        "project_id": "polyscrabble-6fa7a",
+        "storage_bucket": "polyscrabble-6fa7a.appspot.com"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:925622096737:android:0f3b392ae1156a8c0c6b20",
+                "android_client_info": {
+                    "package_name": "com.polyapps.client_leger"
+                }
+            },
+            "oauth_client": [
+                {
+                    "client_id": "925622096737-mohdnt1pvt5cvbqi1askg5rnmm32davd.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyCZHNGn6ctZNaclY-bNaY46Q8KKgknXIxo"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "925622096737-mohdnt1pvt5cvbqi1askg5rnmm32davd.apps.googleusercontent.com",
+                            "client_type": 3
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
