@@ -1,6 +1,6 @@
-import { MultiplierType } from '@app/classes/classes-constants';
 import { NODE_TEST_COUNT, NODE_TEST_FIRST_INDEX, NODE_TEST_SECOND_INDEX } from '@app/constants/board-constants';
 import { Directions } from '@app/enums/directions';
+import { MultiplierType } from '@app/enums/multiplier-type';
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import { BoardNode } from './board-node';

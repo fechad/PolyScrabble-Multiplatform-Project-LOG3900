@@ -9,9 +9,9 @@ import {
     SUCCESSFUL_EDIT_MESSAGE,
     SUCCESSFUL_UPLOAD_MESSAGE,
 } from '@app/constants/dictionary-constant';
-import { HttpService } from '@app/http.service';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { HttpService } from '@app/services/http.service';
 import { of } from 'rxjs';
 import { DEFAULT_DICTIONARY_TITLE, DictionariesTableComponent } from './dictionaries-table.component';
 

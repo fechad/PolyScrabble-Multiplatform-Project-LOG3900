@@ -1,19 +1,19 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
 import { EditDictionaryPopupComponent } from '@app/components/edit-dictionary-popup/edit-dictionary-popup.component';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { UploadDictionaryPopupComponent } from '@app/components/upload-dictionary-popup/upload-dictionary-popup.component';
-import { ConfirmationPopupComponent } from '@app/confirmation-popup/confirmation-popup.component';
 import {
     SUCCESSFUL_DELETE_ALL_MESSAGE,
     SUCCESSFUL_DELETE_MESSAGE,
     SUCCESSFUL_EDIT_MESSAGE,
     SUCCESSFUL_UPLOAD_MESSAGE,
 } from '@app/constants/dictionary-constant';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 export const DEFAULT_DICTIONARY_TITLE = 'dictionnaire par défaut';
@@ -88,7 +88,7 @@ export class DictionariesTableComponent implements AfterViewInit {
         });
     }
 
-    handleResetDictionaries() {
+    async handleResetDictionaries() {
         const description: InformationalPopupData = {
             header: 'Voulez-vous vraiment réinitiliser cette table ?',
             body: `Tous les dictionnaires sauf le dictionnaire par défaut '${DEFAULT_DICTIONARY_TITLE}' seront effacés`,

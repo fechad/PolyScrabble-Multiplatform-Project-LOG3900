@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers -- disabling to ease testing*/
 import { GoalManager } from '@app/classes/goals/goal-manager';
-import { PALINDROME_GOAL } from '@app/classes/goals/goals-constants';
 import { Matcher } from '@app/classes/goals/matcher';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
+import { PALINDROME_GOAL } from '@app/constants/goals-constants';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { expect } from 'chai';
 import { describe } from 'mocha';

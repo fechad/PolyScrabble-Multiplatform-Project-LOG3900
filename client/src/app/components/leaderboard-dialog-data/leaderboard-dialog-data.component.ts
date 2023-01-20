@@ -6,8 +6,8 @@ import { Score } from '@app/classes/score';
     templateUrl: './leaderboard-dialog-data.component.html',
     styleUrls: ['./leaderboard-dialog-data.component.scss'],
 })
-export class LeaderboardDialogDataComponent {
-    constructor(@Inject(MAT_DIALOG_DATA) public data: Score[][], private dialogRef: MatDialogRef<LeaderboardDialogDataComponent>) {}
+export class LeaderBoardDialogDataComponent {
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Score[][], private dialogRef: MatDialogRef<LeaderBoardDialogDataComponent>) {}
 
     closeDialog() {
         this.dialogRef.close();

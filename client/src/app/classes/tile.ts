@@ -32,6 +32,26 @@ export class Tile {
         this.isPositionSet = false;
     }
 
+    get x() {
+        return this.position.x;
+    }
+
+    get y() {
+        return this.position.y;
+    }
+
+    get typeOfSelection() {
+        return this.selectionType;
+    }
+
+    get width() {
+        return this.dimension.width;
+    }
+
+    get height() {
+        return this.dimension.height;
+    }
+
     setDefaultValues(tilePosition: Position, dimension: Dimension, content: string, color: Colors, points?: number) {
         this.position = { x: tilePosition.x, y: tilePosition.y };
         this.dimension = { width: dimension.width, height: dimension.height };
@@ -96,26 +116,6 @@ export class Tile {
     }
     hasLetter(): boolean {
         return this.content !== '' && !this.hasArrowAsContent();
-    }
-
-    get x() {
-        return this.position.x;
-    }
-
-    get y() {
-        return this.position.y;
-    }
-
-    get typeOfSelection() {
-        return this.selectionType;
-    }
-
-    get width() {
-        return this.dimension.width;
-    }
-
-    get height() {
-        return this.dimension.height;
     }
 
     contains(point: Position): boolean {

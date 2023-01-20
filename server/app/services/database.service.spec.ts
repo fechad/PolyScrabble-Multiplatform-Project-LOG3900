@@ -19,12 +19,6 @@ describe('Database service', () => {
         mongoServer = new MongoMemoryServer();
     });
 
-    afterEach(async () => {
-        if (databaseService['client'] && databaseService['client'].isConnected()) {
-            await databaseService['client'].close();
-        }
-    });
-
     it('should connect to the database when start is called', async () => {
         // Reconnect to local server
         const mongoUri = await mongoServer.getUri();
@@ -43,19 +37,9 @@ describe('Database service', () => {
         }
     });
 
-    it('should no longer be connected if close is called', async () => {
-        const mongoUri = await mongoServer.getUri();
-        await databaseService.start(mongoUri);
-        await databaseService.closeConnection();
-        expect(databaseService['client'].isConnected()).to.equal(false);
-    });
-
     it('should populate the database with a helper function', async () => {
         const mongoUri = await mongoServer.getUri();
-        const client = await MongoClient.connect(mongoUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        const client = await MongoClient.connect(mongoUri, {});
         databaseService['db'] = client.db(DATABASE_NAME);
         await databaseService.populateDB();
         const courses = await databaseService.database.collection(DATABASE_COLLECTION).find({}).toArray();

@@ -1,7 +1,7 @@
+import { DIRECT_PLACEMENT_HISTORY_MAX_LENGTH } from '@app/constants/word-history-constants';
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import { WordHistory } from './word-history';
-import { DIRECT_PLACEMENT_HISTORY_MAX_LENGTH } from './word-history-constants';
 
 const testWord = 'testWord';
 

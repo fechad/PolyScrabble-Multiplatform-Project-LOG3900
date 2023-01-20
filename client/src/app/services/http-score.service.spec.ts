@@ -3,6 +3,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Score } from '@app/classes/score';
+import { lastValueFrom } from 'rxjs';
 import { HttpService } from './http.service';
 
 describe('HttpService tests', () => {
@@ -41,24 +42,26 @@ describe('HttpService tests', () => {
             req.flush(expectedScores);
         });
         it('should handle http error safely', () => {
-            service.fetchAllScores().subscribe((response: Score[]) => {
+            lastValueFrom(service.fetchAllScores()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/scores`);
             expect(req.request.method).toBe('GET');
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle httpClientError safely', () => {
-            service.fetchAllScores().subscribe((response: Score[]) => {
+            lastValueFrom(service.fetchAllScores()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
+
             const req = httpMock.expectOne(`${baseUrl}/scores`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.fetchAllScores().subscribe((response: Score[]) => {
+            lastValueFrom(service.fetchAllScores()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -84,25 +87,25 @@ describe('HttpService tests', () => {
             req.flush({} as Score);
         });
         it('calling getBestScoresByGameTypeshould with quantity handle http error safely', () => {
-            service.getNScoresByCategory('classic', 1).subscribe((response: Score[]) => {
+            lastValueFrom(service.getNScoresByCategory('classic', 1)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
 
             const req = httpMock.expectOne(`${baseUrl}/scores/game-type/classic?quantity=1`);
             expect(req.request.method).toBe('GET');
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle httpClientError safely', () => {
-            service.getNScoresByCategory('classic', 1).subscribe((response: Score[]) => {
+            lastValueFrom(service.getNScoresByCategory('classic', 1)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores/game-type/classic?quantity=1`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.getNScoresByCategory('classic', 1).subscribe((response: Score[]) => {
+            lastValueFrom(service.getNScoresByCategory('classic', 1)).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores/game-type/classic?quantity=1`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
@@ -128,25 +131,25 @@ describe('HttpService tests', () => {
             req.flush({} as Score);
         });
         it('should handle httpClientError safely', () => {
-            service.getAllScoresByCategory('classic').subscribe((response: Score[]) => {
+            lastValueFrom(service.getAllScoresByCategory('classic')).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores/game-type/classic`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
         it('should handle http server error safely', () => {
-            service.getAllScoresByCategory('classic').subscribe((response: Score[]) => {
+            lastValueFrom(service.getAllScoresByCategory('classic')).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores/game-type/classic`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });
     });
 
     it('should handle http server error safely', () => {
-        service.deleteAllDictionariesExceptDefault().subscribe((response) => {
+        lastValueFrom(service.deleteAllDictionariesExceptDefault()).then((response) => {
             expect(response).toBeUndefined();
-        }, fail);
+        });
         const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
         req.flush({}, { status: 500, statusText: 'Internal Server Error' });
     });
@@ -176,17 +179,17 @@ describe('HttpService tests', () => {
             expect(headers.get('Expires')).toEqual('0');
             req.flush([] as Score[]);
         });
-        it('should handle httpClientError safely', () => {
-            service.reinitializeScores().subscribe((response) => {
+        it('should handle httpClientError safely', async () => {
+            lastValueFrom(service.reinitializeScores()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores`);
-            req.error(new ErrorEvent('Random error occurred'));
+            req.error(new ProgressEvent('Random error occurred'));
         });
-        it('should handle http server error safely', () => {
-            service.reinitializeScores().subscribe((response) => {
+        it('should handle http server error safely', async () => {
+            lastValueFrom(service.reinitializeScores()).then((response) => {
                 expect(response).toBeUndefined();
-            }, fail);
+            });
             const req = httpMock.expectOne(`${baseUrl}/scores`);
             req.flush({}, { status: 500, statusText: 'Internal Server Error' });
         });

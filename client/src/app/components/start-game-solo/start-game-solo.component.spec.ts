@@ -9,7 +9,7 @@ import { GameData } from '@app/classes/game-data';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { HttpService } from '@app/http.service';
+import { HttpService } from '@app/services/http.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { of } from 'rxjs';

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
-import { ConfirmationPopupComponent } from '@app/confirmation-popup/confirmation-popup.component';
+import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -28,6 +28,10 @@ export class GamePageComponent implements OnInit {
         public room: Room,
         public player: Player,
     ) {}
+
+    get isGameOver(): boolean {
+        return this.room.roomInfo.isGameOver as boolean;
+    }
 
     ngOnInit() {
         this.connect();
@@ -82,12 +86,9 @@ export class GamePageComponent implements OnInit {
             this.leaveGame();
         });
     }
+
     goBackToHome() {
         this.router.navigate(['/home']);
-    }
-
-    get isGameOver(): boolean {
-        return this.room.roomInfo.isGameOver as boolean;
     }
 
     private connect() {

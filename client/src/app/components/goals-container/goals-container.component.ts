@@ -33,14 +33,14 @@ export class GoalsContainerComponent implements OnInit {
         this.otherPlayerPrivateGoal = { ...this.privateGoal };
     }
 
+    get is2990GameType(): boolean {
+        return this.room.roomInfo.gameType === LOG_2990_GAME_TYPE;
+    }
+
     ngOnInit() {
         this.connect();
         if (this.room.roomInfo.gameType !== LOG_2990_GAME_TYPE) return;
         this.socketService.send('getAllGoals');
-    }
-
-    get is2990GameType(): boolean {
-        return this.room.roomInfo.gameType === LOG_2990_GAME_TYPE;
     }
 
     private setOtherPlayerPrivateGoal(goal: Goal) {

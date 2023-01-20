@@ -22,7 +22,7 @@ describe('BotService', () => {
         botService = new BotsService(databaseService as any);
     });
     beforeEach(() => {
-        botService.collection.remove({});
+        botService.collection.deleteMany({});
         bot1 = { name: 'bot1', gameType: 'classic' };
         bot2 = { name: 'bot2', gameType: 'log2990' };
     });

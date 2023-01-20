@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationPopupComponent } from '@app/confirmation-popup/confirmation-popup.component';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
+import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { Game } from '@app/interfaces/game';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 export const DEFAULT_DICTIONARY_TITLE = 'français';
@@ -37,7 +37,7 @@ export class GamesTableComponent implements AfterViewInit {
         this.games = updatedGames;
     }
 
-    handleReinitializeHistory() {
+    async handleReinitializeHistory() {
         const description: InformationalPopupData = {
             header: 'Voulez-vous vraiment réinitialiser les parties?',
             body: 'Toutes les parties jouées seront effacées ',

@@ -1,7 +1,7 @@
-import { GoalTitle } from '@app/enums/goal-titles';
 import { Matcher } from '@app/classes/goals/matcher';
 import { Player } from '@app/classes/player';
-import { DIRECT_PLACEMENT_HISTORY_MAX_LENGTH } from './word-history-constants';
+import { DIRECT_PLACEMENT_HISTORY_MAX_LENGTH } from '@app/constants/word-history-constants';
+import { GoalTitle } from '@app/enums/goal-titles';
 import { WordsTracker } from './words-tracker';
 
 const X_WORDS_TO_FORM = 3;

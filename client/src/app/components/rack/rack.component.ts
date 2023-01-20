@@ -33,6 +33,15 @@ export class RackComponent implements OnInit, AfterViewInit {
     ) {
         return;
     }
+
+    get width(): number {
+        return this.canvasSize.x;
+    }
+
+    get height(): number {
+        return this.canvasSize.y;
+    }
+
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         switch (event.key) {
@@ -81,14 +90,6 @@ export class RackComponent implements OnInit, AfterViewInit {
             return;
         }
         this.focusHandlerService.currentFocus.next(CurrentFocus.RACK);
-    }
-
-    get width(): number {
-        return this.canvasSize.x;
-    }
-
-    get height(): number {
-        return this.canvasSize.y;
     }
 
     mouseHitDetect(event: MouseEvent) {

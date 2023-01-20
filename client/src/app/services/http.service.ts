@@ -10,10 +10,11 @@ import {
 } from '@app/constants/http-constants';
 import { Bot } from '@app/interfaces/bot';
 import { Dictionary } from '@app/interfaces/dictionary';
+import { Game } from '@app/interfaces/game';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Game } from './interfaces/game';
+
 @Injectable({
     providedIn: 'root',
 })

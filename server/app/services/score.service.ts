@@ -1,5 +1,5 @@
-import { Score } from '@app/classes/score';
-import { Collection, UpdateWriteOpResult } from 'mongodb';
+import { Score } from '@app/interfaces/score';
+import { Collection, UpdateResult } from 'mongodb';
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
@@ -16,7 +16,7 @@ export class ScoresService {
     }
 
     async reinitializeScores() {
-        this.collection.remove({});
+        this.collection.deleteMany({});
         await this.databaseService.populateDB();
     }
 
@@ -46,7 +46,7 @@ export class ScoresService {
                 return scores;
             });
     }
-    async updateBestScore(score: Score): Promise<UpdateWriteOpResult> {
+    async updateBestScore(score: Score): Promise<UpdateResult> {
         return this.collection.updateOne(
             { author: score.author, gameType: score.gameType, points: score.points },
             { $set: { author: score.author, gameType: score.gameType, points: score.points, dictionary: score.dictionary, date: score.date } },

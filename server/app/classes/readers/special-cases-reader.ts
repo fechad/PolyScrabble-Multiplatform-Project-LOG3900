@@ -1,6 +1,6 @@
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
-import { MultiplierType } from '@app/classes/classes-constants';
-import { SpecialCaseInfo } from '@app/classes/special-case-info';
+import { MultiplierType } from '@app/enums/multiplier-type';
+import { SpecialCaseInfo } from '@app/interfaces/special-case-info';
 import { JsonReader } from '@app/services/json-reader.service';
 import { JsonObject } from 'swagger-ui-express';
 

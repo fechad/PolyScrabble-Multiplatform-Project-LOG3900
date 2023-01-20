@@ -1,6 +1,6 @@
 import { SpecialCaseInfo } from '@app/classes/special-case-info';
 import { Colors } from '@app/enums/colors';
-import { MultiplierType } from '@app/enums/multiplayer-type';
+import { MultiplierType } from '@app/enums/multiplier-type';
 
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 export const DEFAULT_ROWS: string[] = [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'];

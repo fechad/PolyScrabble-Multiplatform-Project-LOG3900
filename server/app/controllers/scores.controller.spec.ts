@@ -1,5 +1,5 @@
 import { Application } from '@app/app';
-import { Score } from '@app/classes/score';
+import { Score } from '@app/interfaces/score';
 import { BotsService } from '@app/services/bot.service';
 import { DatabaseServiceMock } from '@app/services/database.service.mock';
 import { DictionariesService } from '@app/services/dictionaries.service';

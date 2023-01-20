@@ -1,6 +1,6 @@
-import { Dictionary } from '@app/classes/dictionary';
 import { WordCollection } from '@app/classes/virtual-placement-logic/word-collection';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { Dictionary } from '@app/interfaces/dictionary';
 import * as fs from 'fs';
 import { join } from 'path';
 import { Service } from 'typedi';

@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Score } from '@app/classes/score';
-import { ConfirmationPopupComponent } from '@app/confirmation-popup/confirmation-popup.component';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
+import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 export const DEFAULT_DICTIONARY_TITLE = 'français';
@@ -37,7 +37,7 @@ export class BestScoresTableComponent implements AfterViewInit {
         this.scores = updatedScores;
     }
 
-    handleReinitializeScores() {
+    async handleReinitializeScores() {
         const description: InformationalPopupData = {
             header: 'Voulez-vous vraiment réinitiliser les scores?',
             body: 'Tous les scores seront effacés pour ne garder que les valeurs par defauts.',

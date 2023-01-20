@@ -4,12 +4,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Score } from '@app/classes/score';
-import { LeaderboardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
-import { HttpService } from '@app/http.service';
+import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { routes } from '@app/modules/app-routing.module';
-import { DIALOG_WIDTH, LEADERBOARD_SIZE, MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { of } from 'rxjs';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
+import { DIALOG_WIDTH, LEADERBOARD_SIZE, MainPageComponent } from '@app/pages/main-page/main-page.component';
+import { HttpService } from '@app/services/http.service';
+import { of } from 'rxjs';
 export class MatDialogMock {
     open() {
         return {
@@ -76,10 +76,10 @@ describe('MainPageComponent', () => {
             spyOn(httpService, 'anErrorOccurred').and.returnValue(false);
             const spy = spyOn(dialog, 'open');
             await component.showLeaderboard();
-            expect(spy).toHaveBeenCalledWith(LeaderboardDialogDataComponent, { width: DIALOG_WIDTH, autoFocus: true, data: [scores, scores] });
+            expect(spy).toHaveBeenCalledWith(LeaderBoardDialogDataComponent, { width: DIALOG_WIDTH, autoFocus: true, data: [scores, scores] });
         });
         it('should open an error dialog when getting the scores of a gameType and an error occurred', async () => {
-            spyOn(httpService, 'getNScoresByCategory').and.returnValue(of());
+            spyOn(httpService, 'getNScoresByCategory').and.returnValue(of([]));
             spyOn(httpService, 'anErrorOccurred').and.returnValue(true);
             // We want to test private method
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -96,7 +96,7 @@ describe('MainPageComponent', () => {
         });
         it('should open an error dialog when getting the scores of a gameType', async () => {
             spyOn(dialog, 'open');
-            spyOn(httpService, 'fetchAllScores').and.returnValue(of());
+            spyOn(httpService, 'fetchAllScores').and.returnValue(of(undefined as unknown as Score[]));
             // We want to test private method
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const dialogSpy = spyOn(component, 'showErrorDialog' as any).and.callThrough();

@@ -1,9 +1,9 @@
 import { Player } from '@app/classes/player';
 import { Randomiser } from '@app/classes/randomiser';
+import { DEFAULT_GOALS, PUBLIC_GOAL_COUNT, TARGET_GOAL_COUNT } from '@app/constants/goals-constants';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { Goal } from './goal';
-import { DEFAULT_GOALS, PUBLIC_GOAL_COUNT, TARGET_GOAL_COUNT } from './goals-constants';
 import { Matcher } from './matcher';
 
 const PALINDROME_MULTIPLIER = 2;

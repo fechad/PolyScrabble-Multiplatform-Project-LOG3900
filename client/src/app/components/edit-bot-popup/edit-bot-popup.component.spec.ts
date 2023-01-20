@@ -5,8 +5,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
+import { HttpService } from '@app/services/http.service';
 import { of } from 'rxjs';
 import { EditBotPopupComponent } from './edit-bot-popup.component';
 

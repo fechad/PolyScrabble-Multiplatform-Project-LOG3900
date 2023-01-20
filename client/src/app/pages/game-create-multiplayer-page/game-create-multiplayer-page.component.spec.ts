@@ -8,10 +8,10 @@ import { ActivatedRoute } from '@angular/router';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
 import { UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
 import { GameMode } from '@app/enums/game-mode';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { HttpService } from '@app/services/http.service';
 import { of } from 'rxjs';
 import { GameCreateMultiplayerPageComponent } from './game-create-multiplayer-page.component';
 

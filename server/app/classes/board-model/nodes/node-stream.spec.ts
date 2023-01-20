@@ -1,9 +1,9 @@
-import { MultiplierType } from '@app/classes/classes-constants';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { SpecialCasesReader } from '@app/classes/readers/special-cases-reader';
-import { SpecialCaseInfo } from '@app/classes/special-case-info';
 import { Directions } from '@app/enums/directions';
+import { MultiplierType } from '@app/enums/multiplier-type';
 import { PlacementDirections } from '@app/enums/placement-directions';
+import { SpecialCaseInfo } from '@app/interfaces/special-case-info';
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import { BoardNode } from './board-node';

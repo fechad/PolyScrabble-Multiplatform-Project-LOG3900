@@ -2,9 +2,9 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FORBIDDEN_MESSAGE } from '@app/constants/http-constants';
-import { HttpService } from '@app/http.service';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionaryValidatorService } from '@app/services/dictionary-validator.service';
+import { HttpService } from '@app/services/http.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -33,6 +33,13 @@ export class EditDictionaryPopupComponent {
         this.errorMessage = '';
     }
 
+    private get title(): string {
+        return (this.dictionaryForm.controls.title as FormControl).value;
+    }
+    private get description(): string {
+        return (this.dictionaryForm.controls.description as FormControl).value;
+    }
+
     canModifyDictionary(): boolean {
         return this.hasBeenModified() && this.dictionaryForm.valid;
     }
@@ -47,13 +54,14 @@ export class EditDictionaryPopupComponent {
         if (this.httpService.anErrorOccurred()) {
             return this.handleHttpError(updatedDictionary.title);
         }
-        this.handleSuccessfulmodification(updatedDictionary);
+        this.handleSuccessfulModification(updatedDictionary);
     }
 
-    private handleSuccessfulmodification(updatedDictionary: Dictionary) {
+    private handleSuccessfulModification(updatedDictionary: Dictionary) {
         this.hideProcessing();
         this.dialogRef.close(updatedDictionary);
     }
+
     private handleHttpError(newTitle: string) {
         this.hideProcessing();
         if (this.httpService.getErrorMessage() === FORBIDDEN_MESSAGE) {
@@ -80,26 +88,23 @@ export class EditDictionaryPopupComponent {
             this.dictionaryValidator.isDescriptionValid(updatedDictionary.description)
         );
     }
+
     private hasBeenModified(): boolean {
         return this.titleHasBeenModified() || this.descriptionHasBeenModified();
-    }
-
-    private get title(): string {
-        return (this.dictionaryForm.controls.title as FormControl).value;
-    }
-    private get description(): string {
-        return (this.dictionaryForm.controls.description as FormControl).value;
     }
 
     private titleHasBeenModified(): boolean {
         return this.initialDictionary.title !== this.title;
     }
+
     private descriptionHasBeenModified(): boolean {
         return this.initialDictionary.description !== this.description;
     }
+
     private deepCopyDictionary(dictionary: Dictionary) {
         return { title: dictionary.title.slice(0), description: dictionary.description.slice(0) };
     }
+
     private hideProcessing() {
         this.isProcessing = false;
     }

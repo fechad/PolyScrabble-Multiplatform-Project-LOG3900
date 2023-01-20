@@ -1,6 +1,6 @@
-import { Dictionary } from '@app/classes/dictionary';
 import { ScoreMapper } from '@app/classes/virtual-placement-logic/score-mapper';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionariesFileService } from '@app/services/dictionaries-files.service';
 import { DictionariesService } from '@app/services/dictionaries.service';
 import { Request, Response, Router } from 'express';

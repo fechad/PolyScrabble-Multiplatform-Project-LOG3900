@@ -41,6 +41,18 @@ export class BoardService {
         this.placementCommands = [];
     }
 
+    private get tileWidth() {
+        return this.tileDimension.width;
+    }
+
+    private get tileHeight() {
+        return this.tileDimension.height;
+    }
+
+    private get letterRatio() {
+        return this.tileDimension.letterRatio;
+    }
+
     initializeBoardService(tileDimension: Dimension) {
         this.tileDimension = { ...tileDimension };
         this.reinitializeLettersTiles();
@@ -136,18 +148,6 @@ export class BoardService {
         if (this.isFirstRowOrColumn(position)) return false;
         if (this.lettersInBoard[caseIndexes.x][caseIndexes.y].content !== '') return false;
         return true;
-    }
-
-    private get tileWidth() {
-        return this.tileDimension.width;
-    }
-
-    private get tileHeight() {
-        return this.tileDimension.height;
-    }
-
-    private get letterRatio() {
-        return this.tileDimension.letterRatio;
     }
 
     private canSelectCase(mousePosition: Position): boolean {

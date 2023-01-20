@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { EditBotPopupComponent } from '@app/components/edit-bot-popup/edit-bot-popup.component';
 import { DEFAULT_BOTS_NAME } from '@app/constants/constants';
-import { HttpService } from '@app/http.service';
 import { Bot } from '@app/interfaces/bot';
+import { HttpService } from '@app/services/http.service';
 import { of } from 'rxjs';
 import { BotsTableComponent, SUCCESSFUL_DELETE_ALL_MESSAGE } from './bots-table.component';
 
@@ -79,7 +79,7 @@ describe('BotsTableComponent', () => {
         });
         it('should clear the bots when an error has occurred', async () => {
             component.bots = [fakeBot];
-            spyOn(httpService, 'getAllBots').and.returnValue(of());
+            spyOn(httpService, 'getAllBots').and.returnValue(of(undefined as unknown as Bot[]));
             spyOn(httpService, 'anErrorOccurred').and.returnValue(true);
             await component.handleRefresh();
             expect(component.bots).toEqual([]);

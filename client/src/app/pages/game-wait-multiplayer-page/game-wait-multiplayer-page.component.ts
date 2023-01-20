@@ -3,11 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { GameData } from '@app/classes/game-data';
 import { Room } from '@app/classes/room';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { GONE_RESSOURCE_MESSAGE } from '@app/constants/http-constants';
-import { ErrorDialogComponent } from '@app/error-dialog/error-dialog.component';
-import { HttpService } from '@app/http.service';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { GameDataService } from '@app/services/game-data.service';
+import { HttpService } from '@app/services/http.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { lastValueFrom } from 'rxjs';
 
@@ -36,6 +36,19 @@ export class GameWaitMultiplayerPageComponent implements OnInit {
         this.dictionaryExistsOnServer = true;
     }
 
+    get firstPlayerPseudo(): string {
+        return this.room.players[0] ? this.room.players[0].pseudo : '';
+    }
+
+    get secondPlayerPseudo(): string {
+        return this.room.players[1] ? this.room.players[1].pseudo : '';
+    }
+
+    get roomStatusText(): string {
+        if (this.otherPlayerExist) return `${this.room.players[1].pseudo} à rejoint votre partie, démarrez ou rejetez`;
+        return 'Vous êtes en attente...';
+    }
+
     ngOnInit() {
         this.connect();
     }
@@ -62,19 +75,6 @@ export class GameWaitMultiplayerPageComponent implements OnInit {
 
     onGoToSolo() {
         this.socketService.send('leaveRoomCreator', this.room.roomInfo.name);
-    }
-
-    get firstPlayerPseudo(): string {
-        return this.room.players[0] ? this.room.players[0].pseudo : '';
-    }
-
-    get secondPlayerPseudo(): string {
-        return this.room.players[1] ? this.room.players[1].pseudo : '';
-    }
-
-    get roomStatusText(): string {
-        if (this.otherPlayerExist) return `${this.room.players[1].pseudo} à rejoint votre partie, démarrez ou rejetez`;
-        return 'Vous êtes en attente...';
     }
 
     private handleHttpError() {

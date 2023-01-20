@@ -2,8 +2,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { HttpService } from '@app/http.service';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { HttpService } from '@app/services/http.service';
 import { of } from 'rxjs';
 import { BestScoresTableComponent, SUCCESSFUL_REINITIALIZE_SCORES } from './best-scores-table.component';
 
@@ -60,7 +60,7 @@ describe('BestScoresComponent tests', () => {
         let httpDeleteAllSpy: jasmine.Spy<jasmine.Func>;
         beforeEach(async () => {
             refreshSpy = spyOn(component, 'handleRefresh').and.resolveTo();
-            httpDeleteAllSpy = spyOn(httpService, 'reinitializeScores').and.returnValue(of());
+            httpDeleteAllSpy = spyOn(httpService, 'reinitializeScores').and.returnValue(of(null as any));
         });
         it('should open a dialog to confirm with the user that he wants to reset', async () => {
             const spy = spyOn(dialog, 'open').and.returnValue({ afterClosed: () => of(false) } as MatDialogRef<typeof component>);
