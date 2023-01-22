@@ -1,6 +1,7 @@
 {
     "name": "client",
     "version": "1.0.0",
+    "main": "src/electron-main.ts",
     "scripts": {
         "start": "ng serve --open",
         "build": "ng build",
@@ -10,6 +11,8 @@
         "test": "ng test",
         "coverage": "ng test --code-coverage",
         "lint": "ng lint --format stylish",
+        "electron": "electron .",
+        "electron-build": "ng build --configuration production",
         "lint:fix": "npm run lint -- --fix"
     },
     "private": true,
@@ -30,6 +33,11 @@
         "tslib": "^2.4.1",
         "zone.js": "^0.12.0"
     },
+    "browser": {
+        "fs": false,
+        "path": false,
+        "os": false
+    },
     "devDependencies": {
         "@angular-devkit/build-angular": "^14.2.0",
         "@angular-eslint/builder": "^14.2.0",
@@ -44,6 +52,7 @@
         "@types/node": "^18.11.18",
         "@typescript-eslint/eslint-plugin": "^5.48.2",
         "@typescript-eslint/parser": "^5.48.2",
+        "electron": "^22.0.3",
         "eslint": "^8.32.0",
         "eslint-config-prettier": "^8.6.0",
         "eslint-import-resolver-typescript": "^3.5.3",
