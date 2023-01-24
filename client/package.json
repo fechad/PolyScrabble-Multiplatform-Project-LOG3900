@@ -1,7 +1,7 @@
 {
     "name": "client",
     "version": "1.0.0",
-    "main": "src/electron-main.ts",
+    "main": "electron-main.ts",
     "scripts": {
         "start": "ng serve --open",
         "build": "ng build",
@@ -12,7 +12,7 @@
         "coverage": "ng test --code-coverage",
         "lint": "ng lint --format stylish",
         "electron": "electron .",
-        "electron-build": "ng build --configuration production",
+        "electron-build": "ng build --configuration production && electron .",
         "lint:fix": "npm run lint -- --fix"
     },
     "private": true,

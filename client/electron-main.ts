@@ -5,6 +5,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 // Need to use require instead of import because of electron
 const { app, BrowserWindow } = require('electron');
+const path = require('path');
 
 function createWindow() {
     const window = new BrowserWindow({
@@ -12,7 +13,7 @@ function createWindow() {
         height: 1080,
         backgroundColor: '#ffffff',
     });
-    window.loadURL('http://localhost:4200');
+    window.loadURL(path.join(__dirname, '/dist/client/index.html'));
 
     window.on('closed', function () {
         window.destroy();
