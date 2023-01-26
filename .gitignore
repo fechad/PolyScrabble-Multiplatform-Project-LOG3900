@@ -13,3 +13,6 @@ coverage/
 
 #angular cache
 client/.angular/cache/
+
+#Electron build (too heavy for git)
+client/build
