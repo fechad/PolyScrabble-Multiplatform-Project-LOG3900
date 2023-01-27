@@ -39,6 +39,18 @@ dependencies:
   firebase_auth: ^4.2.5
   cloud_firestore: ^4.3.1
   socket_io_client: ^2.0.1
+  google_fonts: ^3.0.1
+  shared_preferences: ^2.0.17
+  json_path: ^0.4.2
+  timeago: ^3.3.0
+  url_launcher: ^6.1.8
+  page_transition: ^2.0.9
+  provider: ^6.0.5
+  flutter_animate: ^1.0.0
+  cached_network_image: ^3.2.3
+  flutter_cache_manager: ^3.3.0
+  font_awesome_flutter: ^10.1.0
+
 
 dev_dependencies:
   flutter_test:
