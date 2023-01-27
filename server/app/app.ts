@@ -1,11 +1,9 @@
 import { HttpException } from '@app/classes/http.exception';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
-import * as express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import * as logger from 'morgan';
-import * as swaggerJSDoc from 'swagger-jsdoc';
-import * as swaggerUi from 'swagger-ui-express';
+import logger from 'morgan';
 import { Service } from 'typedi';
 import { BotsController } from './controllers/bots.controller';
 import { DictionariesController } from './controllers/dictionaries.controller';
@@ -16,7 +14,6 @@ import { ScoresController } from './controllers/scores.controller';
 export class Application {
     app: express.Application;
     private internalError: number;
-    private readonly swaggerOptions: swaggerJSDoc.Options;
 
     constructor(
         private scoresController: ScoresController,
@@ -27,24 +24,12 @@ export class Application {
         this.internalError = StatusCodes.INTERNAL_SERVER_ERROR;
         this.app = express();
 
-        this.swaggerOptions = {
-            swaggerDefinition: {
-                openapi: '3.0.0',
-                info: {
-                    title: 'Cadriciel Serveur',
-                    version: '1.0.0',
-                },
-            },
-            apis: ['**/*.ts'],
-        };
-
         this.config();
 
         this.bindRoutes();
     }
 
     bindRoutes() {
-        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/scores', this.scoresController.router);
         this.app.use('/api/dictionaries', this.dictionariesController.router);
         this.app.use('/api/bots', this.botsController.router);
