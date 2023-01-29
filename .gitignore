@@ -16,3 +16,5 @@ client/.angular/cache/
 
 #Electron build (too heavy for git)
 client/build
+
+.idea/
