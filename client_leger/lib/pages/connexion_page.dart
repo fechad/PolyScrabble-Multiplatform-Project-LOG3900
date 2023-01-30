@@ -1,3 +1,4 @@
+import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/pages/signup_page.dart';
 
@@ -146,7 +147,10 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                 ),
                             ),
                         ),
-                        onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyHomePage(title: 'PolyScrabble'))); },
+                        onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
+                          //authenticator.setValidate();
+                          MyHomePage(title: 'PolyScrabble')
+                          )); },
                         child: Text(
                           'Login',
                           style: GoogleFonts.nunito(fontSize: 40, fontWeight: FontWeight.w700),

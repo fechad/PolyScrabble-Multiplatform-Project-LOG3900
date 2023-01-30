@@ -1,20 +1,16 @@
-import 'package:client_leger/components/chat_msg_field.dart';
+import 'package:client_leger/components/sender_message.dart';
+import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
+import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
-import '../config/colors.dart';
+import 'package:client_leger/services/chat_service.dart';
+import '../components/chat_card.dart';
+import '../components/chat_model.dart';
+import '../components/user_model.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 //import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter/material.dart';
-import 'individual_chat.dart';
-
 
 class GeneralChatWidget extends StatefulWidget {
-  const GeneralChatWidget({
-    Key? key,
-    bool? chatlistOpen,
-  })  : this.chatlistOpen = chatlistOpen ?? true,
-        super(key: key);
-
-  final bool chatlistOpen;
 
   @override
   _GeneralChatWidgetState createState() => _GeneralChatWidgetState();
@@ -23,16 +19,24 @@ class GeneralChatWidget extends StatefulWidget {
 class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  //ApiCallResponse? apiResult9q8;
-  TextEditingController? textController2;
-  TextEditingController? textController1;
+  final List<ChatMessage> messages = ChatService.discussionChannels[0].messages;
+  final TextEditingController textController = TextEditingController();
+  late ChatModel MyChat = ChatModel(
+    name: 'General group',
+    owner: authenticator.getCurrentUser(),
+    activeUsers: 1,
+    newMessage: 'Welcome to PolyScrabble!',
+    messages: [ChatMessage(system: true, sender: null, time:  DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now()), message: 'Welcome to PolyScrabble!')],
+    time: DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now()),
+    icon: "", //add path to icon
+  );
+  bool isWriting = false;
+
 
   @override
   void initState() {
     super.initState();
     // On page load action.
-    textController1 = TextEditingController();
-    textController2 = TextEditingController();
   }
 
   @override
@@ -45,193 +49,20 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-      drawer: Container(
-        width: 552,
-        child: Drawer(
-          elevation: 16,
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 24, 16, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional(-0.05, 0),
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 40),
-                    child: Container(
-                      width: 434,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).primaryBtnText,
-                        borderRadius: BorderRadius.circular(12),
-                        shape: BoxShape.rectangle,
-                        border: Border.all(
-                          color: Color(0x80000000),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Icon(
-                              Icons.search_rounded,
-                              color: Color(0x80000000),
-                              size: 34,
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                              child: Text(
-                                'Search',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyText2
-                                    .override(
-                                      fontFamily: 'Nunito',
-                                      color: Color(0x80000000),
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
-                  child: Container(
-                    width: double.infinity,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).primaryBtnText,
-                      borderRadius: BorderRadius.circular(12),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                            child: Container(
-                              width: 4,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF17282E),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.forum_rounded,
-                            color: Palette.mainColor,
-                            size: 40,
-                          ),
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                textStyle: const TextStyle(fontSize: 32, fontFamily: 'Nunito'),
-                              ),
-                              child: const Text('General Chat'),
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                  return const GeneralChatWidget();})));},
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        'Discussion channels',
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                              fontFamily: 'Nunito',
-                              color: Color(0xBA101213),
-                              fontSize: 24,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(
-                  thickness: 8,
-                  color: Color(0x80000000),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                                child: Container(
-                                  width: 4,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ),
-                              Icon(
-                                Icons.person,
-                                color: Palette.mainColor,
-                                size: 40,
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.black,
-                                    textStyle: const TextStyle(fontSize: 32, fontFamily: 'Nunito'),
-                                  ),
-                                  child: const Text('Etienne'),
-                                  onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                      return const ChatWidget();})));},
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: FlutterFlowTheme
+          .of(context)
+          .primaryBackground,
+      drawer: Drawer(
+        child: ListView.builder(
+            itemCount: ChatService.discussionChannels.length,
+            itemBuilder: (context, index) =>
+                ChatCard(chatModel: ChatService.discussionChannels[index])),),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primaryBtnText,
+          backgroundColor: FlutterFlowTheme
+              .of(context)
+              .primaryBtnText,
           automaticallyImplyLeading: false,
           leading: Align(
             alignment: AlignmentDirectional(0, 0),
@@ -247,21 +78,25 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
             ),
           ),
           title: Align(
-            alignment: AlignmentDirectional(0, 1),
-            child: Text(
+            alignment: const AlignmentDirectional(0, 1),
+            child: Flexible(
+            child: (Text(
               'General Chat',
               textAlign: TextAlign.center,
-              style: FlutterFlowTheme.of(context).title1.override(
-                    fontFamily: 'Poppins',
-                    fontSize: 56,
-                  ),
-            ),
-          ),
+              style: FlutterFlowTheme
+                  .of(context)
+                  .title1
+                  .override(
+                fontFamily: 'Poppins',
+                fontSize: 56,
+              ),
+            ) ),
+          )),
           actions: [
             InkWell(
               onTap: () {
                 Navigator
-                .push(context, MaterialPageRoute(builder: ((context) {
+                    .push(context, MaterialPageRoute(builder: ((context) {
                   return const MyHomePage(title: 'PolyScrabble');
                 })));
               },
@@ -277,249 +112,89 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
           elevation: 2,
         ),
       ),
-      body: Column(
-  mainAxisSize: MainAxisSize.max,
-  mainAxisAlignment: MainAxisAlignment.end,
-  children: [
-    Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-            child: Container(
-              width: 80,
-              height: 80,
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Image.network(
-                'https://picsum.photos/seed/540/600',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-            child: Container(
-              width: 756.3,
-              height: 88,
-              decoration: BoxDecoration(
-                color: Color(0xFFE6E6E6),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 8, 0, 0),
-                    child: Text(
-                      'Hello World',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Poppins',
-                            fontSize: 24,
-                          ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                    child: Text(
-                      'Hello jdewdojeodejfnienfienfinefinefineifneifneifneifneif',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Poppins',
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-    Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 24, 0),
-            child: Container(
-              width: 756.3,
-              height: 88,
-              decoration: BoxDecoration(
-                color: Color(0xFF7DAF6B),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16, 8, 0, 0),
-                    child: Text(
-                      'Hello jdewdojeodejfnienfienfinefinefineifneifneifneifneif',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Poppins',
-                            fontSize: 24,
-                            fontWeight: FontWeight.normal,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-    Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-          child: Container(
-            width: 80,
-            height: 80,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-            ),
-            child: Image.network(
-              'https://picsum.photos/seed/540/600',
-              fit: BoxFit.cover,
-            ),
-          ),
+      body: new Column(children: <Widget>[
+        new Flexible(
+            child: new ListView.builder(
+              itemBuilder: (_, int index) => messages[index],
+              itemCount: messages.length,
+              reverse: true,
+              padding: new EdgeInsets.all(6.0),
+            )),
+        new Divider(height: 1.0),
+        new Container(
+          child: _buildComposer(),
+          decoration: new BoxDecoration(color: Theme
+              .of(context)
+              .cardColor),
         ),
-        Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-          child: Container(
-            width: 756.3,
-            height: 88,
-            decoration: BoxDecoration(
-              color: Color(0xFFE6E6E6),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 8, 0, 0),
-                  child: Text(
-                    'Hello World',
-                    style: FlutterFlowTheme.of(context).bodyText1.override(
-                          fontFamily: 'Poppins',
-                          fontSize: 24,
-                        ),
-                  ),
+      ]),
+    );
+  }
+
+  Widget _buildComposer() {
+    return new IconTheme(data: new IconThemeData(),
+        child: new Container(
+          margin: const EdgeInsets.symmetric(horizontal: 9.0),
+          child: new Row(
+            children: <Widget>[
+              new Flexible(
+                child: new TextField(
+                  controller: textController,
+                  onChanged: (String txt) {
+                    setState(() {
+                      isWriting = txt.length > 0;
+                    });
+                  },
+                  onSubmitted: submitMsg,
+                  decoration:
+                  new InputDecoration.collapsed(
+                      hintText: "Enter some text to send a message"),
                 ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                  child: Text(
-                    'Hello jdewdojeodejfnienfienfinefinefineifneifneifneifneif',
-                    style: FlutterFlowTheme.of(context).bodyText1.override(
-                          fontFamily: 'Poppins',
-                          fontSize: 24,
-                          fontWeight: FontWeight.normal,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-    Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24, 24, 24, 24),
-              child: TextFormField(
-                controller: textController2,
-                onFieldSubmitted: (_) async {
-                  // var _shouldSetState = false;
-                  // apiResult9q8 = await SendMessageCall.call();
-                  // _shouldSetState = true;
-                  // if ((apiResult9q8?.succeeded ?? true)) {
-                  //   if (_shouldSetState) setState(() {});
-                  //   return;
-                  // }
-                  // if (_shouldSetState) setState(() {});
-                },
-                obscureText: false,
-                decoration: InputDecoration(
-                  hintText: 'Write a message',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 1,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4.0),
-                      topRight: Radius.circular(4.0),
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 1,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4.0),
-                      topRight: Radius.circular(4.0),
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x00000000),
-                      width: 1,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4.0),
-                      topRight: Radius.circular(4.0),
-                    ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0x00000000),
-                      width: 1,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(4.0),
-                      topRight: Radius.circular(4.0),
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: FlutterFlowTheme.of(context).primaryBtnText,
-                  contentPadding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                ),
-                style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Poppins',
-                      color: Color(0x7F101213),
-                      fontSize: 32,
-                      lineHeight: 2,
-                    ),
-                maxLines: 3,
-                minLines: 1,
               ),
-            ),
+              new Container(
+                  margin: new EdgeInsets.symmetric(horizontal: 3.0),
+                  child: new IconButton(onPressed: isWriting
+                      ? () => submitMsg(textController.text)
+                      : null, icon: new Icon(Icons.send),)
+              )
+            ],
           ),
-        ],
-      ),
-    ),
-  ],
-)
+        ));
+  }
+
+  void submitMsg(String txt) {
+    textController.clear();
+    setState(() {
+      isWriting = false;
+    });
+
+    ChatMessage msg = ChatMessage(
+      sender: authenticator.getCurrentUser(),
+      system: false,
+      time: DateFormat('yy-MM-dd hh:mm').format(DateTime.now()),
+      message: txt);
+
+    setState(() {
+      messages.insert(0, msg);
+      MyChat.messages.insert(0, msg);
+      //ChatService.discussionChannels[0].messages.insert(0, msg);
+  });
+
+
+}}
+
+
+class ChatMessage extends StatelessWidget {
+  UserModel? sender;
+  bool system;
+  String time;
+  String message;
+  ChatMessage({required this.sender, required this.system, required this.time, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO add condition and see who sends msg to use different layout of msg -- system vs sender vs receiver
+    return (SenderMessage(txt: message, time: DateFormat('yy-MM-dd hh:mm').format(DateTime.now()))
     );
   }
 }

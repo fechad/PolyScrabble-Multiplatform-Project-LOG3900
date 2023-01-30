@@ -145,7 +145,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                               child: const Text('General Chat'),
                               onPressed: () {
                                 Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                  return const GeneralChatWidget();})));},
+                                  return GeneralChatWidget();})));},
                             ),
                           ),
                         ],

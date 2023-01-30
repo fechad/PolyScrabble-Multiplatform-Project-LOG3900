@@ -1,33 +1,18 @@
 import 'package:client_leger/pages/chat_page.dart';
+import 'package:client_leger/pages/connexion_page.dart';
+import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
-//import 'package:socket_io_client/socket_io_client.dart';
+import '../components/chat_model.dart';
+import '../components/chat_card.dart';
 import '../config/colors.dart';
+import '../config/environment.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chatbox',
-      theme: ThemeData(
-        primarySwatch: Palette.mainColor,
-      ),// Try running your application with "flutter run". You'll see the
-      // application has a blue toolbar. Then, without quitting the app, try
-      // changing the primarySwatch below to Colors.green and then invoke
-      // "hot reload" (press "r" in the console where you ran "flutter run",
-      // or simply save your changes to "hot reload" in a Flutter IDE).
-      // Notice that the counter didn't reset back to zero; the application
-      // is not restarted.
-    );
-  }
-}
+  Socket socket = io(getSocketURL(), <String, dynamic>{
+    'transports':['websocket'],
+    'autoConnect': false,
+  });
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -50,6 +35,25 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+   
+
+  @override
+  void initState() {
+      super.initState();
+      connect();
+  }
+
+  void connect() {
+    socket.connect();
+    socket.onConnect((data) {
+      print('connect');
+    });
+    print(socket.connected);
+    // socket.on('event', (data) => print(data));
+    // socket.onDisconnect((_) => print('disconnect'));
+    // socket.on('fromServer', (_) => print(_));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,191 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-      drawer: Container(
-        width: 552,
-        child: Drawer(
-          elevation: 16,
-          child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(16, 24, 16, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional(-0.05, 0),
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 40),
-                    child: Container(
-                      width: 434,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).primaryBtnText,
-                        borderRadius: BorderRadius.circular(12),
-                        shape: BoxShape.rectangle,
-                        border: Border.all(
-                          color: Color(0x80000000),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Icon(
-                              Icons.search_rounded,
-                              color: Color(0x80000000),
-                              size: 34,
-                            ),
-                            Padding(
-                              padding:
-                              EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                              child: Text(
-                                'Search',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyText2
-                                    .override(
-                                  fontFamily: 'Nunito',
-                                  color: Color(0x80000000),
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 12),
-                  child: Container(
-                    width: double.infinity,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).primaryBtnText,
-                      borderRadius: BorderRadius.circular(12),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding:
-                            EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                            child: Container(
-                              width: 4,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.forum_rounded,
-                            color: Palette.mainColor,
-                            size: 40,
-                          ),
-                          Padding(
-                            padding:
-                            EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-
-                            child: TextButton(
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                textStyle: const TextStyle(fontSize: 32, fontFamily: 'Nunito'),
-                              ),
-                              child: const Text('General Chat'),
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                return const GeneralChatWidget();})));},
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        'Discussion channels',
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                          fontFamily: 'Nunito',
-                          color: Color(0xBA101213),
-                          fontSize: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(
-                  thickness: 8,
-                  color: Color(0x80000000),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                                child: Container(
-                                  width: 4,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ),
-                              Icon(
-                                Icons.person,
-                                color: Palette.mainColor,
-                                size: 40,
-                              ),
-                              Padding(
-                                padding:
-                                EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                                child: Text(
-                                  'Étienne',
-                                  style: FlutterFlowTheme.of(context)
-                                      .subtitle2
-                                      .override(
-                                    fontFamily: 'Nunito',
-                                    color: Colors.black,
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-
+      drawer: Drawer(
+      child: ListView.builder(itemCount: ChatService.discussionChannels.length,
+      itemBuilder: (context, index) => ChatCard(chatModel:  ChatService.discussionChannels[index])),),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: AppBar(
@@ -325,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: ((context) {
-        return const GeneralChatWidget();
+        return const ConnexionPageWidget();
       })));},
           backgroundColor: Palette.mainColor,
         child: const Icon(Icons.logout,
