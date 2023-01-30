@@ -1,11 +1,15 @@
 
-//import 'package:socket_io_client/socket_io_client.dart';
+import 'package:client_leger/services/auth_service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:flutter/material.dart';
-
+import 'package:socket_io_client/socket_io_client.dart';
 import 'pages/chat_page.dart';
+import 'config/environment.dart';
 
+
+AuthService authenticator = AuthService();
 
 void main() {
   runApp(const MyApp());
