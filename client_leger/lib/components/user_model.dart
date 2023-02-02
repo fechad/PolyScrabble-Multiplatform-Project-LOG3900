@@ -20,7 +20,7 @@ class Badge {
 class UserModel {
   String username;
   String email;
-  Icon icon;
+  Icon icon; // TODO: vérifier si le type marche avec le serveur
   Level level;
   List<Badge> badges;
   int highScore;

@@ -1,13 +1,16 @@
 import { Room } from '@app/classes/room-model/room';
 import { CommandController } from '@app/controllers/command.controller';
+import { ChannelMessage } from '@app/interfaces/channel-message';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
+import { DiscussionChannelService } from './discussion-channel.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
+import { SocketChannelService } from './socket-channel.service';
 import { SocketGameService } from './socket-game.service';
 import { SocketHandlerService } from './socket-handler.service';
 import { SocketRoomService } from './socket-room.service';
@@ -17,10 +20,13 @@ export class SocketManager {
     commandController: CommandController;
     private socketHandlerService: SocketHandlerService;
     private socketRoomService: SocketRoomService;
+    private socketChannelService: SocketChannelService;
     private socketGameService: SocketGameService;
     private chatMessageService: ChatMessageService;
+    private discussionChannelService: DiscussionChannelService;
     constructor(server: http.Server, private scoresService: ScoresService, private gamesHistoryService: GamesHistoryService) {
         this.chatMessageService = new ChatMessageService();
+        this.discussionChannelService = new DiscussionChannelService();
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         const singleRoomService = new RoomService();
         const singleDateService = new DateService();
@@ -49,7 +55,15 @@ export class SocketManager {
             singleRoomService,
             singleDateService,
         );
-
+        this.socketChannelService = new SocketChannelService(
+            this.discussionChannelService,
+            this.sio,
+            this.scoresService,
+            this.gamesHistoryService,
+            this.chatMessageService,
+            singleRoomService,
+            singleDateService,
+        );
         this.commandController = new CommandController(this.chatMessageService);
     }
 
@@ -73,6 +87,26 @@ export class SocketManager {
 
             socket.on('joinRoom', (room: Room) => {
                 this.socketRoomService.handleJoinRoom(socket, room);
+            });
+
+            socket.on('joinChatChannel', (channel: string, username: string) => {
+                this.socketChannelService.handleJoinChannel(socket, channel, username);
+            });
+
+            socket.on('leaveChatChannel', (channel: string, username: string) => {
+                this.socketChannelService.handleLeaveChannel(socket, channel, username);
+            });
+
+            socket.on('creatorLeaveChatChannel', (channel: string) => {
+                this.socketChannelService.handleLeaveChannelCreator(socket, channel);
+            });
+
+            socket.on('chatChannelMessage', (channel: string, message: ChannelMessage) => {
+                this.socketChannelService.handleChatChannelMessage(socket, channel, message);
+            });
+
+            socket.on('getDiscussionChannels', () => {
+                this.socketChannelService.handleGetDiscussionChannels(socket);
             });
 
             socket.on('joinRoomSolo', (room: Room) => {

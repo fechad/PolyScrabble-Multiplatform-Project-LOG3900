@@ -3,15 +3,15 @@ import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/services/chat_service.dart';
+//import 'package:socket_io_client/socket_io_client.dart';
+import 'package:flutter/material.dart';
+
 import '../components/chat_card.dart';
 import '../components/chat_model.dart';
 import '../components/user_model.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
-//import 'package:socket_io_client/socket_io_client.dart';
-import 'package:flutter/material.dart';
 
 class GeneralChatWidget extends StatefulWidget {
-
   @override
   _GeneralChatWidgetState createState() => _GeneralChatWidgetState();
 }
@@ -21,21 +21,13 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final List<ChatMessage> messages = ChatService.discussionChannels[0].messages;
   final TextEditingController textController = TextEditingController();
-  late ChatModel MyChat = ChatModel(
-    name: 'General group',
-    owner: authenticator.getCurrentUser(),
-    activeUsers: 1,
-    newMessage: 'Welcome to PolyScrabble!',
-    messages: [ChatMessage(system: true, sender: null, time:  DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now()), message: 'Welcome to PolyScrabble!')],
-    time: DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now()),
-    icon: "", //add path to icon
-  );
+  late ChatModel MyChat = ChatService.discussionChannels[0];
   bool isWriting = false;
-
 
   @override
   void initState() {
     super.initState();
+    ChatService();
     // On page load action.
   }
 
@@ -49,20 +41,17 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme
-          .of(context)
-          .primaryBackground,
+      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       drawer: Drawer(
         child: ListView.builder(
             itemCount: ChatService.discussionChannels.length,
             itemBuilder: (context, index) =>
-                ChatCard(chatModel: ChatService.discussionChannels[index])),),
+                ChatCard(chatModel: ChatService.discussionChannels[index])),
+      ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: AppBar(
-          backgroundColor: FlutterFlowTheme
-              .of(context)
-              .primaryBtnText,
+          backgroundColor: FlutterFlowTheme.of(context).primaryBtnText,
           automaticallyImplyLeading: false,
           leading: Align(
             alignment: AlignmentDirectional(0, 0),
@@ -78,25 +67,21 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
             ),
           ),
           title: Align(
-            alignment: const AlignmentDirectional(0, 1),
-            child: Flexible(
-            child: (Text(
-              'General Chat',
-              textAlign: TextAlign.center,
-              style: FlutterFlowTheme
-                  .of(context)
-                  .title1
-                  .override(
-                fontFamily: 'Poppins',
-                fontSize: 56,
-              ),
-            ) ),
-          )),
+              alignment: const AlignmentDirectional(0, 1),
+              child: Flexible(
+                child: (Text(
+                  'General Chat',
+                  textAlign: TextAlign.center,
+                  style: FlutterFlowTheme.of(context).title1.override(
+                        fontFamily: 'Poppins',
+                        fontSize: 56,
+                      ),
+                )),
+              )),
           actions: [
             InkWell(
               onTap: () {
-                Navigator
-                    .push(context, MaterialPageRoute(builder: ((context) {
+                Navigator.push(context, MaterialPageRoute(builder: ((context) {
                   return const MyHomePage(title: 'PolyScrabble');
                 })));
               },
@@ -115,24 +100,23 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
       body: new Column(children: <Widget>[
         new Flexible(
             child: new ListView.builder(
-              itemBuilder: (_, int index) => messages[index],
-              itemCount: messages.length,
-              reverse: true,
-              padding: new EdgeInsets.all(6.0),
-            )),
+          itemBuilder: (_, int index) => messages[index],
+          itemCount: messages.length,
+          reverse: true,
+          padding: new EdgeInsets.all(6.0),
+        )),
         new Divider(height: 1.0),
         new Container(
           child: _buildComposer(),
-          decoration: new BoxDecoration(color: Theme
-              .of(context)
-              .cardColor),
+          decoration: new BoxDecoration(color: Theme.of(context).cardColor),
         ),
       ]),
     );
   }
 
   Widget _buildComposer() {
-    return new IconTheme(data: new IconThemeData(),
+    return new IconTheme(
+        data: new IconThemeData(),
         child: new Container(
           margin: const EdgeInsets.symmetric(horizontal: 9.0),
           child: new Row(
@@ -146,17 +130,17 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                     });
                   },
                   onSubmitted: submitMsg,
-                  decoration:
-                  new InputDecoration.collapsed(
+                  decoration: new InputDecoration.collapsed(
                       hintText: "Enter some text to send a message"),
                 ),
               ),
               new Container(
                   margin: new EdgeInsets.symmetric(horizontal: 3.0),
-                  child: new IconButton(onPressed: isWriting
-                      ? () => submitMsg(textController.text)
-                      : null, icon: new Icon(Icons.send),)
-              )
+                  child: new IconButton(
+                    onPressed:
+                        isWriting ? () => submitMsg(textController.text) : null,
+                    icon: new Icon(Icons.send),
+                  ))
             ],
           ),
         ));
@@ -169,32 +153,33 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
     });
 
     ChatMessage msg = ChatMessage(
-      sender: authenticator.getCurrentUser(),
-      system: false,
-      time: DateFormat('yy-MM-dd hh:mm').format(DateTime.now()),
-      message: txt);
+        sender: authenticator.getCurrentUser(),
+        system: false,
+        time: DateFormat('yy-MM-dd hh:mm').format(DateTime.now()),
+        message: txt);
 
     setState(() {
       messages.insert(0, msg);
-      MyChat.messages.insert(0, msg);
-      //ChatService.discussionChannels[0].messages.insert(0, msg);
-  });
-
-
-}}
-
+    });
+  }
+}
 
 class ChatMessage extends StatelessWidget {
   UserModel? sender;
   bool system;
   String time;
   String message;
-  ChatMessage({required this.sender, required this.system, required this.time, required this.message});
+  ChatMessage(
+      {required this.sender,
+      required this.system,
+      required this.time,
+      required this.message});
 
   @override
   Widget build(BuildContext context) {
     // TODO add condition and see who sends msg to use different layout of msg -- system vs sender vs receiver
-    return (SenderMessage(txt: message, time: DateFormat('yy-MM-dd hh:mm').format(DateTime.now()))
-    );
+    return (SenderMessage(
+        txt: message,
+        time: DateFormat('yy-MM-dd hh:mm').format(DateTime.now())));
   }
 }
