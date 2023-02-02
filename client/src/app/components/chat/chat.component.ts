@@ -79,6 +79,7 @@ export class ChatComponent implements OnInit {
     }
 
     sendToRoom(text: string) {
+        // TODO: {message: string, userClass: object}
         this.socketService.send('message', text);
         this.waitServerResponse();
     }
