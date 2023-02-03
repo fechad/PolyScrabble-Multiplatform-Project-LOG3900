@@ -38,7 +38,7 @@ export class BotsController {
         });
         this.router.delete('/', async (req: Request, res: Response) => {
             try {
-                const bot = await this.botService.deleteAllBots();
+                const bot = await this.botService.resetAllBots();
                 res.json(bot);
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);

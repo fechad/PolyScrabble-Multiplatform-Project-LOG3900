@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import { describe } from 'mocha';
 import * as sinon from 'sinon';
-import * as request from 'supertest';
+import request from 'supertest';
 import { BotsController } from './bots.controller';
 import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
