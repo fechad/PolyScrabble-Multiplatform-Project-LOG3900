@@ -1,5 +1,5 @@
 import { Bot } from '@app/interfaces/bot';
-import { Collection, DeleteResult, UpdateResult } from 'mongodb';
+import { WriteResult } from 'firebase-admin/firestore';
 import 'reflect-metadata';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
@@ -9,40 +9,31 @@ const DATABASE_COLLECTION = 'bots';
 export class BotsService {
     constructor(private databaseService: DatabaseService) {}
 
-    get collection(): Collection<Bot> {
-        return this.databaseService.database.collection(DATABASE_COLLECTION);
-    }
-
     async getAllBots(): Promise<Bot[]> {
-        return this.collection
-            .find({})
-            .toArray()
-            .then((bots: Bot[]) => {
-                return bots;
-            });
+        return this.databaseService.getAllDocumentsFromCollection<Bot>(DATABASE_COLLECTION);
     }
 
     async deleteBot(nameToDelete: string) {
-        return await this.collection.findOneAndDelete({ name: nameToDelete }).then((result) => {
-            return result;
-        });
+        return this.databaseService.deleteDocumentByField(DATABASE_COLLECTION, 'name', nameToDelete);
     }
-    async deleteAllBots(): Promise<DeleteResult> {
-        const returned = this.collection.deleteMany({});
-        await this.collection.insertMany([
-            { name: 'Trump', gameType: 'débutant' },
-            { name: 'Zemmour', gameType: 'débutant' },
-            { name: 'Legault', gameType: 'débutant' },
-            { name: 'Ulrich', gameType: 'expert' },
-            { name: 'Sami', gameType: 'expert' },
-            { name: 'Augustin', gameType: 'expert' },
-        ]);
+    async resetAllBots(): Promise<unknown> {
+        const returned = this.databaseService.deleteCollection(DATABASE_COLLECTION);
+        await this.databaseService.batchSave(
+            DATABASE_COLLECTION,
+            [
+                { name: 'Trump', gameType: 'débutant' },
+                { name: 'Zemmour', gameType: 'débutant' },
+                { name: 'Legault', gameType: 'débutant' },
+                { name: 'LebronJames', gameType: 'expert' },
+                { name: 'Hermes', gameType: 'expert' },
+                { name: 'Jack Da ripa', gameType: 'expert' },
+            ],
+            (entry: { name: string; gameType: string }) => entry.name,
+        );
         return returned;
     }
 
-    async updateBot(nameToUpdate: string, updatedBot: Bot): Promise<UpdateResult> {
-        const filter = { name: nameToUpdate };
-        const setQuery = { $set: { name: updatedBot.name, gameType: updatedBot.gameType } };
-        return this.collection.updateOne(filter, setQuery, { upsert: true });
+    async updateBot(nameToUpdate: string, updatedBot: Bot): Promise<WriteResult> {
+        return this.databaseService.updateDocumentByID(DATABASE_COLLECTION, nameToUpdate, updatedBot);
     }
 }

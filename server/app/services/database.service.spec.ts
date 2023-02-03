@@ -1,59 +1,85 @@
 /* eslint-disable dot-notation */ // We need to access private attributes for our tests ant the linter does not like the notation used for it
-import { fail } from 'assert';
+import { Account } from '@app/interfaces/firestoreDB/account';
 import * as chai from 'chai';
 import { expect } from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
+import chaiAsPromised from 'chai-as-promised';
+import { Firestore } from 'firebase-admin/firestore';
 import { describe } from 'mocha';
-import { MongoClient } from 'mongodb';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { DatabaseService, DATABASE_COLLECTION, DATABASE_NAME } from './database.service';
+import { DatabaseService } from './database.service';
 chai.use(chaiAsPromised);
 
-const INITIAL_DB_SIZE = 10;
-describe('Database service', () => {
+describe('Database Service', () => {
     let databaseService: DatabaseService;
-    let mongoServer: MongoMemoryServer;
 
     beforeEach(async () => {
         databaseService = new DatabaseService();
-        mongoServer = new MongoMemoryServer();
+        databaseService.deleteCollection('test');
     });
 
     it('should connect to the database when start is called', async () => {
         // Reconnect to local server
-        const mongoUri = await mongoServer.getUri();
-        await databaseService.start(mongoUri);
-        expect(databaseService['client']).not.to.equal(undefined);
-        expect(databaseService['db'].databaseName).to.equal(DATABASE_NAME);
+        const db = await databaseService.start();
+        expect(db).not.to.equal(undefined);
     });
 
-    it('should not connect to the database when start is called with wrong URL', async () => {
-        // Try to reconnect to local server
-        try {
-            await databaseService.start('WRONG URL');
-            fail();
-        } catch {
-            expect(databaseService['client']).to.equal(undefined);
+    it('should be able to write multiple documents, get them with the correct interface, update and delete them', async () => {
+        await databaseService.start();
+        const usernames: string[] = ['DOOM BOT', 'BOT DOOM'];
+        const emails: string[] = ['doom@bot.com', 'bot@doom.com'];
+        const accounts: Account[] = [];
+        let index = 0;
+        for (const name of usernames) {
+            const account: Account = {
+                username: name,
+                email: `${emails[index]}`,
+                defaultLanguage: 'french',
+                badges: ['dev'],
+                defaultTheme: 'DOOOOOOOM',
+                highscore: 666,
+                totalXP: -99999,
+            };
+            accounts.push(account);
+            index++;
         }
+
+        const results = await databaseService.batchSave('test', accounts, (entry: Account) => entry.email);
+        expect(results.length, 'creation of dummy accounts failed').to.equal(2);
+        const readResults = await databaseService.getAllDocumentsFromCollection<Account>('test');
+
+        expect(readResults, 'all documents read failed').to.include(readResults[0]);
+        expect(readResults, 'all documents read failed').to.include(readResults[1]);
+
+        const singleReadResult = await databaseService.getDocumentByID<Account>('test', emails[0]);
+        expect(singleReadResult, 'single read failed').to.not.equal(undefined);
+
+        const newInfo = accounts[0];
+        const newHighscore = 1000;
+        newInfo.highscore = newHighscore;
+        await databaseService.updateDocumentByID('test', emails[0], newInfo);
+        const updateResult = await databaseService.getDocumentByID<Account>('test', emails[0]);
+        expect(updateResult.highscore, 'update not successful').to.equal(newHighscore);
+
+        const fieldDeleteResult = await databaseService.deleteDocumentByField('test', 'username', 'DOOM BOT');
+        expect(fieldDeleteResult, 'deletion of first dummy failed').not.to.equal(undefined);
+
+        const idDeleteResult = await databaseService.deleteDocumentByID('test', emails[1]);
+        expect(idDeleteResult, 'deletion of first dummy failed').not.to.equal(undefined);
     });
 
-    it('should populate the database with a helper function', async () => {
-        const mongoUri = await mongoServer.getUri();
-        const client = await MongoClient.connect(mongoUri, {});
-        databaseService['db'] = client.db(DATABASE_NAME);
-        await databaseService.populateDB();
-        const courses = await databaseService.database.collection(DATABASE_COLLECTION).find({}).toArray();
-        expect(courses.length).to.equal(INITIAL_DB_SIZE);
-    });
+    it('should delete a collection and its subcollections at the same time', async () => {
+        let db = await databaseService.start();
+        db = db as Firestore;
+        const testCollectionRef = await db.collection('test');
+        await testCollectionRef?.doc('subtestDoc').collection('subcollection');
+        databaseService.deleteCollection('test');
 
-    it('should not populate the database with start function if it is already populated', async () => {
-        const mongoUri = await mongoServer.getUri();
-        await databaseService.start(mongoUri);
-        let scores = await databaseService.database.collection(DATABASE_COLLECTION).find({}).toArray();
-        expect(scores.length).to.equal(INITIAL_DB_SIZE);
-        await databaseService.closeConnection();
-        await databaseService.start(mongoUri);
-        scores = await databaseService.database.collection(DATABASE_COLLECTION).find({}).toArray();
-        expect(scores.length).to.equal(INITIAL_DB_SIZE);
+        const deletedTestCollection = await db.collection('test').get();
+        expect(deletedTestCollection.empty, 'collection not deleted').to.equal(true);
+
+        const deletedSubtestDoc = await db.collection('test').doc('subtestDoc').get();
+        expect(deletedSubtestDoc.exists, 'subsetDoc not deleted').to.equal(false);
+
+        const deletedSubcollection = await db.collection('test').doc('subtestDoc').collection('subcollection').get();
+        expect(deletedSubcollection.empty, 'subcollection not deleted').to.equal(true);
     });
 });

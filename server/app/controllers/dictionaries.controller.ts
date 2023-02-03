@@ -76,11 +76,12 @@ export class DictionariesController {
         });
         this.router.post('/:title', async (req: Request, res: Response) => {
             try {
-                const result = await this.dictionariesService.addDictionary(req.body);
-                if (result.upsertedCount <= 0) {
-                    res.status(StatusCodes.CONFLICT).send();
-                    return;
-                }
+                await this.dictionariesService.addDictionary(req.body);
+                // TODO: Check if we can keep this safeguard with firestore
+                // if (result.upsertedCount <= 0) {
+                //    res.status(StatusCodes.CONFLICT).send();
+                //    return;
+                // }
                 const mappedWords = ScoreMapper.createMap(ScoreMapper.formWordsMap(req.body.words));
                 await this.fileService.createDictionaryFile(req.body, mappedWords);
                 res.status(StatusCodes.CREATED).send();
@@ -102,7 +103,7 @@ export class DictionariesController {
                     return;
                 }
                 const updateResult = await this.dictionariesService.updateDictionary(title, req.body);
-                if (!updateResult.modifiedCount) {
+                if (updateResult.writeTime) {
                     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
                     return;
                 }
