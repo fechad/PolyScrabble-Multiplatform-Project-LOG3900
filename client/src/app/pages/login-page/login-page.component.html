@@ -1,0 +1,92 @@
+<div class="page-container">
+    <app-hearder></app-hearder>
+
+    <div class="main-container">
+        <div class="gray-box">
+            <form class="auth-form" [formGroup]="loginForm">
+                <div *ngIf="isLoginForm" class="form-title">Connexion</div>
+                <div *ngIf="!isLoginForm" class="form-title">Inscription</div>
+
+                <div *ngIf="!isLoginForm" class="input-container error-msg">
+                    <label #usernameLabel (click)="focusInput(usernameInput)" class="simple-label placeholder">Pseudo</label>
+                    <input
+                        #usernameInput
+                        (focus)="setPlaceholderAsLabel(usernameLabel)"
+                        (blur)="setLabelAsPlaceholder(usernameLabel, 'username')"
+                        [class.invalid]="isEmailInvalid"
+                        formControlName="username"
+                        name="username"
+                        type="text"
+                        class="simple-input"
+                    />
+                    <div class="simple-input-error-msg">
+                        {{ invalidUsernameText }}
+                    </div>
+                </div>
+
+                <div class="input-container error-msg">
+                    <label #emailLabel (click)="focusInput(emailInput)" class="simple-label placeholder">Courriel</label>
+                    <input
+                        #emailInput
+                        (focus)="setPlaceholderAsLabel(emailLabel)"
+                        (blur)="setLabelAsPlaceholder(emailLabel, 'email')"
+                        [class.invalid]="isEmailInvalid"
+                        formControlName="email"
+                        name="email"
+                        type="email"
+                        class="simple-input"
+                    />
+                    <div class="simple-input-error-msg">
+                        {{ invalidEmailText }}
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label #passwordLabel (click)="focusInput(passwordInput)" class="simple-label placeholder">Mot de Passe</label>
+                    <input
+                        #passwordInput
+                        (focus)="setPlaceholderAsLabel(passwordLabel)"
+                        (blur)="setLabelAsPlaceholder(passwordLabel, 'password')"
+                        formControlName="password"
+                        name="password"
+                        type="password"
+                        class="simple-input"
+                    />
+                    <div *ngIf="isLoginForm" class="info-text-container">
+                        <div class="info-text">Mot de passe oublié?</div>
+                        <button class="button-text">Appuyez ici</button>
+                    </div>
+                </div>
+                <div *ngIf="!isLoginForm" class="input-container error-msg">
+                    <label #passwordConfirmLabel (click)="focusInput(passwordConfirmInput)" class="simple-label placeholder">
+                        Confirmez le Mot de Passe
+                    </label>
+                    <input
+                        #passwordConfirmInput
+                        (focus)="setPlaceholderAsLabel(passwordConfirmLabel)"
+                        (blur)="setLabelAsPlaceholder(passwordConfirmLabel, 'confirmPassword')"
+                        formControlName="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        class="simple-input"
+                    />
+                    <div class="simple-input-error-msg">{{ invalidConfirmPassWordText }}</div>
+                </div>
+                <button *ngIf="isLoginForm" [disabled]="!areLoginInfoValid" (click)="submitConnection()" class="button">Se Connecter</button>
+                <button *ngIf="!isLoginForm" [disabled]="!areSignInInfoValid" (click)="submitRegistration()" class="button">S'inscrire</button>
+            </form>
+            <div *ngIf="isLoginForm" class="info-text-container sign-in">
+                <div class="info-text">Pas encore inscrit?</div>
+                <button (click)="registerAccount()" class="button-text">Inscription</button>
+            </div>
+            <div *ngIf="!isLoginForm && !emailSent" class="info-text-container sign-in">
+                <div class="info-text">Déja inscrit?</div>
+                <button (click)="connectAccount()" class="button-text">Connectez-vous</button>
+            </div>
+            <div *ngIf="emailSent" class="info-text-container sign-in">
+                <div class="info-text">En attente de la confirmation de votre email</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">footer (À ne pas supprimer, important pour la mise en page)</div>
+</div>

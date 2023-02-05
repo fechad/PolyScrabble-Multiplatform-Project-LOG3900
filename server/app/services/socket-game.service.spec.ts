@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // we want to tests private methods
 /* eslint-disable dot-notation */ // we want to access private attribute to test
-import { GoalTitle } from '@app/enums/goal-titles';
 import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
 import { Timer } from '@app/classes/timer';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
+import { GoalTitle } from '@app/enums/goal-titles';
 import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
-import { DatabaseServiceMock } from './database.service.mock';
 import { DateService } from './date.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
@@ -41,8 +40,8 @@ describe('socketGameService service tests', () => {
     const roomService = new RoomService();
     const socketGameService = new SocketGameService(
         ioServerMock,
-        new ScoresService(new DatabaseServiceMock() as any),
-        new GamesHistoryService(new DatabaseServiceMock() as any),
+        new ScoresService({} as any),
+        new GamesHistoryService({} as any),
         new ChatMessageService(),
         roomService,
         new DateService(),

@@ -10,11 +10,13 @@ import { GameJoinMultiplayerPageComponent } from '@app/pages/game-join-multiplay
 import { GameOptionPageComponent } from '@app/pages/game-option-page/game-option-page.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameWaitMultiplayerPageComponent } from '@app/pages/game-wait-multiplayer-page/game-wait-multiplayer-page.component';
+import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
-    { path: 'home', component: MainPageComponent },
+    { path: 'home', component: LoginPageComponent },
+    { path: 'main', component: MainPageComponent },
     { path: 'game', component: GamePageComponent },
     { path: 'game/option', component: GameOptionPageComponent },
     { path: 'game/multiplayer/create/:mode', component: GameCreateMultiplayerPageComponent },
