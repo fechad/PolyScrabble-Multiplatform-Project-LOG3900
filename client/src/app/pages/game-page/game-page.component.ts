@@ -67,7 +67,7 @@ export class GamePageComponent implements OnInit {
 
     leaveGame() {
         this.socketService.disconnect();
-        this.router.navigate(['/home']);
+        this.router.navigate(['/main']);
     }
 
     confirmLeaving() {
@@ -88,7 +88,7 @@ export class GamePageComponent implements OnInit {
     }
 
     goBackToHome() {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/main']);
     }
 
     private connect() {

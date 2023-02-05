@@ -15,7 +15,6 @@ import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
-import { DatabaseServiceMock } from './database.service.mock';
 import { DateService } from './date.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
@@ -70,8 +69,8 @@ describe('Socket-game-stub service tests', () => {
     const roomService = new RoomService();
     const socketGameService = new SocketGameService(
         ioServerMock,
-        new ScoresService(new DatabaseServiceMock() as any),
-        new GamesHistoryService(new DatabaseServiceMock() as any),
+        new ScoresService({} as any),
+        new GamesHistoryService({} as any),
         new ChatMessageService(),
         roomService,
         new DateService(),

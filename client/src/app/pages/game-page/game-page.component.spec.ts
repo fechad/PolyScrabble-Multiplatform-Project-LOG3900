@@ -147,7 +147,7 @@ describe('GamePageComponent', () => {
             const spy = spyOn(socketServiceMock, 'disconnect');
             component.leaveGame();
             expect(spy).toHaveBeenCalled();
-            expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/main']);
         });
     });
 

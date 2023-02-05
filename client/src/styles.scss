@@ -9,12 +9,11 @@ $row-border-radius: 8px;
 
 /* You can add global styles to this file, and also import other style files */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap');
 html,
 body {
     margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
+    font-family: 'Nunito' !important;
+    font-size: 16px !important;
     height: auto;
 }
 
@@ -25,13 +24,12 @@ body {
     appearance: none;
     background-color: #7daf6b;
     border: 0;
-    border-radius: 6px;
-    box-shadow: #4b733d 0 -7px 0px inset;
+    border-radius: 8px;
     box-sizing: border-box;
     color: #fff;
     cursor: pointer;
     display: inline-flex;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Nunito';
     justify-content: center;
     line-height: 1;
     list-style: none;
@@ -41,12 +39,12 @@ body {
     position: relative;
     text-align: center;
     text-decoration: none;
-    transition: box-shadow 0.15s, transform 0.15s, background-color 0.15s, color 0.15s;
+    transition: transform 0.15s, background-color 0.15s, color 0.15s;
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
     white-space: nowrap;
-    will-change: box-shadow, transform;
+    will-change: transform;
     font-size: 18px;
     height: 50px;
     width: 350px;
@@ -57,7 +55,7 @@ body {
     border-color: gray;
     padding-left: 16px;
     justify-content: center;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Nunito';
     font-size: 18px;
     height: 30px;
     width: 200px;
@@ -83,41 +81,34 @@ body {
 }
 
 .button:disabled {
-    background-color: #9aaf92;
-    color: #333333;
-    box-shadow: #687465 0 -7px 0px inset;
+    background-color: rgba(125, 175, 107, 0.5);
+    color: white;
     cursor: default;
 }
 
 .button:disabled:hover {
-    box-shadow: #2c2c2c;
 }
 
 .button:focus {
-    box-shadow: #4b733d 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #4b733d 0 -3px 0 inset;
 }
 
 .button:enabled:hover {
-    box-shadow: rgba(45, 35, 66, 0.4) 0 -7px 0px inset;
     transform: translateY(-2px);
 }
 
 .button:enabled:active {
-    box-shadow: #4b733d 0 3px 7px inset;
     transform: translateY(2px);
 }
 
 .button.important-button {
     align-items: center;
     background-color: $important-button-color;
-    box-shadow: $important-button-shadow-color 0 -7px 0px inset;
     color: black;
 }
 
 .button.important-button:disabled {
     color: #333333;
     background-color: #ad8763;
-    box-shadow: #70573f 0 -7px 0px inset;
     cursor: default;
 }
 
@@ -125,30 +116,25 @@ body {
     color: black;
     align-items: center;
     background-color: #fcaaaa;
-    box-shadow: #af6b6b 0 -7px 0px inset;
 }
 
 .button.cancel-button:disabled {
     color: #333333;
     background-color: #eadfdf;
-    box-shadow: #d9bdbd 0 -7px 0px inset;
     cursor: default;
 }
 
 .button.cancel-button:enabled:hover {
-    box-shadow: rgba(179, 57, 93, 0.4) 0 -7px 0px inset;
     transform: translateY(-2px);
 }
 
 .button.cancel-button:enabled:active {
-    box-shadow: #ff8989 0 3px 7px inset;
     transform: translateY(2px);
 }
 
 .button.minor-button {
     align-items: center;
     background-color: #adbca8;
-    box-shadow: #798c73 0 -7px 0px inset;
 }
 
 .button.minor-button {
@@ -203,10 +189,11 @@ body {
 }
 
 .gray-box {
-    border-radius: 20px;
+    border-radius: 8px;
     padding: 30px;
-    background-color: #f3f3f3;
-    box-shadow: 0px 20px 0px #c0c0c0;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 8px 12px 4px rgba(0, 0, 0, 0.2);
 }
 
 .notification {
@@ -230,7 +217,7 @@ body {
 
 #games {
     border-radius: 10px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Nunito';
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -376,7 +363,7 @@ body {
 $contrast-color: rgb(255, 255, 255);
 $primary-color: #ffffff;
 .admin-table {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Nunito';
     width: 50%;
     margin-left: auto;
     margin-right: auto;

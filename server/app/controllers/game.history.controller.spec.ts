@@ -1,7 +1,6 @@
 import { Application } from '@app/app';
 import { Game } from '@app/interfaces/game';
 import { BotsService } from '@app/services/bot.service';
-import { DatabaseServiceMock } from '@app/services/database.service.mock';
 import { DictionariesService } from '@app/services/dictionaries.service';
 import { GamesHistoryService } from '@app/services/games.history.service';
 import { ScoresService } from '@app/services/score.service';
@@ -30,19 +29,19 @@ describe('GamesHistoryController', () => {
     before(async () => {
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        scoresService = new ScoresService(new DatabaseServiceMock() as any);
+        scoresService = new ScoresService({} as any);
         scoresController = new ScoresController(scoresService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dictionariesService = new DictionariesService(new DatabaseServiceMock() as any);
+        dictionariesService = new DictionariesService({} as any);
         dictionariesController = new DictionariesController(dictionariesService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        botsService = new BotsService(new DatabaseServiceMock() as any);
+        botsService = new BotsService({} as any);
         botsController = new BotsController(botsService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        gamesHistoryService = new GamesHistoryService(new DatabaseServiceMock() as any);
+        gamesHistoryService = new GamesHistoryService({} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
         application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController);
         games = [

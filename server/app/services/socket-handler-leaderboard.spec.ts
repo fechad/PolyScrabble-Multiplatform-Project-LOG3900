@@ -10,7 +10,6 @@ import { assert } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
-import { DatabaseServiceMock } from './database.service.mock';
 import { DateService } from './date.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
@@ -37,12 +36,12 @@ describe('LeaderBoard', () => {
 
     const roomService = new RoomService();
 
-    const scoreService = new ScoresService(new DatabaseServiceMock() as any);
+    const scoreService = new ScoresService({} as any);
 
     const socketGameService = new SocketGameService(
         ioServerMock,
         scoreService,
-        new GamesHistoryService(new DatabaseServiceMock() as any),
+        new GamesHistoryService({} as any),
         new ChatMessageService(),
         roomService,
         new DateService(),

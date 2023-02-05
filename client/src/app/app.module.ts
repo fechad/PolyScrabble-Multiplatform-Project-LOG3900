@@ -43,6 +43,7 @@ import { AdminDictionariesPageComponent } from './pages/admin-dictionaries-page/
 import { AdminGamesPageComponent } from './pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { BestScoresPageComponent } from './pages/best-scores-page/best-scores-page.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -93,6 +94,7 @@ import { BestScoresPageComponent } from './pages/best-scores-page/best-scores-pa
         HeaderComponent,
         BestScoresTableComponent,
         EndGamePopupComponent,
+        LoginPageComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
     providers: [],
