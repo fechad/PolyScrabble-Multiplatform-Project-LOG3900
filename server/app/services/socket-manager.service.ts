@@ -1,6 +1,6 @@
 import { Room } from '@app/classes/room-model/room';
 import { CommandController } from '@app/controllers/command.controller';
-import { ChannelMessage } from '@app/interfaces/channel-message';
+import { Account } from '@app/interfaces/account';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
 import * as io from 'socket.io';
@@ -89,8 +89,13 @@ export class SocketManager {
                 this.socketRoomService.handleJoinRoom(socket, room);
             });
 
-            socket.on('joinChatChannel', (channel: string, username: string) => {
-                this.socketChannelService.handleJoinChannel(socket, channel, username);
+            socket.on('createChatChannel', (channel: string, username: Account) => {
+                this.socketChannelService.handleCreateChannel(socket, channel, username);
+            });
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            socket.on('joinChatChannel', (data: any) => {
+                this.socketChannelService.handleJoinChannel(socket, data.name, data.user);
             });
 
             socket.on('leaveChatChannel', (channel: string, username: string) => {
@@ -101,8 +106,9 @@ export class SocketManager {
                 this.socketChannelService.handleLeaveChannelCreator(socket, channel);
             });
 
-            socket.on('chatChannelMessage', (channel: string, message: ChannelMessage) => {
-                this.socketChannelService.handleChatChannelMessage(socket, channel, message);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            socket.on('chatChannelMessage', (data: any) => {
+                this.socketChannelService.handleChatChannelMessage(socket, data.channelName, data);
             });
 
             socket.on('getDiscussionChannels', () => {
