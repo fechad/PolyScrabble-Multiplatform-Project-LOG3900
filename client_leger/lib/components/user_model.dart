@@ -17,13 +17,34 @@ class Badge {
   Badge({required this.icon, required this.name, required this.description});
 }
 
+class GamesPlayed {
+    String gameID;
+    String type;
+    int score;
+    GamesPlayed({required this.gameID, required this.type, required this.score});
+}
+
 class UserModel {
   String username;
   String email;
-  Icon icon; // TODO: vérifier si le type marche avec le serveur
+  String avatarURL; // TODO: vérifier si le type marche avec le serveur
   Level level;
   List<Badge> badges;
   int highScore;
   int gamesWon;
-  UserModel({required this.username, required this.email, required this.icon, required this.level, required this.badges, required this.highScore, required this.gamesWon});
+  int totalXp;
+  List<GamesPlayed> gamesPlayed;
+  List<GamesPlayed>bestGames;
+  UserModel({
+    required this.username, 
+    required this.email, 
+    required this.avatarURL, 
+    required this.level, 
+    required this.badges, 
+    required this.highScore, 
+    required this.gamesWon,
+    required this.totalXp,
+    required this.gamesPlayed,
+    required this.bestGames
+    });
 }

@@ -21,6 +21,7 @@ export class DiscussionChannel {
     joinChannel(username: string): ChannelMessage {
         this.activeUsers += 1;
         const newMessage = {
+            channelName: this.name,
             system: true,
             message: `${username} has joined the chat!`,
             time: new Date().toLocaleTimeString(),
@@ -32,6 +33,7 @@ export class DiscussionChannel {
     leaveChannel(username: string) {
         this.activeUsers -= 1;
         const newMessage = {
+            channelName: this.name,
             system: true,
             message: `${username} has left the chat!`,
             time: new Date().toLocaleTimeString(),
