@@ -14,7 +14,6 @@ export class GamesHistoryController {
 
     private configureRouter() {
         this.router = Router();
-
         this.router.get('/', async (_req: Request, res: Response) => {
             try {
                 const games = await this.gamesHistoryService.getGamesHistory();

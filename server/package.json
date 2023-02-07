@@ -4,7 +4,8 @@
     "version": "1.1.0",
     "private": true,
     "scripts": {
-        "start": "nodemon",
+        "start": "node out/index.js",
+        "start-local": "nodemon",
         "build": "rimraf out && tsc --project tsconfig.app.json",
         "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
         "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
@@ -42,6 +43,10 @@
     },
     "_moduleAliases": {
         "@app": "out/"
+    },
+    "engines": {
+        "node": "18.x",
+        "npm": "8.19.3"
     },
     "dependencies": {
         "cookie-parser": "^1.4.6",

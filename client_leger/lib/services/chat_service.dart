@@ -62,6 +62,7 @@ class ChatService {
         (data) => {
               //print('update'),
               //print(data.runtimeType),
+              socket.emit('joinChatChannel', {'General Chat', 'Anna'}),
               _discussionChannels = [],
               for (var i in data)
                 {print(i), _discussionChannels.add(decodeModel(i))},
@@ -117,7 +118,7 @@ class ChatService {
 
   void addMessage({required String channelName, required ChatMessage message}) {
     print(message);
-    socket.emit('chatChannelMessage', {message});
+    socket.emit('channelMessage', {message});
   }
 
   void joinDiscussion(channelName) {

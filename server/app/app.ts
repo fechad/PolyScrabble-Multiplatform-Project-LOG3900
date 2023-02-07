@@ -49,8 +49,11 @@ export class Application {
     private errorHandling() {
         // When previous handlers have not served a request: path wasn't found
         this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+            if (req.url === '/favicon.ico') return res.writeHead(204).end('No icon');
+
             const err: HttpException = new HttpException('Not Found');
-            next(err);
+            return next(err);
         });
 
         // development error handler
