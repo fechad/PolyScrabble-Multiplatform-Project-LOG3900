@@ -13,7 +13,8 @@ export class BotsController {
 
     private configureRouter() {
         this.router = Router();
-
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        this.router.get('/favicon.ico', (req, res) => res.status(204));
         this.router.get('/', async (_req: Request, res: Response) => {
             try {
                 const bots = await this.botService.getAllBots();

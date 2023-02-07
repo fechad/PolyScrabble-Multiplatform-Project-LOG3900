@@ -1,16 +1,20 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart';
+import 'package:socket_io_client/socket_io_client.dart' as Io;
 
 import '../config/colors.dart';
-import '../config/environment.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../config/flutter_flow/flutter_flow_widgets.dart';
+import 'connexion_page.dart';
 
-Socket socket = io(getSocketURL(), <String, dynamic>{
-  'transports': ['websocket'],
-  'autoConnect': false,
-});
+Io.Socket socket = Io.io(
+    'https://polyscrabble-105-2.nn.r.appspot.com',
+    Io.OptionBuilder()
+        .setTransports(['websocket'])
+        .setPath('/socket.io')
+        .disableAutoConnect()
+        .build());
 
 final chatService = ChatService();
 
@@ -42,11 +46,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void connect() {
-    socket.connect();
-    socket.onConnect((data) {
-      print('connect');
-    });
-    print(socket.connected);
+    try {
+      socket.connect();
+      socket.onConnect((data) {
+        print('connect');
+      });
+      socket.on(
+          'connect_error',
+          (d) => {
+                print(socket.io.options),
+                print(d),
+                //socket.io.replaceAll(':0', ''),
+                //socket.disconnect().connect(),
+                //socket.io.options.update('transports', (value) => ['polling']),
+                print(socket.io.options)
+              });
+
+      print(socket.connected);
+    } catch (e) {
+      print(e);
+    }
     // socket.on('event', (data) => print(data));
     // socket.onDisconnect((_) => print('disconnect'));
     // socket.on('fromServer', (_) => print(_));
@@ -152,10 +171,29 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             color: Colors.white,
             child: Center(
-              child: Text(
-                "Profile",
-                style: TextStyle(color: Colors.black, fontSize: 30),
-              ),
+              child: FFButtonWidget(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ConnexionPageWidget()));
+                  },
+                  text: 'Log out',
+                  options: FFButtonOptions(
+                    width: 240,
+                    height: 50,
+                    color: Palette.mainColor,
+                    textStyle: TextStyle(
+                      fontFamily: 'Nunito',
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: 2,
+                  )),
             ),
           ), // This trailing comma makes auto-formatting nicer for build methods.
         ));

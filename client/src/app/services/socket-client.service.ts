@@ -13,7 +13,7 @@ export class SocketClientService {
     }
 
     connect() {
-        this.socket = io(environment.serverUrl.replace('/api', ''), { transports: ['polling'], upgrade: false } as Partial<ManagerOptions>);
+        this.socket = io(environment.serverUrl.replace('/api', ''), { transports: ['websocket'], upgrade: false } as Partial<ManagerOptions>);
     }
 
     disconnect() {
