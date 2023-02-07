@@ -30,6 +30,7 @@ import { EmojisPickerComponent } from './components/emojis-picker/emojis-picker.
 import { EndGamePopupComponent } from './components/endgame-popup/endgame-popup.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
 import { GamesTableComponent } from './components/games-table/games-table.component';
+import { GeneralChatComponent } from './components/general-chat/general-chat.component';
 import { GoalDialogDataComponent } from './components/goal-dialog-data/goal-dialog-data.component';
 import { GoalComponent } from './components/goal/goal.component';
 import { GoalsContainerComponent } from './components/goals-container/goals-container.component';
@@ -95,6 +96,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         BestScoresTableComponent,
         EndGamePopupComponent,
         LoginPageComponent,
+        GeneralChatComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
     providers: [],

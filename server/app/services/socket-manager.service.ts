@@ -108,7 +108,7 @@ export class SocketManager {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             socket.on('chatChannelMessage', (data: any) => {
-                this.socketChannelService.handleChatChannelMessage(socket, data.channelName, data);
+                this.socketChannelService.handleChatChannelMessage(data.channelName, data);
             });
 
             socket.on('getDiscussionChannels', () => {
