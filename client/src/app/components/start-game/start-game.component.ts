@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { GONE_RESSOURCE_MESSAGE } from '@app/constants/http-constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { HttpService } from '@app/services/http.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { lastValueFrom } from 'rxjs';
@@ -52,7 +53,7 @@ export class StartGameComponent implements OnInit {
     }
 
     configureBaseSocketFeatures() {
-        this.socketService.on('joinRoomStatus', (serverRoomName: string) => {
+        this.socketService.on(SocketEvent.JoinRoomStatus, (serverRoomName: string) => {
             this.onProcess = false;
             if (!serverRoomName.startsWith('Room')) return;
             this.room.roomInfo.name = serverRoomName;
@@ -72,7 +73,7 @@ export class StartGameComponent implements OnInit {
         }
         this.initializeRoom();
         this.onProcess = true;
-        this.socketService.send('joinRoom', this.room);
+        this.socketService.send(SocketEvent.JoinRoom, this.room);
     }
 
     private dictionaryExists(): boolean {

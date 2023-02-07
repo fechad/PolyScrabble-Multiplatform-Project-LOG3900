@@ -1,3 +1,4 @@
+import { SocketEvent } from '@app/enums/socket-event';
 import { Account } from '@app/interfaces/account';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import * as io from 'socket.io';
@@ -22,38 +23,38 @@ export class SocketChannelService extends SocketHandlerService {
         super(sio, scoreService, gamesHistoryService, chatMessageService, roomService, dateService);
     }
 
-    handleCreateChannel(socket: io.Socket, channelName: string, creator: Account) {
+    handleCreateChannel(channelName: string, creator: Account) {
         if (!channelName) return;
         const added = this.discussionChannelService.addChannel(channelName, creator);
-        if (added) this.sendToEveryoneInRoom(socket.id, 'availableChannels', this.discussionChannelService.availableChannels);
+        if (added) this.sendToEveryone(SocketEvent.AvailableChannels, this.discussionChannelService.availableChannels);
     }
 
     handleJoinChannel(socket: io.Socket, channelName: string, username: string) {
         if (!channelName) return;
         const message = this.discussionChannelService.joinChannel(channelName, username);
         this.socketJoin(socket, channelName);
-        this.sendToEveryoneInRoom(channelName, 'channelMessage', message);
+        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, message);
     }
 
     handleLeaveChannelCreator(socket: io.Socket, channelName: string) {
         const availableChannels = this.discussionChannelService.creatorLeaveChannel(channelName);
         this.socketLeaveRoom(socket, channelName);
-        this.sendToEveryone('availableChannels', availableChannels);
+        this.sendToEveryone(SocketEvent.AvailableChannels, availableChannels);
     }
 
     handleLeaveChannel(socket: io.Socket, channelName: string, username: string) {
         const message = this.discussionChannelService.leaveChannel(channelName, username);
         this.socketLeaveRoom(socket, channelName);
-        this.socketEmitRoom(socket, channelName, 'channelMessage', message);
+        this.socketEmitRoom(socket, channelName, SocketEvent.ChannelMessage, message);
     }
 
     handleChatChannelMessage(channelName: string, message: ChannelMessage) {
         const messageAdded = this.discussionChannelService.addChannelMessage(channelName, message);
-        if (messageAdded) this.sendToEveryoneInRoom(channelName, 'channelMessage', message);
+        if (messageAdded) this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, message);
     }
 
     handleGetDiscussionChannels(socket: io.Socket) {
         const channels = this.discussionChannelService.availableChannels;
-        socket.emit('availableChannels', channels);
+        socket.emit(SocketEvent.AvailableChannels, channels);
     }
 }

@@ -5,6 +5,7 @@ import { Timer } from '@app/classes/timer';
 import { COUNT_PLAYER_TURN, END_TIMER_VALUE, ONE_SECOND_IN_MS, SYSTEM_NAME, THREE_SECONDS_IN_MS } from '@app/constants/constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
+import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
@@ -19,7 +20,7 @@ export class SocketGameService extends SocketHandlerService {
     handleGetRackInfo(socket: io.Socket, roomName: string) {
         if (!this.isRoomAndPlayerValid(socket, roomName)) return;
         const player = (this.roomService.getRoom(roomName) as Room).getPlayer(socket.id) as Player;
-        this.socketEmit(socket, 'drawRack', player.rack.getLetters());
+        this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
     }
 
     handleGetAllGoals(socket: io.Socket) {
@@ -28,19 +29,19 @@ export class SocketGameService extends SocketHandlerService {
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
         const goals = room.getAllGoals();
-        this.sendToEveryoneInRoom(roomName, 'goalsUpdated', goals);
+        this.sendToEveryoneInRoom(roomName, SocketEvent.GoalsUpdated, goals);
     }
 
     handleMessage(socket: io.Socket, message: string) {
         this.chatMessageService.restore();
-        this.sendToEveryoneInRoom(socket.id, 'messageReceived');
+        this.sendToEveryoneInRoom(socket.id, SocketEvent.MessageReceived);
         const roomName = this.getSocketRoom(socket) as string;
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
         const isCommand = this.commandController.hasCommandSyntax(message);
         if (!isCommand) {
             const chatMessage = this.convertToChatMessage(room, socket.id, message);
-            this.socketEmitRoom(socket, room.roomInfo.name, 'message', chatMessage);
+            this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.Message, chatMessage);
             return;
         }
         const commandSender = room.getPlayer(socket.id) as Player;
@@ -48,7 +49,7 @@ export class SocketGameService extends SocketHandlerService {
         if (this.chatMessageService.isError) {
             this.chatMessageService.message.sender = SYSTEM_NAME;
             this.chatMessageService.message.color = MessageSenderColors.SYSTEM;
-            this.sendToEveryoneInRoom(socket.id, 'message', this.chatMessageService.message);
+            this.sendToEveryoneInRoom(socket.id, SocketEvent.Message, this.chatMessageService.message);
             return;
         }
         if (room.turnPassedCounter >= COUNT_PLAYER_TURN) {
@@ -58,7 +59,7 @@ export class SocketGameService extends SocketHandlerService {
         this.notifyViewBasedOnCommandResult(executionResult, room, commandSender, socket);
         const currentTurnPlayer = room.getCurrentPlayerTurn();
         if (!currentTurnPlayer) return;
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'playerTurnChanged', currentTurnPlayer.pseudo);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
         if (!room.isGameFinished()) return;
         this.handleGamePlaceFinish(room, socket.id);
     }
@@ -74,10 +75,10 @@ export class SocketGameService extends SocketHandlerService {
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
-        this.socketEmit(socket, 'updatePlayerScore', player);
-        this.sendToEveryoneInRoom(roomName, 'playerTurnChanged', currentTurnPlayer.pseudo);
-        this.socketEmit(socket, 'lettersBankCountUpdated', room.letterBank.getLettersCount());
-        this.socketEmit(socket, 'drawRack', player.rack.getLetters());
+        this.socketEmit(socket, SocketEvent.UpdatePlayerScore, player);
+        this.sendToEveryoneInRoom(roomName, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
+        this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
+        this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
 
         if (room.hasTimer()) return;
         this.setTimer(room);
@@ -97,14 +98,14 @@ export class SocketGameService extends SocketHandlerService {
         const roomName = this.getSocketRoom(socket) as string;
         const room = this.roomService.getRoom(roomName);
         if (!room) {
-            this.sendToEveryoneInRoom(roomName, 'botPlayedAction', FullCommandVerbs.SKIP);
+            this.sendToEveryoneInRoom(roomName, SocketEvent.BotPlayedAction, FullCommandVerbs.SKIP);
             return;
         }
 
         await Timer.wait(THREE_SECONDS_IN_MS);
         const message = await room.bot.playTurn();
-        this.sendToEveryoneInRoom(roomName, 'botPlayedAction', message);
-        this.socketEmitRoom(socket, roomName, 'message', { text: message, sender: room.bot.pseudo, color: MessageSenderColors.PLAYER2 });
+        this.sendToEveryoneInRoom(roomName, SocketEvent.BotPlayedAction, message);
+        this.socketEmitRoom(socket, roomName, SocketEvent.Message, { text: message, sender: room.bot.pseudo, color: MessageSenderColors.PLAYER2 });
     }
 
     setTimer(room: Room) {
@@ -119,21 +120,21 @@ export class SocketGameService extends SocketHandlerService {
             if (room.elapsedTime >= +room.roomInfo.timerPerTurn) {
                 const currentPlayer = room.getCurrentPlayerTurn();
                 if (!currentPlayer) return;
-                this.sendToEveryoneInRoom(currentPlayer.socketId, 'message', {
+                this.sendToEveryoneInRoom(currentPlayer.socketId, SocketEvent.Message, {
                     text: '!passer',
                     sender: 'Vous',
                     color: MessageSenderColors.PLAYER1,
                 });
                 const otherPlayer = room.players.find((playerInRoom) => playerInRoom !== currentPlayer);
                 if (!otherPlayer) return;
-                this.sendToEveryoneInRoom(otherPlayer.socketId, 'message', {
+                this.sendToEveryoneInRoom(otherPlayer.socketId, SocketEvent.Message, {
                     text: `${currentPlayer.pseudo} a passé son tour`,
                     sender: SYSTEM_NAME,
                     color: MessageSenderColors.SYSTEM,
                 });
                 this.changeTurn(room);
             } else {
-                this.sendToEveryoneInRoom(room.roomInfo.name, 'timeUpdated', room);
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.TimeUpdated, room);
             }
         }, ONE_SECOND_IN_MS);
     }
@@ -150,13 +151,13 @@ export class SocketGameService extends SocketHandlerService {
 
         const currentTurnPlayer = room.getCurrentPlayerTurn();
         if (!currentTurnPlayer) return;
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'playerTurnChanged', currentTurnPlayer.pseudo);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
         return;
     }
 
     private handleBotGreeting(name: string, greeting: string, roomName: string) {
         const chatMessage: ChatMessage = { sender: name, text: greeting, color: MessageSenderColors.PLAYER2 };
-        this.sendToEveryoneInRoom(roomName, 'message', chatMessage);
+        this.sendToEveryoneInRoom(roomName, SocketEvent.Message, chatMessage);
     }
 
     private isRoomAndPlayerValid(socket: io.Socket, roomName: string): boolean {
@@ -176,15 +177,15 @@ export class SocketGameService extends SocketHandlerService {
         if (!report || !room || !sender) return;
         switch (report.commandType) {
             case CommandVerbs.PLACE:
-                this.sendToEveryoneInRoom(room.roomInfo.name, 'drawBoard', report.commandData);
-                this.sendToEveryoneInRoom(room.roomInfo.name, 'updatePlayerScore', sender);
-                this.sendToEveryoneInRoom(sender.socketId, 'drawRack', sender.rack.getLetters());
-                this.sendToEveryoneInRoom(room.roomInfo.name, 'lettersBankCountUpdated', room.letterBank.getLettersCount());
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.DrawBoard, report.commandData);
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, sender);
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
                 sender.addCommand(report);
                 break;
             case CommandVerbs.SWITCH:
-                this.sendToEveryoneInRoom(sender.socketId, 'drawRack', sender.rack.getLetters());
-                this.sendToEveryoneInRoom(sender.socketId, 'message', {
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
                     text: report.messageToSender,
                     sender: SYSTEM_NAME,
                     color: MessageSenderColors.SYSTEM,
@@ -192,28 +193,28 @@ export class SocketGameService extends SocketHandlerService {
                 if (!socket) return;
                 socket
                     .to(room.roomInfo.name)
-                    .emit('message', { text: report.messageToOthers, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM });
+                    .emit(SocketEvent.Message, { text: report.messageToOthers, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM });
                 sender.addCommand(report);
                 break;
             case CommandVerbs.SKIP:
                 sender.addCommand(report);
                 break;
             case CommandVerbs.BANK:
-                this.sendToEveryoneInRoom(sender.socketId, 'message', {
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
                     text: report.messageToSender,
                     sender: SYSTEM_NAME,
                     color: MessageSenderColors.SYSTEM,
                 });
                 break;
             case CommandVerbs.HINT:
-                this.sendToEveryoneInRoom(sender.socketId, 'message', {
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
                     text: report.messageToSender,
                     sender: SYSTEM_NAME,
                     color: MessageSenderColors.SYSTEM,
                 });
                 break;
             case CommandVerbs.HELP:
-                this.sendToEveryoneInRoom(sender.socketId, 'message', {
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
                     text: report.messageToSender,
                     sender: SYSTEM_NAME,
                     color: MessageSenderColors.SYSTEM,
@@ -223,10 +224,10 @@ export class SocketGameService extends SocketHandlerService {
 
         if (report.message) {
             const systemMessage: ChatMessage = { text: report.message, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
-            this.sendToEveryoneInRoom(room.roomInfo.name, 'message', systemMessage);
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemMessage);
         }
         if (room.roomInfo.gameType !== 'log2990') return;
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'goalsUpdated', room.getAllGoals());
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
         this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
     }
     private communicateNewAchievements(roomName: string, goalsReached: ReachedGoal[]) {
@@ -237,7 +238,7 @@ export class SocketGameService extends SocketHandlerService {
                 sender: SYSTEM_NAME,
                 color: MessageSenderColors.GOALS,
             };
-            this.sendToEveryoneInRoom(roomName, 'message', goalMessage);
+            this.sendToEveryoneInRoom(roomName, SocketEvent.Message, goalMessage);
             goal.communicated = true;
         });
     }
@@ -252,7 +253,7 @@ export class SocketGameService extends SocketHandlerService {
         room.elapsedTime = END_TIMER_VALUE; // to clear the interval
         this.updateLeaderboard(room);
         this.updateGame(room);
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'gameIsOver', [winner]);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, [winner]);
         this.displayGameResume(room);
     }
 
@@ -262,12 +263,12 @@ export class SocketGameService extends SocketHandlerService {
         const player = room.getPlayer(socket.id);
         if (!player) return;
 
-        this.socketEmit(socket, 'updatePlayerScore', player);
-        this.socketEmit(socket, 'lettersBankCountUpdated', room.letterBank.getLettersCount());
+        this.socketEmit(socket, SocketEvent.UpdatePlayerScore, player);
+        this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
 
         const currentPlayerTurn = room.getCurrentPlayerTurn();
         if (!currentPlayerTurn) return;
-        this.socketEmit(socket, 'playerTurnChanged', currentPlayerTurn.pseudo);
+        this.socketEmit(socket, SocketEvent.PlayerTurnChanged, currentPlayerTurn.pseudo);
     }
 
     private handleGamePassFinish(room: Room) {
@@ -278,7 +279,7 @@ export class SocketGameService extends SocketHandlerService {
         this.updateLeaderboard(room);
         this.updateGame(room);
         room.elapsedTime = END_TIMER_VALUE; // to clear the interval
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'gameIsOver', room.getWinner());
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, room.getWinner());
         this.displayGameResume(room);
     }
 
@@ -287,7 +288,7 @@ export class SocketGameService extends SocketHandlerService {
             if (!player || !player.rack || !room.letterBank) {
                 continue;
             }
-            this.sendToEveryoneInRoom(room.roomInfo.name, 'updatePlayerScore', player);
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, player);
         }
     }
 

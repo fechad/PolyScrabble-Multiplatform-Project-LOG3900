@@ -19,15 +19,15 @@
         <div class="chat">
             <div
                 *ngFor="let chat of chats"
-                [class.my-message]="chat.sender === 'me'"
-                [class.their-message]="chat.sender !== 'me' && !chat.system"
+                [class.my-message]="isSender(chat)"
+                [class.their-message]="!isSender(chat) && !chat.system"
                 [class.system-message]="chat.system"
             >
                 <p class="hour">{{ chat.time }}</p>
-                <div *ngIf="!chat.system" class="bubble-text" [class.my]="chat.sender === 'me'" [class.their]="chat.sender !== 'me' && !chat.system">
-                    <p *ngIf="chat.sender === 'me'">{{ chat.message }}</p>
-                    <p *ngIf="chat.sender !== 'me'" class="name">{{ chat.sender }}</p>
-                    <p *ngIf="chat.sender !== 'me'">{{ chat.message }}</p>
+                <div *ngIf="!chat.system" class="bubble-text" [class.my]="isSender(chat)" [class.their]="!isSender(chat) && !chat.system">
+                    <p *ngIf="isSender(chat)">{{ chat.message }}</p>
+                    <p *ngIf="!isSender(chat)" class="name">{{ chat.sender }}</p>
+                    <p *ngIf="!isSender(chat)">{{ chat.message }}</p>
                 </div>
                 <hr *ngIf="chat.system" style="margin-top: 0%" width="10%" size="1" />
                 <p *ngIf="chat.system">{{ chat.message }}</p>

@@ -7,6 +7,7 @@ import { Room } from '@app/classes/room';
 import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { DEFAULT_RACK_HEIGHT, DEFAULT_RACK_WIDTH } from '@app/constants/rack-constants';
 import { Direction } from '@app/enums/direction';
+import { SocketEvent } from '@app/enums/socket-event';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { LetterTileService } from '@app/services/letter-tile.service';
 import { RackGridService } from '@app/services/rack-grid.service';
@@ -144,7 +145,7 @@ export class RackComponent implements OnInit, AfterViewInit {
             }
             if (this.socketService.isSocketAlive()) {
                 this.configureBaseSocketFeatures();
-                this.socketService.send('getRackInfos', this.room.roomInfo.name);
+                this.socketService.send(SocketEvent.GetRackInfos, this.room.roomInfo.name);
                 clearInterval(timerInterval);
             }
             secondPassed++;
@@ -152,7 +153,7 @@ export class RackComponent implements OnInit, AfterViewInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('drawRack', (letters: string) => {
+        this.socketService.on(SocketEvent.DrawRack, (letters: string) => {
             this.rack.updateRack(letters);
         });
     }

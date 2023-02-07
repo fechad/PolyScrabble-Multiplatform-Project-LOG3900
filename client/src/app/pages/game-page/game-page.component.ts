@@ -5,6 +5,7 @@ import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
+import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -37,7 +38,7 @@ export class GamePageComponent implements OnInit {
         this.connect();
         const session = this.sessionStorageService.getPlayerData('data');
         if (this.room.roomInfo.name === '') {
-            this.socketService.send('reconnect', { socketId: session.socketId, roomName: session.roomName });
+            this.socketService.send(SocketEvent.Reconnect, { socketId: session.socketId, roomName: session.roomName });
             return;
         }
         this.startGame();
@@ -50,19 +51,19 @@ export class GamePageComponent implements OnInit {
     }
 
     startGame() {
-        this.socketService.send('startGame');
+        this.socketService.send(SocketEvent.StartGame);
     }
 
     helpCommand() {
-        this.socketService.send('message', '!aide');
+        this.socketService.send(SocketEvent.Message, '!aide');
     }
 
     hintCommand() {
-        this.socketService.send('message', '!indice');
+        this.socketService.send(SocketEvent.Message, '!indice');
     }
 
     letterBankCommand() {
-        this.socketService.send('message', '!réserve');
+        this.socketService.send(SocketEvent.Message, '!réserve');
     }
 
     leaveGame() {
@@ -102,7 +103,7 @@ export class GamePageComponent implements OnInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('reconnected', (data: { room: Room; player: Player }) => {
+        this.socketService.on(SocketEvent.Reconnected, (data: { room: Room; player: Player }) => {
             this.setRoom(data.room);
             this.setPlayer(data.player);
             this.sessionStorageService.setItem('data', JSON.stringify({ socketId: data.player.socketId, roomName: data.room.roomInfo.name }));

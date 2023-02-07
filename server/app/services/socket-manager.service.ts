@@ -1,5 +1,6 @@
 import { Room } from '@app/classes/room-model/room';
 import { CommandController } from '@app/controllers/command.controller';
+import { SocketEvent } from '@app/enums/socket-event';
 import { Account } from '@app/interfaces/account';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
@@ -68,113 +69,113 @@ export class SocketManager {
     }
 
     handleSockets() {
-        this.sio.on('connection', (socket) => {
-            socket.on('disconnecting', () => {
+        this.sio.on(SocketEvent.Connection, (socket) => {
+            socket.on(SocketEvent.Disconnection, () => {
                 this.socketHandlerService.handleDisconnecting(socket);
             });
 
-            socket.on('reconnect', (playerData: PlayerData) => {
+            socket.on(SocketEvent.Reconnect, (playerData: PlayerData) => {
                 this.socketHandlerService.handleReconnect(socket, playerData);
             });
 
-            socket.on('getPlayerInfos', (roomName) => {
+            socket.on(SocketEvent.GetPlayerInfos, (roomName: string) => {
                 this.socketGameService.handleGetPlayerInfo(socket, roomName);
             });
 
-            socket.on('getRackInfos', (roomName) => {
+            socket.on(SocketEvent.GetRackInfos, (roomName: string) => {
                 this.socketGameService.handleGetRackInfo(socket, roomName);
             });
 
-            socket.on('joinRoom', (room: Room) => {
+            socket.on(SocketEvent.JoinRoom, (room: Room) => {
                 this.socketRoomService.handleJoinRoom(socket, room);
             });
 
-            socket.on('createChatChannel', (channel: string, username: Account) => {
-                this.socketChannelService.handleCreateChannel(socket, channel, username);
+            socket.on(SocketEvent.CreateChatChannel, (channel: string, username: Account) => {
+                this.socketChannelService.handleCreateChannel(channel, username);
             });
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            socket.on('joinChatChannel', (data: any) => {
+            socket.on(SocketEvent.JoinChatChannel, (data: any) => {
                 this.socketChannelService.handleJoinChannel(socket, data.name, data.user);
             });
 
-            socket.on('leaveChatChannel', (channel: string, username: string) => {
+            socket.on(SocketEvent.LeaveChatChannel, (channel: string, username: string) => {
                 this.socketChannelService.handleLeaveChannel(socket, channel, username);
             });
 
-            socket.on('creatorLeaveChatChannel', (channel: string) => {
+            socket.on(SocketEvent.CreatorLeaveChatChannel, (channel: string) => {
                 this.socketChannelService.handleLeaveChannelCreator(socket, channel);
             });
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            socket.on('chatChannelMessage', (data: any) => {
+            socket.on(SocketEvent.ChatChannelMessage, (data: any) => {
                 this.socketChannelService.handleChatChannelMessage(data.channelName, data);
             });
 
-            socket.on('getDiscussionChannels', () => {
+            socket.on(SocketEvent.GetDiscussionChannels, () => {
                 this.socketChannelService.handleGetDiscussionChannels(socket);
             });
 
-            socket.on('joinRoomSolo', (room: Room) => {
+            socket.on(SocketEvent.JoinRoomSolo, (room: Room) => {
                 this.socketRoomService.handleJoinRoomSolo(socket, room);
             });
 
-            socket.on('joinRoomSoloBot', (data: { roomName: string; botName: string; isExpertLevel: boolean }) => {
+            socket.on(SocketEvent.JoinRoomSoloBot, (data: { roomName: string; botName: string; isExpertLevel: boolean }) => {
                 this.socketRoomService.handleJoinRoomSoloBot(socket, data);
             });
 
-            socket.on('convertToRoomSoloBot', (data: { roomName: string; botName: string; points: number; isExpertLevel: boolean }) => {
+            socket.on(SocketEvent.ConvertToRoomSoloBot, (data: { roomName: string; botName: string; points: number; isExpertLevel: boolean }) => {
                 this.socketHandlerService.handleConvertToRoomSoloBot(socket, data);
                 const room = this.socketRoomService.roomService.getRoom(data.roomName);
                 this.socketGameService.handleChangeTurn(socket, room?.getCurrentPlayerTurn()?.pseudo as string);
                 this.socketGameService.sendToEveryoneInRoom(data.roomName, 'playerTurnChanged', room?.getCurrentPlayerTurn()?.pseudo);
             });
 
-            socket.on('leaveRoomCreator', (roomName: string) => {
+            socket.on(SocketEvent.LeaveRoomCreator, (roomName: string) => {
                 this.socketRoomService.handleLeaveRoomCreator(socket, roomName);
             });
 
-            socket.on('leaveRoomOther', (roomName: string) => {
+            socket.on(SocketEvent.LeaveRoomOther, (roomName: string) => {
                 this.socketRoomService.handleLeaveRoomOther(socket, roomName);
             });
 
-            socket.on('setRoomAvailable', (roomName: string) => {
+            socket.on(SocketEvent.SetRoomAvailable, (roomName: string) => {
                 this.socketRoomService.handleSetRoomAvailable(socket, roomName);
             });
 
-            socket.on('askToJoin', (room: Room) => {
+            socket.on(SocketEvent.AskToJoin, (room: Room) => {
                 this.socketRoomService.handleAskToJoin(socket, room);
             });
 
-            socket.on('acceptPlayer', (room: Room) => {
+            socket.on(SocketEvent.AcceptPlayer, (room: Room) => {
                 this.socketRoomService.handleAcceptPlayer(socket, room);
             });
 
-            socket.on('rejectPlayer', (room: Room) => {
+            socket.on(SocketEvent.RejectPlayer, (room: Room) => {
                 this.socketRoomService.handleRejectPlayer(socket, room);
             });
 
-            socket.on('message', (message: string) => {
+            socket.on(SocketEvent.Message, (message: string) => {
                 this.socketGameService.handleMessage(socket, message);
             });
 
-            socket.on('availableRooms', () => {
+            socket.on(SocketEvent.AvailableRooms, () => {
                 this.socketRoomService.handleAvailableRooms(socket);
             });
 
-            socket.on('startGame', () => {
+            socket.on(SocketEvent.StartGame, () => {
                 this.socketGameService.handleStartGame(socket);
             });
 
-            socket.on('changeTurn', (roomName: string) => {
+            socket.on(SocketEvent.ChangeTurn, (roomName: string) => {
                 this.socketGameService.handleChangeTurn(socket, roomName);
             });
 
-            socket.on('botPlayAction', async () => {
+            socket.on(SocketEvent.BotPlayAction, async () => {
                 await this.socketGameService.handleBotPlayAction(socket);
             });
 
-            socket.on('getAllGoals', () => {
+            socket.on(SocketEvent.GetAllGoals, () => {
                 this.socketGameService.handleGetAllGoals(socket);
             });
         });

@@ -5,6 +5,7 @@ import { GameData } from '@app/classes/game-data';
 import { Room } from '@app/classes/room';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { GONE_RESSOURCE_MESSAGE } from '@app/constants/http-constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { GameDataService } from '@app/services/game-data.service';
 import { HttpService } from '@app/services/http.service';
@@ -54,7 +55,7 @@ export class GameWaitMultiplayerPageComponent implements OnInit {
     }
 
     leaveRoom() {
-        this.socketService.send('leaveRoomCreator', this.room.roomInfo.name);
+        this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
         this.rejectPlayer();
     }
 
@@ -65,16 +66,16 @@ export class GameWaitMultiplayerPageComponent implements OnInit {
             return;
         }
         this.room.currentPlayerPseudo = this.playerName;
-        this.socketService.send('acceptPlayer', this.room);
+        this.socketService.send(SocketEvent.AcceptPlayer, this.room);
         this.router.navigate(['/game']);
     }
 
     rejectPlayer() {
-        this.socketService.send('rejectPlayer', this.room);
+        this.socketService.send(SocketEvent.RejectPlayer, this.room);
     }
 
     onGoToSolo() {
-        this.socketService.send('leaveRoomCreator', this.room.roomInfo.name);
+        this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
     }
 
     private handleHttpError() {
@@ -116,12 +117,12 @@ export class GameWaitMultiplayerPageComponent implements OnInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('playerFound', (room: Room) => {
+        this.socketService.on(SocketEvent.PlayerFound, (room: Room) => {
             this.room.players = room.players;
             this.otherPlayerExist = true;
         });
 
-        this.socketService.on('playerLeft', () => {
+        this.socketService.on(SocketEvent.PlayerLeft, () => {
             sessionStorage.removeItem('data');
             const playerToRemove = this.room.players[1];
             if (playerToRemove) {
@@ -129,7 +130,7 @@ export class GameWaitMultiplayerPageComponent implements OnInit {
             }
             this.otherPlayerExist = false;
 
-            this.socketService.send('setRoomAvailable', this.room.roomInfo.name);
+            this.socketService.send(SocketEvent.SetRoomAvailable, this.room.roomInfo.name);
         });
     }
 }

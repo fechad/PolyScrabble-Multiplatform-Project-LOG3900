@@ -5,6 +5,7 @@ import { LOG_2990_GAME_TYPE, MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@a
 import { ERROR, RACK_CAPACITY } from '@app/constants/rack-constants';
 import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalTitle } from '@app/enums/goal-titles';
+import { SocketEvent } from '@app/enums/socket-event';
 import { Goal } from '@app/interfaces/goal';
 import { SocketClientService } from '@app/services/socket-client.service';
 
@@ -40,7 +41,7 @@ export class GoalsContainerComponent implements OnInit {
     ngOnInit() {
         this.connect();
         if (this.room.roomInfo.gameType !== LOG_2990_GAME_TYPE) return;
-        this.socketService.send('getAllGoals');
+        this.socketService.send(SocketEvent.GetAllGoals);
     }
 
     private setOtherPlayerPrivateGoal(goal: Goal) {
@@ -69,7 +70,7 @@ export class GoalsContainerComponent implements OnInit {
             }
             if (this.socketService.isSocketAlive()) {
                 this.configureBaseSocketFeatures();
-                this.socketService.send('getAllGoals');
+                this.socketService.send(SocketEvent.GetAllGoals);
                 clearInterval(timerInterval);
             }
             secondPassed++;
@@ -77,14 +78,14 @@ export class GoalsContainerComponent implements OnInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('lettersBankCountUpdated', (lettersBankCount: number) => {
+        this.socketService.on(SocketEvent.LettersBankCountUpdated, (lettersBankCount: number) => {
             this.lettersBankCount = lettersBankCount;
             if (lettersBankCount < RACK_CAPACITY) {
                 this.room.isBankUsable = false;
             }
         });
 
-        this.socketService.on('goalsUpdated', (goals: Goal[]) => {
+        this.socketService.on(SocketEvent.GoalsUpdated, (goals: Goal[]) => {
             this.publicGoals = goals.filter((goal) => goal.isPublic);
 
             goals.forEach((goal) => {
