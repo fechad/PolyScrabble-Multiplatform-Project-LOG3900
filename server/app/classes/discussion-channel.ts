@@ -24,7 +24,7 @@ export class DiscussionChannel {
             channelName: this.name,
             system: true,
             message: `${username} has joined the chat!`,
-            time: new Date().toLocaleTimeString(),
+            time: new Date().toLocaleTimeString([], { hour12: false }),
         };
         this.addMessage(newMessage);
         return newMessage;
@@ -36,7 +36,7 @@ export class DiscussionChannel {
             channelName: this.name,
             system: true,
             message: `${username} has left the chat!`,
-            time: new Date().toLocaleTimeString(),
+            time: new Date().toLocaleTimeString([], { hour12: false }),
         };
         this.addMessage(newMessage);
         return newMessage;

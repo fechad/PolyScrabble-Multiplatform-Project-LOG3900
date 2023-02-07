@@ -22,6 +22,7 @@ import {
     specialCases,
 } from '@app/constants/board-constants';
 import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { BoardGridService } from '@app/services/board-grid.service';
 import { BoardService } from '@app/services/board.service';
@@ -147,13 +148,13 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     }
 
     changePlayerTurn() {
-        this.socketService.send('message', '!passer');
+        this.socketService.send(SocketEvent.Message, '!passer');
     }
 
     confirmPlacement() {
         if (this.commandInvoker.commandMessage.length === 0) return;
         this.focusHandlerService.clientChatMessage.next(this.commandInvoker.commandMessage);
-        this.socketService.send('message', this.commandInvoker.commandMessage);
+        this.socketService.send(SocketEvent.Message, this.commandInvoker.commandMessage);
 
         this.handleGoodPlacement();
 
@@ -205,7 +206,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('drawBoard', (placementData: PlacementData) => {
+        this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
             const rowNumber = this.matchRowNumber(placementData.row) as number;
             this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
         });
@@ -237,7 +238,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
         setTimeout(() => {
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             if (!this.player.isItsTurn) return;
-            this.socketService.send('changeTurn', this.room.roomInfo.name);
+            this.socketService.send(SocketEvent.ChangeTurn, this.room.roomInfo.name);
         }, ONE_SECOND_IN_MS * 3);
     }
 

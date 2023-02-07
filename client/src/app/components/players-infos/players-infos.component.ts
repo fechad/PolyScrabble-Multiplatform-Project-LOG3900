@@ -5,6 +5,7 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { EndGamePopupComponent } from '@app/components/endgame-popup/endgame-popup.component';
 import { BASE_TEN, MAX_RECONNECTION_DELAY, MINUTE_IN_SECOND, ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { Bot } from '@app/interfaces/bot';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -129,7 +130,7 @@ export class PlayersInfosComponent implements OnInit {
             }
             if (this.socketService.isSocketAlive() && this.socketClientBotService.isSocketAlive()) {
                 this.configureBaseSocketFeatures();
-                this.socketService.send('getPlayerInfos', this.room.roomInfo.name);
+                this.socketService.send(SocketEvent.GetPlayerInfos, this.room.roomInfo.name);
                 clearInterval(timerInterval);
             }
             secondPassed++;
@@ -137,26 +138,26 @@ export class PlayersInfosComponent implements OnInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('playerTurnChanged', (currentPlayerTurnPseudo: string) => {
+        this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.player.isItsTurn) {
                 this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             }
             this.currentPlayerTurnPseudo = currentPlayerTurnPseudo;
             this.player.isItsTurn = this.player.pseudo === currentPlayerTurnPseudo;
             if (this.room.roomInfo.isSolo && this.bot && this.bot.pseudo === currentPlayerTurnPseudo) {
-                this.socketClientBotService.send('botPlayAction');
+                this.socketClientBotService.send(SocketEvent.BotPlayAction);
             }
         });
 
-        this.socketService.on('timeUpdated', (room: Room) => {
+        this.socketService.on(SocketEvent.TimeUpdated, (room: Room) => {
             this.remainingTime = Math.max(+room.roomInfo.timerPerTurn - room.elapsedTime, 0);
         });
 
-        this.socketService.on('playerLeft', (player: Player) => {
+        this.socketService.on(SocketEvent.PlayerLeft, (player: Player) => {
             const beginnersNames = this.beginners.map((e) => e.name);
             const botName = beginnersNames.filter((name) => name !== this.player.pseudo)[Math.floor(Math.random() * beginnersNames.length)];
 
-            this.socketClientBotService.send('convertToRoomSoloBot', {
+            this.socketClientBotService.send(SocketEvent.ConvertToRoomSoloBot, {
                 roomName: this.room.roomInfo.name,
                 botName,
                 points: player.points,
@@ -165,7 +166,7 @@ export class PlayersInfosComponent implements OnInit {
             this.sessionStorageService.removeItem('data');
         });
 
-        this.socketService.on('gameIsOver', (winnerArray: Player[]) => {
+        this.socketService.on(SocketEvent.GameIsOver, (winnerArray: Player[]) => {
             this.room.roomInfo.isGameOver = true;
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             this.setPlayersTurnToFalse();
@@ -173,17 +174,17 @@ export class PlayersInfosComponent implements OnInit {
             this.showEndGameDialog();
         });
 
-        this.socketService.on('updatePlayerScore', (player: Player) => {
+        this.socketService.on(SocketEvent.UpdatePlayerScore, (player: Player) => {
             const playerToUpdate = this.getPlayer(player.pseudo);
             if (!playerToUpdate) return;
             playerToUpdate.points = player.points;
         });
 
-        this.socketService.on('convertToRoomSoloBotStatus', () => {
+        this.socketService.on(SocketEvent.ConvertToRoomSoloBotStatus, () => {
             this.room.roomInfo.isSolo = true;
         });
 
-        this.socketService.on('botInfos', (bot: Player) => {
+        this.socketService.on(SocketEvent.BotInfos, (bot: Player) => {
             this.bot = bot;
             if (this.room.players.length === 1) {
                 this.room.players.push(bot);
@@ -194,8 +195,8 @@ export class PlayersInfosComponent implements OnInit {
             this.room.players[this.room.players.indexOf(playerToSwap)] = bot;
         });
 
-        this.socketClientBotService.on('botPlayedAction', (message: string) => {
-            this.socketClientBotService.send('message', message);
+        this.socketClientBotService.on(SocketEvent.BotPlayedAction, (message: string) => {
+            this.socketClientBotService.send(SocketEvent.Message, message);
         });
     }
 

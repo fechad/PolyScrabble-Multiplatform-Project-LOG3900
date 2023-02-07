@@ -2,6 +2,7 @@ import { Room } from '@app/classes/room-model/room';
 import { COUNT_PLAYER_TURN, DEFAULT_ROOM_NAME, DISCONNECT_DELAY, END_TIMER_VALUE, SYSTEM_NAME } from '@app/constants/constants';
 import { CommandController } from '@app/controllers/command.controller';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
+import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
 import { Game } from '@app/interfaces/game';
 import { PlayerData } from '@app/interfaces/player-data';
@@ -34,19 +35,19 @@ export class SocketHandlerService {
         room.roomInfo.isSolo = true;
         room.bot.points = data.points;
         this.socketJoin(socket, room.roomInfo.name);
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'botInfos', room.bot);
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'convertToRoomSoloBotStatus');
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotInfos, room.bot);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ConvertToRoomSoloBotStatus);
         this.roomService.setUnavailable(room.roomInfo.name);
-        this.sendToEveryone('updateAvailableRoom', this.roomService.getRoomsAvailable());
+        this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
 
         const systemAlert: ChatMessage = {
             sender: SYSTEM_NAME,
             color: MessageSenderColors.SYSTEM,
             text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + room.bot.pseudo,
         };
-        this.sendToEveryone('message', systemAlert);
+        this.sendToEveryone(SocketEvent.Message, systemAlert);
         const botGreeting: ChatMessage = { sender: room.bot.pseudo, color: MessageSenderColors.PLAYER2, text: room.bot.greeting };
-        this.sendToEveryone('message', botGreeting);
+        this.sendToEveryone(SocketEvent.Message, botGreeting);
     }
 
     sendToEveryoneInRoom(roomName: string, nameEvent: string, dataEvent?: unknown) {
@@ -90,14 +91,14 @@ export class SocketHandlerService {
                     player.points = 0;
                     this.sendToEveryoneInRoom(
                         roomName,
-                        'gameIsOver',
+                        SocketEvent.GameIsOver,
                         room.players.filter((playerInRoom) => playerInRoom !== player),
                     );
                     this.displayGameResume(room);
                 }
                 room.removePlayer(player);
-                this.socketEmitRoom(socket, roomName, 'playerLeft', player);
-                this.sendToEveryoneInRoom(room.roomInfo.name, 'playerTurnChanged', room.getCurrentPlayerTurn()?.pseudo);
+                this.socketEmitRoom(socket, roomName, SocketEvent.PlayerLeft, player);
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
             }, DISCONNECT_DELAY);
         }
         this.sendToEveryone('updateAvailableRoom', this.roomService.getRoomsAvailable());
@@ -112,7 +113,7 @@ export class SocketHandlerService {
 
         player.socketId = socket.id;
         this.socketJoin(socket, playerData.roomName);
-        this.socketEmit(socket, 'reconnected', { room, player });
+        this.socketEmit(socket, SocketEvent.Reconnected, { room, player });
     }
 
     getSocketRoom(socket: io.Socket): string | undefined {
@@ -136,7 +137,7 @@ export class SocketHandlerService {
             sender: SYSTEM_NAME,
             color: MessageSenderColors.SYSTEM,
         };
-        this.sendToEveryoneInRoom(room.roomInfo.name, 'message', chatMessage);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, chatMessage);
     }
 
     updateLeaderboard(room: Room) {
@@ -153,6 +154,7 @@ export class SocketHandlerService {
             this.scoreService.updateBestScore(score);
         }
     }
+
     protected async updateGame(room: Room) {
         const game: Game = {
             date: room.startDate.toUTCString(),

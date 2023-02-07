@@ -10,6 +10,7 @@ import {
     ROOM_ERROR,
     WAITING_FOR_CONFIRMATION,
 } from '@app/constants/status-constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -75,7 +76,7 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         this.player.socketId = this.socketService.socket.id;
         this.setRoomServerToThisRoom(creatorRoom);
         this.room.addPlayer(this.player);
-        this.socketService.send('askToJoin', this.room);
+        this.socketService.send(SocketEvent.AskToJoin, this.room);
     }
 
     joinRandomRoom() {
@@ -86,11 +87,11 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
     }
 
     getAvailableRooms() {
-        this.socketService.send('availableRooms');
+        this.socketService.send(SocketEvent.AvailableRooms);
     }
 
     leaveRoom(roomName: string) {
-        this.socketService.send('leaveRoomOther', roomName);
+        this.socketService.send(SocketEvent.LeaveRoomOther, roomName);
         this.room.roomInfo.name = '';
         this.isInRoom = false;
         this.isRejected = true;
@@ -118,18 +119,18 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('playerAccepted', (roomCreator: Room) => {
+        this.socketService.on(SocketEvent.PlayerAccepted, (roomCreator: Room) => {
             sessionStorage.removeItem('data');
             this.setRoomServerToThisRoom(roomCreator);
             this.room.currentPlayerPseudo = this.pseudo;
             this.router.navigate(['/game']);
         });
 
-        this.socketService.on('playerRejected', (roomCreator: Room) => {
+        this.socketService.on(SocketEvent.PlayerRejected, (roomCreator: Room) => {
             this.leaveRoom(roomCreator.roomInfo.name);
         });
 
-        this.socketService.on('updateAvailableRoom', (rooms: Room[]) => {
+        this.socketService.on(SocketEvent.UpdateAvailableRoom, (rooms: Room[]) => {
             this.availableRooms = rooms;
         });
     }

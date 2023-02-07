@@ -5,6 +5,7 @@ import { GameData } from '@app/classes/game-data';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { GONE_RESSOURCE_MESSAGE } from '@app/constants/http-constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { HttpService } from '@app/services/http.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -60,7 +61,7 @@ export class StartGameSoloComponent implements OnInit {
     }
 
     configureBaseSocketFeatures() {
-        this.socketService.on('joinRoomSoloStatus', (serverRoomName: string) => {
+        this.socketService.on(SocketEvent.JoinRoomSoloStatus, (serverRoomName: string) => {
             this.onProcess = false;
             if (!serverRoomName.startsWith('Room')) return;
             this.room.roomInfo.name = serverRoomName;
@@ -70,7 +71,7 @@ export class StartGameSoloComponent implements OnInit {
                 isExpertLevel: this.gameData?.isExpertLevel || false,
             });
         });
-        this.socketService.on('botInfos', (bot: Player) => {
+        this.socketService.on(SocketEvent.BotInfos, (bot: Player) => {
             this.room.players[1] = bot;
             this.router.navigate(['/game']);
         });
@@ -106,7 +107,7 @@ export class StartGameSoloComponent implements OnInit {
         this.setRoomInfo(pseudo);
         this.setPlayerInfo(pseudo);
         this.onProcess = true;
-        this.socketService.send('joinRoomSolo', this.room);
+        this.socketService.send(SocketEvent.JoinRoomSolo, this.room);
     }
 
     private dictionaryExists(): boolean {

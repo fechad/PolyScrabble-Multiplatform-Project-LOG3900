@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { CurrentFocus } from '@app/classes/current-focus';
 import { MAX_MESSAGE_LENGTH, MAX_RECONNECTION_DELAY, MIN_MESSAGE_LENGTH, ONE_SECOND_IN_MS, SERVER_RESPONSE_DELAY } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
+import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/message';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -79,8 +80,7 @@ export class ChatComponent implements OnInit {
     }
 
     sendToRoom(text: string) {
-        // TODO: {message: string, userClass: object}
-        this.socketService.send('message', text);
+        this.socketService.send(SocketEvent.Message, text);
         this.waitServerResponse();
     }
 
@@ -131,10 +131,10 @@ export class ChatComponent implements OnInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on('message', (roomMessage: ChatMessage) => {
+        this.socketService.on(SocketEvent.Message, (roomMessage: ChatMessage) => {
             this.addMessage(roomMessage);
         });
-        this.socketService.on('messageReceived', () => {
+        this.socketService.on(SocketEvent.MessageReceived, () => {
             this.serverResponded = true;
         });
     }
