@@ -32,7 +32,7 @@ export class SocketChannelService extends SocketHandlerService {
         if (!channelName) return;
         const message = this.discussionChannelService.joinChannel(channelName, username);
         this.socketJoin(socket, channelName);
-        this.sendToEveryoneInRoom(socket.id, 'channelMessage', message);
+        this.sendToEveryoneInRoom(channelName, 'channelMessage', message);
     }
 
     handleLeaveChannelCreator(socket: io.Socket, channelName: string) {
@@ -47,9 +47,9 @@ export class SocketChannelService extends SocketHandlerService {
         this.socketEmitRoom(socket, channelName, 'channelMessage', message);
     }
 
-    handleChatChannelMessage(socket: io.Socket, channelName: string, message: ChannelMessage) {
+    handleChatChannelMessage(channelName: string, message: ChannelMessage) {
         const messageAdded = this.discussionChannelService.addChannelMessage(channelName, message);
-        if (messageAdded) this.sendToEveryoneInRoom(socket.id, 'channelMessage', message);
+        if (messageAdded) this.sendToEveryoneInRoom(channelName, 'channelMessage', message);
     }
 
     handleGetDiscussionChannels(socket: io.Socket) {

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Room } from '@app/classes/room';
 import { Score } from '@app/classes/score';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
+import { GeneralChatComponent } from '@app/components/general-chat/general-chat.component';
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { HttpService } from '@app/services/http.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
@@ -36,6 +37,16 @@ export class MainPageComponent {
             width: DIALOG_WIDTH,
             autoFocus: true,
             data: scores,
+        });
+    }
+    showGeneralChat() {
+        this.dialog.open(GeneralChatComponent, {
+            width: '100%',
+            maxWidth: '100%',
+            height: '100%',
+            maxHeight: '100%',
+            autoFocus: true,
+            panelClass: 'pop-up-chat',
         });
     }
 
