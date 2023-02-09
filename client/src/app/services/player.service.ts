@@ -7,6 +7,10 @@ import { Player } from '@app/classes/player';
 export class PlayerService {
     player: Player;
 
+    constructor() {
+        this.player = new Player();
+    }
+
     setPlayer(socketId: string, pseudo: string) {
         this.player.pseudo = pseudo;
         this.player.socketId = socketId;

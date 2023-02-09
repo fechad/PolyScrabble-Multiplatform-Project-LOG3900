@@ -23,6 +23,7 @@ export class HttpService {
     private readonly dictionaryBaseUrl: string;
     private readonly botBaseUrl: string;
     private readonly gameBaseUrl: string;
+    private readonly authUrl: string;
     private baseUrl: string;
     private errorMessage: string;
     constructor(private http: HttpClient) {
@@ -30,8 +31,30 @@ export class HttpService {
         this.dictionaryBaseUrl = 'dictionaries';
         this.gameBaseUrl = 'games';
         this.botBaseUrl = 'bots';
+        this.authUrl = 'auth';
         this.baseUrl = environment.serverUrl;
         this.errorMessage = '';
+    }
+
+    getUsernames() {
+        this.clearError();
+        return this.http.get<string[]>(`${this.baseUrl}/${this.authUrl}/usernames`).pipe(catchError(this.handleError<string[]>('getUsers')));
+    }
+
+    loginUser(username: string) {
+        this.clearError();
+        const loginUrl = `${this.baseUrl}/${this.authUrl}/login`;
+        return this.http
+            .put<string>(loginUrl, { username }, { headers: this.createCacheHeaders(), observe: 'response' })
+            .pipe(catchError(this.handleError<HttpResponse<string>>('loginUser')));
+    }
+
+    logoutUser(username: string) {
+        this.clearError();
+        const logoutUrl = `${this.baseUrl}/${this.authUrl}/logout`;
+        return this.http
+            .put<string>(logoutUrl, { username }, { headers: this.createCacheHeaders(), observe: 'response' })
+            .pipe(catchError(this.handleError<HttpResponse<string>>('logoutUser')));
     }
 
     fetchAllScores(): Observable<Score[]> {

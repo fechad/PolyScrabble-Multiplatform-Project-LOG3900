@@ -99,8 +99,8 @@ export class SocketManager {
                 this.socketChannelService.handleJoinChannel(socket, data.name, data.user);
             });
 
-            socket.on(SocketEvent.LeaveChatChannel, (channel: string, username: string) => {
-                this.socketChannelService.handleLeaveChannel(socket, channel, username);
+            socket.on(SocketEvent.LeaveChatChannel, (data: { channel: string; username: string }) => {
+                this.socketChannelService.handleLeaveChannel(socket, data.channel, data.username);
             });
 
             socket.on(SocketEvent.CreatorLeaveChatChannel, (channel: string) => {

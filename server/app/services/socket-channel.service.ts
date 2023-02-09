@@ -31,9 +31,10 @@ export class SocketChannelService extends SocketHandlerService {
 
     handleJoinChannel(socket: io.Socket, channelName: string, username: string) {
         if (!channelName) return;
-        const message = this.discussionChannelService.joinChannel(channelName, username);
+        this.discussionChannelService.joinChannel(channelName, username);
         this.socketJoin(socket, channelName);
-        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, message);
+        const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
+        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
     }
 
     handleLeaveChannelCreator(socket: io.Socket, channelName: string) {
@@ -43,14 +44,18 @@ export class SocketChannelService extends SocketHandlerService {
     }
 
     handleLeaveChannel(socket: io.Socket, channelName: string, username: string) {
-        const message = this.discussionChannelService.leaveChannel(channelName, username);
+        this.discussionChannelService.leaveChannel(channelName, username);
         this.socketLeaveRoom(socket, channelName);
-        this.socketEmitRoom(socket, channelName, SocketEvent.ChannelMessage, message);
+        const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
+        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
     }
 
     handleChatChannelMessage(channelName: string, message: ChannelMessage) {
         const messageAdded = this.discussionChannelService.addChannelMessage(channelName, message);
-        if (messageAdded) this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, message);
+        if (messageAdded) {
+            const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
+            this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
+        }
     }
 
     handleGetDiscussionChannels(socket: io.Socket) {

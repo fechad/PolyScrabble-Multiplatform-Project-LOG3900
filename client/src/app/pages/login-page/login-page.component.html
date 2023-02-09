@@ -7,7 +7,7 @@
                 <div *ngIf="isLoginForm" class="form-title">Connexion</div>
                 <div *ngIf="!isLoginForm" class="form-title">Inscription</div>
 
-                <div *ngIf="!isLoginForm" class="input-container error-msg">
+                <div class="input-container error-msg">
                     <label #usernameLabel (click)="focusInput(usernameInput)" class="simple-label placeholder">Pseudo</label>
                     <input
                         #usernameInput
@@ -24,6 +24,7 @@
                     </div>
                 </div>
 
+                <!--
                 <div class="input-container error-msg">
                     <label #emailLabel (click)="focusInput(emailInput)" class="simple-label placeholder">Courriel</label>
                     <input
@@ -71,13 +72,18 @@
                     />
                     <div class="simple-input-error-msg">{{ invalidConfirmPassWordText }}</div>
                 </div>
-                <button *ngIf="isLoginForm" [disabled]="!areLoginInfoValid" (click)="submitConnection()" class="button">Se Connecter</button>
+                 -->
+                <button (click)="submitConnection()" [disabled]="!isPseudoValid" class="button">Se Connecter</button>
+
+                <!-- <button *ngIf="isLoginForm" [disabled]="!areLoginInfoValid" (click)="submitConnection()" class="button">Se Connecter</button> -->
                 <button *ngIf="!isLoginForm" [disabled]="!areSignInInfoValid" (click)="submitRegistration()" class="button">S'inscrire</button>
             </form>
+            <!--
             <div *ngIf="isLoginForm" class="info-text-container sign-in">
                 <div class="info-text">Pas encore inscrit?</div>
                 <button (click)="registerAccount()" class="button-text">Inscription</button>
             </div>
+            -->
             <div *ngIf="!isLoginForm && !emailSent" class="info-text-container sign-in">
                 <div class="info-text">Déja inscrit?</div>
                 <button (click)="connectAccount()" class="button-text">Connectez-vous</button>
@@ -88,5 +94,5 @@
         </div>
     </div>
 
-    <div class="footer">footer (À ne pas supprimer, important pour la mise en page)</div>
+    <div class="footer"></div>
 </div>

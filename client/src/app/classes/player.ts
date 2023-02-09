@@ -11,7 +11,7 @@ export class Player {
     isItsTurn: boolean;
 
     constructor() {
-        this.pseudo = 'defaultUser';
+        this.pseudo = '';
         this.socketId = '';
         this.points = 0;
         this.isCreator = false;
