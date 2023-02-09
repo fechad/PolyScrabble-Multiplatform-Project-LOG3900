@@ -7,9 +7,26 @@ import { auth } from '../firebase-config';
 @Service()
 export class Authentificator {
     auth: Auth;
-
+    userNames: string[];
     constructor() {
         this.auth = auth;
+        this.userNames = [];
+    }
+
+    userExists(userName: string): boolean {
+        return this.userNames.find((name: string) => userName === name) ? true : false;
+    }
+
+    loginUser(username: string) {
+        if (this.userExists(username)) return;
+        this.userNames.push(username);
+    }
+
+    logoutUser(username: string) {
+        const userToRemove = this.userNames.find((name: string) => username === name);
+        if (userToRemove) {
+            this.userNames.splice(this.userNames.indexOf(userToRemove), 1);
+        }
     }
 
     async getFindUser(uid: string) {

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
-const CURRENT_USER = 'me';
 @Component({
     selector: 'app-general-chat',
     templateUrl: './general-chat.component.html',
@@ -13,33 +14,35 @@ const CURRENT_USER = 'me';
 })
 export class GeneralChatComponent implements OnInit {
     chats: ChannelMessage[];
-    constructor(public dialogRef: MatDialogRef<GeneralChatComponent>, private socketService: SocketClientService) {
-        this.chats = [
-            // { system: false, message: "Ceci est un message que j'ai écris", time: '8:30:21', sender: 'me', channelName: 'test' },
-            // { system: false, message: 'Ceci est un message écrit par Allan Poe lui même', time: '8:34:06', sender: 'other', channelName: 'test' },
-            // { system: true, message: 'Le système détecte un fourberie', time: '8:35:25', sender: 'SYSTEM', channelName: 'test' },
-            // { system: false, message: 'wassup2', time: '8:36:10', sender: 'other', channelName: 'test' },
-        ];
+    constructor(
+        public dialogRef: MatDialogRef<GeneralChatComponent>,
+        private playerService: PlayerService,
+        private socketService: SocketClientService,
+    ) {
+        this.chats = [];
     }
 
     isSender(chatMessage: ChannelMessage): boolean {
-        return CURRENT_USER === chatMessage.sender;
+        return this.playerService.player.pseudo === chatMessage.sender;
     }
 
     ngOnInit() {
         this.connect();
-        this.socketService.send(SocketEvent.GetDiscussionChannels /* { name: 'General Chat', user: CURRENT_USER }*/);
+        this.socketService.send(SocketEvent.GetDiscussionChannels);
     }
 
     sendChannelMessage(inputElement: HTMLInputElement) {
-        this.socketService.send(SocketEvent.ChatChannelMessage, {
+        if (inputElement.value.length <= 0) return;
+        const channelMessage = {
             system: false,
             message: inputElement.value,
             time: new Date().toLocaleTimeString([], { hour12: false }),
-            sender: CURRENT_USER,
+            sender: this.playerService.player.pseudo,
             channelName: 'General Chat',
-        });
+        };
+        this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         inputElement.value = '';
+        this.chats.push(channelMessage);
     }
 
     closeDialog() {
@@ -47,22 +50,37 @@ export class GeneralChatComponent implements OnInit {
     }
 
     private connect() {
-        if (!this.socketService.isSocketAlive()) {
-            this.socketService.connect();
+        if (this.socketService.isSocketAlive()) {
+            this.configureBaseSocketFeatures();
+            this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
+            return;
         }
-        this.configureBaseSocketFeatures();
+        this.tryReconnection();
+    }
+
+    private tryReconnection() {
+        let secondPassed = 0;
+
+        const timerInterval = setInterval(() => {
+            if (secondPassed >= MAX_RECONNECTION_DELAY) {
+                clearInterval(timerInterval);
+            }
+            if (this.socketService.isSocketAlive()) {
+                this.configureBaseSocketFeatures();
+                this.socketService.send(SocketEvent.GetDiscussionChannels);
+                clearInterval(timerInterval);
+            }
+            secondPassed++;
+        }, ONE_SECOND_IN_MS);
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.ChannelMessage, (channelMessage: ChannelMessage) => {
-            console.log(channelMessage);
-            this.chats.push(channelMessage);
+        this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
+            this.chats = channelMessages;
         });
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
-            console.log(channels[0].messages);
             this.chats = channels[0].messages;
-            this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: CURRENT_USER });
         });
     }
 }

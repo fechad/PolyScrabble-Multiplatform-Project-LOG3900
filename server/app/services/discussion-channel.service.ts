@@ -17,6 +17,10 @@ export class DiscussionChannelService {
         } as ChannelMessage);
     }
 
+    getDiscussionChannel(channelName: string): DiscussionChannel | undefined {
+        return this.availableChannels.find((channel: DiscussionChannel) => channel.name === channelName);
+    }
+
     addChannel(name: string, owner: Account): boolean {
         this.availableChannels.push(new DiscussionChannel(name, owner));
         return true;

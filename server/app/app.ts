@@ -5,6 +5,7 @@ import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import logger from 'morgan';
 import { Service } from 'typedi';
+import { AuthController } from './controllers/auth.controller';
 import { BotsController } from './controllers/bots.controller';
 import { DictionariesController } from './controllers/dictionaries.controller';
 import { GamesHistoryController } from './controllers/game.history.controller';
@@ -20,6 +21,7 @@ export class Application {
         private dictionariesController: DictionariesController,
         private botsController: BotsController,
         private gamesHistoryController: GamesHistoryController,
+        private authController: AuthController,
     ) {
         this.internalError = StatusCodes.INTERNAL_SERVER_ERROR;
         this.app = express();
@@ -34,6 +36,7 @@ export class Application {
         this.app.use('/api/dictionaries', this.dictionariesController.router);
         this.app.use('/api/bots', this.botsController.router);
         this.app.use('/api/games', this.gamesHistoryController.router);
+        this.app.use('/api/auth', this.authController.router);
         this.errorHandling();
     }
 

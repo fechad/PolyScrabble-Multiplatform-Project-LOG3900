@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Room } from '@app/classes/room';
 import { Score } from '@app/classes/score';
@@ -6,6 +6,7 @@ import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.
 import { GeneralChatComponent } from '@app/components/general-chat/general-chat.component';
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { HttpService } from '@app/services/http.service';
+import { SocketClientService } from '@app/services/socket-client.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
 export const LEADERBOARD_SIZE = 5;
@@ -16,17 +17,22 @@ export const DIALOG_WIDTH = '600px';
     templateUrl: './main-page.component.html',
     styleUrls: ['./main-page.component.scss', '../dark-theme.scss'],
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit {
     title: string;
     message: BehaviorSubject<string>;
-    constructor(public room: Room, private dialog: MatDialog, private httpService: HttpService) {
+    constructor(public room: Room, private dialog: MatDialog, private httpService: HttpService, private socketService: SocketClientService) {
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
+    }
+
+    ngOnInit() {
+        this.connect();
     }
 
     setGameType(type: string) {
         this.room.roomInfo.gameType = type;
     }
+
     async showLeaderboard() {
         const scores = await this.getLeaderboardScores();
         if (this.httpService.anErrorOccurred()) {
@@ -39,6 +45,7 @@ export class MainPageComponent {
             data: scores,
         });
     }
+
     showGeneralChat() {
         this.dialog.open(GeneralChatComponent, {
             width: '100%',
@@ -62,6 +69,13 @@ export class MainPageComponent {
             data: [scores],
         });
     }
+
+    private connect() {
+        if (!this.socketService.isSocketAlive()) {
+            this.socketService.connect();
+        }
+    }
+
     private async getLeaderboardScores(): Promise<Score[][] | undefined> {
         const scores: Score[][] = [];
         for (const gameMode of ['log2990', 'classic']) {
@@ -71,6 +85,7 @@ export class MainPageComponent {
         }
         return scores;
     }
+
     private showErrorDialog() {
         this.dialog.open(ErrorDialogComponent, {
             width: DIALOG_WIDTH,
