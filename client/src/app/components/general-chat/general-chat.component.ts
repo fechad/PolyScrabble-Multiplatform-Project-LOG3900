@@ -31,16 +31,20 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
     ngAfterContentChecked(): void {
         setTimeout(() => {
             const chatBar = document.getElementsByClassName('chat-bar')[0] as HTMLInputElement;
-            this.enable = chatBar.value !== '';
+            if (chatBar) this.enable = chatBar.value !== '';
         }, 0);
     }
 
     ngOnInit() {
+        const delay = 50;
         this.connect();
         this.socketService.send(SocketEvent.GetDiscussionChannels);
+        const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
+        setTimeout(() => chat.scrollTo(0, chat.scrollHeight), delay);
     }
 
     sendChannelMessage(inputElement: HTMLInputElement) {
+        const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
         if (inputElement.value.length <= 0) return;
         const channelMessage = {
             system: false,
@@ -52,6 +56,7 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         inputElement.value = '';
         this.chats.push(channelMessage);
+        setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
     }
 
     closeDialog() {
