@@ -3,7 +3,6 @@
     <div class="chat-list">
         <div class="chat-container">
             <input type="text" class="search-bar" placeholder="Rechercher un canal" />
-            <i class="fa fa-search fa-2x"></i>
             <p class="chat-name">Canal général</p>
             <hr size="1" width="80%" />
         </div>
@@ -35,6 +34,7 @@
         </div>
         <div class="chat-bar-container">
             <input #inputElement (keyup.enter)="sendChannelMessage(inputElement)" class="chat-bar" type="text" placeholder="Entrer un message" />
+            <i class="fa fa-send fa-2x" [ngClass]="{ enabled: enable, disabled: !enable }" (click)="sendChannelMessage(inputElement)"></i>
         </div>
     </div>
 </div>
