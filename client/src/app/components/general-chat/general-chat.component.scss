@@ -159,6 +159,7 @@
     height: 10%;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .chat-bar {
@@ -169,4 +170,13 @@
     outline: none;
     font-size: 24px;
     font-family: 'Nunito';
+    margin-right: 16px;
+}
+
+.enabled {
+    color: #7daf6b;
+}
+
+.disabled {
+    color: rgba(0, 0, 0, 0.212);
 }

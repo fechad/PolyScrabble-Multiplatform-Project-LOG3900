@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentChecked, Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -12,18 +12,27 @@ import { SocketClientService } from '@app/services/socket-client.service';
     templateUrl: './general-chat.component.html',
     styleUrls: ['./general-chat.component.scss'],
 })
-export class GeneralChatComponent implements OnInit {
+export class GeneralChatComponent implements OnInit, AfterContentChecked {
     chats: ChannelMessage[];
+    enable: boolean;
     constructor(
         public dialogRef: MatDialogRef<GeneralChatComponent>,
         private playerService: PlayerService,
         private socketService: SocketClientService,
     ) {
         this.chats = [];
+        this.enable = false;
     }
 
     isSender(chatMessage: ChannelMessage): boolean {
         return this.playerService.player.pseudo === chatMessage.sender;
+    }
+
+    ngAfterContentChecked(): void {
+        setTimeout(() => {
+            const chatBar = document.getElementsByClassName('chat-bar')[0] as HTMLInputElement;
+            this.enable = chatBar.value !== '';
+        }, 0);
     }
 
     ngOnInit() {
