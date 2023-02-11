@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/sender_message.dart';
 import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
-//import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
@@ -16,17 +18,42 @@ class GeneralChatWidget extends StatefulWidget {
 }
 
 class _GeneralChatWidgetState extends State<GeneralChatWidget> {
-  final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController textController = TextEditingController();
+  final ScrollController _controller = ScrollController();
   bool isWriting = false;
-  List<ChatMessage> messages = [];
+  List<ChatMessage> messages = chatService.getDiscussions()[0].messages;
 
   @override
   void initState() {
     super.initState();
-    // On page load action.
-    messages = chatService.getDiscussions()[0].messages;
+    connect();
+    Timer(Duration(milliseconds: 0), () => {_controller.jumpTo(_controller.position.maxScrollExtent+300.0)});
+  }
+
+  connect() {
+    socket.on(
+        'channelMessage',
+        (data) => {
+              setState((() => {
+                    messages = [],
+                    (data as List<dynamic>).forEach((message) => {
+                          messages.add(ChatMessage(
+                              channelName: message['channelName'],
+                              system: message['system'],
+                              sender: message['sender'],
+                              time: message['time'],
+                              message: message['message'])),
+                        })
+
+              })),
+          _scrollDown()
+            }
+            );
+  }
+
+  void _scrollDown() {
+    _controller.jumpTo(_controller.position.maxScrollExtent+200.0);
   }
 
   @override
@@ -87,10 +114,11 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
       body: Column(children: <Widget>[
         Flexible(
             child: ListView.builder(
-          itemBuilder: (_, int index) => messages[index],
-          itemCount: messages.length,
-          reverse: true,
-          padding: EdgeInsets.all(6.0),
+              controller: _controller,
+              itemBuilder: (BuildContext context, int index) => messages[index],
+              itemCount: messages.length,
+              reverse: false,
+              padding: EdgeInsets.all(6.0),
         )),
         Divider(height: 1.0),
         Container(
@@ -110,14 +138,15 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
             children: <Widget>[
               Flexible(
                 child: TextField(
+                  onEditingComplete: () {},
                   style: TextStyle(height: 2),
                   controller: textController,
                   onChanged: (String txt) {
                     setState(() {
                       isWriting = txt.length > 0;
-                      messages = chatService.getDiscussions()[0].messages;
                     });
                   },
+
                   onSubmitted: submitMsg,
                   decoration: InputDecoration.collapsed(
                       hintStyle: TextStyle(fontSize: 18),
@@ -127,8 +156,8 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
               Container(
                   margin: EdgeInsets.symmetric(horizontal: 3.0),
                   child: IconButton(
-                    onPressed: isWriting
-                        ? () => {submitMsg(textController.text)}
+                    onPressed: textController.text.trim().isNotEmpty
+                        ? () => {submitMsg(textController.text.trim())}
                         : null,
                     icon: const Icon(Icons.send),
                   ))
@@ -138,21 +167,21 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   }
 
   void submitMsg(String txt) {
-    if (txt.isEmpty) return;
     textController.clear();
 
     ChatMessage msg = ChatMessage(
         channelName: 'General Chat',
         sender: authenticator.getCurrentUser().username,
         system: false,
-        time: DateFormat('hh:mm:ss').format(DateTime.now()),
+        time: DateFormat('HH:mm:ss').format(DateTime.now()),
         message: txt);
 
     chatService.addMessage(message: msg, channelName: msg.channelName);
 
     setState(() {
       isWriting = false;
-      messages = chatService.getDiscussions()[0].messages;
+      messages;
+      _scrollDown();
     });
   }
 }
@@ -194,6 +223,6 @@ class ChatMessage extends StatelessWidget {
     else if (sender == authenticator.currentUser.username)
       return (SenderMessage(txt: message, time: time));
     else
-      return (OtherMessage(txt: message, time: time));
+      return (OtherMessage(username: sender!, txt: message, time: time));
   }
 }

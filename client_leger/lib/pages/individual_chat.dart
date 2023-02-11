@@ -1,16 +1,10 @@
 import 'package:client_leger/pages/home_page.dart';
+//import 'package:socket_io_client/socket_io_client.dart';
+import 'package:flutter/material.dart';
 
 import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
-import '../config/flutter_flow/flutter_flow_util.dart';
-//import 'package:socket_io_client/socket_io_client.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/src/widgets/transitions.dart';
-
 import 'chat_page.dart';
-
 
 class ChatWidget extends StatefulWidget {
   const ChatWidget({
@@ -83,17 +77,17 @@ class _ChatWidgetState extends State<ChatWidget> {
                             ),
                             Padding(
                               padding:
-                              EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                  EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Search',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText2
                                     .override(
-                                  fontFamily: 'Nunito',
-                                  color: Color(0x80000000),
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                      fontFamily: 'Nunito',
+                                      color: Color(0x80000000),
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                             ),
                           ],
@@ -119,7 +113,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                         children: [
                           Padding(
                             padding:
-                            EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
+                                EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
                             child: Container(
                               width: 4,
                               height: 60,
@@ -136,16 +130,20 @@ class _ChatWidgetState extends State<ChatWidget> {
                           ),
                           Padding(
                             padding:
-                            EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                             child: TextButton(
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.black,
-                                textStyle: const TextStyle(fontSize: 32, fontFamily: 'Nunito'),
+                                textStyle: const TextStyle(
+                                    fontSize: 32, fontFamily: 'Nunito'),
                               ),
                               child: const Text('General Chat'),
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                  return GeneralChatWidget();})));},
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: ((context) {
+                                  return GeneralChatWidget();
+                                })));
+                              },
                             ),
                           ),
                         ],
@@ -161,10 +159,10 @@ class _ChatWidgetState extends State<ChatWidget> {
                       Text(
                         'Discussion channels',
                         style: FlutterFlowTheme.of(context).bodyText1.override(
-                          fontFamily: 'Nunito',
-                          color: Color(0xBA101213),
-                          fontSize: 24,
-                        ),
+                              fontFamily: 'Nunito',
+                              color: Color(0xBA101213),
+                              fontSize: 24,
+                            ),
                       ),
                     ],
                   ),
@@ -187,7 +185,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                             children: [
                               Padding(
                                 padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
                                 child: Container(
                                   width: 4,
                                   height: 60,
@@ -204,16 +202,20 @@ class _ChatWidgetState extends State<ChatWidget> {
                               ),
                               Padding(
                                 padding:
-                                EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                                    EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.black,
-                                    textStyle: const TextStyle(fontSize: 32, fontFamily: 'Nunito'),
+                                    textStyle: const TextStyle(
+                                        fontSize: 32, fontFamily: 'Nunito'),
                                   ),
                                   child: const Text('Etienne'),
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                      return const ChatWidget();})));},
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return const ChatWidget();
+                                    })));
+                                  },
                                 ),
                               ),
                             ],
@@ -252,16 +254,15 @@ class _ChatWidgetState extends State<ChatWidget> {
               '[username]',
               textAlign: TextAlign.center,
               style: FlutterFlowTheme.of(context).title1.override(
-                fontFamily: 'Poppins',
-                fontSize: 56,
-              ),
+                    fontFamily: 'Poppins',
+                    fontSize: 56,
+                  ),
             ),
           ),
           actions: [
             InkWell(
               onTap: () {
-                Navigator
-                    .push(context, MaterialPageRoute(builder: ((context) {
+                Navigator.push(context, MaterialPageRoute(builder: ((context) {
                   return const MyHomePage(title: 'PolyScrabble');
                 })));
               },

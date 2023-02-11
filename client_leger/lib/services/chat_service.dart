@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 
 class ChatService {
   List<ChatModel> _discussionChannels = [
-    ChatModel(name: 'General Chat', activeUsers: 1, messages: [])
+    ChatModel(name: 'General Chat', activeUsers: [], messages: [])
   ];
 
   ChatService() {
@@ -20,7 +20,7 @@ class ChatService {
   }
 
   String getTime() {
-    return DateFormat('kk:mm:ss').format(DateTime.now());
+    return DateFormat('HH:mm:ss').format(DateTime.now());
   }
 
   List<ChatModel> getDiscussions() {
@@ -31,30 +31,15 @@ class ChatService {
     socket.on(
         'channelMessage',
         (data) => {
-              print(data),
-              print('received new message'),
-              if (data['system'])
-                {
-                  _discussionChannels[0].messages.insert(
-                      0,
-                      ChatMessage(
-                          channelName: data['channelName'],
-                          system: true,
-                          time: data['time'],
-                          message: data['message']))
-                }
-              else
-                {
-                  _discussionChannels[0].messages.insert(
-                      0,
-                      ChatMessage(
-                          channelName: data['channelName'],
-                          system: false,
-                          sender: data['sender'],
-                          time: data['time'],
-                          message: data['message']))
-                },
-              print(_discussionChannels[0].messages)
+              _discussionChannels[0].messages = [],
+              (data as List<dynamic>).forEach((message) => {
+                    _discussionChannels[0].messages.add(ChatMessage(
+                        channelName: message['channelName'],
+                        system: message['system'],
+                        sender: message['sender'],
+                        time: message['time'],
+                        message: message['message'])),
+                  })
             });
 
     socket.on(
@@ -62,13 +47,11 @@ class ChatService {
         (data) => {
               //print('update'),
               //print(data.runtimeType),
-              socket.emit('joinChatChannel', {'General Chat', 'Anna'}),
+              socket.emit('joinChatChannel',
+                  {'General Chat', authenticator.currentUser.username}),
               _discussionChannels = [],
               for (var i in data)
                 {print(i), _discussionChannels.add(decodeModel(i))},
-
-              // ignore: avoid_print
-              print(_discussionChannels[0])
             });
 
     socket.on('addChannel', (data) => {addDiscussion(data)});
@@ -117,8 +100,8 @@ class ChatService {
   }
 
   void addMessage({required String channelName, required ChatMessage message}) {
-    print(message);
-    socket.emit('channelMessage', {message});
+    print('emitting $message');
+    socket.emit('chatChannelMessage', {message});
   }
 
   void joinDiscussion(channelName) {
@@ -129,7 +112,9 @@ class ChatService {
   }
 
   void leaveDiscussion(channelName, username) {
-    socket.emit(
-        'leaveChatChannel', [channelName, authenticator.currentUser.username]);
+    socket.emit('leaveChatChannel', {
+      'channel': channelName,
+      'username': authenticator.currentUser.username
+    });
   }
 }

@@ -77,7 +77,7 @@ export class LoginPageComponent implements AfterViewInit {
     }
 
     get userExist() {
-        return this.usernames.find((username: string) => username === this.username);
+        return this.usernames.find((username: string) => username.toLowerCase() === this.username.toLowerCase());
     }
 
     async ngAfterViewInit() {
