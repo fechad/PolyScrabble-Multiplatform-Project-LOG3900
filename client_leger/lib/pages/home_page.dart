@@ -1,15 +1,17 @@
 import 'package:client_leger/components/drawer.dart';
+import 'package:client_leger/main.dart';
 import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
 
 import '../config/colors.dart';
+import '../config/environment.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
 import 'connexion_page.dart';
 
 Io.Socket socket = Io.io(
-    'https://polyscrabble-105-2.nn.r.appspot.com',
+    getSocketURL(),
     Io.OptionBuilder()
         .setTransports(['websocket'])
         .setPath('/socket.io')
@@ -173,13 +175,18 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Center(
               child: FFButtonWidget(
                   onPressed: () {
+                    httpService
+                        .logoutUser(authenticator.currentUser.username)
+                        .then((value) => chatService.leaveDiscussion(
+                            'General Chat',
+                            authenticator.currentUser.username));
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ConnexionPageWidget()));
+                            builder: (context) => const ConnexionPageWidget()));
                   },
                   text: 'Log out',
-                  options: FFButtonOptions(
+                  options: const FFButtonOptions(
                     width: 240,
                     height: 50,
                     color: Palette.mainColor,

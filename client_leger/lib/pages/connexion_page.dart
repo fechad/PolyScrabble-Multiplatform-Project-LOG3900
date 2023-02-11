@@ -1,12 +1,14 @@
+import 'dart:async';
+
+import 'package:client_leger/config/colors.dart';
 import 'package:client_leger/main.dart';
-import 'package:client_leger/pages/home_page.dart';
-import 'package:client_leger/pages/signup_page.dart';
+import 'package:flutter/material.dart';
 
 import '../config/flutter_flow/flutter_flow_theme.dart';
-import '../config/flutter_flow/flutter_flow_util.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../services/http_service.dart';
+import 'home_page.dart';
 
+final httpService = HttpService();
 
 class ConnexionPageWidget extends StatefulWidget {
   const ConnexionPageWidget({Key? key}) : super(key: key);
@@ -18,11 +20,33 @@ class ConnexionPageWidget extends StatefulWidget {
 class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  late List<String> usernames;
+  final TextEditingController textController = TextEditingController();
+  bool isWriting = false;
+  bool validUsername = false;
+
+  @override
+  void initState() {
+    super.initState();
+    httpService.getUsernames().then((names) => {usernames = names});
+  }
 
   @override
   void dispose() {
     _unfocusNode.dispose();
     super.dispose();
+  }
+
+  Future<bool> checkWithAvailableNames(String value) async {
+    await httpService.getUsernames().then((names) => {usernames = names});
+    if (usernames
+        .toString()
+        .toLowerCase()
+        .contains('"${value?.toLowerCase()}"')) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -43,7 +67,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.35,
-                height: MediaQuery.of(context).size.height * 0.62,
+                height: MediaQuery.of(context).size.height * 0.32,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                   boxShadow: [
@@ -59,135 +83,95 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                   ),
                 ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Align(
-                    alignment: AlignmentDirectional(0, -1),
-                      child: Text(
-                        'Login',
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                          fontFamily: 'Nunito',
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 32),
-                    SizedBox(
-                      width:336,
-                      child: TextField(
-                        style: FlutterFlowTheme.of(context).bodyText1.override(
-                          fontFamily: 'Nunito',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: 'Email adress',
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 0),
-                        ),
-                      )
-                    ),
-                    SizedBox(height: 32),
-                    SizedBox(
-                        width:336,
-                        child: TextField(
-                          style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Nunito',
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(vertical: 0),
-                          ),
-                        )
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        SizedBox(width: 56),
-                        Text(
-                          'Forgot password?',
-                          style: FlutterFlowTheme.of(context).bodyText1.override(
-                            color: Color(0x80000000),
-                            fontFamily: 'Nunito',
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'Click here',
-                          style: FlutterFlowTheme.of(context).bodyText1.override(
-                            color: Color(0xFF7DAF6B),
-                            fontFamily: 'Nunito',
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ]
-
-                    ),
-                    SizedBox(height: 32),
-                    SizedBox(
-                      height: 64,
-                      width: 336,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF7DAF6B)),
-                          foregroundColor: MaterialStateProperty.all<Color>(Color(0xFFFFFFFF)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(48)
-                                ),
-                            ),
-                        ),
-                        onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: (context) => 
-                          //authenticator.setValidate();
-                          MyHomePage(title: 'PolyScrabble')
-                          )); },
-                        child: Text(
-                          'Login',
-                          style: GoogleFonts.nunito(fontSize: 40, fontWeight: FontWeight.w700),
-
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 32),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            'Not register yet?',
-                            style: FlutterFlowTheme.of(context).bodyText1.override(
-                              color: Color(0x80000000),
-                              fontFamily: 'Nunito',
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          Center(
+                            child: Text(
+                              'Connexion',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyText1
+                                  .override(
+                                    color: Colors.black,
+                                    fontFamily: 'Nunito',
+                                    fontSize: 24,
+                                  ),
                             ),
                           ),
-                          SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () { Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignupPageWidget())); },
-                            child: Text(
-                              'Sign up',
-                              style: FlutterFlowTheme.of(context).bodyText1.override(
-                                color: Color(0xFF7DAF6B),
-                                fontFamily: 'Nunito',
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                          SizedBox(
+                            width: 400,
+                            child: TextFormField(
+                              controller: textController,
+                              maxLength: 10,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter a username',
+                                labelText: 'Pseudo',
                               ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                checkWithAvailableNames(value!);
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a valid username';
+                                }
+                                if (usernames
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains('"${value.toLowerCase()}"')) {
+                                  return 'The username $value is already taken';
+                                }
+                              },
+                            ),
                           ),
-                          ),
-                        ]
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Validate returns true if the form is valid, or false otherwise.
+                                if (_formKey.currentState!.validate()) {
+                                  loginUser(textController.text);
 
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          duration:
+                                              Duration(milliseconds: 1000),
+                                          content: Text(
+                                              'Vérification de la connexion ...')));
+                                  Timer(const Duration(milliseconds: 1000),
+                                      (() => {}));
+                                }
+                              },
+                              style: ButtonStyle(
+                                  shape: MaterialStatePropertyAll<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(48))),
+                                  minimumSize: MaterialStateProperty.all(
+                                      const Size(400, 50)),
+                                  backgroundColor:
+                                      const MaterialStatePropertyAll<Color>(
+                                          Palette.mainColor)),
+                              child: Text(
+                                'Se connecter',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyText1
+                                    .override(
+                                      color: Colors.white,
+                                      fontFamily: 'Nunito',
+                                      fontSize: 24,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ]
+                  ],
                 ),
               ),
             ),
@@ -195,5 +179,31 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
         ),
       ),
     );
+  }
+
+  void loginUser(String username) {
+    if (username.isEmpty) return;
+    //textController.clear();
+
+    httpService.loginUser(username).then((value) => value.statusCode == 200
+        ? navigate()
+        : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red[300],
+            duration: const Duration(milliseconds: 1000),
+            content: const Text('Erreur de connexion: nom déjà pris'))));
+
+    setState(() {
+      isWriting = false;
+      usernames;
+    });
+  }
+
+  void navigate() {
+    validUsername = true;
+    authenticator.setUser(textController.text);
+    chatService.joinDiscussion('General Chat');
+    Navigator.push(context, MaterialPageRoute(builder: ((context) {
+      return const MyHomePage(title: 'PolyScrabble');
+    })));
   }
 }

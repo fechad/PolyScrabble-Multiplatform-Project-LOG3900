@@ -36,7 +36,7 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
     }
 
     ngOnInit() {
-        const delay = 50;
+        const delay = 100;
         this.connect();
         this.socketService.send(SocketEvent.GetDiscussionChannels);
         const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
@@ -90,6 +90,8 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
 
     private configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
+            const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
+            setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
             this.chats = channelMessages;
         });
 

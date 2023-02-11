@@ -97,10 +97,12 @@
     display: flex;
     flex-direction: column;
     align-items: end;
+    overflow-wrap: break-word;
 }
 
 .their {
     background-color: #e6e6e6;
+    overflow-wrap: break-word;
 }
 
 .search-bar {

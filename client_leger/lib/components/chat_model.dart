@@ -3,7 +3,7 @@ import '../pages/chat_page.dart';
 class ChatModel {
   String name;
   String? owner;
-  int activeUsers;
+  List<String> activeUsers;
   List<ChatMessage> messages;
   ChatModel(
       {required this.name,
@@ -14,7 +14,11 @@ class ChatModel {
   ChatModel.fromJson(dynamic json, jsonMessages)
       : name = json['name'],
         owner = json['owner'],
-        activeUsers = json['activeUsers'],
+        activeUsers = json['activeUsers']
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
         messages = jsonMessages;
 
   Map<String, dynamic> toJson() => {
