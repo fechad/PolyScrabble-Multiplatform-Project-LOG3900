@@ -45,7 +45,8 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
 
     sendChannelMessage(inputElement: HTMLInputElement) {
         const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
-        if (inputElement.value.length <= 0) return;
+        const inputValue = inputElement.value;
+        if (inputValue.length <= 0 || inputValue.replace(/\s/g, '').length <= 0) return;
         const channelMessage = {
             system: false,
             message: inputElement.value,
