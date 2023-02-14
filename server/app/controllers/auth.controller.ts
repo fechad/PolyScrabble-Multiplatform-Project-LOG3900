@@ -1,4 +1,5 @@
 import { Authentificator } from '@app/services/auth.service';
+import { DatabaseService } from '@app/services/database.service';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
@@ -7,7 +8,7 @@ import { Service } from 'typedi';
 export class AuthController {
     router: Router;
 
-    constructor(private authentificator: Authentificator) {
+    constructor(private authentificator: Authentificator, private databaseService: DatabaseService) {
         this.configureRouter();
     }
 
@@ -17,6 +18,18 @@ export class AuthController {
         this.router.get('/usernames', async (req: Request, res: Response) => {
             try {
                 res.json(this.authentificator.userNames);
+            } catch (error) {
+                res.status(StatusCodes.NOT_FOUND).send(error.message);
+            }
+        });
+
+        this.router.get('/user/:email', async (req: Request, res: Response) => {
+            try {
+                await this.databaseService
+                    .getDocumentByID('accounts', req.params.email)
+                    .then((data) => res.json(data))
+                    // eslint-disable-next-line no-console
+                    .catch((e) => console.log(e));
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
             }
