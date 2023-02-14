@@ -1,5 +1,5 @@
-import { Account } from '@app/interfaces/account';
 import { ChannelMessage } from '@app/interfaces/channel-message';
+import { Account } from '@app/interfaces/firestoreDB/account';
 
 export class DiscussionChannel {
     name: string;

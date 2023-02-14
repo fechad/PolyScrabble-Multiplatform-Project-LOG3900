@@ -10,6 +10,7 @@ export class Player {
     isItsTurn: boolean;
     managerId: number;
     lastThreeCommands?: CommandResult[];
+    accountID?: string;
 
     constructor(socketId: string, pseudo: string, isCreator: boolean) {
         this.pseudo = pseudo;

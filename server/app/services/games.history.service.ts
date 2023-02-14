@@ -1,4 +1,4 @@
-import { Game } from '@app/interfaces/game';
+import { Game } from '@app/interfaces/firestoreDB/game';
 import { WriteResult } from 'firebase-admin/firestore';
 import 'reflect-metadata';
 import { Service } from 'typedi';
@@ -16,6 +16,6 @@ export class GamesHistoryService {
         return this.databaseService.deleteCollection(DATABASE_COLLECTION);
     }
     async updateGame(dateToUpdate: string, updatedGame: Game): Promise<WriteResult> {
-        return this.databaseService.updateDocumentByID(DATABASE_COLLECTION, updatedGame.date, updatedGame);
+        return this.databaseService.updateDocumentByID(DATABASE_COLLECTION, updatedGame.startDatetime, updatedGame);
     }
 }

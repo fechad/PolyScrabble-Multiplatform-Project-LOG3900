@@ -1,13 +1,14 @@
 import { Room } from '@app/classes/room-model/room';
 import { CommandController } from '@app/controllers/command.controller';
 import { SocketEvent } from '@app/enums/socket-event';
-import { Account } from '@app/interfaces/account';
+import { Account } from '@app/interfaces/firestoreDB/account';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
 import { DiscussionChannelService } from './discussion-channel.service';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -25,7 +26,12 @@ export class SocketManager {
     private socketGameService: SocketGameService;
     private chatMessageService: ChatMessageService;
     private discussionChannelService: DiscussionChannelService;
-    constructor(server: http.Server, private scoresService: ScoresService, private gamesHistoryService: GamesHistoryService) {
+    constructor(
+        server: http.Server,
+        private scoresService: ScoresService,
+        private playerGameHistoryService: PlayerGameHistoryService,
+        private gamesHistoryService: GamesHistoryService,
+    ) {
         this.chatMessageService = new ChatMessageService();
         this.discussionChannelService = new DiscussionChannelService();
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
@@ -35,6 +41,7 @@ export class SocketManager {
         this.socketHandlerService = new SocketHandlerService(
             this.sio,
             this.scoresService,
+            this.playerGameHistoryService,
             gamesHistoryService,
             this.chatMessageService,
             singleRoomService,
@@ -43,6 +50,7 @@ export class SocketManager {
         this.socketRoomService = new SocketRoomService(
             this.sio,
             this.scoresService,
+            this.playerGameHistoryService,
             this.gamesHistoryService,
             this.chatMessageService,
             singleRoomService,
@@ -51,6 +59,7 @@ export class SocketManager {
         this.socketGameService = new SocketGameService(
             this.sio,
             this.scoresService,
+            this.playerGameHistoryService,
             this.gamesHistoryService,
             this.chatMessageService,
             singleRoomService,
@@ -61,6 +70,7 @@ export class SocketManager {
             this.sio,
             this.scoresService,
             this.gamesHistoryService,
+            this.playerGameHistoryService,
             this.chatMessageService,
             singleRoomService,
             singleDateService,

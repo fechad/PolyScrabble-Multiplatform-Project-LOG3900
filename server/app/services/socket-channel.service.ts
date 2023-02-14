@@ -1,10 +1,11 @@
 import { SocketEvent } from '@app/enums/socket-event';
-import { Account } from '@app/interfaces/account';
 import { ChannelMessage } from '@app/interfaces/channel-message';
+import { Account } from '@app/interfaces/firestoreDB/account';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
 import { DiscussionChannelService } from './discussion-channel.service';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -16,11 +17,12 @@ export class SocketChannelService extends SocketHandlerService {
         public sio: io.Server,
         scoreService: ScoresService,
         gamesHistoryService: GamesHistoryService,
+        playerGameHistoryService: PlayerGameHistoryService,
         public chatMessageService: ChatMessageService,
         public roomService: RoomService,
         public dateService: DateService,
     ) {
-        super(sio, scoreService, gamesHistoryService, chatMessageService, roomService, dateService);
+        super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
     }
 
     handleCreateChannel(channelName: string, creator: Account) {
