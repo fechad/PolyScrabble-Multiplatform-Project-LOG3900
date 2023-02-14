@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:client_leger/config/colors.dart';
 import 'package:client_leger/main.dart';
+import 'package:client_leger/pages/home_page.dart';
+import 'package:client_leger/pages/signup_page.dart';
 import 'package:flutter/material.dart';
 
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../services/http_service.dart';
-import 'home_page.dart';
 
 final httpService = HttpService();
 
@@ -20,6 +21,8 @@ class ConnexionPageWidget extends StatefulWidget {
 class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late List<String> usernames;
   final TextEditingController textController = TextEditingController();
@@ -67,7 +70,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.35,
-                height: MediaQuery.of(context).size.height * 0.32,
+                height: MediaQuery.of(context).size.height * 0.60,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                   boxShadow: [
@@ -104,13 +107,15 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                             ),
                           ),
                           SizedBox(
+                            height: 6,
+                          ),
+                          SizedBox(
                             width: 400,
                             child: TextFormField(
-                              controller: textController,
-                              maxLength: 10,
+                              controller: emailController,
                               decoration: const InputDecoration(
-                                hintText: 'Enter a username',
-                                labelText: 'Pseudo',
+                                hintText: 'Enter your email address',
+                                labelText: 'Email address',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
@@ -118,13 +123,61 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter a valid username';
                                 }
-                                if (usernames
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains('"${value.toLowerCase()}"')) {
-                                  return 'The username $value is already taken';
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: 14,
+                          ),
+                          SizedBox(
+                            width: 400,
+                            child: TextFormField(
+                              obscureText: true,
+                              controller: passwordController,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter your password',
+                                labelText: 'Password',
+                              ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                checkWithAvailableNames(value!);
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a valid password';
                                 }
                               },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 400,
+                            height: 60,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Forgot password?',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        color: Color(0x80000000),
+                                        fontFamily: 'Nunito',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Click here',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyText1
+                                      .override(
+                                        color: Color(0xFF7DAF6B),
+                                        fontFamily: 'Nunito',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                )
+                              ],
                             ),
                           ),
                           Padding(
@@ -133,7 +186,23 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                               onPressed: () {
                                 // Validate returns true if the form is valid, or false otherwise.
                                 if (_formKey.currentState!.validate()) {
-                                  loginUser(textController.text);
+                                  //loginUser(textController.text);
+                                  authenticator
+                                      .signInUser(emailController.text,
+                                          passwordController.text)
+                                      .then((value) => Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  //authenticator.setValidate();
+                                                  MyHomePage(
+                                                      title: 'PolyScrabble'))))
+                                      .catchError((error) => ScaffoldMessenger
+                                              .of(context)
+                                          .showSnackBar(SnackBar(
+                                              backgroundColor: Colors.redAccent,
+                                              duration:
+                                                  Duration(milliseconds: 1000),
+                                              content: Text('Error: $error'))));
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -168,6 +237,45 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                               ),
                             ),
                           ),
+                          SizedBox(
+                            width: 400,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Not register yet?',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyText1
+                                        .override(
+                                          color: Color(0x80000000),
+                                          fontFamily: 'Nunito',
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SignupPageWidget()));
+                                    },
+                                    child: Text(
+                                      'Sign up',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyText1
+                                          .override(
+                                            color: Color(0xFF7DAF6B),
+                                            fontFamily: 'Nunito',
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
                         ],
                       ),
                     ),
@@ -200,7 +308,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
 
   void navigate() {
     validUsername = true;
-    authenticator.setUser(textController.text);
+    authenticator.setLoggedInEmail(emailController.text);
     chatService.joinDiscussion('General Chat');
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return const MyHomePage(title: 'PolyScrabble');

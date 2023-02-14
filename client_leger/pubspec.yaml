@@ -49,6 +49,7 @@ dependencies:
     cached_network_image: ^3.2.3
     flutter_cache_manager: ^3.3.0
     font_awesome_flutter: ^10.1.0
+    firebase_core: ^2.4.1
     auto_size_text: ^3.0.0
     http: ^0.13.3
 

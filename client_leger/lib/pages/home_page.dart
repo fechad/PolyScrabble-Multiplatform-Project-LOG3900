@@ -179,7 +179,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         .logoutUser(authenticator.currentUser.username)
                         .then((value) => chatService.leaveDiscussion(
                             'General Chat',
-                            authenticator.currentUser.username));
+                            authenticator
+                                .currentUser.username)); //TODO: Envoyer l'email
                     Navigator.push(
                         context,
                         MaterialPageRoute(

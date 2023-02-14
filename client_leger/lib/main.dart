@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 AuthService authenticator = AuthService();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  authenticator = await AuthService.create();
   runApp(const MyApp());
 }
 
