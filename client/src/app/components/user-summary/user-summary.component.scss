@@ -1,0 +1,132 @@
+.name {
+    width: 100%;
+    text-align: center;
+}
+.user {
+    aspect-ratio: 1 / 1;
+    border-radius: 100%;
+    width: 50%;
+    background-color: rgb(228, 228, 228);
+}
+
+.user-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.badge-container {
+    width: 50%;
+    height: 10%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    row-gap: 4px;
+    margin: 32px 0;
+    padding: 0 25%;
+}
+
+.badge {
+    aspect-ratio: 1 / 1;
+    height: 100%;
+    margin: 0 4px;
+    background-color: #ccc;
+    border-radius: 100%;
+}
+
+.level {
+    display: flex;
+    width: 90%;
+    height: 100px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+}
+
+.level-container {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 48px 0;
+}
+
+.lvl-number {
+    display: flex;
+    width: 10%;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bold {
+    font-weight: bolder;
+    font-size: 1.75em;
+    margin: 4px;
+}
+
+.progress div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 33.3333333%;
+}
+
+.progress {
+    width: 100%;
+}
+
+progress[value] {
+    width: 90%;
+    background-color: #7daf6b;
+    height: 30%;
+    border-radius: 20px;
+}
+
+progress[value]::-webkit-progress-bar {
+    background-color: #ccc;
+    border-radius: 100px;
+}
+
+progress[value]::-webkit-progress-value {
+    background-color: #7daf6b;
+    border-radius: 100px;
+    background-size: 35px 20px, 100% 100%, 100% 100%;
+}
+
+.fraction {
+    float: right;
+    padding-right: 5%;
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.high-scores {
+    display: flex;
+    justify-content: center;
+    margin: 32px 0 0 8px;
+}
+
+H3 {
+    margin: 0;
+    text-align: center;
+}
+
+.mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 24px;
+}
+
+.mode p {
+    font-size: 1.2em;
+    margin-top: 4px;
+}
+
+.button-container {
+    margin-top: 64px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    width: 90%;
+}
