@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChatComponent } from '@app/components/chat/chat.component';
@@ -39,12 +40,14 @@ import { LeaderBoardDialogDataComponent } from './components/leaderboard-dialog-
 import { MessagesDisplayComponent } from './components/messages-display/messages-display.component';
 import { StartGameSoloComponent } from './components/start-game-solo/start-game-solo.component';
 import { UploadDictionaryPopupComponent } from './components/upload-dictionary-popup/upload-dictionary-popup.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { AdminBotPageComponent } from './pages/admin-bot-page/admin-bot-page.component';
 import { AdminDictionariesPageComponent } from './pages/admin-dictionaries-page/admin-dictionaries-page.component';
 import { AdminGamesPageComponent } from './pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { BestScoresPageComponent } from './pages/best-scores-page/best-scores-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { UserSummaryComponent } from './components/user-summary/user-summary.component';
 
 /**
  * Main module that is used in main.ts.
@@ -97,8 +100,19 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         EndGamePopupComponent,
         LoginPageComponent,
         GeneralChatComponent,
+        UserProfileComponent,
+        UserSummaryComponent,
     ],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, ReactiveFormsModule],
+    imports: [
+        AppMaterialModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        MatSlideToggleModule,
+    ],
     providers: [],
     bootstrap: [AppComponent],
 })

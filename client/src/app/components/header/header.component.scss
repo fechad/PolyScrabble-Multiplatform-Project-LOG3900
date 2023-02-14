@@ -9,6 +9,16 @@
     justify-content: center;
 }
 
+.user {
+    position: absolute;
+    border-radius: 100%;
+    right: 2%;
+    height: 60px;
+    width: 60px;
+    background-color: white;
+    z-index: 1000;
+    cursor: pointer;
+}
 .log-out-button {
     position: absolute;
     right: 2%;
