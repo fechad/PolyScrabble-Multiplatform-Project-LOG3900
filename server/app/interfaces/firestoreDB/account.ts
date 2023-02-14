@@ -1,3 +1,5 @@
+import { GameHeader } from './game-header';
+
 export interface Account {
     username: string;
     email: string;
@@ -6,4 +8,7 @@ export interface Account {
     highscore: number;
     totalXP: number;
     badges: string[];
+    avatarUrl: string;
+    bestGames: GameHeader[];
+    gamesPlayed: GameHeader[];
 }

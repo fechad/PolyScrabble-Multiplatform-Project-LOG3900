@@ -9,7 +9,8 @@ import { Service } from 'typedi';
 
 const DEFAULT_MAX_BATCH_SIZE = 100;
 export const DATABASE_NAME = 'Cluster0';
-export const DATABASE_COLLECTION = 'scores';
+export const SCORE_COLLECTION = 'scores';
+export const BOT_COLLECTION = 'bots';
 
 @Service()
 export class DatabaseService {
@@ -25,6 +26,7 @@ export class DatabaseService {
             // TODO: remove legacy function
             this.addDummyScores();
             this.addDummyAccounts();
+            this.addDummyBots();
         } catch {
             throw new Error('Database connection error');
         }
@@ -45,6 +47,20 @@ export class DatabaseService {
         }
         return batch.commit();
     }
+    async addDummyBots(): Promise<WriteResult[]> {
+        return await this.batchSave(
+            BOT_COLLECTION,
+            [
+                { name: 'Trump', gameType: 'débutant', avatarURLs: { angry: 'https://pbs.twimg.com/media/CrzsyX9WYAAmCrA.jpg' } },
+                { name: 'Zemmour', gameType: 'débutant' },
+                { name: 'Legault', gameType: 'débutant' },
+                { name: 'LebronJames', gameType: 'expert' },
+                { name: 'Hermes', gameType: 'expert' },
+                { name: 'Jack Da ripa', gameType: 'expert' },
+            ],
+            (entry: { name: string; gameType: string }) => entry.name,
+        );
+    }
     async addDummyAccounts(): Promise<WriteResult[]> {
         const usernames: string[] = ['Homer en mer', 'Aymen amen', 'Frankkk drankkk', 'Fedwin for the win', 'Etienne à Vienne', 'Anna kin'];
         const accounts: Account[] = [];
@@ -57,6 +73,9 @@ export class DatabaseService {
                 defaultTheme: 'dark',
                 highscore: 666,
                 totalXP: 9999,
+                avatarUrl: 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large',
+                bestGames: [],
+                gamesPlayed: [],
             };
             accounts.push(account);
         }
@@ -82,13 +101,17 @@ export class DatabaseService {
                 scores.push(score);
             }
         }
-        return this.batchSave(DATABASE_COLLECTION, scores, (entry: Score) => entry.author);
+        return this.batchSave(SCORE_COLLECTION, scores, (entry: Score) => entry.author);
     }
 
-    async getDocumentByID<T>(collection: string, id: string): Promise<T> {
-        const data = (await this.db.collection(collection).doc(id).get()).data();
+    async getDocumentByID<T>(collection: string, id: string): Promise<T | null> {
+        const document = await this.db.collection(collection).doc(id).get();
+        if (!document.exists) return null;
+
+        const data = document.data();
         return data as T;
     }
+
     async getAllDocumentsFromCollection<T>(collection: string): Promise<T[]> {
         const entries: T[] = [];
         return await this.db
@@ -106,8 +129,16 @@ export class DatabaseService {
         return Object.entries(newData).map(([key, value]) => ({ key, value }));
     }
     async updateDocumentByID(collection: string, id: string, newData: object): Promise<WriteResult> {
-        const documentRef = this.db.collection(collection).doc(id);
-        return documentRef.update(newData);
+        try {
+            const documentRef = this.db.collection(collection).doc(id);
+
+            const documentSnapshot = await documentRef.get();
+            if (!documentSnapshot.exists) return documentRef.set(newData);
+
+            return documentRef.update(newData);
+        } catch (error) {
+            return Promise.reject(`Could not update or create document: ${collection}/${id}. Error: ${error}`);
+        }
     }
 
     async deleteDocumentByID(collection: string, id: string): Promise<WriteResult> {

@@ -4,12 +4,13 @@ import { CommandController } from '@app/controllers/command.controller';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
-import { Game } from '@app/interfaces/game';
+import { Game } from '@app/interfaces/firestoreDB/game';
 import { PlayerData } from '@app/interfaces/player-data';
 import { Score } from '@app/interfaces/score';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -19,6 +20,7 @@ export class SocketHandlerService {
     constructor(
         public sio: io.Server,
         private scoreService: ScoresService,
+        private playerGameHistoryService: PlayerGameHistoryService,
         private gamesHistoryService: GamesHistoryService,
         public chatMessageService: ChatMessageService,
         public roomService: RoomService,
@@ -156,16 +158,28 @@ export class SocketHandlerService {
     }
 
     protected async updateGame(room: Room) {
+        const playerResults: { playerID: string; score: number }[] = [];
+        room.players.forEach((player) => {
+            let playerId = 'notAnswered';
+            if (player.pseudo && player.pseudo !== room.bot?.pseudo) {
+                playerId = player.pseudo;
+            }
+            const result = { playerID: playerId, score: player.points };
+            playerResults.push(result);
+        });
         const game: Game = {
-            date: room.startDate.toUTCString(),
+            startDatetime: room.startDate.toUTCString(),
             period: this.dateService.convertToString(this.dateService.getGamePeriod(room.startDate, new Date())),
-            player1: room.players[0].pseudo,
-            scorePlayer1: room.players[0].points,
-            player2: room.players[1].pseudo,
-            scorePlayer2: room.players[1].points,
+            results: playerResults,
             gameType: room.roomInfo.gameType,
             surrender: room.roomInfo.surrender,
+            botIDS: [],
         };
-        await this.gamesHistoryService.updateGame(game.date, game);
+        if (room.bot?.pseudo) {
+            game.botIDS.push(room.bot?.pseudo);
+        }
+
+        await this.gamesHistoryService.updateGame(game.startDatetime, game);
+        await this.playerGameHistoryService.updatePlayersGameHistories(game);
     }
 }

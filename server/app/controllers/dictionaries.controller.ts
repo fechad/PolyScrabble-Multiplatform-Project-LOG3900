@@ -1,12 +1,15 @@
+import { DictionaryReader } from '@app/classes/readers/dictionary-reader';
 import { ScoreMapper } from '@app/classes/virtual-placement-logic/score-mapper';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionariesFileService } from '@app/services/dictionaries-files.service';
 import { DictionariesService } from '@app/services/dictionaries.service';
+import { JsonReader } from '@app/services/json-reader.service';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
+const DEFAULT_DICTIONARY_PATH = 'dictionnaire-par-defaut.json';
 @Service()
 export class DictionariesController {
     router: Router;
@@ -20,8 +23,9 @@ export class DictionariesController {
 
         this.router.get('/', async (_req: Request, res: Response) => {
             try {
-                const dictionaries = await this.dictionariesService.getAllDictionaries();
-                res.json(dictionaries);
+                const dictionary = new JsonReader().getData(DEFAULT_DICTIONARY_PATH);
+                dictionary.title = DEFAULT_DICTIONARY_TITLE;
+                res.json([dictionary]);
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
             }
@@ -39,7 +43,8 @@ export class DictionariesController {
         this.router.get('/:title', async (req: Request, res: Response) => {
             const title = decodeURIComponent(req.params.title);
             try {
-                let dictionary = await this.dictionariesService.getDictionary(title);
+                const reader = new DictionaryReader();
+                let dictionary: Dictionary = { title: DEFAULT_DICTIONARY_TITLE, description: 'KEKZ BOIS', words: [...reader.getWords().keys()] };
                 if (!dictionary) {
                     res.status(StatusCodes.GONE).send({});
                     return;

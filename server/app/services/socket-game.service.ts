@@ -257,6 +257,18 @@ export class SocketGameService extends SocketHandlerService {
         this.displayGameResume(room);
     }
 
+    private handleGamePassFinish(room: Room) {
+        if (!room) return;
+        room.setPlayersTurnToFalse();
+        room.updateScoreOnPassFinish();
+        this.updatePlayersScore(room);
+        this.updateLeaderboard(room);
+        this.updateGame(room);
+        room.elapsedTime = END_TIMER_VALUE; // to clear the interval
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, room.getWinner());
+        this.displayGameResume(room);
+    }
+
     private updatePlayerView(socket: io.Socket, roomName: string) {
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
@@ -269,18 +281,6 @@ export class SocketGameService extends SocketHandlerService {
         const currentPlayerTurn = room.getCurrentPlayerTurn();
         if (!currentPlayerTurn) return;
         this.socketEmit(socket, SocketEvent.PlayerTurnChanged, currentPlayerTurn.pseudo);
-    }
-
-    private handleGamePassFinish(room: Room) {
-        if (!room) return;
-        room.setPlayersTurnToFalse();
-        room.updateScoreOnPassFinish();
-        this.updatePlayersScore(room);
-        this.updateLeaderboard(room);
-        this.updateGame(room);
-        room.elapsedTime = END_TIMER_VALUE; // to clear the interval
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, room.getWinner());
-        this.displayGameResume(room);
     }
 
     private updatePlayersScore(room: Room) {

@@ -1,6 +1,6 @@
 import { DiscussionChannel } from '@app/classes/discussion-channel';
-import { Account } from '@app/interfaces/account';
 import { ChannelMessage } from '@app/interfaces/channel-message';
+import { Account } from '@app/interfaces/firestoreDB/account';
 import { Service } from 'typedi';
 
 @Service()

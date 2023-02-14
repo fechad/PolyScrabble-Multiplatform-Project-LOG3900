@@ -3,6 +3,7 @@ import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
 import { DatabaseService } from './services/database.service';
+import { PlayerGameHistoryService } from './services/GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './services/games.history.service';
 import { ScoresService } from './services/score.service';
 import { SocketManager } from './services/socket-manager.service';
@@ -19,6 +20,7 @@ export class Server {
         private readonly application: Application,
         private databaseService: DatabaseService,
         private scoreService: ScoresService,
+        private playerGameHistoryService: PlayerGameHistoryService,
         private gamesHistoryService: GamesHistoryService,
     ) {}
 
@@ -36,7 +38,7 @@ export class Server {
         this.application.app.set('port', Server.appPort);
 
         this.server = http.createServer(this.application.app);
-        this.socketManager = new SocketManager(this.server, this.scoreService, this.gamesHistoryService);
+        this.socketManager = new SocketManager(this.server, this.scoreService, this.playerGameHistoryService, this.gamesHistoryService);
         this.socketManager.handleSockets();
 
         this.server.listen(Server.appPort);

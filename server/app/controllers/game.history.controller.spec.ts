@@ -1,5 +1,5 @@
 import { Application } from '@app/app';
-import { Game } from '@app/interfaces/game';
+import { Game } from '@app/interfaces/firestoreDB/game';
 import { BotsService } from '@app/services/bot.service';
 import { DictionariesService } from '@app/services/dictionaries.service';
 import { GamesHistoryService } from '@app/services/games.history.service';
@@ -9,6 +9,7 @@ import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import { describe } from 'mocha';
 import * as sinon from 'sinon';
 import request from 'supertest';
+import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
 import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
@@ -23,6 +24,7 @@ describe('GamesHistoryController', () => {
     let botsController: BotsController;
     let gamesHistoryService: GamesHistoryService;
     let gamesHistoryController: GamesHistoryController;
+    let authController: AuthController;
     let application: Application;
     let games: Game[];
 
@@ -41,9 +43,12 @@ describe('GamesHistoryController', () => {
         botsController = new BotsController(botsService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        authController = new AuthController({} as any);
+        // as any is used to replace the real DB service by a mock
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         gamesHistoryService = new GamesHistoryService({} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
-        application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController);
+        application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController, authController);
         games = [
             {
                 date: 'date1',
