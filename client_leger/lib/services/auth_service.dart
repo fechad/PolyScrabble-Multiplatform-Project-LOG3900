@@ -84,7 +84,10 @@ class AuthService {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
 
     await httpService.getUserInfo(email).then((value) => {
+<<<<<<< HEAD
+=======
           print(value),
+>>>>>>> dev
           currentUser = UserModel(
             username: "Anna",
             email: "xanna@gmail.com",
@@ -104,7 +107,10 @@ class AuthService {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
 
     await httpService.getUserInfo(email).then((value) => {
+<<<<<<< HEAD
+=======
           print(jsonDecode(value.body)['username']),
+>>>>>>> dev
           currentUser = UserModel(
             username: '${jsonDecode(value.body)['username']}',
             email: '${jsonDecode(value.body)['email']}',
@@ -117,7 +123,10 @@ class AuthService {
             gamesPlayed: [],
             bestGames: [],
           ),
+<<<<<<< HEAD
+=======
           print(currentUser.username)
+>>>>>>> dev
         });
   }
 

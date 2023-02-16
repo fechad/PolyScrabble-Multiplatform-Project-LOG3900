@@ -11,7 +11,8 @@ export class PlayerService {
         this.player = new Player();
     }
 
-    setPlayer(socketId: string, pseudo: string) {
+    setPlayer(socketId: string, email: string, pseudo: string) {
+        this.player.email = email;
         this.player.pseudo = pseudo;
         this.player.socketId = socketId;
     }

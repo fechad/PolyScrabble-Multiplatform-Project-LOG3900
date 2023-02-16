@@ -76,6 +76,7 @@ export class DatabaseService {
                 avatarUrl: 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large',
                 bestGames: [],
                 gamesPlayed: [],
+                gamesWon: 0,
             };
             accounts.push(account);
         }

@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class Player {
+    email: string;
     pseudo: string;
     socketId: string;
     points: number;
@@ -11,7 +12,7 @@ export class Player {
     isItsTurn: boolean;
 
     constructor() {
-        this.pseudo = '';
+        this.email = '';
         this.socketId = '';
         this.points = 0;
         this.isCreator = false;
