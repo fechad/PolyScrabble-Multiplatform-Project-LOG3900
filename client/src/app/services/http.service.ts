@@ -41,12 +41,24 @@ export class HttpService {
         return this.http.get<string[]>(`${this.baseUrl}/${this.authUrl}/usernames`).pipe(catchError(this.handleError<string[]>('getUsers')));
     }
 
-    loginUser(username: string) {
+    loginUser(email: string) {
         this.clearError();
-        const loginUrl = `${this.baseUrl}/${this.authUrl}/login`;
+        return this.http.get<unknown[]>(`${this.baseUrl}/${this.authUrl}/user/${email}`).pipe(catchError(this.handleError<string[]>('loginUser')));
+    }
+
+    signUpUser(email: string, username?: string) {
+        this.clearError();
+        // TODO: Connect to server user creation route
         return this.http
-            .put<string>(loginUrl, { username }, { headers: this.createCacheHeaders(), observe: 'response' })
-            .pipe(catchError(this.handleError<HttpResponse<string>>('loginUser')));
+            .post<{ email: string; username: string }>(
+                `${this.baseUrl}/${this.authUrl}/user`,
+                { email, username },
+                {
+                    headers: this.createCacheHeaders(),
+                    observe: 'response',
+                },
+            )
+            .pipe(catchError(this.handleError<HttpResponse<{ email: string; username: string }>>('SignUp User')));
     }
 
     logoutUser(username: string) {

@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { HttpResponse } from '@angular/common/http';
 import { AfterViewInit, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MAX_LENGTH_PSEUDO, MIN_LENGTH_PSEUDO } from '@app/constants/constants';
+import { Authentificator as Authenticator } from '@app/services/auth.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { lastValueFrom } from 'rxjs';
@@ -13,10 +16,18 @@ import { lastValueFrom } from 'rxjs';
 })
 export class LoginPageComponent implements AfterViewInit {
     isLoginForm: boolean;
+    isLoginInfoValid: boolean;
+    loginError: string;
     emailSent: boolean;
     usernames: string[];
     protected loginForm: FormGroup;
-    constructor(private formBuilder: FormBuilder, private router: Router, private playerService: PlayerService, private httpService: HttpService) {
+    constructor(
+        private formBuilder: FormBuilder,
+        private router: Router,
+        private playerService: PlayerService,
+        private httpService: HttpService,
+        private authService: Authenticator,
+    ) {
         // email validator: https://mailtrap.io/blog/angular-email-validation/
         this.loginForm = this.formBuilder.group({
             username: ['', [Validators.required, Validators.minLength(MIN_LENGTH_PSEUDO), Validators.maxLength(MAX_LENGTH_PSEUDO)]],
@@ -25,6 +36,8 @@ export class LoginPageComponent implements AfterViewInit {
             confirmPassword: ['', [Validators.required]],
         });
         this.isLoginForm = true;
+        this.isLoginInfoValid = true;
+        this.loginError = '';
         this.emailSent = false;
         this.usernames = [];
     }
@@ -38,7 +51,7 @@ export class LoginPageComponent implements AfterViewInit {
     }
 
     get areSignInInfoValid(): boolean {
-        return this.loginForm.controls.username.valid && this.loginForm.controls.email.valid && this.areSignInPasswordsTheSame;
+        return this.loginForm.controls.email.valid && this.areSignInPasswordsTheSame;
     }
 
     get isPseudoValid(): boolean {
@@ -76,6 +89,11 @@ export class LoginPageComponent implements AfterViewInit {
         return 'Le mot de passe ne concorde pas';
     }
 
+    get invalidLoginInfo(): string {
+        if (this.isLoginInfoValid) return '';
+        return this.loginError;
+    }
+
     get userExist() {
         return this.usernames.find((username: string) => username.toLowerCase() === this.username.toLowerCase());
     }
@@ -107,24 +125,66 @@ export class LoginPageComponent implements AfterViewInit {
     }
 
     async submitConnection() {
-        const loginResult = await lastValueFrom(this.httpService.loginUser(this.username));
-        if (this.httpService.anErrorOccurred()) {
-            // TODO: afficher erreur
-            return;
-        }
-        const STATUS_OK = 200;
-        if (loginResult.status !== STATUS_OK) {
-            // afficher erreur
-            return;
-        }
+        // const loginResult = await lastValueFrom(this.httpService.loginUser(this.username));
+        this.authService
+            .signIn(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
+            .then(async (userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const loginResult = await lastValueFrom(this.httpService.loginUser(user?.email!));
+                // eslint-disable-next-line no-console
+                console.log(loginResult);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.playerService.player.pseudo = (loginResult as any).username;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.playerService.player.email = (loginResult as any).email;
+                this.router.navigate(['/main']);
 
-        this.playerService.player.pseudo = this.username;
-        this.router.navigate(['/main']);
+                // ...
+            })
+            .catch((error) => {
+                const errorCode: string = error.code;
+                if (errorCode) {
+                    this.isLoginInfoValid = false;
+                    const errorMessage = error.message;
+                    this.loginError = errorMessage;
+                }
+            });
     }
 
     submitRegistration() {
-        this.clearInputFields();
-        this.emailSent = true;
+        this.authService
+            .signUp(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
+            .then(async (userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                const signUpResult: HttpResponse<{ email: string; username: string }> = await lastValueFrom(
+                    this.httpService.signUpUser(user?.email!, this.loginForm.value.username),
+                );
+                const statusCode = 201;
+                if (signUpResult.status === statusCode) {
+                    const loginResult = await lastValueFrom(this.httpService.loginUser(user?.email!));
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    this.playerService.player.email = (loginResult as any).email;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    this.playerService.player.pseudo = (loginResult as any).username;
+
+                    this.router.navigate(['/main']);
+                } else {
+                    this.loginError = 'Error: could not create account';
+                    this.clearInputFields();
+                }
+                // ...
+            })
+            .catch((error) => {
+                const errorCode: string = error.code;
+                if (errorCode) {
+                    this.isLoginInfoValid = false;
+                    const errorMessage = error.message;
+                    this.loginError = errorMessage;
+                }
+            });
     }
 
     private clearInputFields() {

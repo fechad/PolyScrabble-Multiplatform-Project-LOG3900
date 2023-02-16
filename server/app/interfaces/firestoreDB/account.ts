@@ -11,4 +11,5 @@ export interface Account {
     avatarUrl: string;
     bestGames: GameHeader[];
     gamesPlayed: GameHeader[];
+    gamesWon: number;
 }

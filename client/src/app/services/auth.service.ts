@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Auth, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 // eslint-disable-next-line no-restricted-imports
 import { app } from '../../firebase-config';
 
@@ -14,11 +14,11 @@ export class Authentificator {
     }
 
     async signIn(email: string, password: string) {
-        signInWithEmailAndPassword(this.auth, email, password).then((user) => {
-            // send user id to server user.user.uid
-            // eslint-disable-next-line no-console
-            console.log('successful signin', user.user.email);
-        });
+        return signInWithEmailAndPassword(this.auth, email, password);
+    }
+
+    async signUp(email: string, password: string) {
+        return createUserWithEmailAndPassword(this.auth, email, password);
     }
 
     async changePassword() {
