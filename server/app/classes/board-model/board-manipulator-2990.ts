@@ -1,4 +1,4 @@
-import { Player } from '@app/classes/player';
+/* import { Player } from '@app/classes/player';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { BoardMessage } from './board-message';
@@ -49,4 +49,4 @@ export class BoardManipulator2990 extends BoardManipulator {
             this.rewardTracker.registerFormedWord(nodeStream.getWord(reverseDirection), currentPlayer, nodeStream.getScore(reverseDirection));
         }
     }
-}
+}*/

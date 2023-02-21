@@ -33,10 +33,13 @@ describe('Database Service', () => {
                 username: name,
                 email: `${emails[index]}`,
                 defaultLanguage: 'french',
-                badges: ['dev'],
                 defaultTheme: 'DOOOOOOOM',
                 highscore: 666,
                 totalXP: -99999,
+                badges: ['dev'],
+                avatarUrl: 'url',
+                bestGames: [],
+                gamesPlayed: [],
             };
             accounts.push(account);
             index++;
@@ -57,7 +60,7 @@ describe('Database Service', () => {
         newInfo.highscore = newHighscore;
         await databaseService.updateDocumentByID('test', emails[0], newInfo);
         const updateResult = await databaseService.getDocumentByID<Account>('test', emails[0]);
-        expect(updateResult.highscore, 'update not successful').to.equal(newHighscore);
+        expect(updateResult?.highscore, 'update not successful').to.equal(newHighscore);
 
         const fieldDeleteResult = await databaseService.deleteDocumentByField('test', 'username', 'DOOM BOT');
         expect(fieldDeleteResult, 'deletion of first dummy failed').not.to.equal(undefined);

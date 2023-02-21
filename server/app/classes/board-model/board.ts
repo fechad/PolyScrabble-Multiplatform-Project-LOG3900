@@ -1,8 +1,6 @@
-import { PointsCalculator } from '@app/classes/board-model/calculators/points-calculator';
-import { RulesValidator } from '@app/classes/board-model/validators/rules-validator';
 import { WordsValidator } from '@app/classes/board-model/validators/words-validator';
 import { SpecialCasesReader } from '@app/classes/readers/special-cases-reader';
-import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
+import { CENTRAL_NODE_INDEX, DEFAULT_COLUMN_COUNT, DEFAULT_ROWS, MAX_COLUMN_INDEX } from '@app/constants/board-constants';
 import { BoardMessageContent } from '@app/enums/board-message-content';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { Directions } from '@app/enums/directions';
@@ -11,140 +9,160 @@ import { BoardMessage } from './board-message';
 import { BoardNodesIterator } from './board-nodes-iterator';
 import { DirectionHandler } from './handlers/direction-handler';
 import { IndexationTranslator } from './handlers/indexation.translator';
-import { SpecialCasesHandler } from './handlers/special-cases-handler';
 import { SuccessMessageBuilder } from './handlers/success-message-builder';
 import { BoardNode } from './nodes/board-node';
-import { NodeLink } from './nodes/node-link';
+import { NodeStream } from './nodes/node-stream';
 
 export class Board {
-    translator: IndexationTranslator;
     iterator: BoardNodesIterator;
     private table: BoardNode[];
-    private rulesValidator: RulesValidator;
+    private translator: IndexationTranslator;
+    private placementScore: number;
     private wordsValidator: WordsValidator;
     private letterValues: Map<string, number>;
-    private newLinksHistory: NodeLink[];
-    private disabler: SpecialCasesHandler;
 
     constructor(letterValues: Map<string, number>, dictionaryName?: string) {
         this.translator = new IndexationTranslator();
         this.wordsValidator = new WordsValidator(dictionaryName);
-        this.table = new Array<BoardNode>(this.translator.caseCount + 1);
-        this.disabler = new SpecialCasesHandler();
-        const specialCaseReader = new SpecialCasesReader();
-        for (let i = this.translator.minColumnIndex; i <= this.translator.caseCount; i++) {
-            this.table[i] = new BoardNode('', i, specialCaseReader.getSpecialCaseInfo(i));
-        }
-        this.rulesValidator = new RulesValidator(this.translator.findTableIndex(DEFAULT_CENTRAL_ROW, CENTRAL_COLUMN_INDEX) as number);
+        this.table = new Array<BoardNode>(this.translator.caseCount);
         this.letterValues = letterValues;
         this.iterator = new BoardNodesIterator(this.table);
-        this.newLinksHistory = [];
+        this.placementScore = 0;
+        this.setupBoard();
     }
-    getPoints(row: string, columnIndex: number, direction?: string): number {
-        if (direction === undefined) direction = PlacementDirections.Horizontal;
-        const tableIndex = this.translator.findTableIndex(row, columnIndex);
-
-        if (tableIndex === undefined) return 0;
-        return PointsCalculator.computeNewPoints(this.table[tableIndex], DirectionHandler.getPlacementDirections(direction));
+    getNode(index: number): BoardNode | BoardMessage {
+        if (this.isValidIndex(index)) return this.table[index];
+        return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.OutOfBounds };
     }
-    getNode(nodeIndex: number): BoardNode {
-        return this.table[nodeIndex];
+    getScore() {
+        return this.placementScore;
     }
-    askFormedWordsValidation(startNode: BoardNode, placementDirection: PlacementDirections): boolean {
-        return this.wordsValidator.validateWordsFormed(startNode, placementDirection);
-    }
-
-    checkRulesRespected(placementTest?: boolean): BoardMessage {
-        if (placementTest) return this.rulesValidator.performValidation(true);
-        return this.rulesValidator.performValidation();
-    }
-    getIsEmpty(): boolean {
-        return this.rulesValidator.centerIsFull;
-    }
-    saveIsEmpty() {
-        this.rulesValidator.centerIsFullSave = this.rulesValidator.centerIsFull;
-    }
-    restoreBoard() {
-        this.revertNewLinks();
-        this.rulesValidator.modifiedCases.forEach((node, index) => {
-            this.table[index].clearNewLinksHistory();
-            this.table[index].content = node.content;
-            this.table[index].value = node.value;
-            this.table[index].maxStreamLength = node.maxStreamLength;
-            this.table[index].multiplierInfo = node.multiplierInfo;
+    checkLettersValidity(letters: string): boolean {
+        if (letters.length < 1) return false;
+        return [...letters].every((letter) => {
+            return this.letterValues.has(letter.toLowerCase());
         });
-        this.rulesValidator.resetValues();
     }
-
-    getTableLength(): number {
-        return this.table.length;
+    isValidIndex(tableIndex: number | undefined): boolean {
+        return tableIndex !== undefined && tableIndex < MAX_COLUMN_INDEX * DEFAULT_COLUMN_COUNT;
     }
+    placeLetter(letters: string, row: string, column: number, direction?: PlacementDirections, isShadowPlacement?: boolean): BoardMessage {
+        const tableIndex = this.translator.findTableIndex(row, column) as number;
+        if (letters.length === 1) direction = this.setOneLetterDirection(tableIndex);
 
-    getCaseContent(index: number): BoardNode {
-        return this.table[index];
-    }
+        if (!this.isValidIndex(this.translator.findTableIndex(row, column)))
+            return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.OutOfBounds };
 
-    linkNeighbors(tableIndex: number): boolean {
-        const rightNeighborIndex = this.translator.findNeighborIndex(tableIndex, Directions.Right);
-        const downNeighborIndex = this.translator.findNeighborIndex(tableIndex, Directions.Down);
-        if (rightNeighborIndex !== undefined) {
-            const rightNeighbor = this.table[rightNeighborIndex];
-            if (!this.table[tableIndex].registerNeighbor(rightNeighbor, Directions.Right)) return false;
-            this.newLinksHistory.push(this.table[tableIndex].getLink(Directions.Right) as NodeLink);
+        const basicVerificationsMessage: BoardMessage | undefined = this.basicVerifications(letters, tableIndex, direction);
+        if (basicVerificationsMessage) return basicVerificationsMessage;
+
+        direction = direction as PlacementDirections;
+
+        const nodeStream = new NodeStream(this.table[tableIndex], direction, letters.length);
+        let mainFlow: BoardNode[] | undefined = nodeStream.getFlows(direction)?.at(0);
+        if (!mainFlow) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NoLetters };
+        mainFlow = mainFlow as BoardNode[];
+
+        if (this.isCenterNodeFull(mainFlow)) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.CenterCaseEmpty };
+
+        if (mainFlow.length === letters.length && !nodeStream.getFlows(DirectionHandler.reversePlacementDirection(direction)))
+            return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NotConnected };
+
+        let placeLettersCount = 0;
+        for (const node of mainFlow) {
+            if (node.content) continue;
+            node.setLetter(letters.at(placeLettersCount) as string);
+            placeLettersCount++;
         }
-        if (downNeighborIndex !== undefined) {
-            const downNeighbor = this.table[downNeighborIndex];
-            if (!this.table[tableIndex].registerNeighbor(downNeighbor, Directions.Down)) return false;
-            this.newLinksHistory.push(this.table[tableIndex].getLink(Directions.Down) as NodeLink);
+        if (placeLettersCount !== letters.length) throw new Error("Some letters couldn't be placed on the board");
+
+        if (!this.wordsValidator.isValidWords(nodeStream.getWords())) {
+            mainFlow.forEach((node) => {
+                if (node.isNewValue) node.undoPlacement();
+            });
+            return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.InvalidWord };
         }
-        return true;
+        this.placementScore = nodeStream.getScore();
+
+        mainFlow.forEach((node) => {
+            if (node.isNewValue && isShadowPlacement) node.undoPlacement();
+            else node.confirmPlacement();
+        });
+        const directionString: string | undefined = direction ? (direction === PlacementDirections.Horizontal ? 'H' : 'V') : undefined;
+        return SuccessMessageBuilder.elaborateSuccessMessage([...letters], row, column, directionString, this.placementScore);
     }
-    checkLetterValidity(letter: string): boolean {
-        return this.letterValues.has(letter.toLowerCase());
-    }
-    checkTableIndexValidity(tableIndex: number | undefined): BoardMessage | boolean {
+
+    private basicVerifications(letters: string, tableIndex: number, direction?: PlacementDirections): undefined | BoardMessage {
+        if (!this.checkLettersValidity(letters)) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NotValidLetter };
+
         if (tableIndex === undefined) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.OutOfBounds };
-        return true;
+
+        if (this.table[tableIndex].content) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.OccupiedCase };
+
+        if (letters.length < 1) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NoLetters };
+
+        if (!direction) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NoDirection };
+
+        return undefined;
     }
-    commitNewLinks() {
-        this.newLinksHistory.forEach((entry) => {
-            entry.commitLink();
-        });
-        this.newLinksHistory = [];
+
+    private isCenterNodeFull(mainFlow: BoardNode[]): boolean | undefined {
+        return (
+            this.table[CENTRAL_NODE_INDEX].content === null &&
+            mainFlow.every((node: BoardNode) => {
+                return node.index !== CENTRAL_NODE_INDEX;
+            })
+        );
     }
-    askForDisable() {
-        this.disabler.disableCases();
-    }
-    placeLetter(letter: string, row: string, index: number, direction?: PlacementDirections, isSinglePlacement?: boolean): BoardMessage {
-        if (!this.checkLetterValidity(letter)) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NotValidLetter };
-        const tableIndex = this.translator.findTableIndex(row, index);
-        const tableIndexValidity = this.checkTableIndexValidity(tableIndex);
 
-        if (tableIndexValidity !== true) return tableIndexValidity as BoardMessage;
-        if (this.table[tableIndex as number].content !== '')
-            return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.OccupiedCase };
-        if (!this.linkNeighbors(tableIndex as number))
-            return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.InternalLogicError };
-
-        this.rulesValidator.registerModification(this.table[tableIndex as number], direction);
-
-        // Using cast because checkLetterValidity already checked the letter is in letterValues
-        if (letter !== letter.toLowerCase()) {
-            letter = letter.toLowerCase();
-            this.table[tableIndex as number].value = 0;
-        } else this.table[tableIndex as number].value = this.letterValues.get(letter) as number;
-
-        this.table[tableIndex as number].content = letter;
-        this.disabler.register(this.table[tableIndex as number]);
-        if (isSinglePlacement) {
-            const validationResult = this.checkRulesRespected();
-            if (validationResult.title === BoardMessageTitle.RulesBroken) return validationResult;
+    private setupBoard() {
+        const specialCaseReader = new SpecialCasesReader();
+        for (let i = 0; i < this.translator.caseCount; i++) {
+            this.table[i] = new BoardNode(i, specialCaseReader.getSpecialCaseInfo(i));
         }
-        return SuccessMessageBuilder.elaborateSuccessMessage([letter], row, index);
+        for (let i = 0; i < this.translator.caseCount; i++) {
+            const neighbors = new Map<Directions, BoardNode>();
+            const upNeighbor: BoardNode | undefined = this.getNeighbor(i, Directions.Up);
+            if (upNeighbor) neighbors.set(Directions.Up, upNeighbor);
+
+            const downNeighbor: BoardNode | undefined = this.getNeighbor(i, Directions.Down);
+            if (downNeighbor) neighbors.set(Directions.Down, downNeighbor);
+
+            const leftNeighbor: BoardNode | undefined = this.getNeighbor(i, Directions.Left);
+            if (i % DEFAULT_COLUMN_COUNT !== 0 && leftNeighbor) neighbors.set(Directions.Left, leftNeighbor);
+
+            const rightNeighbor: BoardNode | undefined = this.getNeighbor(i, Directions.Right);
+            if ((i + 1) % DEFAULT_COLUMN_COUNT !== 0 && rightNeighbor) neighbors.set(Directions.Right, rightNeighbor);
+
+            neighbors.forEach((node, direction) => {
+                this.table[i].registerNeighbor(node, direction);
+            });
+        }
     }
-    private revertNewLinks() {
-        this.newLinksHistory.forEach((entry) => {
-            entry.unlink();
-        });
+    private getNeighbor(index: number, direction: Directions): BoardNode | undefined {
+        let triedIndex = -1;
+        switch (direction) {
+            case Directions.Up:
+                triedIndex = index - DEFAULT_COLUMN_COUNT;
+                break;
+            case Directions.Down:
+                triedIndex = index + DEFAULT_COLUMN_COUNT;
+                break;
+            case Directions.Left:
+                triedIndex = index - 1;
+                break;
+            case Directions.Right:
+                triedIndex = index + 1;
+                break;
+        }
+        if (triedIndex < 0 || triedIndex >= DEFAULT_COLUMN_COUNT * DEFAULT_ROWS.length) return undefined;
+        return this.table[triedIndex];
+    }
+    private setOneLetterDirection(tableIndex: number): PlacementDirections {
+        return this.table[CENTRAL_NODE_INDEX].content === null ||
+            this.getNeighbor(tableIndex, Directions.Right)?.content ||
+            this.getNeighbor(tableIndex, Directions.Left)?.content
+            ? PlacementDirections.Horizontal
+            : PlacementDirections.Vertical;
     }
 }

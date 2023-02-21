@@ -14,12 +14,12 @@ export class BoardNodesIterator implements BoardIterator {
         this.current = this.table[this.startIndex];
     }
     hasNext(): boolean {
-        if (this.current.key >= this.table.length - 1) return false;
+        if (this.current.index >= this.table.length - 1) return false;
         return true;
     }
     getNext(): BoardNode | undefined {
         if (!this.hasNext()) return;
-        this.current = this.table[this.current.key + 1];
+        this.current = this.table[this.current.index + 1];
         return this.current;
     }
 }

@@ -11,12 +11,12 @@ import { GameManager } from './game-manager';
 
 const palindromeWord = 'naan';
 describe('GameManager tests', () => {
-    const manager: GameManager = new GameManager(DEFAULT_DICTIONARY_PATH, true);
+    const manager: GameManager = new GameManager(DEFAULT_DICTIONARY_PATH);
     const player1 = new Player('id', 'test', true);
     it('reached goals should return an empty array initially', () => {
         const data: PlacementData = { word: palindromeWord, row: 'h', column: 8, direction: PlacementDirections.Horizontal };
         manager.givePlayerGoals([player1]);
-        manager.askPlacement(data, player1);
+        manager.askPlacement(data);
 
         assert(manager.reachedGoals.length === 0);
     });

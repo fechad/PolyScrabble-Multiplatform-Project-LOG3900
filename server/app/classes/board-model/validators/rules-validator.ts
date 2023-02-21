@@ -1,4 +1,4 @@
-import { BoardMessage } from '@app/classes/board-model/board-message';
+/* import { BoardMessage } from '@app/classes/board-model/board-message';
 import { BoardNode } from '@app/classes/board-model/nodes/board-node';
 import { BoardMessageContent } from '@app/enums/board-message-content';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
@@ -60,4 +60,4 @@ export class RulesValidator {
         this.resetValues();
         return { title: BoardMessageTitle.NoRulesBroken, content: BoardMessageContent.NoRulesBroken };
     }
-}
+}*/

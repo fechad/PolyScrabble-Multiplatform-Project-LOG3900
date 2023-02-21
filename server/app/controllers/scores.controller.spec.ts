@@ -9,6 +9,7 @@ import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
 import { describe } from 'mocha';
 import * as sinon from 'sinon';
 import request from 'supertest';
+import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
 import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
@@ -21,6 +22,7 @@ describe('ScoresController', () => {
     let dictionariesService: DictionariesService;
     let gamesHistoryController: GamesHistoryController;
     let gamesHistoryService: GamesHistoryService;
+    let authController: AuthController;
     let botsService: BotsService;
     let botsController: BotsController;
     let application: Application;
@@ -42,8 +44,11 @@ describe('ScoresController', () => {
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         gamesHistoryService = new GamesHistoryService({} as any);
+        // as any is used to replace the real DB service by a mock
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        authController = new AuthController({} as any, {} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
-        application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController);
+        application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController, authController);
         scores = [{ points: 20, author: 'David', gameType: 'log2990', dictionary: 'English', date: new Date().toISOString() }];
     });
 

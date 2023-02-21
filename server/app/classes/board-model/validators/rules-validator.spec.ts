@@ -1,4 +1,4 @@
-import { BoardNode } from '@app/classes/board-model/nodes/board-node';
+/* import { BoardNode } from '@app/classes/board-model/nodes/board-node';
 import { Directions } from '@app/enums/directions';
 import { expect } from 'chai';
 import { describe } from 'mocha';
@@ -31,4 +31,4 @@ describe('RulesValidator tests', () => {
         validator.modifiedCases.set(nodes[1].key, nodes[1]);
         expect(validator.checkModified(nodes[1].key));
     });
-});
+});*/

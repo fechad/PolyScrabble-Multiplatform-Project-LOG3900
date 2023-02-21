@@ -1,8 +1,8 @@
 import { BoardNode } from '@app/classes/board-model/nodes/board-node';
 import { NodeStream } from '@app/classes/board-model/nodes/node-stream';
-import { Randomiser } from '@app/classes/randomiser';
-import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
-import { DEFAULT_DISTRIBUTION } from '@app/constants/virtual-player-constants';
+// import { Randomiser } from '@app/classes/randomiser';
+import { DEFAULT_COLUMN_COUNT, MAX_COLUMN_INDEX } from '@app/constants/board-constants';
+import { MAXIMUM_PLACEMENT_LENGTH } from '@app/constants/virtual-player-constants';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { Directions } from '@app/enums/directions';
 import { PlacementDirections } from '@app/enums/placement-directions';
@@ -10,8 +10,8 @@ import { ScoreInterval } from '@app/interfaces/score-interval';
 import { UserPlacement } from '@app/interfaces/user-placement';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
 
-const MID_WEIGHT = 50;
-const MIN_FIRST_PLACEMENT = 3;
+// const MID_WEIGHT = 50;
+// const MIN_FIRST_PLACEMENT = 3;
 export class PlacementFinder {
     centerNode: BoardNode;
     tools: VirtualTools;
@@ -19,17 +19,17 @@ export class PlacementFinder {
     constructor(tools: VirtualTools) {
         this.tools = tools;
         this.possiblePlacements = [];
-        const centerNode = this.tools.manipulator.askNode(DEFAULT_CENTRAL_ROW, CENTRAL_COLUMN_INDEX);
-        if (centerNode === undefined) throw new Error('Board was not initialized properly');
-        this.centerNode = centerNode;
+        // const centerNode = this.tools.manipulator.askNode(DEFAULT_CENTRAL_ROW, CENTRAL_COLUMN_INDEX);
+        // if (!(centerNode instanceof BoardNode)) throw new Error('Board was not initialized properly');
+        // this.centerNode = centerNode;
     }
     getPlacement(targetScore: ScoreInterval, availableLetters: string): UserPlacement[] {
         this.possiblePlacements = [];
-        if (this.checkCenterNode()) this.findFirstPlacement(targetScore, availableLetters);
-        else this.findPlacements(targetScore, availableLetters);
+        // if (this.checkCenterNode()) this.findFirstPlacement(targetScore, availableLetters);
+        this.findPlacements(targetScore, availableLetters);
         return this.possiblePlacements;
     }
-    private findFirstPlacement(targetScore: ScoreInterval, availableLetters: string) {
+    /* private findFirstPlacement(targetScore: ScoreInterval, availableLetters: string) {
         const probability = Randomiser.getRandomValue(DEFAULT_DISTRIBUTION) as number;
         const placement: UserPlacement = {
             row: 'h',
@@ -50,25 +50,24 @@ export class PlacementFinder {
             toPlace.letters = word;
             this.registerPossiblePlacements(toPlace, targetScore);
         }
-    }
+    }*/
 
     private findPlacements(targetScore: ScoreInterval, availableLetters: string) {
-        const iterator = this.tools.manipulator.getIterator();
-        for (this.tools.manipulator.getIterator(); iterator.hasNext(); iterator.getNext()) {
-            if (iterator.current.content === '') {
-                continue;
-            }
-            const stream = new NodeStream(iterator.current);
-            stream.elaborateBothFlows();
-            this.findDirectionalPlacement(stream, targetScore, PlacementDirections.Horizontal, availableLetters);
-            this.findDirectionalPlacement(stream, targetScore, PlacementDirections.Vertical, availableLetters);
+        for (let i = 0; i < MAX_COLUMN_INDEX * DEFAULT_COLUMN_COUNT; i++) {
+            let node = this.tools.manipulator.askNodeByIndex(i);
+            if (node === undefined) return;
+            node = node as BoardNode;
+            const streamH = new NodeStream(node, PlacementDirections.Horizontal, MAXIMUM_PLACEMENT_LENGTH);
+            const streamV = new NodeStream(node, PlacementDirections.Horizontal, MAXIMUM_PLACEMENT_LENGTH);
+            this.findDirectionalPlacement(streamH, targetScore, PlacementDirections.Horizontal, availableLetters);
+            this.findDirectionalPlacement(streamV, targetScore, PlacementDirections.Vertical, availableLetters);
         }
-        iterator.goToStart();
     }
-    private checkCenterNode(): boolean {
-        return this.centerNode.content === '';
-    }
-    private registerPossiblePlacements(placement: UserPlacement, scoreInterval?: ScoreInterval) {
+    // private checkCenterNode(): boolean {
+    //    return this.centerNode.content === '';
+    // }
+
+    private registerPossiblePlacements(placement: UserPlacement) {
         const result = this.tools.manipulator.placeLetters(
             placement.newWord.replace(placement.oldWord, '').split(''),
             placement.row,
@@ -77,15 +76,8 @@ export class PlacementFinder {
             true,
         );
         if (result.title !== BoardMessageTitle.SuccessfulPlacement) return;
-        if (scoreInterval) {
-            if ((result.score as number) < scoreInterval.min || (result.score as number) > scoreInterval.max) {
-                this.tools.manipulator.askBoardRestoration();
-                return;
-            }
-        }
         placement.points = result.score;
-        if (!this.possiblePlacements.includes(placement)) this.possiblePlacements.push(placement);
-        this.tools.manipulator.askBoardRestoration();
+        this.possiblePlacements.push(placement);
     }
     private findDirectionalPlacement(
         nodeStream: NodeStream,
@@ -93,14 +85,14 @@ export class PlacementFinder {
         placementDirection: PlacementDirections,
         availableLetters: string,
     ) {
-        const startNode = nodeStream.getFirstNode(placementDirection) as BoardNode;
-        const base = nodeStream.getWord(placementDirection) as string;
+        const mainFlow = (nodeStream.getFlows(placementDirection) as BoardNode[][])[0];
+        const base = nodeStream.getWords()[0] as string;
         if (base.length < 1) return;
         const derivatives = this.tools.fetcher.getPlacements(scoreInterval, base, availableLetters.split(''));
         for (const word of derivatives) {
             const placement = {
-                row: this.tools.translator.findRowLetter(startNode.key),
-                col: this.tools.translator.findColumnIndex(startNode.key) as number,
+                row: this.tools.translator.findRowLetter(mainFlow[0].index),
+                col: this.tools.translator.findColumnIndex(mainFlow[0].index) as number,
                 direction: placementDirection,
                 newWord: word,
                 oldWord: base,
@@ -108,7 +100,7 @@ export class PlacementFinder {
             } as UserPlacement;
             this.computePlacementStart(placement);
             if (placement.row === undefined || placement.col === undefined) continue;
-            this.registerPossiblePlacements(placement, scoreInterval);
+            this.registerPossiblePlacements(placement);
         }
     }
     private computePlacementStart(placement: UserPlacement) {

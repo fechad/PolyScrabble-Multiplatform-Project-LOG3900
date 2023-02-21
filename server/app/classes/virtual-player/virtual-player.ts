@@ -1,4 +1,3 @@
-import { BoardManipulator2990 } from '@app/classes/board-model/board-manipulator-2990';
 import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
 import { BoardNode } from '@app/classes/board-model/nodes/board-node';
@@ -30,7 +29,7 @@ export class VirtualPlayer extends Player {
         socketId: string,
         pseudo: string,
         isCreator: boolean,
-        boardManipulator: BoardManipulator | BoardManipulator2990,
+        boardManipulator: BoardManipulator,
         letterBank: LetterBank,
         wordFetcher: WordFetcher,
         desiredLevel: string = GameLevel.Beginner,
@@ -46,7 +45,7 @@ export class VirtualPlayer extends Player {
         this.tools = { ...baseTools, finder: new PlacementFinder(baseTools) };
         this.possiblePlacements = [];
         const centerNode = this.tools.manipulator.askNode(DEFAULT_CENTRAL_ROW, CENTRAL_COLUMN_INDEX);
-        if (centerNode === undefined) return;
+        if (!(centerNode instanceof BoardNode)) return;
         this.centerNode = centerNode;
         this.setGreeting();
     }

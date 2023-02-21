@@ -43,7 +43,7 @@ describe('GamesHistoryController', () => {
         botsController = new BotsController(botsService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        authController = new AuthController({} as any);
+        authController = new AuthController({} as any, {} as any);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         gamesHistoryService = new GamesHistoryService({} as any);
@@ -51,12 +51,13 @@ describe('GamesHistoryController', () => {
         application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController, authController);
         games = [
             {
-                date: 'date1',
+                startDatetime: 'date1',
                 period: '1h30',
-                player1: 'game1player1',
-                scorePlayer1: 20,
-                player2: 'game1player2',
-                scorePlayer2: 50,
+                botIDS: [],
+                results: [
+                    { playerID: 'game1player1', score: 20 },
+                    { playerID: 'game1player2', score: 50 },
+                ],
                 gameType: 'classique',
                 surrender: '',
             },
