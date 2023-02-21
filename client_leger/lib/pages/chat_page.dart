@@ -6,11 +6,10 @@ import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class GeneralChatWidget extends StatefulWidget {
   @override
@@ -23,6 +22,8 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   final ScrollController _controller = ScrollController();
   bool isWriting = false;
   List<ChatMessage> messages = chatService.getDiscussions()[0].messages;
+
+
 
   @override
   void initState() {
@@ -47,11 +48,19 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                         })
 
               })),
+        if(messages[messages.length-1].sender != authenticator.currentUser.username){
+          FlutterRingtonePlayer.play(
+          android: AndroidSounds.notification,
+          ios: IosSounds.receivedMessage,
+          looping: false, // Android only - API >= 28
+          volume: 0.5, // Android only - API >= 28
+          asAlarm: false, // Android only - all APIs
+        ),},
           _scrollDown()
             }
             );
   }
-
+  
   void _scrollDown() {
     _controller.jumpTo(_controller.position.maxScrollExtent+200.0);
   }
@@ -157,7 +166,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                   margin: EdgeInsets.symmetric(horizontal: 3.0),
                   child: IconButton(
                     onPressed: textController.text.trim().isNotEmpty
-                        ? () => {submitMsg(textController.text.trim())}
+                        ? () => {submitMsg(textController.text)}
                         : null,
                     icon: const Icon(Icons.send),
                   ))
@@ -167,6 +176,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   }
 
   void submitMsg(String txt) {
+    if(textController.text.trim().isEmpty) return;
     textController.clear();
 
     ChatMessage msg = ChatMessage(
@@ -174,7 +184,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
         sender: authenticator.getCurrentUser().username,
         system: false,
         time: DateFormat('HH:mm:ss').format(DateTime.now()),
-        message: txt);
+        message: txt.trim());
 
     chatService.addMessage(message: msg, channelName: msg.channelName);
 
