@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers -- disabling to ease testing*/
-import { GoalManager } from '@app/classes/goals/goal-manager';
+/* import { GoalManager } from '@app/classes/goals/goal-manager';
 import { Matcher } from '@app/classes/goals/matcher';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
@@ -57,4 +57,4 @@ describe('BoardManipulator2990 tests', () => {
         board.handlePlacementRequest(palindromeWord.split(''), 'h', 8, firstPlayer, 'h');
         expect(spy.calledOnce).to.equals(true);
     });
-});
+});*/

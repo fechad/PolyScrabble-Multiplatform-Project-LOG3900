@@ -1,4 +1,3 @@
-import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { SpecialCasesReader } from '@app/classes/readers/special-cases-reader';
 import { Directions } from '@app/enums/directions';
 import { MultiplierType } from '@app/enums/multiplier-type';
@@ -20,67 +19,63 @@ describe('NodeStream tests', () => {
     let horizontalStreamTest: NodeStream;
     let verticalStreamTest: NodeStream;
     const reader = new SpecialCasesReader();
-    const bank = new LetterBank();
-    const values = bank.produceValueMap();
+
     beforeEach(() => {
         horizontalNodes = new Array<BoardNode>(NODES_COUNT);
         verticalNodes = new Array<BoardNode>(NODES_COUNT);
 
-        horizontalNodes[0] = new BoardNode(TEST_LETTERS[0], 0, reader.getSpecialCaseInfo(0));
-        horizontalNodes[0].value = values.get(TEST_LETTERS[0]) as number;
+        horizontalNodes[0] = new BoardNode(0, reader.getSpecialCaseInfo(0));
+        horizontalNodes[0].setLetter(TEST_LETTERS.at(0) as string);
 
-        verticalNodes[0] = new BoardNode(TEST_LETTERS[0], 0, reader.getSpecialCaseInfo(0));
-        verticalNodes[0].value = values.get(TEST_LETTERS[0]) as number;
+        verticalNodes[0] = new BoardNode(0, reader.getSpecialCaseInfo(0));
+        verticalNodes[0].setLetter(TEST_LETTERS.at(0) as string);
 
         for (let i = 1; i < NODES_COUNT; i++) {
-            horizontalNodes[i] = new BoardNode(TEST_LETTERS[i], i, reader.getSpecialCaseInfo(0));
-            horizontalNodes[i].value = values.get(TEST_LETTERS[i]) as number;
+            horizontalNodes[i] = new BoardNode(i, reader.getSpecialCaseInfo(0));
+            horizontalNodes[i].setLetter(TEST_LETTERS.at(i) as string);
             horizontalNodes[i].registerNeighbor(horizontalNodes[i - 1], Directions.Left);
+            horizontalNodes[i - 1].registerNeighbor(horizontalNodes[i], Directions.Right);
 
-            verticalNodes[i] = horizontalNodes[i];
-            verticalNodes[i].value = values.get(TEST_LETTERS[i]) as number;
+            verticalNodes[i] = new BoardNode(i, reader.getSpecialCaseInfo(0));
+            verticalNodes[i].setLetter(TEST_LETTERS.at(i) as string);
             verticalNodes[i].registerNeighbor(verticalNodes[i - 1], Directions.Up);
+            verticalNodes[i - 1].registerNeighbor(verticalNodes[i], Directions.Down);
         }
-        horizontalStreamTest = new NodeStream(horizontalNodes[2]);
-        verticalStreamTest = new NodeStream(verticalNodes[2]);
-        horizontalStreamTest.elaborateBothFlows();
-        verticalStreamTest.elaborateBothFlows();
+        horizontalStreamTest = new NodeStream(horizontalNodes[0], PlacementDirections.Horizontal, NODES_COUNT);
+        verticalStreamTest = new NodeStream(verticalNodes[0], PlacementDirections.Vertical, NODES_COUNT);
     });
     it('should horizontally retrace nodeStream correctly', () => {
-        expect(horizontalStreamTest.getFlow(PlacementDirections.Horizontal)).to.deep.equals(horizontalNodes);
+        expect(horizontalStreamTest.getFlows(PlacementDirections.Horizontal)?.at(0)).to.deep.equals(horizontalNodes);
     });
     it('should vertically retrace nodeStream correctly', () => {
-        expect(verticalStreamTest.getFlow(PlacementDirections.Vertical)).to.deep.equals(verticalNodes);
+        expect(verticalStreamTest.getFlows(PlacementDirections.Vertical)?.at(0)).to.deep.equals(verticalNodes);
     });
     it('should horizontally retrace words correctly', () => {
-        expect(horizontalStreamTest.getWord(PlacementDirections.Horizontal)).to.equals(TEST_WORD);
+        expect(horizontalStreamTest.getWords().at(0)).to.equals(TEST_WORD);
     });
-    it('should horizontally retrace words correctly', () => {
-        expect(verticalStreamTest.getWord(PlacementDirections.Vertical)).to.equals(TEST_WORD);
+    it('should vertically retrace words correctly', () => {
+        expect(verticalStreamTest.getWords().at(0)).to.equals(TEST_WORD);
     });
     it('should horizontally add up score correctly', () => {
-        expect(horizontalStreamTest.getScore(PlacementDirections.Horizontal)).to.equals(BASE_VALUE);
+        expect(horizontalStreamTest.getScore()).to.equals(BASE_VALUE);
     });
     it('should vertically add up score correctly', () => {
-        expect(verticalStreamTest.getScore(PlacementDirections.Vertical)).to.equals(BASE_VALUE);
-    });
-    it('should return undefined when given an incorrect placement direction', () => {
-        expect(horizontalStreamTest.getFirstNode('test' as PlacementDirections)).to.equals(undefined);
+        expect(verticalStreamTest.getScore()).to.equals(BASE_VALUE);
     });
     describe('Score retracing tests with special cases', () => {
         beforeEach(() => {
             const wordMultiplierCaseInfo: SpecialCaseInfo = { multiplierValue: 3, multiplierType: MultiplierType.WordMultiplier };
             const letterMultiplierCaseInfo: SpecialCaseInfo = { multiplierValue: 2, multiplierType: MultiplierType.LetterMultiplier };
-            horizontalNodes[0].multiplierInfo = wordMultiplierCaseInfo;
-            horizontalNodes[1].multiplierInfo = letterMultiplierCaseInfo;
-            verticalNodes[0].multiplierInfo = wordMultiplierCaseInfo;
-            verticalNodes[1].multiplierInfo = letterMultiplierCaseInfo;
+            horizontalNodes[0].multiplier = wordMultiplierCaseInfo;
+            horizontalNodes[1].multiplier = letterMultiplierCaseInfo;
+            verticalNodes[0].multiplier = wordMultiplierCaseInfo;
+            verticalNodes[1].multiplier = letterMultiplierCaseInfo;
         });
         it('should horizontally add up score correctly when special cases are present', () => {
-            expect(horizontalStreamTest.getScore(PlacementDirections.Horizontal)).to.equals(SPECIAL_SCORE);
+            expect(horizontalStreamTest.getScore()).to.equals(SPECIAL_SCORE);
         });
         it('should vertically add up score correctly when special cases are present', () => {
-            expect(verticalStreamTest.getScore(PlacementDirections.Vertical)).to.equals(SPECIAL_SCORE);
+            expect(verticalStreamTest.getScore()).to.equals(SPECIAL_SCORE);
         });
     });
 });

@@ -13,6 +13,7 @@ import * as sinon from 'sinon';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -26,6 +27,7 @@ describe('SocketHandler service tests', () => {
     const socketHandlerService = new SocketHandlerService(
         new io.Server(http.createServer(), { cors: { origin: '*', methods: ['GET', 'POST'] } }),
         new ScoresService({} as any),
+        new PlayerGameHistoryService({} as any),
         new GamesHistoryService({} as any),
         new ChatMessageService(),
         new RoomService(),

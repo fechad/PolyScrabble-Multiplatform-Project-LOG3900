@@ -3,6 +3,7 @@ export const MAX_COLUMN_INDEX = 15;
 export const CENTRAL_COLUMN_INDEX = 8;
 export const THIRD_COLUMN_INDEX = 3;
 export const DEFAULT_COLUMN_COUNT = 15;
+export const CENTRAL_NODE_INDEX = 113;
 export const DEFAULT_ROWS: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'];
 export const DEFAULT_CENTRAL_INDEX = 7;
 export const DEFAULT_FIRST_ROW = DEFAULT_ROWS[0];

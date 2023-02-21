@@ -1,4 +1,3 @@
-import { BoardManipulator2990 } from '@app/classes/board-model/board-manipulator-2990';
 import { BoardMessage } from '@app/classes/board-model/board-message';
 import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
@@ -14,23 +13,19 @@ import { COUNT_PLAYER_TURN, DEFAULT_DICTIONARY_PATH } from '@app/constants/const
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
+
 export class GameManager {
     turnPassedCounter: number;
     hasTimeout: boolean;
     placementFinder: PlacementFinder;
-    boardManipulator: BoardManipulator | BoardManipulator2990;
+    boardManipulator: BoardManipulator;
     goalManager: GoalManager;
     private letterBank: LetterBank;
     private wordFetcher: WordFetcher;
-    private is2990: boolean;
 
-    constructor(dictionaryName: string = DEFAULT_DICTIONARY_PATH, is2990: boolean) {
+    constructor(dictionaryName: string = DEFAULT_DICTIONARY_PATH) {
         this.letterBank = new LetterBank();
         this.boardManipulator = new BoardManipulator(this.letterBank.produceValueMap(), dictionaryName);
-        if (is2990) {
-            this.boardManipulator = new BoardManipulator2990(this.letterBank.produceValueMap(), dictionaryName);
-            this.is2990 = is2990;
-        }
         this.turnPassedCounter = 0;
         this.hasTimeout = false;
         this.wordFetcher = new WordFetcher();
@@ -71,16 +66,8 @@ export class GameManager {
         player.rack.insertLetters(this.letterBank.fetchRandomLetters(player.rack.getSpaceLeft()));
     }
 
-    askPlacement(placement: PlacementData, currentPlayer?: Player): BoardMessage {
-        if (this.is2990 && currentPlayer) {
-            return (this.boardManipulator as BoardManipulator2990).handlePlacementRequest(
-                placement.word.split(''),
-                placement.row,
-                placement.column,
-                currentPlayer,
-                placement.direction,
-            );
-        }
+    /// eslint-disable-next-line @typescript-eslint/no-unused-vars
+    askPlacement(placement: PlacementData): BoardMessage {
         return this.boardManipulator.placeLetters(placement.word.split(''), placement.row, placement.column, placement.direction);
     }
 

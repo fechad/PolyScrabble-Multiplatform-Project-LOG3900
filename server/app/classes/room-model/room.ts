@@ -12,6 +12,7 @@ import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
 import { DictionariesFileService } from '@app/services/dictionaries-files.service';
 import { GameManager } from './game-manager';
+
 export class Room {
     elapsedTime: number;
     players: Player[];
@@ -20,6 +21,7 @@ export class Room {
     startDate: Date;
     private isFirstGame: boolean;
     private gameManager: GameManager;
+
     constructor(clientRoom?: Room) {
         this.players = [];
         this.elapsedTime = 0;
@@ -35,10 +37,7 @@ export class Room {
                 surrender: '',
             };
         } else this.roomInfo = { name: '', timerPerTurn: '', dictionary: DEFAULT_DICTIONARY_TITLE, gameType: '', maxPlayers: 2, surrender: '' };
-        this.gameManager = new GameManager(
-            new DictionariesFileService().convertTitleIntoFilename(this.roomInfo.dictionary),
-            this.roomInfo.gameType === 'log2990',
-        );
+        this.gameManager = new GameManager(new DictionariesFileService().convertTitleIntoFilename(this.roomInfo.dictionary));
         this.isFirstGame = true;
     }
 
@@ -120,7 +119,7 @@ export class Room {
     }
 
     askPlacement(placement: PlacementData): BoardMessage {
-        return this.gameManager.askPlacement(placement, this.getCurrentPlayerTurn());
+        return this.gameManager.askPlacement(placement);
     }
 
     getPlayer(playerSocketId: string): Player | undefined {

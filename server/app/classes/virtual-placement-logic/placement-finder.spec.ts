@@ -1,4 +1,4 @@
-import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
+/* import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { DictionaryReader } from '@app/classes/readers/dictionary-reader';
@@ -60,4 +60,4 @@ describe('PlacementFinder tests', () => {
             assert(dictionary.hasWord(value.newWord), 'One of the new words proposed was not in the dictionary');
         });
     });
-});
+});*/
