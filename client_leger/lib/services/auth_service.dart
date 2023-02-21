@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:client_leger/components/user_model.dart';
+import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,7 +69,7 @@ class AuthService {
         throw ('Wrong password provided for that user.');
         //return () => 'Wrong password provided for that user.';
       } else
-        throw ('Connexion could not be fulfilled, try again later');
+        throw (e.message!);
     }
   }
 
@@ -105,7 +106,6 @@ class AuthService {
 
   Future<void> setUser(String email) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-
     await httpService.getUserInfo(email).then((value) => {
 <<<<<<< HEAD
 =======
