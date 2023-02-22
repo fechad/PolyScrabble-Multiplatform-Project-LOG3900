@@ -5,6 +5,7 @@ import { Score } from '@app/classes/score';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { GeneralChatComponent } from '@app/components/general-chat/general-chat.component';
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
+import { AudioService } from '@app/services/audio.service';
 import { HttpService } from '@app/services/http.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
@@ -20,13 +21,20 @@ export const DIALOG_WIDTH = '600px';
 export class MainPageComponent implements OnInit {
     title: string;
     message: BehaviorSubject<string>;
-    constructor(public room: Room, private dialog: MatDialog, private httpService: HttpService, private socketService: SocketClientService) {
+    constructor(
+        public room: Room,
+        private dialog: MatDialog,
+        private httpService: HttpService,
+        private socketService: SocketClientService,
+        private audioService: AudioService,
+    ) {
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
     }
 
     ngOnInit() {
         this.connect();
+        this.audioService.playMainTheme();
     }
 
     setGameType(type: string) {
