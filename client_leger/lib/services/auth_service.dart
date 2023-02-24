@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:client_leger/components/user_model.dart';
-import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,13 +33,14 @@ class AuthService {
     );
   }
 
-  Future<void> signUpUser(String emailAddress, String password) async {
+  Future<void> signUpUser(
+      String emailAddress, String password, String username) async {
     try {
       final credential = await firebase.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
-      createUser(credential.user!.email!);
+      createUser(credential.user!.email!, username);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         throw ('This email is not valid');
@@ -69,7 +69,7 @@ class AuthService {
         throw ('Wrong password provided for that user.');
         //return () => 'Wrong password provided for that user.';
       } else
-        throw (e.message!);
+        throw ('Connexion could not be fulfilled, try again later');
     }
   }
 
@@ -81,36 +81,18 @@ class AuthService {
     loggedInEmail = email;
   }
 
-  Future<void> createUser(String email) async {
+  Future<void> createUser(String email, String username) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
 
-    await httpService.getUserInfo(email).then((value) => {
-<<<<<<< HEAD
-=======
-          print(value),
->>>>>>> dev
-          currentUser = UserModel(
-            username: "Anna",
-            email: "xanna@gmail.com",
-            avatarURL: '',
-            level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
-            badges: [],
-            highScore: 0,
-            gamesWon: 0,
-            totalXp: 0,
-            gamesPlayed: [],
-            bestGames: [],
-          )
-        });
+    await httpService
+        .createUser(email, username)
+        .then((value) => setUser(email));
   }
 
   Future<void> setUser(String email) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
+
     await httpService.getUserInfo(email).then((value) => {
-<<<<<<< HEAD
-=======
-          print(jsonDecode(value.body)['username']),
->>>>>>> dev
           currentUser = UserModel(
             username: '${jsonDecode(value.body)['username']}',
             email: '${jsonDecode(value.body)['email']}',
@@ -123,10 +105,6 @@ class AuthService {
             gamesPlayed: [],
             bestGames: [],
           ),
-<<<<<<< HEAD
-=======
-          print(currentUser.username)
->>>>>>> dev
         });
   }
 

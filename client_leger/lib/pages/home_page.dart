@@ -55,14 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       socket.on(
           'connect_error',
-              (d) => {
-            print(socket.io.options),
-            print(d),
-            //socket.io.replaceAll(':0', ''),
-            //socket.disconnect().connect(),
-            //socket.io.options.update('transports', (value) => ['polling']),
-            print(socket.io.options)
-          });
+          (d) => {
+                print(socket.io.options),
+                print(d),
+                //socket.io.replaceAll(':0', ''),
+                //socket.disconnect().connect(),
+                //socket.io.options.update('transports', (value) => ['polling']),
+                print(socket.io.options)
+              });
 
       print(socket.connected);
     } catch (e) {
@@ -95,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
               child: InkWell(
                 onTap: () {
                   scaffoldKey.currentState!.openDrawer();
-
                 },
                 child: Icon(
                   Icons.list_rounded,
@@ -110,9 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 'PolyScrabble',
                 textAlign: TextAlign.center,
                 style: FlutterFlowTheme.of(context).title1.override(
-                  fontFamily: 'Poppins',
-                  fontSize: 56,
-                ),
+                      fontFamily: 'Poppins',
+                      fontSize: 56,
+                    ),
               ),
             ),
             actions: [
@@ -134,20 +133,20 @@ class _MyHomePageState extends State<MyHomePage> {
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
           child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
+              // Column is also a layout widget. It takes a list of children and
+              // arranges them vertically. By default, it sizes itself to fit its
+              // children horizontally, and tries to be as tall as its parent.
+              //
+              // Invoke "debug painting" (press "p" in the console, choose the
+              // "Toggle Debug Paint" action from the Flutter Inspector in Android
+              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+              // to see the wireframe for each widget.
+              //
+              // Column has various properties to control how it sizes itself and
+              // how it positions its children. Here we use mainAxisAlignment to
+              // center the children vertically; the main axis here is the vertical
+              // axis because Columns are vertical (the cross axis would be
+              // horizontal).
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
@@ -179,9 +178,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     httpService
                         .logoutUser(authenticator.currentUser.username)
                         .then((value) => chatService.leaveDiscussion(
-                        'General Chat',
-                        authenticator
-                            .currentUser.username)); //TODO: Envoyer l'email
+                            'General Chat',
+                            authenticator
+                                .currentUser.username)); //TODO: Envoyer l'email
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -208,4 +207,3 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
   }
 }
-

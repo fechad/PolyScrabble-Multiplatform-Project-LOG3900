@@ -6,10 +6,11 @@ import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class GeneralChatWidget extends StatefulWidget {
   @override
@@ -23,13 +24,14 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   bool isWriting = false;
   List<ChatMessage> messages = chatService.getDiscussions()[0].messages;
 
-
-
   @override
   void initState() {
     super.initState();
     connect();
-    Timer(Duration(milliseconds: 0), () => {_controller.jumpTo(_controller.position.maxScrollExtent+300.0)});
+    Timer(
+        Duration(milliseconds: 0),
+        () =>
+            {_controller.jumpTo(_controller.position.maxScrollExtent + 300.0)});
   }
 
   connect() {
@@ -46,23 +48,24 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                               time: message['time'],
                               message: message['message'])),
                         })
-
-              })),
-        if(messages[messages.length-1].sender != authenticator.currentUser.username){
-          FlutterRingtonePlayer.play(
-          android: AndroidSounds.notification,
-          ios: IosSounds.receivedMessage,
-          looping: false, // Android only - API >= 28
-          volume: 0.5, // Android only - API >= 28
-          asAlarm: false, // Android only - all APIs
-        ),},
-          _scrollDown()
-            }
-            );
+                  })),
+              if (messages[messages.length - 1].sender !=
+                  authenticator.currentUser.username)
+                {
+                  FlutterRingtonePlayer.play(
+                    android: AndroidSounds.notification,
+                    ios: IosSounds.receivedMessage,
+                    looping: false, // Android only - API >= 28
+                    volume: 0.5, // Android only - API >= 28
+                    asAlarm: false, // Android only - all APIs
+                  ),
+                },
+              _scrollDown()
+            });
   }
-  
+
   void _scrollDown() {
-    _controller.jumpTo(_controller.position.maxScrollExtent+200.0);
+    _controller.jumpTo(_controller.position.maxScrollExtent + 200.0);
   }
 
   @override
@@ -123,11 +126,11 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
       body: Column(children: <Widget>[
         Flexible(
             child: ListView.builder(
-              controller: _controller,
-              itemBuilder: (BuildContext context, int index) => messages[index],
-              itemCount: messages.length,
-              reverse: false,
-              padding: EdgeInsets.all(6.0),
+          controller: _controller,
+          itemBuilder: (BuildContext context, int index) => messages[index],
+          itemCount: messages.length,
+          reverse: false,
+          padding: EdgeInsets.all(6.0),
         )),
         Divider(height: 1.0),
         Container(
@@ -155,7 +158,6 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                       isWriting = txt.length > 0;
                     });
                   },
-
                   onSubmitted: submitMsg,
                   decoration: InputDecoration.collapsed(
                       hintStyle: TextStyle(fontSize: 18),
@@ -176,7 +178,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   }
 
   void submitMsg(String txt) {
-    if(textController.text.trim().isEmpty) return;
+    if (textController.text.trim().isEmpty) return;
     textController.clear();
 
     ChatMessage msg = ChatMessage(
