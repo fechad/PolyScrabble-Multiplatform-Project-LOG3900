@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:client_leger/main.dart';
+import 'package:client_leger/services/http_service.dart';
 import 'package:flutter/material.dart';
 
 import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import 'connexion_page.dart';
 import 'home_page.dart';
+
+final httpService = HttpService();
 
 class SignupPageWidget extends StatefulWidget {
   const SignupPageWidget({Key? key}) : super(key: key);
@@ -22,6 +25,14 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final usernameController = TextEditingController();
+  late List<String> usernames;
+
+  @override
+  void initState() {
+    super.initState();
+    httpService.getUsernames().then((names) => {usernames = names});
+  }
 
   @override
   void dispose() {
@@ -84,6 +95,28 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                         fontFamily: 'Nunito',
                                         fontSize: 24,
                                       ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 400,
+                                child: TextFormField(
+                                  controller: usernameController,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Choose a username',
+                                    labelText: 'username',
+                                  ),
+                                  // The validator receives the text that the user has entered.
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a valid email address';
+                                    }
+                                    if (usernames
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains('"${value.toLowerCase()}"')) {
+                                      return 'The username $value is already taken';
+                                    }
+                                  },
                                 ),
                               ),
                               SizedBox(
@@ -154,8 +187,10 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                     if (_formKey.currentState!.validate()) {
                                       //loginUser(textController.text);
                                       authenticator
-                                          .signUpUser(emailController.text,
-                                              passwordController.text)
+                                          .signUpUser(
+                                              emailController.text,
+                                              passwordController.text,
+                                              usernameController.text)
                                           .then((value) => Navigator.of(context)
                                               .push(MaterialPageRoute(
                                                   builder: (context) =>

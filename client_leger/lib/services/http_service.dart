@@ -23,6 +23,11 @@ class HttpService {
     return http.get(Uri.parse('$url/api/$authUrl/user/$email'));
   }
 
+  Future<http.Response> createUser(String email, String username) {
+    return http.post(Uri.parse('$url/api/$authUrl/user'),
+        body: {"email": email, "username": username});
+  }
+
   Future<List<String>> getUsernames() async {
     final response = await http.get(Uri.parse('$url/api/$authUrl/usernames'));
     if (response.statusCode != 200) {

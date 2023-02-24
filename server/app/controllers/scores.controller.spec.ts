@@ -1,6 +1,8 @@
 import { Application } from '@app/app';
 import { Score } from '@app/interfaces/score';
+import { Authentificator } from '@app/services/auth.service';
 import { BotsService } from '@app/services/bot.service';
+import { DatabaseService } from '@app/services/database.service';
 import { DictionariesService } from '@app/services/dictionaries.service';
 import { GamesHistoryService } from '@app/services/games.history.service';
 import { ScoresService } from '@app/services/score.service';
@@ -37,6 +39,7 @@ describe('ScoresController', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         dictionariesService = new DictionariesService({} as any);
         dictionariesController = new DictionariesController(dictionariesService);
+        authController = new AuthController({} as Authentificator, {} as DatabaseService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         botsService = new BotsService({} as any);
