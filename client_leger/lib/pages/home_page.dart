@@ -4,12 +4,12 @@ import 'package:client_leger/services/chat_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
-
+import '../components/sidebar.dart';
 import '../config/colors.dart';
 import '../config/environment.dart';
-import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
 import 'connexion_page.dart';
+import 'menu_page.dart';
 
 Io.Socket socket = Io.io(
     getSocketURL(),
@@ -65,14 +65,14 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       socket.on(
           'connect_error',
-          (d) => {
-                print(socket.io.options),
-                print(d),
-                //socket.io.replaceAll(':0', ''),
-                //socket.disconnect().connect(),
-                //socket.io.options.update('transports', (value) => ['polling']),
-                print(socket.io.options)
-              });
+              (d) => {
+            print(socket.io.options),
+            print(d),
+            //socket.io.replaceAll(':0', ''),
+            //socket.disconnect().connect(),
+            //socket.io.options.update('transports', (value) => ['polling']),
+            print(socket.io.options)
+          });
 
       print(socket.connected);
     } catch (e) {
@@ -93,91 +93,67 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        drawer: ChatDrawer(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100),
-          child: AppBar(
-            backgroundColor: FlutterFlowTheme.of(context).primaryBtnText,
-            automaticallyImplyLeading: false,
-            leading: Align(
-              alignment: AlignmentDirectional(0, 0),
-              child: InkWell(
-                onTap: () {
-                  scaffoldKey.currentState!.openDrawer();
-                },
-                child: Icon(
-                  Icons.list_rounded,
-                  color: Colors.black,
-                  size: 60,
+        backgroundColor: Color(0xFFF9FFF6),
+        drawer: const ChatDrawer(),
+        body: Stack(
+          children: <Widget>[
+            Container(
+              child: Center(
+                // Center is a layout widget. It takes a single child and positions it
+                // in the middle of the parent.
+                child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[Align(
+                      alignment: Alignment.topCenter,
+                      child: Image.asset(
+                        "assets/images/scrabble_hero.png",
+                        ),
+                      ),
+                      SizedBox(height: 130),
+                      Text("Modes de jeu" ,
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 35,
+                           decoration: TextDecoration.underline,
+                      )),
+                      SizedBox(height: 60),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Palette.mainColor,
+                          minimumSize: Size(300, 40),
+                          textStyle: const TextStyle(fontSize: 20),
+                        ),
+                        child: const Text('Scrabble Classique'),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MenuPage()));
+                        },
+                      ),
+                      SizedBox(height: 15),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Palette.mainColor,
+                          minimumSize: Size(300, 40),
+                          textStyle: const TextStyle(fontSize: 20),
+                        ),
+                        child: const Text('Scrabble Mania'),
+                        onPressed: () {
+                          // Navigator.push(context,
+                          //     MaterialPageRoute(builder: ((context) {
+                          //       return GeneralChatWidget();
+                          //     })));
+                        },
+                      ),
+                      SizedBox(height: 200),
+                    ],
                 ),
               ),
             ),
-            title: Align(
-              alignment: AlignmentDirectional(0, 1),
-              child: Text(
-                'PolyScrabble',
-                textAlign: TextAlign.center,
-                style: FlutterFlowTheme.of(context).title1.override(
-                      fontFamily: 'Poppins',
-                      fontSize: 56,
-                    ),
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.person),
-                color: Colors.black,
-                iconSize: 60,
-                onPressed: () {
-                  scaffoldKey.currentState!.openEndDrawer();
-                },
-              ),
-            ],
-            centerTitle: false,
-            toolbarHeight: 100,
-            elevation: 2,
-          ),
-        ),
-        body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: Column(
-              // Column is also a layout widget. It takes a list of children and
-              // arranges them vertically. By default, it sizes itself to fit its
-              // children horizontally, and tries to be as tall as its parent.
-              //
-              // Invoke "debug painting" (press "p" in the console, choose the
-              // "Toggle Debug Paint" action from the Flutter Inspector in Android
-              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-              // to see the wireframe for each widget.
-              //
-              // Column has various properties to control how it sizes itself and
-              // how it positions its children. Here we use mainAxisAlignment to
-              // center the children vertically; the main axis here is the vertical
-              // axis because Columns are vertical (the cross axis would be
-              // horizontal).
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
-                    minimumSize: Size(300, 40),
-                    textStyle: const TextStyle(fontSize: 20),
-                  ),
-                  child: const Text('Scrabble classique'),
-                  onPressed: () {},
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
-                    minimumSize: Size(300, 40),
-                    textStyle: const TextStyle(fontSize: 20),
-                  ),
-                  child: const Text('Meilleurs scores'),
-                  onPressed: () {},
-                ),
-              ]),
+            CollapsingNavigationDrawer(),
+          ]
+
         ),
         endDrawer: Drawer(
           child: Container(
@@ -189,9 +165,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     httpService
                         .logoutUser(authenticator.currentUser.username)
                         .then((value) => chatService.leaveDiscussion(
-                            'General Chat',
-                            authenticator
-                                .currentUser.username)); //TODO: Envoyer l'email
+                        'General Chat',
+                        authenticator
+                            .currentUser.username)); //TODO: Envoyer l'email
                     Navigator.push(
                         context,
                         MaterialPageRoute(

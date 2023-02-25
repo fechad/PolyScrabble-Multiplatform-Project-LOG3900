@@ -56,6 +56,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Color(0xFFF9FFF6),
       body: SafeArea(
         child: GestureDetector(
@@ -70,7 +71,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.35,
-                height: MediaQuery.of(context).size.height * 0.60,
+                height: MediaQuery.of(context).size.height * 0.50,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                   boxShadow: [
@@ -107,55 +108,53 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                             ),
                           ),
                           SizedBox(
-                            height: 6,
+                            height: 3,
                           ),
                           SizedBox(
                             width: 400,
                             child: TextFormField(
                               controller: emailController,
                               decoration: const InputDecoration(
-                                hintText: 'Enter your email address',
-                                labelText: 'Email address',
+                                hintText: 'Entrez votre adresse courriel',
+                                labelText: 'Adresse courriel',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
                                 checkWithAvailableNames(value!);
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter a valid username';
+                                  return "Entrez un nom d'utilisateur valide";
                                 }
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: 14,
-                          ),
+
                           SizedBox(
                             width: 400,
                             child: TextFormField(
                               obscureText: true,
                               controller: passwordController,
                               decoration: const InputDecoration(
-                                hintText: 'Enter your password',
-                                labelText: 'Password',
+                                hintText: 'Entrez votre mot de passe',
+                                labelText: 'Mot de passe',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
                                 checkWithAvailableNames(value!);
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter a valid password';
+                                  return 'Entrez un mot de passe valide';
                                 }
                               },
                             ),
                           ),
                           SizedBox(
                             width: 400,
-                            height: 60,
+                            height: 40,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Forgot password?',
+                                  'Mot de passe oublié?',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
@@ -167,7 +166,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                 ),
                                 SizedBox(width: 4),
                                 Text(
-                                  'Click here',
+                                  'Cliquez ici',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
@@ -244,7 +243,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Not register yet?',
+                                    'Pas encore inscrit?',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyText1
                                         .override(
@@ -263,7 +262,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                                   SignupPageWidget()));
                                     },
                                     child: Text(
-                                      'Sign up',
+                                      "M'inscrire",
                                       style: FlutterFlowTheme.of(context)
                                           .bodyText1
                                           .override(
