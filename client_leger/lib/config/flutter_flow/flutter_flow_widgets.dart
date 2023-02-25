@@ -143,7 +143,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
           icon: Padding(
             padding: widget.options.iconPadding ?? EdgeInsets.zero,
             child: widget.icon ??
-                FaIcon(
+                Icon(
                   widget.iconData,
                   size: widget.options.iconSize,
                   color: widget.options.iconColor ??

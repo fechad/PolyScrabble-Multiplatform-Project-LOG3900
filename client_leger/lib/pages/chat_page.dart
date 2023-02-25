@@ -1,16 +1,14 @@
 import 'dart:async';
-
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/sender_message.dart';
 import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 class GeneralChatWidget extends StatefulWidget {
   @override
@@ -23,6 +21,8 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   final ScrollController _controller = ScrollController();
   bool isWriting = false;
   List<ChatMessage> messages = chatService.getDiscussions()[0].messages;
+
+
 
   @override
   void initState() {
@@ -48,20 +48,18 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                               time: message['time'],
                               message: message['message'])),
                         })
-                  })),
-              if (messages[messages.length - 1].sender !=
-                  authenticator.currentUser.username)
-                {
-                  FlutterRingtonePlayer.play(
-                    android: AndroidSounds.notification,
-                    ios: IosSounds.receivedMessage,
-                    looping: false, // Android only - API >= 28
-                    volume: 0.5, // Android only - API >= 28
-                    asAlarm: false, // Android only - all APIs
-                  ),
-                },
-              _scrollDown()
-            });
+              })),
+        if(messages[messages.length-1].sender != authenticator.currentUser.username){
+          FlutterRingtonePlayer.play(
+          android: AndroidSounds.notification,
+          ios: IosSounds.receivedMessage,
+          looping: false, // Android only - API >= 28
+          volume: 0.5, // Android only - API >= 28
+          asAlarm: false, // Android only - all APIs
+        ),},
+          _scrollDown()
+            }
+            );
   }
 
   void _scrollDown() {

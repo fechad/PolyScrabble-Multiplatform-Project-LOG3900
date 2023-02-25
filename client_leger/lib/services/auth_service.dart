@@ -19,7 +19,7 @@ class AuthService {
 
   AuthService._create() {
     initializeApp().then(
-      (value) => firebase = FirebaseAuth.instanceFor(app: app),
+          (value) => firebase = FirebaseAuth.instanceFor(app: app),
     );
   }
 
@@ -100,19 +100,19 @@ class AuthService {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
     if (!isProduction) return setDefaultUser();
     await httpService.getUserInfo(email).then((value) => {
-          currentUser = UserModel(
-            username: '${jsonDecode(value.body)['username']}',
-            email: '${jsonDecode(value.body)['email']}',
-            avatarURL: '${jsonDecode(value.body)['avatarURL']}',
-            level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
-            badges: [],
-            highScore: 0,
-            gamesWon: 0,
-            totalXp: 0,
-            gamesPlayed: [],
-            bestGames: [],
-          ),
-        });
+      currentUser = UserModel(
+        username: '${jsonDecode(value.body)['username']}',
+        email: '${jsonDecode(value.body)['email']}',
+        avatarURL: '${jsonDecode(value.body)['avatarURL']}',
+        level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
+        badges: [],
+        highScore: 0,
+        gamesWon: 0,
+        totalXp: 0,
+        gamesPlayed: [],
+        bestGames: [],
+      ),
+    });
   }
 
   void setDefaultUser() {
@@ -134,3 +134,4 @@ class AuthService {
     return currentUser;
   }
 }
+
