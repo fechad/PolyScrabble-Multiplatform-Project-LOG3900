@@ -8,6 +8,7 @@ import { Authentificator as Authenticator } from '@app/services/auth.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { lastValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-login-page',
@@ -28,6 +29,11 @@ export class LoginPageComponent implements AfterViewInit {
         private httpService: HttpService,
         private authService: Authenticator,
     ) {
+        if (!environment.production) {
+            this.playerService.player.email = 'Chad@gmail.com';
+            this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
+            router.navigateByUrl('/main');
+        }
         // email validator: https://mailtrap.io/blog/angular-email-validation/
         this.loginForm = this.formBuilder.group({
             username: ['', [Validators.required, Validators.minLength(MIN_LENGTH_PSEUDO), Validators.maxLength(MAX_LENGTH_PSEUDO)]],

@@ -24,4 +24,4 @@ npm-debug.log
 !tsconfig.app.json
 !tsconfig.spec.json
 !tsconfig.json
-!package-lock.json
+package-lock.json

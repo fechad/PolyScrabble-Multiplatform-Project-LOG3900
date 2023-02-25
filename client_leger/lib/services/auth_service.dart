@@ -5,6 +5,7 @@ import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import '../config/flutter_flow/flutter_flow_util.dart';
 import '../firebase_options.dart';
 
 class AuthService {
@@ -12,6 +13,7 @@ class AuthService {
   late FirebaseAuth firebase;
   late UserModel currentUser;
   late String loggedInEmail;
+  final bool isProduction = bool.fromEnvironment('dart.vm.product');
 
   AuthService();
 
@@ -56,6 +58,7 @@ class AuthService {
   }
 
   Future<void> signInUser(String emailAddress, String password) async {
+    if (!isProduction) return;
     print(emailAddress);
     print(password);
     try {
@@ -74,16 +77,20 @@ class AuthService {
   }
 
   Future<void> signOutUser() async {
+    if (!isProduction) return;
     await FirebaseAuth.instance.signOut();
   }
 
   void setLoggedInEmail(String email) {
+    if (!isProduction) {
+      return setDefaultUser();
+    }
     loggedInEmail = email;
   }
 
   Future<void> createUser(String email, String username) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-
+    if (!isProduction) return;
     await httpService
         .createUser(email, username)
         .then((value) => setUser(email));
@@ -91,7 +98,7 @@ class AuthService {
 
   Future<void> setUser(String email) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-
+    if (!isProduction) return setDefaultUser();
     await httpService.getUserInfo(email).then((value) => {
           currentUser = UserModel(
             username: '${jsonDecode(value.body)['username']}',
@@ -106,6 +113,21 @@ class AuthService {
             bestGames: [],
           ),
         });
+  }
+
+  void setDefaultUser() {
+    currentUser = UserModel(
+      username: 'User ${DateFormat('HH:mm:ss').format(DateTime.now())}',
+      email: 'gigaChad@gmail.com',
+      avatarURL: '',
+      level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
+      badges: [],
+      highScore: 0,
+      gamesWon: 0,
+      totalXp: 0,
+      gamesPlayed: [],
+      bestGames: [],
+    );
   }
 
   UserModel getCurrentUser() {
