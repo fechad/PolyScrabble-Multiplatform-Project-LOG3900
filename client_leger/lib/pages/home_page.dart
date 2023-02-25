@@ -40,10 +40,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  static const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
   @override
   void initState() {
     super.initState();
+    if (!isProduction) authenticator.setLoggedInEmail('');
     connect();
   }
 
@@ -175,6 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Center(
               child: FFButtonWidget(
                   onPressed: () {
+                    if (!isProduction) return;
                     httpService
                         .logoutUser(authenticator.currentUser.username)
                         .then((value) => chatService.leaveDiscussion(

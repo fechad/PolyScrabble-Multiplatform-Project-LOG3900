@@ -1,4 +1,5 @@
 import 'package:client_leger/pages/connexion_page.dart';
+import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  static const bool isProduction = bool.fromEnvironment('dart.vm.product');
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -31,6 +33,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //home: const MyHomePage(title: 'PolyScrabble'),
-        home: const ConnexionPageWidget());
+        home: isProduction
+            ? ConnexionPageWidget()
+            : MyHomePage(title: 'PolyScrabble'));
   }
 }
