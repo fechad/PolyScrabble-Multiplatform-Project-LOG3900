@@ -1,6 +1,7 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/services/chat_service.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
 
@@ -18,6 +19,7 @@ Io.Socket socket = Io.io(
         .disableAutoConnect()
         .build());
 
+final socketService = SocketService();
 final chatService = ChatService();
 
 class MyHomePage extends StatefulWidget {
@@ -50,6 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void connect() {
+    try {
+      socketService.connect();
+    } catch (e) {
+      print(e);
+    }
+
     try {
       socket.connect();
       socket.onConnect((data) {
