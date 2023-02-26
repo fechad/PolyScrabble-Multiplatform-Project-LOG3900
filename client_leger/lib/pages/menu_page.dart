@@ -1,10 +1,11 @@
 import 'package:client_leger/components/drawer.dart';
+import 'package:client_leger/pages/games_room.dart';
 import 'package:client_leger/pages/multiplayer_page.dart';
 import 'package:client_leger/pages/solo_page.dart';
 import 'package:flutter/material.dart';
 import '../components/sidebar.dart';
 import '../config/colors.dart';
-import '../config/flutter_flow/flutter_flow_theme.dart';
+
 
 
 
@@ -36,11 +37,6 @@ class _MenuPageState extends State<MenuPage> {
       key: scaffoldKey,
       backgroundColor: Color(0xFFF9FFF6),
       drawer: const ChatDrawer(),
-      // appBar: AppBar(
-      //   title: Image.asset("assets/images/scrabble_hero.png"),
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
       body: Stack(
           children: <Widget>[
             Container(
@@ -101,10 +97,10 @@ class _MenuPageState extends State<MenuPage> {
                       ),
                       child: const Text('Joindre une partie multijoueur'),
                       onPressed: () {
-                        // Navigator.push(context,
-                        //     MaterialPageRoute(builder: ((context) {
-                        //       return GeneralChatWidget();
-                        //     })));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: ((context) {
+                              return GamesRoomPage();
+                            })));
                       },
                     ),
                     SizedBox(height: 200),
