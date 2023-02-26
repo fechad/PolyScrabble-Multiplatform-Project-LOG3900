@@ -46,7 +46,8 @@ class _SoloPageState extends State<SoloPage> {
                 child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children:  <Widget>[Align(
+        children:  <Widget>[
+          Align(
           alignment: Alignment.topCenter,
           child: Image.asset(
             "assets/images/scrabble_hero.png",

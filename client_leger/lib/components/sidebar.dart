@@ -64,7 +64,6 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                       Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 280),
                     child: CollapsingListTile(
                       onTap: () {
-                        print(counter);
                         setState(() {
                           currentSelectedIndex = counter;
                         });
@@ -96,22 +95,6 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                 itemCount: navigationItems.length,
               ),
             ),
-          //   InkWell(
-          //     onTap: () {
-          //       setState(() {
-          //         isCollapsed = !isCollapsed;
-          //         isCollapsed
-          //             ? _animationController.forward()
-          //             : _animationController.reverse();
-          //       });
-          //     },
-          //     child: AnimatedIcon(
-          //     icon: AnimatedIcons.close_menu,
-          //     progress: _animationController,
-          //     color: Colors.white,
-          //     size: 50.0,
-          //   ),
-          // ),
           ],
         ),
       ),
