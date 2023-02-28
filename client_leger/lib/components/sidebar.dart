@@ -18,7 +18,7 @@ class CollapsingNavigationDrawer extends StatefulWidget {
 
 class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
     with SingleTickerProviderStateMixin {
-  double maxWidth = 80;
+  double maxWidth = 70;
   double minWidth = 0;
   bool isCollapsed = false;
   late AnimationController _animationController;
@@ -36,24 +36,28 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
+    return SizedBox(
+        width: 70,
+        child: AnimatedBuilder(
       animation: _animationController,
       builder: (context, widget) => getWidget(context, widget),
-    );
+    ));
   }
 
   Widget getWidget(context, widget) {
     return Material(
       elevation: 80.0,
       child: Container(
-        width: widthAnimation.value,
+        width: 70,
         color: Palette.darkColor.shade600,
-        child: Column(
+        child: OverflowBox(
+          maxWidth: 80,
+          child: Column(
           children: <Widget>[
             CollapsingListTile(title: 'Username', icon: Icons.person, animationController: _animationController,
                 // TODO onTap: .... send to user profile
                 ),
-            Divider(color: Colors.grey, height: 40.0,),
+            Divider(height: 40.0),
             Expanded(
               child: ListView.separated(
                 separatorBuilder: (context, counter) {
@@ -96,6 +100,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
               ),
             ),
           ],
+        ),
         ),
       ),
     );

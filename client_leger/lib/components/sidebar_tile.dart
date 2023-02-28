@@ -56,7 +56,6 @@ class _CollapsingListTileState extends State<CollapsingListTile> {
               color: widget.isSelected ? Colors.white : Colors.white30,
               size: 38.0,
             ),
-            SizedBox(width: 10),
             // (widthAnimation.value >= 190)
             //     ? Text(widget.title,
             //     style: widget.isSelected

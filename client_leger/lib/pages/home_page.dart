@@ -9,7 +9,11 @@ import '../config/colors.dart';
 import '../config/environment.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
 import 'connexion_page.dart';
+
+import 'game_page.dart';
+
 import 'menu_page.dart';
+
 
 Io.Socket socket = Io.io(
     getSocketURL(),
@@ -151,6 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+
             CollapsingNavigationDrawer(),
           ]
 
