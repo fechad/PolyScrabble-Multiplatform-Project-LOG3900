@@ -9,6 +9,7 @@ import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 import { Room } from './room';
 
+// TODO: move game manager tests to game manager tests
 describe('room tests', () => {
     let room: Room;
     let socketIdMock: string;
@@ -23,9 +24,7 @@ describe('room tests', () => {
         socketIdMock = '123';
         socketIdMock2 = '456';
         playerMock = new Player(socketIdMock, 'pseudo', false);
-        playerMock.isItsTurn = false;
         playerMock2 = new Player(socketIdMock2, 'pseudo2', false);
-        playerMock2.isItsTurn = false;
         inexistentPlayer = new Player('H45SHID', 'inexistantPlayer', false);
         letterBankMock = new LetterBank();
 
@@ -38,11 +37,9 @@ describe('room tests', () => {
 
     describe('addPlayer tests', () => {
         it('should add a player correctly to room.Players on addPlayer', () => {
-            const spy = sinon.spy(room, 'fillPlayerRack');
             const nPlayers = room.players.length;
-            room.addPlayer(new Player(socketIdMock, 'playerName', false));
+            room.addPlayer(new Player(socketIdMock, 'playerName', false), '');
             expect(room.players.length).to.equal(nPlayers + 1);
-            assert(spy.called, 'did not call fillPlayerRack on addPlayer');
             expect(typeof room.players[0]).to.equal('object');
         });
         it('getPlayerName should return the right player name', () => {
@@ -51,11 +48,11 @@ describe('room tests', () => {
         });
         it('should not add a player if the array is higher than the max amount of players', () => {
             room.roomInfo.maxPlayers = 2;
-            room.addPlayer(new Player(socketIdMock, 'firstPlayer', false));
-            room.addPlayer(new Player(socketIdMock, 'secondPlayerName', false));
+            room.addPlayer(new Player(socketIdMock, 'firstPlayer', false), '');
+            room.addPlayer(new Player(socketIdMock, 'secondPlayerName', false), '');
 
             const nPlayers = room.players.length;
-            room.addPlayer(new Player(socketIdMock, 'thirdPlayerName', false));
+            room.addPlayer(new Player(socketIdMock, 'thirdPlayerName', false), '');
             expect(room.players.length).to.equal(nPlayers);
         });
     });
@@ -176,12 +173,10 @@ describe('room tests', () => {
         it('should not change turn if there are not 2 players in the room', () => {
             const previousTurn = playerMock.isItsTurn;
             room.players = [playerMock];
-            const spy = sinon.spy(room['gameManager'], 'verifyBothPlayersExist');
             const expectedResult = room.canChangePlayerTurn();
             room.changePlayerTurn();
             expect(expectedResult).to.equal(false);
             expect(playerMock.isItsTurn).to.equal(previousTurn);
-            assert(spy.called, 'did not call verifyBothPlayers on changePlayerTurn with player != 2');
         });
         it('should call chooseRandomTurn if both player isItsTurn are equal', () => {
             room.players = [playerMock, playerMock2];
@@ -207,28 +202,8 @@ describe('room tests', () => {
         it('should return undefined if there are not 2 players', () => {
             playerMock.isItsTurn = true;
             room.players = [playerMock];
-            const spy = sinon.spy(room['gameManager'], 'verifyBothPlayersExist');
             const result = room.getCurrentPlayerTurn();
-            assert(spy.called, 'did not call verifyBothPlayers on getCurrentPlayer with player != 2');
             expect(result).to.equal(undefined);
-        });
-    });
-
-    describe('verifyBothPlayersExist tests', () => {
-        it('should return true if there are only 2 players in the room', () => {
-            room.players = [playerMock, playerMock2];
-            const result = room.verifyBothPlayersExist();
-            expect(result).to.equal(true);
-        });
-        it('should return false if players.length < 2 ', () => {
-            room.players = [playerMock];
-            const result = room.verifyBothPlayersExist();
-            expect(result).to.equal(false);
-        });
-        it('should return false if players.length > 2 ', () => {
-            room.players = [playerMock, playerMock2, playerMock];
-            const result = room.verifyBothPlayersExist();
-            expect(result).to.equal(false);
         });
     });
 

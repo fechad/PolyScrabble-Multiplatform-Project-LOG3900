@@ -42,8 +42,8 @@ describe('CommandController', () => {
         testRoom = new Room();
         testPlayer = new Player(socketMock, 'David', true);
         testPlayer.rack.setLetters('hgfrabc');
-        testRoom.addPlayer(testPlayer);
-        testRoom.addPlayer(new Player(socketMock2, 'Hamza', false));
+        testRoom.addPlayer(testPlayer, '');
+        testRoom.addPlayer(new Player(socketMock2, 'Hamza', false), '');
         // eslint-disable-next-line dot-notation -- we want to access private attribute to test
         testRoom['gameManager'].placementFinder = finderMock;
     });

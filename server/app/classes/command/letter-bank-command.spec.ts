@@ -24,8 +24,8 @@ describe('LetterBankCommand', () => {
         testPlayer = new Player(socketMock1, name, false);
         testPlayer.isItsTurn = true;
 
-        testRoom.addPlayer(testPlayer);
-        testRoom.addPlayer(new Player(socketMock2, name, true));
+        testRoom.addPlayer(testPlayer, '');
+        testRoom.addPlayer(new Player(socketMock2, name, true), '');
         validText = '!réserve';
         chatMessageService = new ChatMessageService();
         validCommand = new LetterBankCommand(validText, testRoom, testPlayer, chatMessageService);

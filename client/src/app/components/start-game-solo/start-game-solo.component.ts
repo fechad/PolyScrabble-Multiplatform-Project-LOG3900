@@ -49,14 +49,12 @@ export class StartGameSoloComponent implements OnInit {
     }
 
     connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.socketService.disconnect();
+        if (!this.socketService.isSocketAlive()) {
+            this.socketService.connect();
         }
-        if (this.socketServiceBot.isSocketAlive()) {
-            this.socketServiceBot.disconnect();
+        if (!this.socketServiceBot.isSocketAlive()) {
+            this.socketServiceBot.connect();
         }
-        this.socketService.connect();
-        this.socketServiceBot.connect();
         this.configureBaseSocketFeatures();
     }
 

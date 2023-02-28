@@ -1,112 +1,14 @@
 $marginBottom: 25px;
 $importantTextBold: 1000;
 
-.page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    width: 100vw;
-    height: 100vh;
-}
-
-.main-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 .auth-form {
     margin-bottom: $marginBottom;
-}
-
-.form-title {
-    text-align: center;
-    font-size: 25px;
-    font-weight: $importantTextBold;
-    margin-bottom: $marginBottom;
-}
-
-.input-container {
-    display: flex;
-    flex-direction: column;
-    align-items: baseline;
-    margin-bottom: $marginBottom;
-}
-
-.input-container.error-msg {
-    margin-bottom: 0px;
-}
-
-.simple-label {
-    position: relative;
-    top: 0px;
-    color: black;
-    font-size: 14px;
-    transition: all 0.2s ease-out;
-    min-height: 22px;
-    max-height: 22px;
-}
-
-.simple-label.invalid {
-    color: red;
-}
-
-.simple-label.placeholder {
-    top: 25px;
-    color: gray;
-    font-size: 16px;
-}
-
-.simple-label.placeholder:hover {
-    cursor: text;
-}
-
-.simple-input {
-    width: 100%;
-    height: 30px;
-
-    font-family: 'Nunito';
-    font-size: 18px;
-    height: 30px;
-
-    background-color: transparent;
-    border-top: 0px;
-    border-right: 0px;
-    border-left: 0px;
-    border-bottom: 2px solid black;
-}
-
-.simple-input.invalid {
-    border-bottom: 2px solid red;
-}
-
-.simple-input:focus {
-    outline: none;
-    border-bottom: 2px solid green;
-}
-
-.simple-input-error-msg {
-    min-height: $marginBottom;
-    color: red;
-}
-
-.info-text-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.info-text-container.sign-in {
-    margin-top: 0px;
-    justify-content: center;
 }
 
 .button {
     margin: 25px 0px 10px 0px;
     border-radius: 30px;
+    min-width: 350px;
 }
 
 .button-text {

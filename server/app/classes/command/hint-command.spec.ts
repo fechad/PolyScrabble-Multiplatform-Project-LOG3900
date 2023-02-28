@@ -40,8 +40,8 @@ describe('HintCommand', () => {
         testRoom = new Room();
         testPlayer = new Player(socketMock1, name, false);
         testPlayer.isItsTurn = true;
-        testRoom.addPlayer(testPlayer);
-        testRoom.addPlayer(new Player(socketMock2, name, true));
+        testRoom.addPlayer(testPlayer, '');
+        testRoom.addPlayer(new Player(socketMock2, name, true), '');
         validText = '!indice';
         chatMessageService = new ChatMessageService();
         validCommand = new HintCommand(validText, testRoom, testPlayer, finderMock, chatMessageService);

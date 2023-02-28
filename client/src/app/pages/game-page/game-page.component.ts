@@ -9,6 +9,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -27,7 +28,7 @@ export class GamePageComponent implements OnInit {
         private router: Router,
         private dialog: MatDialog,
         public room: Room,
-        public player: Player,
+        public playerService: PlayerService,
     ) {}
 
     get isGameOver(): boolean {
@@ -37,7 +38,7 @@ export class GamePageComponent implements OnInit {
     ngOnInit() {
         this.connect();
         const session = this.sessionStorageService.getPlayerData('data');
-        if (this.room.roomInfo.name === '') {
+        if (this.room.roomInfo.name === '' && session) {
             this.socketService.send(SocketEvent.Reconnect, { socketId: session.socketId, roomName: session.roomName });
             return;
         }
@@ -93,9 +94,8 @@ export class GamePageComponent implements OnInit {
     }
 
     private connect() {
-        if (!this.socketService.isSocketAlive()) {
-            this.socketService.connect();
-        }
+        this.socketService.refreshConnection();
+        this.configureBaseSocketFeatures();
         if (!this.socketServiceBot.isSocketAlive()) {
             this.socketServiceBot.connect();
         }
@@ -121,10 +121,10 @@ export class GamePageComponent implements OnInit {
     }
 
     private setPlayer(player: Player) {
-        this.player.pseudo = player.pseudo;
-        this.player.socketId = player.socketId;
-        this.player.points = player.points;
-        this.player.isCreator = player.isCreator;
-        this.player.isItsTurn = player.isItsTurn;
+        this.playerService.player.pseudo = player.pseudo;
+        this.playerService.player.socketId = player.socketId;
+        this.playerService.player.points = player.points;
+        this.playerService.player.isCreator = player.isCreator;
+        this.playerService.player.isItsTurn = player.isItsTurn;
     }
 }

@@ -63,29 +63,38 @@ export class SocketGameService extends SocketHandlerService {
         if (!room.isGameFinished()) return;
         this.handleGamePlaceFinish(room, socket.id);
     }
+
     handleStartGame(socket: io.Socket) {
         const roomName = this.getSocketRoom(socket);
         if (!roomName) return;
         const room = this.roomService.getRoom(roomName) as Room;
         if (!room) return;
-        if (room.players.length !== room.maxPlayers) return;
-        room.choseRandomTurn();
+        if (room.players.length > room.maxPlayers || room.players.length <= 1) return;
         const currentTurnPlayer = room.getCurrentPlayerTurn();
-        if (!currentTurnPlayer) return;
+        if (!currentTurnPlayer) room.choseRandomTurn();
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
         this.socketEmit(socket, SocketEvent.UpdatePlayerScore, player);
-        this.sendToEveryoneInRoom(roomName, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
+        this.sendToEveryoneInRoom(roomName, SocketEvent.PlayerTurnChanged, currentTurnPlayer?.pseudo);
         this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
 
         if (room.hasTimer()) return;
         this.setTimer(room);
+        room.fillPlayersRack();
+        this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         const botGreeting = room.getBotGreeting();
         if (botGreeting) this.handleBotGreeting(room.bot.pseudo, botGreeting, roomName);
         if (room.roomInfo.gameType !== 'log2990') return;
         room.givesPlayerGoals();
+    }
+
+    handleStartGameRequest(socket: io.Socket, roomName: string) {
+        const room = this.roomService.getRoom(roomName) as Room;
+        if (!room) return;
+
+        this.sendToEveryoneInRoom(roomName, SocketEvent.GameStarted);
     }
 
     handleChangeTurn(socket: io.Socket, roomName: string) {

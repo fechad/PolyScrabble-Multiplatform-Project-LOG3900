@@ -62,6 +62,12 @@ export class GameManager {
         return new VirtualPlayer(socketId, name, false, this.boardManipulator, this.letterBank, wordFetcher, desiredLevel);
     }
 
+    fillPlayersRack(players: Player[]) {
+        players.forEach((player) => {
+            this.fillPlayerRack(player);
+        });
+    }
+
     fillPlayerRack(player: Player) {
         player.rack.insertLetters(this.letterBank.fetchRandomLetters(player.rack.getSpaceLeft()));
     }
@@ -72,46 +78,42 @@ export class GameManager {
     }
 
     choseRandomTurn(players: Player[]) {
-        if (!this.verifyBothPlayersExist(players)) return;
-        const max = 1;
-        const playerIndex = Math.floor(Math.random() * (max + 1));
-
-        players[playerIndex].isItsTurn = true;
-
-        if (playerIndex === 0) {
-            players[1].isItsTurn = false;
-        } else {
-            players[0].isItsTurn = false;
+        for (const player of players) {
+            player.isItsTurn = false;
         }
+
+        if (players.length <= 1) return;
+
+        const playerIndex = Math.floor(Math.random() * players.length);
+        if (!players[playerIndex]) return;
+        players[playerIndex].isItsTurn = true;
     }
 
     changePlayerTurn(players: Player[]) {
         if (!this.canChangePlayerTurn(players)) return;
-        if (players[0].isItsTurn === players[1].isItsTurn) {
+        const currentPlayerTurn = this.getCurrentPlayerTurn(players);
+        if (!currentPlayerTurn) {
             this.choseRandomTurn(players);
-        } else {
-            players[0].isItsTurn = !players[0].isItsTurn;
-            players[1].isItsTurn = !players[1].isItsTurn;
+            return;
         }
+
+        const currentPlayerIndex = players.indexOf(currentPlayerTurn);
+        if (!players[currentPlayerIndex]) return;
+        players[currentPlayerIndex].isItsTurn = false;
+        players[(currentPlayerIndex + 1) % players.length].isItsTurn = true;
     }
 
     canChangePlayerTurn(players: Player[]): boolean {
+        if (players.length <= 1) return false;
         if (this.turnPassedCounter >= COUNT_PLAYER_TURN) {
             return false;
         }
-        if (!this.verifyBothPlayersExist(players)) return false;
         return true;
     }
 
     getCurrentPlayerTurn(players: Player[]): Player | undefined {
-        if (!this.verifyBothPlayersExist(players)) return;
-        return players[0].isItsTurn ? players[0] : players[1];
-    }
-
-    verifyBothPlayersExist(players: Player[]): boolean {
-        if (players.length !== 2) return false;
-        if (!players[0] || !players[1]) return false;
-        return true;
+        if (players.length <= 1) return;
+        return players.find((player: Player) => player.isItsTurn);
     }
 
     isGameFinished(players: Player[]): boolean {
@@ -154,15 +156,20 @@ export class GameManager {
     getWinner(players: Player[]): Player[] {
         const winnerArray: Player[] = [];
         if (players.length <= 1) return [];
+        const sortedPlayersByPoints = players.sort((playerA: Player, playerB: Player) => {
+            return playerB.points - playerA.points;
+        });
 
-        if (players[0].points > players[1].points) {
-            winnerArray.push(players[0]);
-        } else if (players[0].points < players[1].points) {
-            winnerArray.push(players[1]);
-        } else {
-            winnerArray.push(players[0]);
-            winnerArray.push(players[1]);
+        for (const player of sortedPlayersByPoints) {
+            if (winnerArray.length === 0) {
+                winnerArray.push(player);
+                continue;
+            }
+            if (player.points === winnerArray[0].points) {
+                winnerArray.push(player);
+            }
         }
+
         return winnerArray;
     }
 }

@@ -33,8 +33,8 @@ describe('PlaceLettersCommand', () => {
         testPlayer.isItsTurn = true;
         testPlayer.managerId = 0;
         testPlayer.rack.setLetters('bonjour');
-        testRoom.addPlayer(testPlayer);
-        testRoom.addPlayer(new Player(socketMock2, name, true));
+        testRoom.addPlayer(testPlayer, '');
+        testRoom.addPlayer(new Player(socketMock2, name, true), '');
         validText = '!placer h7h bonjour';
         chatMessageService = new ChatMessageService();
         validCommand = new PlaceLettersCommand(validText, testRoom, testPlayer, chatMessageService);

@@ -1,0 +1,61 @@
+<div #menuContainer class="menu-container">
+    <div class="menu">
+        <div class="icons-container">
+            <button class="icon">[-_-]</button>
+            <button (click)="showChatMenu()" class="icon">Chat</button>
+            <button class="icon">Trophy</button>
+            <button class="icon">Eyes</button>
+        </div>
+        <div class="icons-container">
+            <button class="icon">[||]</button>
+            <button (click)="logOut()" class="icon">logout</button>
+        </div>
+
+        <!-- CHAT MENU -->
+        <div #chatMenu class="chat-menu">
+            <div class="chats-list-container">
+                <div class="search-chat-container">
+                    <input class="simple-input" type="text" />
+                    <button class="search-button">Search</button>
+                </div>
+                <div></div>
+                <div *ngFor="let discussionChannel of availableDiscussionChannels; index as i" class="chats-list">
+                    <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
+                        {{ discussionChannel.name }}
+                    </button>
+                    <hr *ngIf="i === 0" size="1" width="97%" />
+                </div>
+            </div>
+            <button class="button">New Chat</button>
+        </div>
+    </div>
+    <div #chatContainer class="chat-container">
+        <div *ngIf="!isWaitMultiPage" class="chat-header">
+            <button class="close-chat-button" (click)="closeChat()">X</button>
+        </div>
+        <div *ngIf="isWaitMultiPage && selectedDiscussionChannel.name === room.roomInfo.name" class="waiting-room-header">
+            <div class="game-info-container">
+                <div class="game-info">
+                    <div class="game-info-icon">[+_+]</div>
+                    <div class="game-info-value">Difficile</div>
+                </div>
+                <div class="game-info">
+                    <div class="game-info-icon">[V]</div>
+                    <div class="game-info-value">1 min</div>
+                </div>
+            </div>
+            <div class="game-players">
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg" />
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg" />
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg" />
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg" />
+            </div>
+            <div class="game-buttons">
+                <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option">Quitter</button>
+                <button [disabled]="room.players.length <= 1 || !isGameCreator" (click)="requestGameStart()" class="button">Démarrer</button>
+            </div>
+        </div>
+        <app-general-chat [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
+    </div>
+    <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
+</div>

@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnChanges, OnInit, 
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Dimension } from '@app/classes/dimension';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
-import { Player } from '@app/classes/player';
 import { Position } from '@app/classes/position';
 import { Room } from '@app/classes/room';
 import { Tile } from '@app/classes/tile';
@@ -28,6 +27,7 @@ import { BoardGridService } from '@app/services/board-grid.service';
 import { BoardService } from '@app/services/board.service';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
         private boardService: BoardService,
         private focusHandlerService: FocusHandlerService,
         private room: Room,
-        private player: Player,
+        private playerService: PlayerService,
     ) {
         this.ratioSize = 1;
         this.letterRatio = BOARD_SCALING_RATIO;
@@ -76,7 +76,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     }
 
     get isActivePlayer(): boolean {
-        return this.player.isItsTurn;
+        return this.playerService.player.isItsTurn;
     }
 
     get isGameOver(): boolean {
@@ -114,7 +114,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
-        if (!this.player.isItsTurn) return;
+        if (!this.playerService.player.isItsTurn) return;
         this.updateFocus(event);
         if (this.focusHandlerService.currentFocus.value !== CurrentFocus.BOARD) return;
         this.boardService.mouseHitDetect({ x: event.offsetX, y: event.offsetY });
@@ -169,7 +169,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     }
 
     isPlayerTurn(): boolean {
-        return this.player.isItsTurn;
+        return this.playerService.player.isItsTurn;
     }
 
     private connect() {
@@ -218,7 +218,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
-        if (!this.player.isItsTurn) return;
+        if (!this.playerService.player.isItsTurn) return;
         if (!this.boardService.canBeFocused({ x: event.offsetX, y: event.offsetY })) return;
         this.focusHandlerService.currentFocus.next(CurrentFocus.BOARD);
     }
@@ -227,7 +227,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
         const TURN_UPDATE_DELAY = 100;
 
         setTimeout(() => {
-            if (!this.player.isItsTurn) {
+            if (!this.playerService.player.isItsTurn) {
                 this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
                 return;
             }
@@ -237,7 +237,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     private handleBadPlacement() {
         setTimeout(() => {
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
-            if (!this.player.isItsTurn) return;
+            if (!this.playerService.player.isItsTurn) return;
             this.socketService.send(SocketEvent.ChangeTurn, this.room.roomInfo.name);
         }, ONE_SECOND_IN_MS * 3);
     }

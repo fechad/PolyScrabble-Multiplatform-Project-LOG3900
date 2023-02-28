@@ -20,8 +20,8 @@ describe('HelpCommand', () => {
         testRoom = new Room();
         testPlayer = new Player(socketMock1, name, false);
         testPlayer.isItsTurn = true;
-        testRoom.addPlayer(testPlayer);
-        testRoom.addPlayer(new Player(socketMock2, name, true));
+        testRoom.addPlayer(testPlayer, '');
+        testRoom.addPlayer(new Player(socketMock2, name, true), '');
         validText = '!aide';
         chatMessageService = new ChatMessageService();
         validCommand = new HelpCommand(validText, testRoom, testPlayer, chatMessageService);

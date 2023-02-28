@@ -26,10 +26,4 @@ describe('GeneralChatComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
-    it('calling closeDialog should call close method of the dialog', () => {
-        // eslint-disable-next-line dot-notation -- we need to access to the dialogRef private attribute to test this function
-        const spy = spyOn(component['dialogRef'], 'close');
-        component.closeDialog();
-        expect(spy).toHaveBeenCalled();
-    });
 });

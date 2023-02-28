@@ -8,14 +8,13 @@ import { SocketClientService } from '@app/services/socket-client.service';
     styleUrls: ['./game-option-page.component.scss', '../dark-theme.scss'],
 })
 export class GameOptionPageComponent implements OnInit {
-    constructor(private socketService: SocketClientService, public room: Room) {}
+    constructor(public room: Room, private socketService: SocketClientService) {}
+
     ngOnInit() {
-        this.disconnect();
+        this.connect();
     }
 
-    disconnect() {
-        if (this.socketService.isSocketAlive()) {
-            this.socketService.disconnect();
-        }
+    private connect() {
+        this.socketService.refreshConnection();
     }
 }

@@ -2,6 +2,7 @@ import { Room } from '@app/classes/room-model/room';
 import { CommandController } from '@app/controllers/command.controller';
 import { SocketEvent } from '@app/enums/socket-event';
 import { Account } from '@app/interfaces/firestoreDB/account';
+import { JoinRoomForm } from '@app/interfaces/join-room-form';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
 import * as io from 'socket.io';
@@ -96,12 +97,12 @@ export class SocketManager {
                 this.socketGameService.handleGetRackInfo(socket, roomName);
             });
 
-            socket.on(SocketEvent.JoinRoom, (room: Room) => {
-                this.socketRoomService.handleJoinRoom(socket, room);
+            socket.on(SocketEvent.CreateRoom, (room: Room) => {
+                this.socketRoomService.handleCreateRoom(socket, room);
             });
 
-            socket.on(SocketEvent.CreateChatChannel, (channel: string, username: Account) => {
-                this.socketChannelService.handleCreateChannel(channel, username);
+            socket.on(SocketEvent.CreateChatChannel, (data: { channel: string; username: Account }) => {
+                this.socketChannelService.handleCreateChannel(data.channel, data.username);
             });
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -143,26 +144,29 @@ export class SocketManager {
 
             socket.on(SocketEvent.LeaveRoomCreator, (roomName: string) => {
                 this.socketRoomService.handleLeaveRoomCreator(socket, roomName);
+                this.socketChannelService.handleLeaveChannelCreator(socket, roomName);
             });
 
             socket.on(SocketEvent.LeaveRoomOther, (roomName: string) => {
-                this.socketRoomService.handleLeaveRoomOther(socket, roomName);
+                const playerRemoved = this.socketRoomService.handleLeaveRoomOther(socket, roomName);
+                if (!playerRemoved) return;
+                this.socketChannelService.handleLeaveChannel(socket, roomName, playerRemoved.pseudo);
             });
 
             socket.on(SocketEvent.SetRoomAvailable, (roomName: string) => {
                 this.socketRoomService.handleSetRoomAvailable(socket, roomName);
             });
 
-            socket.on(SocketEvent.AskToJoin, (room: Room) => {
-                this.socketRoomService.handleAskToJoin(socket, room);
+            socket.on(SocketEvent.JoinRoomRequest, (joinRoomForm: JoinRoomForm) => {
+                this.socketRoomService.handleJoinRequest(socket, joinRoomForm);
             });
 
-            socket.on(SocketEvent.AcceptPlayer, (room: Room) => {
-                this.socketRoomService.handleAcceptPlayer(socket, room);
+            socket.on(SocketEvent.AcceptPlayer, (data: { roomName: string; playerName: string }) => {
+                this.socketRoomService.handleAcceptPlayer(socket, data);
             });
 
-            socket.on(SocketEvent.RejectPlayer, (room: Room) => {
-                this.socketRoomService.handleRejectPlayer(socket, room);
+            socket.on(SocketEvent.RejectPlayer, (data: { roomName: string; playerName: string }) => {
+                this.socketRoomService.handleRejectPlayer(socket, data);
             });
 
             socket.on(SocketEvent.Message, (message: string) => {
@@ -171,6 +175,10 @@ export class SocketManager {
 
             socket.on(SocketEvent.AvailableRooms, () => {
                 this.socketRoomService.handleAvailableRooms(socket);
+            });
+
+            socket.on(SocketEvent.StartGameRequest, (roomName: string) => {
+                this.socketGameService.handleStartGameRequest(socket, roomName);
             });
 
             socket.on(SocketEvent.StartGame, () => {

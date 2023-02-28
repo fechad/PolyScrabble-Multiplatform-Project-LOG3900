@@ -79,11 +79,11 @@ describe('SocketManager service tests', () => {
             }, RESPONSE_DELAY);
         });
 
-        it('should call handleJoinRoom on joinRoom', (done) => {
-            const stub = sinon.stub(socketManager['socketRoomService'], 'handleJoinRoom');
-            clientSocket.emit('joinRoom', roomMock);
+        it('should call handleJoinRequest on JoinRoomRequest', (done) => {
+            const stub = sinon.stub(socketManager['socketRoomService'], 'handleJoinRequest');
+            clientSocket.emit('joinRoomRequest', roomMock);
             setTimeout(() => {
-                assert(stub.called, 'did not call socketManager.socketRoomService.handleJoinRoom on joinRoom');
+                assert(stub.called, 'did not call socketManager.socketRoomService.handleJoinRequest on JoinRoomRequest');
                 done();
             }, RESPONSE_DELAY);
         });
@@ -115,11 +115,11 @@ describe('SocketManager service tests', () => {
             }, RESPONSE_DELAY);
         });
 
-        it('should call handleAskToJoin on askToJoin', (done) => {
-            const stub = sinon.stub(socketManager['socketRoomService'], 'handleAskToJoin');
-            clientSocket.emit('askToJoin', roomMock);
+        it('should call handleAskToJoin on StartGameRequest', (done) => {
+            const stub = sinon.stub(socketManager['socketGameService'], 'handleStartGameRequest');
+            clientSocket.emit('startGameRequest', roomMock);
             setTimeout(() => {
-                assert(stub.called, 'did not call socketManager.socketRoomService.handleAskToJoin on askToJoin');
+                assert(stub.called, 'did not call socketManager.socketGameService.handleStartGameRequest on StartGameRequest');
                 done();
             }, RESPONSE_DELAY);
         });

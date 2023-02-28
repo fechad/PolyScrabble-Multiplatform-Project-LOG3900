@@ -1,41 +1,26 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 <div class="page">
-    <div class="chat-list">
-        <div class="chat-container">
-            <input type="text" class="search-bar" placeholder="Rechercher un canal" />
-            <p class="chat-name">Canal général</p>
-            <hr size="1" width="80%" />
-        </div>
-        <div class="btn-container">
-            <button class="button">Nouveau canal</button>
-        </div>
-        <!-- <app-user-summary></app-user-summary> -->
+    <div class="chat-title">
+        <H1 class="bold-title">{{ discussionChannel.name }}</H1>
     </div>
-    <div class="right-side">
-        <div class="chat-title">
-            <H1 class="bold-title">Canal général</H1>
-            <mat-icon (click)="closeDialog()" class="close">close</mat-icon>
-        </div>
-        <div class="chat">
-            <div
-                *ngFor="let chat of chats"
-                [class.my-message]="isSender(chat)"
-                [class.their-message]="!isSender(chat) && !chat.system"
-                [class.system-message]="chat.system"
-            >
-                <p class="hour">{{ chat.time }}</p>
-                <div *ngIf="!chat.system" class="bubble-text" [class.my]="isSender(chat)" [class.their]="!isSender(chat) && !chat.system">
-                    <p *ngIf="isSender(chat)">{{ chat.message }}</p>
-                    <p *ngIf="!isSender(chat)" class="name">{{ chat.sender }}</p>
-                    <p *ngIf="!isSender(chat)">{{ chat.message }}</p>
-                </div>
-                <hr *ngIf="chat.system" style="margin-top: 0%" width="10%" size="1" />
-                <p *ngIf="chat.system">{{ chat.message }}</p>
+    <div class="chat">
+        <div
+            *ngFor="let chat of discussionChannel.messages"
+            [class.my-message]="isSender(chat)"
+            [class.their-message]="!isSender(chat) && !chat.system"
+            [class.system-message]="chat.system"
+        >
+            <p class="hour">{{ chat.time }}</p>
+            <div *ngIf="!chat.system" class="bubble-text" [class.my]="isSender(chat)" [class.their]="!isSender(chat) && !chat.system">
+                <p *ngIf="isSender(chat)">{{ chat.message }}</p>
+                <p *ngIf="!isSender(chat)" class="name">{{ chat.sender }}</p>
+                <p *ngIf="!isSender(chat)">{{ chat.message }}</p>
             </div>
+            <hr *ngIf="chat.system" style="margin-top: 0%" width="10%" size="1" />
+            <p *ngIf="chat.system">{{ chat.message }}</p>
         </div>
-        <div class="chat-bar-container">
-            <input #inputElement (keyup.enter)="sendChannelMessage(inputElement)" class="chat-bar" type="text" placeholder="Entrer un message" />
-            <i class="fa fa-send fa-2x" [ngClass]="{ enabled: enable, disabled: !enable }" (click)="sendChannelMessage(inputElement)"></i>
-        </div>
+    </div>
+    <div class="chat-bar-container">
+        <input #inputElement (keyup.enter)="sendChannelMessage(inputElement)" class="chat-bar" type="text" placeholder="Entrer un message" />
+        <i class="fa fa-send fa-2x" [ngClass]="{ enabled: enable, disabled: !enable }" (click)="sendChannelMessage(inputElement)"></i>
     </div>
 </div>

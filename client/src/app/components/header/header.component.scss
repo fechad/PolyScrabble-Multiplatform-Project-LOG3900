@@ -1,12 +1,6 @@
 .header-img-container {
-    width: 100vw;
-    padding: 25px 0px;
-    background-color: #7daf6b;
-    max-height: 50px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 70px;
 }
 
 .user {
@@ -18,20 +12,4 @@
     background-color: white;
     z-index: 1000;
     cursor: pointer;
-}
-.log-out-button {
-    position: absolute;
-    right: 2%;
-    color: white;
-    font-weight: bold;
-    background-color: rgb(212, 75, 75);
-    border-radius: 20px;
-    border: 0px;
-    padding: 15px;
-}
-
-.log-out-button:hover {
-    cursor: pointer;
-    transform: translateY(-2px);
-    transition: transform 0.15s, background-color 0.15s, color 0.15s;
 }

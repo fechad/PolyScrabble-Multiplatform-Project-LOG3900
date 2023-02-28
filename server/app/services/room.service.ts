@@ -81,7 +81,7 @@ export class RoomService {
     private convertToServerRoom(clientRoom: Room): Room {
         const serverRoom = new Room(clientRoom);
         for (const player of clientRoom.players) {
-            serverRoom.addPlayer(new Player(player.socketId, player.pseudo, player.isCreator));
+            serverRoom.addPlayer(new Player(player.socketId, player.pseudo, player.isCreator), serverRoom.roomInfo.password);
         }
         return serverRoom;
     }

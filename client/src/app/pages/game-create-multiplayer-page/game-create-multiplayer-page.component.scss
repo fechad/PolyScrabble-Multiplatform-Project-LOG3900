@@ -1,9 +1,32 @@
-.flex-container {
+.button {
+    width: 100%;
+}
+
+.input-container.hide {
+    display: none;
+}
+
+.form-title {
+    margin: 10px;
+}
+
+.simple-label {
+    z-index: 0;
+}
+
+.simple-label.placeholder.select {
+    cursor: default;
+}
+
+.room-type-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 50px;
-    padding-bottom: 100px;
+    width: 100%;
+}
+
+.room-type-checkbox {
+    margin-left: 20px;
 }
 
 form {
@@ -32,15 +55,6 @@ form {
     justify-content: space-between;
     gap: 20px;
     width: 400px;
-}
-
-.confirm-buttons-container > button,
-.confirm-buttons-container > div {
-    width: 50%;
-}
-
-.start-game {
-    max-width: 50px;
 }
 
 select {

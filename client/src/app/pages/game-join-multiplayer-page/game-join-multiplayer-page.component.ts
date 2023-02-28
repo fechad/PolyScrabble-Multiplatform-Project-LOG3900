@@ -1,16 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
-import { MAX_LENGTH_PSEUDO, MIN_LENGTH_PSEUDO } from '@app/constants/constants';
-import {
-    GAME_REJECTION_BY_ADVERSARY,
-    INVALID_PSEUDO,
-    INVALID_PSEUDO_LENGTH,
-    ROOM_ERROR,
-    WAITING_FOR_CONFIRMATION,
-} from '@app/constants/status-constants';
+import { GAME_REJECTION_BY_ADVERSARY, INVALID_PSEUDO, ROOM_ERROR, WAITING_FOR_CONFIRMATION } from '@app/constants/status-constants';
 import { SocketEvent } from '@app/enums/socket-event';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -20,26 +13,25 @@ import { SocketClientService } from '@app/services/socket-client.service';
 })
 export class GameJoinMultiplayerPageComponent implements OnInit {
     availableRooms: Room[];
-    pseudo: string;
+    selectedRoom: Room;
     isPseudoValid: boolean;
     isInRoom: boolean;
     isRejected: boolean;
     canJoinRoom: boolean;
 
-    constructor(private socketService: SocketClientService, private router: Router, public room: Room, public player: Player) {
-        this.pseudo = '';
+    constructor(private socketService: SocketClientService, private router: Router, public room: Room, public playerService: PlayerService) {
         this.isPseudoValid = true;
         this.canJoinRoom = true;
         this.isInRoom = false;
         this.isRejected = false;
         this.room.roomInfo.name = '';
+        this.selectedRoom = new Room();
         this.availableRooms = [];
     }
 
     get roomStatusText(): string {
         if (this.isInRoom) return WAITING_FOR_CONFIRMATION;
         if (this.isRejected) return GAME_REJECTION_BY_ADVERSARY;
-        if (this.pseudo.length > MAX_LENGTH_PSEUDO) return INVALID_PSEUDO_LENGTH;
         if (!this.isPseudoValid) return INVALID_PSEUDO;
         if (!this.canJoinRoom) return ROOM_ERROR;
         return '';
@@ -47,10 +39,6 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
 
     get roomsWithMyGameType(): Room[] {
         return this.availableRooms.filter((room) => room.roomInfo.gameType === this.room.roomInfo.gameType);
-    }
-
-    get hasValidName(): boolean {
-        return this.pseudo.length >= MIN_LENGTH_PSEUDO && this.pseudo.length <= MAX_LENGTH_PSEUDO;
     }
 
     ngOnInit() {
@@ -62,28 +50,30 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         return this.roomStatusText === '';
     }
 
-    askToJoin(creatorRoom: Room) {
-        this.isRejected = false;
-
-        if (!this.canJoinCreatorRoom(creatorRoom)) return;
-
-        this.isPseudoValid = true;
-        this.isInRoom = true;
-        this.availableRooms.splice(this.availableRooms.indexOf(creatorRoom), 1);
-
-        this.player.pseudo = this.pseudo;
-        this.player.isCreator = false;
-        this.player.socketId = this.socketService.socket.id;
-        this.setRoomServerToThisRoom(creatorRoom);
-        this.room.addPlayer(this.player);
-        this.socketService.send(SocketEvent.AskToJoin, this.room);
+    openPasswordPopup(availableRoom: Room, roomPopup: HTMLDivElement, darkBackground: HTMLDivElement) {
+        this.selectedRoom = availableRoom;
+        roomPopup.classList.add('show');
+        darkBackground.classList.add('show');
     }
 
-    joinRandomRoom() {
-        if (this.roomsWithMyGameType.length === 0) return;
-        const maxIndex = this.roomsWithMyGameType.length - 1;
-        const roomIndex = Math.floor(Math.random() * (maxIndex + 1));
-        this.askToJoin(this.roomsWithMyGameType[roomIndex]);
+    closePasswordPopup(roomPopup: HTMLDivElement, darkBackground: HTMLDivElement) {
+        roomPopup.classList.remove('show');
+        darkBackground.classList.remove('show');
+    }
+
+    joinRoom(password: string, room?: Room) {
+        const roomToUse = room || this.selectedRoom;
+        if (!this.canJoinCreatorRoom(roomToUse)) return;
+        if (roomToUse.roomInfo.isPublic && password !== roomToUse.roomInfo.password) return;
+
+        this.sendJoinRoomRequest(roomToUse, password);
+    }
+
+    askToJoinRoom(room: Room) {
+        if (room.roomInfo.isPublic) return;
+        if (!this.canJoinCreatorRoom(room)) return;
+
+        this.sendJoinRoomRequest(room, '');
     }
 
     getAvailableRooms() {
@@ -95,26 +85,15 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         this.room.roomInfo.name = '';
         this.isInRoom = false;
         this.isRejected = true;
-    }
-
-    validateName(room: Room): boolean {
-        return this.pseudoIsDifferentFromAdversary(room) && this.isPseudoLengthValid();
+        this.room.reinitialize(this.room.roomInfo.gameType);
     }
 
     websiteHasAvailableRooms(): boolean {
         return this.availableRooms && this.availableRooms.length > 0;
     }
-    private pseudoIsDifferentFromAdversary(room: Room): boolean {
-        return room.players[0].pseudo !== this.pseudo;
-    }
-    private isPseudoLengthValid(): boolean {
-        return this.pseudo.length >= MIN_LENGTH_PSEUDO && this.pseudo.length <= MAX_LENGTH_PSEUDO;
-    }
+
     private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.socketService.disconnect();
-        }
-        this.socketService.connect();
+        this.socketService.refreshConnection();
         this.configureBaseSocketFeatures();
     }
 
@@ -122,8 +101,13 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         this.socketService.on(SocketEvent.PlayerAccepted, (roomCreator: Room) => {
             sessionStorage.removeItem('data');
             this.setRoomServerToThisRoom(roomCreator);
-            this.room.currentPlayerPseudo = this.pseudo;
-            this.router.navigate(['/game']);
+            // TODO: remove currentPlayerPseudo. Obsolete
+            this.room.currentPlayerPseudo = this.playerService.player.pseudo;
+            this.socketService.send(SocketEvent.JoinChatChannel, {
+                name: roomCreator.roomInfo.name,
+                user: this.playerService.player.pseudo,
+            });
+            this.router.navigate(['/game/multiplayer/wait']);
         });
 
         this.socketService.on(SocketEvent.PlayerRejected, (roomCreator: Room) => {
@@ -135,15 +119,24 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         });
     }
 
+    private sendJoinRoomRequest(room: Room, password: string) {
+        this.isRejected = false;
+
+        this.isPseudoValid = true;
+        this.isInRoom = true;
+        this.availableRooms.splice(this.availableRooms.indexOf(room), 1);
+
+        this.playerService.player.isCreator = false;
+        this.playerService.player.socketId = this.socketService.socket.id;
+
+        const joinRoomForm = { roomName: room.roomInfo.name, player: this.playerService.player, password };
+        this.socketService.send(SocketEvent.JoinRoomRequest, joinRoomForm);
+    }
+
     private canJoinCreatorRoom(room: Room): boolean {
-        if (!room || room?.players.length > 1 || room.players.length === 0) {
+        if (!room || room?.players.length >= room?.roomInfo.maxPlayers || room.players.length === 0) {
             this.canJoinRoom = false;
             this.availableRooms.splice(this.availableRooms.indexOf(room), 1);
-            return false;
-        }
-
-        if (!this.validateName(room)) {
-            this.isPseudoValid = false;
             return false;
         }
 

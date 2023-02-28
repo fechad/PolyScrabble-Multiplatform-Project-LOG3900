@@ -15,7 +15,7 @@ export class Player {
         this.email = '';
         this.socketId = '';
         this.points = 0;
-        this.isCreator = false;
+        this.isCreator = false; // Remove this from here, obsolete
         this.isItsTurn = false;
     }
 }

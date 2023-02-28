@@ -25,7 +25,7 @@ describe('Room tests', () => {
         });
 
         it('should not add the player if room.players has the max amount of player', () => {
-            room.players = [player, player2];
+            room.players = [player, player2, player, player2];
             const nCurrentPlayer = room.players.length;
             room.addPlayer(player);
             expect(room.players.length).toEqual(nCurrentPlayer);
