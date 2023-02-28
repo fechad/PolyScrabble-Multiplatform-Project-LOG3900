@@ -1,3 +1,4 @@
+import { Trie } from '@app/classes/Trie/trie';
 import { ScoreMapper } from '@app/classes/virtual-placement-logic/score-mapper';
 import { JsonReader } from '@app/services/json-reader.service';
 import { JsonObject } from 'swagger-ui-express';
@@ -21,6 +22,13 @@ export class DictionaryReader {
     }
     getWords(): Map<string, number> {
         return this.words;
+    }
+    getWordsTrie(): Trie {
+        const trie = new Trie();
+        for (const word of this.words.keys()) {
+            trie.insert(word);
+        }
+        return trie;
     }
     private formWordsMap(words: string) {
         for (const word of words) {
