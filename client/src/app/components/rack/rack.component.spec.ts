@@ -1,25 +1,21 @@
 /* eslint-disable dot-notation */ // We want to set private attribute of the class for multiple tests
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Direction } from '@app/enums/direction';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
-import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
+import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { SelectionType } from '@app/enums/selection-type';
 import { TIMER_TEST_DELAY } from '@app/constants/constants';
+import { Direction } from '@app/enums/direction';
+import { SelectionType } from '@app/enums/selection-type';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { PlayerService } from '@app/services/player.service';
 import { RackGridService } from '@app/services/rack-grid.service';
 import { SocketClientService } from '@app/services/socket-client.service';
-import { Socket } from 'socket.io-client';
 import { RackComponent } from './rack.component';
+
 const LETTER = 'hello';
 const EXCHANGE_MESSAGE = '!échanger';
-class SocketClientServiceMock extends SocketClientService {
-    override connect() {
-        return;
-    }
-}
 
 describe('RackComponent', () => {
     let component: RackComponent;
@@ -28,13 +24,14 @@ describe('RackComponent', () => {
     let socketHelper: SocketTestHelper;
     let rackGridService: RackGridService;
     let focusHandlerService: FocusHandlerService;
+    let playerService: PlayerService;
 
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
-        socketServiceMock = new SocketClientServiceMock();
-        socketServiceMock.socket = socketHelper as unknown as Socket;
+        socketServiceMock = new SocketClientServiceMock(socketHelper);
         rackGridService = new RackGridService();
         focusHandlerService = new FocusHandlerService();
+        playerService = new PlayerService();
 
         await TestBed.configureTestingModule({
             declarations: [RackComponent],
@@ -43,6 +40,7 @@ describe('RackComponent', () => {
                 { provide: RackGridService, useValue: rackGridService },
                 { provide: SocketTestHelper, useValue: socketHelper },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
+                { provide: PlayerService, useValue: playerService },
             ],
         }).compileComponents();
     });
@@ -162,8 +160,7 @@ describe('RackComponent', () => {
 
     describe('isExchangeAllowed() tests', () => {
         it('should return false if it is not the player s turn', () => {
-            const playerService = fixture.debugElement.injector.get(Player);
-            playerService.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             expect(component.isExchangeAllowed()).toBeFalse();
         });
 
@@ -175,17 +172,15 @@ describe('RackComponent', () => {
 
         it('should return false if it is its turn but bank is not usable', () => {
             const roomService = fixture.debugElement.injector.get(Room);
-            const playerService = fixture.debugElement.injector.get(Player);
-            playerService.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             roomService.isBankUsable = false;
             expect(component.isExchangeAllowed()).toBeFalse();
         });
 
         it('should return true if the conditions are respected ', () => {
             const roomService = fixture.debugElement.injector.get(Room);
-            const playerService = fixture.debugElement.injector.get(Player);
             roomService.isBankUsable = true;
-            playerService.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             const spy = spyOn(component, 'areTilesSelectedForExchange').and.returnValues(true);
             const result = component.isExchangeAllowed();
             expect(spy).toHaveBeenCalled();
@@ -193,9 +188,8 @@ describe('RackComponent', () => {
         });
         it('should return false if the conditions are not respected ', () => {
             const roomService = fixture.debugElement.injector.get(Room);
-            const playerService = fixture.debugElement.injector.get(Player);
             roomService.isBankUsable = true;
-            playerService.isItsTurn = false;
+            playerService.player.isItsTurn = false;
             const spy = spyOn(component, 'areTilesSelectedForExchange').and.returnValues(true);
             const result = component.isExchangeAllowed();
             expect(spy).not.toHaveBeenCalled();

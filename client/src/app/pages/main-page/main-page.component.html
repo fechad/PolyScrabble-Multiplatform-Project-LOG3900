@@ -1,18 +1,20 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<div class="page-container">
+    <div class="page-body">
+        <app-hearder></app-hearder>
+        <div class="body-main-container">
+            <div class="page-title">
+                <div class="form-title">Modes de jeu</div>
+                <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
+            </div>
 
-<app-hearder></app-hearder>
-
-<body>
-    <p class="title">Bienvenue!</p>
-    <div class="main-container">
-        <div class="gray-box">
-            <button class="button" (click)="setGameType('classic')" routerLink="/game/option">Scrabble classique</button>
-            <button class="button" (click)="setGameType('log2990')" routerLink="/game/option">Scrabble LOG2990</button>
-            <button class="button" (click)="showLeaderboard()">Meilleurs scores</button>
-            <button class="button" (click)="showAllScores()">Tous les scores</button>
+            <div class="gray-box">
+                <button class="button" (click)="setGameType('classic')" routerLink="/game/option">Scrabble classique</button>
+                <button class="button" (click)="setGameType('log2990')" routerLink="/game/option">Scrabble LOG2990</button>
+                <button class="button" (click)="showLeaderboard()">Meilleurs scores</button>
+                <button class="button" (click)="showAllScores()">Tous les scores</button>
+            </div>
         </div>
-        <div class="footer-item">
-            <i class="fa fa-wechat fa-5x" (click)="showGeneralChat()"></i>
-        </div>
+        <div class="footer"></div>
     </div>
-</body>
+    <app-menu></app-menu>
+</div>

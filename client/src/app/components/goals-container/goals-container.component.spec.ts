@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { LOG_2990_GAME_TYPE, TIMER_TEST_DELAY } from '@app/constants/constants';
+import { DEFAULT_ROOM_INFO, LOG_2990_GAME_TYPE, TIMER_TEST_DELAY } from '@app/constants/constants';
 import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalRewards } from '@app/enums/goal-rewards';
 import { GoalTitle } from '@app/enums/goal-titles';
@@ -33,7 +33,8 @@ describe('GoalsContainerComponent', () => {
         socketServiceMock.socket = socketHelper as unknown as Socket;
 
         room = new Room();
-        room.roomInfo = { name: 'Room1', timerPerTurn: '60', dictionary: 'french', gameType: LOG_2990_GAME_TYPE, maxPlayers: 2 };
+        room.roomInfo = DEFAULT_ROOM_INFO;
+        room.roomInfo.gameType = LOG_2990_GAME_TYPE;
         room.currentPlayerPseudo = '';
 
         firstPlayer = new Player();

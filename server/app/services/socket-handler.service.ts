@@ -126,14 +126,16 @@ export class SocketHandlerService {
     }
 
     displayGameResume(room: Room) {
-        if (!room.verifyBothPlayersExist()) return;
         if (!room.letterBank) return;
 
-        const message = `
+        let message = `
             Fin de partie - ${room.letterBank.convertAvailableLettersBankToString()} \n
-            ${room.players[0].pseudo}: ${room.players[0].rack.getLetters()} \n
-            ${room.players[1].pseudo}: ${room.players[1].rack.getLetters()}
         `;
+
+        for (const player of room.players) {
+            message += `${player.pseudo}: ${player.rack.getLetters()} \n`;
+        }
+
         const chatMessage: ChatMessage = {
             text: message,
             sender: SYSTEM_NAME,

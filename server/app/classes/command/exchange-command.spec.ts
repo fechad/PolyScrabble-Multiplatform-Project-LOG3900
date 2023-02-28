@@ -22,8 +22,8 @@ describe('ExchangeLetters command', () => {
         testPlayer = new Player(socketMock1, name, false);
         testPlayer.rack.setLetters('bonjour');
         testPlayer.isItsTurn = true;
-        testRoom.addPlayer(testPlayer);
-        testRoom.addPlayer(new Player(socketMock2, name, true));
+        testRoom.addPlayer(testPlayer, '');
+        testRoom.addPlayer(new Player(socketMock2, name, true), '');
         validText = '!échanger bon';
         chatMessageService = new ChatMessageService();
         validCommand = new ExchangeLettersCommand(validText, testRoom, testPlayer, chatMessageService);

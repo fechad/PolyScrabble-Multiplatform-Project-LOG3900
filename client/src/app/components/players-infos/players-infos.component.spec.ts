@@ -7,11 +7,12 @@ import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { TIMER_TEST_DELAY } from '@app/constants/constants';
+import { DEFAULT_ROOM_INFO, TIMER_TEST_DELAY } from '@app/constants/constants';
 import { Bot } from '@app/interfaces/bot';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HttpService } from '@app/services/http.service';
+import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -35,22 +36,22 @@ describe('PlayersInfosComponent', () => {
     let socketHelper: SocketTestHelper;
     let socketHelper2: SocketTestHelper;
     let room: Room;
-    let player: Player;
+    let playerService: PlayerService;
     let player2: Player;
     let httpService: HttpService;
     let botExpert1: Bot;
     let botBeginner1: Bot;
     beforeEach(async () => {
         room = new Room();
-        room.roomInfo = { name: 'Room1', timerPerTurn: '60', dictionary: 'french', gameType: 'classic', maxPlayers: 2 };
+        room.roomInfo = DEFAULT_ROOM_INFO;
         room.currentPlayerPseudo = '';
 
-        player = new Player();
+        playerService = new PlayerService();
         player2 = new Player();
-        player.pseudo = 'playerPseudo';
+        playerService.player.pseudo = 'playerPseudo';
         player2.pseudo = 'playerPseudo2';
         player2.isItsTurn = true;
-        room.players = [player, player2];
+        room.players = [playerService.player, player2];
 
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketHelper = new SocketTestHelper();
@@ -70,12 +71,11 @@ describe('PlayersInfosComponent', () => {
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: SocketClientBotService, useValue: socketServiceBotMock },
-                { provide: Router, useValue: routerSpy },
-                { provide: Room, useValue: room },
-                { provide: Player, useValue: player },
                 { provide: SessionStorageService, useValue: sessionStorageServiceSpy },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: HttpService },
+                { provide: Room, useValue: room },
+                { provide: PlayerService, useValue: playerService },
                 { provide: MatDialog, useClass: MatDialogMock },
             ],
         }).compileComponents();
@@ -191,7 +191,7 @@ describe('PlayersInfosComponent', () => {
             it('should update the focus to chat on "playerTurnChanged" event when it is the playerTurn', () => {
                 focusHandlerService.currentFocus.next(CurrentFocus.NONE);
                 componentPrivateAccess.configureBaseSocketFeatures();
-                player.isItsTurn = true;
+                playerService.player.isItsTurn = true;
                 const pseudo = 'Jacob';
                 socketHelper.peerSideEmit('playerTurnChanged', pseudo);
                 expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.CHAT);
@@ -200,11 +200,11 @@ describe('PlayersInfosComponent', () => {
             it('should send botPlayAction if isSolo on "playerTurnChanged" event when it is the playerTurn', () => {
                 const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
                 componentPrivateAccess.configureBaseSocketFeatures();
-                player.isItsTurn = true;
+                playerService.player.isItsTurn = true;
                 room.roomInfo.isSolo = true;
                 // eslint-disable-next-line dot-notation -- we need to set private attribute
-                componentPrivateAccess['bot'] = { pseudo: player.pseudo };
-                socketHelper.peerSideEmit('playerTurnChanged', player.pseudo);
+                componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
+                socketHelper.peerSideEmit('playerTurnChanged', playerService.player.pseudo);
                 expect(spy).toHaveBeenCalled();
             });
 
@@ -217,26 +217,26 @@ describe('PlayersInfosComponent', () => {
             it('no players should be allowed to play when receiving the event "gameIsOver"', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
                 socketHelper.peerSideEmit('gameIsOver', []);
-                expect(player.isItsTurn).toEqual(false);
+                expect(playerService.player.isItsTurn).toEqual(false);
                 expect(player2.isItsTurn).toEqual(false);
             });
             it('should send convertToRoomSoloBot if isSolo on "playerLeft" event', () => {
                 const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
                 componentPrivateAccess.configureBaseSocketFeatures();
-                player.isItsTurn = true;
+                playerService.player.isItsTurn = true;
                 room.roomInfo.isSolo = true;
                 // eslint-disable-next-line dot-notation -- we need to set private attribute
-                componentPrivateAccess['bot'] = { pseudo: player.pseudo };
-                socketHelper.peerSideEmit('playerLeft', player.pseudo);
+                componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
+                socketHelper.peerSideEmit('playerLeft', playerService.player.pseudo);
                 expect(spy).toHaveBeenCalled();
             });
             it('should call removeItem from sessionStorageService if isSolo on "playerLeft" event', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
-                player.isItsTurn = true;
+                playerService.player.isItsTurn = true;
                 room.roomInfo.isSolo = true;
                 // eslint-disable-next-line dot-notation -- we need to set private attribute
-                componentPrivateAccess['bot'] = { pseudo: player.pseudo };
-                socketHelper.peerSideEmit('playerLeft', player.pseudo);
+                componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
+                socketHelper.peerSideEmit('playerLeft', playerService.player.pseudo);
                 expect(sessionStorageServiceSpy.removeItem).toHaveBeenCalled();
             });
             it('should check if timeUpdated was called', () => {
@@ -249,10 +249,10 @@ describe('PlayersInfosComponent', () => {
             it('should not update the score of the players when player received does not exist', async () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
                 spyOn(component, 'getPlayer').and.returnValue(undefined);
-                const points = player.points;
+                const points = playerService.player.points;
                 player2.points = 2;
                 socketHelper.peerSideEmit('updatePlayerScore', player2);
-                expect(player.points).toEqual(points);
+                expect(playerService.player.points).toEqual(points);
             });
             it('should set isSolo to true when player received does not exist', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
@@ -262,26 +262,26 @@ describe('PlayersInfosComponent', () => {
 
             it('should not update the score of the players when player received does not exist', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
-                const initialPoints = componentPrivateAccess.player.points;
+                const initialPoints = playerService.player.points;
                 const inexistentPlayer = new Player();
                 inexistentPlayer.points = 1;
                 socketHelper.peerSideEmit('updatePlayerScore', inexistentPlayer);
-                expect(componentPrivateAccess.player.points).toEqual(initialPoints);
+                expect(playerService.player.points).toEqual(initialPoints);
             });
 
             it('should update the score of the players ', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
-                const initialPoints = componentPrivateAccess.player.points;
+                const initialPoints = playerService.player.points;
                 socketHelper.peerSideEmit('updatePlayerScore', player2);
-                expect(componentPrivateAccess.player.points).toEqual(initialPoints);
+                expect(playerService.player.points).toEqual(initialPoints);
             });
 
             it('should swap the leaving player to a bot when receiving the event "botInfos"', () => {
-                player.isItsTurn = true;
+                playerService.player.isItsTurn = true;
                 player2.isItsTurn = true;
                 const randomPlayer = new Player();
                 randomPlayer.pseudo = 'pseudo';
-                componentPrivateAccess.room.players = [player, randomPlayer];
+                componentPrivateAccess.room.players = [playerService.player, randomPlayer];
                 componentPrivateAccess.configureBaseSocketFeatures();
                 socketHelper.peerSideEmit('botInfos', player2);
                 expect(componentPrivateAccess.bot).toEqual(player2);
@@ -289,7 +289,7 @@ describe('PlayersInfosComponent', () => {
             });
 
             it('should add the bot to the room on botInfos if the room length === 1', () => {
-                componentPrivateAccess.room.players = [player];
+                componentPrivateAccess.room.players = [playerService.player];
                 componentPrivateAccess.configureBaseSocketFeatures();
                 socketHelper.peerSideEmit('botInfos', player2);
                 expect(componentPrivateAccess.bot).toEqual(player2);
@@ -329,25 +329,25 @@ describe('PlayersInfosComponent', () => {
 
         it('should set all the players isItsTurn to false on gameIsOver signal', () => {
             componentPrivateAccess.configureBaseSocketFeatures();
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             player2.isItsTurn = true;
             socketHelper.peerSideEmit('gameIsOver');
-            expect(player.isItsTurn).toBeFalse();
+            expect(playerService.player.isItsTurn).toBeFalse();
             expect(player2.isItsTurn).toBeFalse();
         });
     });
 
     describe('getPlayerInfo tests', () => {
         it('should return the correct player pseudo with the good argument', () => {
-            component.room.players = [player, player2];
-            expect(component.getPlayerInfo(true, 'pseudo')).toEqual(player.pseudo);
+            component.room.players = [playerService.player, player2];
+            expect(component.getPlayerInfo(true, 'pseudo')).toEqual(playerService.player.pseudo);
             expect(component.getPlayerInfo(false, 'pseudo')).toEqual(player2.pseudo);
         });
         it('should return the correct player score with the good argument', () => {
-            player.points = 10;
+            playerService.player.points = 10;
             player2.points = 5;
-            component.room.players = [player, player2];
-            expect(component.getPlayerInfo(true, 'score')).toEqual(player.points);
+            component.room.players = [playerService.player, player2];
+            expect(component.getPlayerInfo(true, 'score')).toEqual(playerService.player.points);
             expect(component.getPlayerInfo(false, 'score')).toEqual(player2.points);
         });
     });

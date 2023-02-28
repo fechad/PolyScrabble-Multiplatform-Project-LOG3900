@@ -1,15 +1,13 @@
 /* eslint-disable max-lines */ // Lot of tests to make sure that the code work correctly
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
 import { CurrentFocus } from '@app/classes/current-focus';
-import { Player } from '@app/classes/player';
 import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { Tile } from '@app/classes/tile';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { TIMER_TEST_DELAY } from '@app/constants/constants';
+import { DEFAULT_ROOM_INFO, TIMER_TEST_DELAY } from '@app/constants/constants';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { BoardGridService } from '@app/services/board-grid.service';
 import { BoardService } from '@app/services/board.service';
@@ -17,6 +15,7 @@ import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { LetterTileService } from '@app/services/letter-tile.service';
 import { PlacementViewTilesService } from '@app/services/placement-view-tiles.service';
+import { PlayerService } from '@app/services/player.service';
 import { RackGridService } from '@app/services/rack-grid.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -36,7 +35,6 @@ describe('PlayAreaComponent', () => {
     let socketServiceMock: SocketClientServiceMock;
     let socketHelper: SocketTestHelper;
     let placement: PlacementData;
-    let formBuilder: FormBuilder;
     let boardGridService: BoardGridService;
     let sessionStorageService: SessionStorageService;
     let letterTileService: LetterTileService;
@@ -45,7 +43,7 @@ describe('PlayAreaComponent', () => {
     let mouseEvent: MouseEvent;
     let boardService: BoardService;
 
-    let player: Player;
+    let playerService: PlayerService;
     let room: Room;
 
     let removeAllViewLetterSpy: jasmine.Spy;
@@ -60,9 +58,9 @@ describe('PlayAreaComponent', () => {
         commandInvokerService = new CommandInvokerService();
         focusHandlerService = new FocusHandlerService();
 
-        player = new Player();
+        playerService = new PlayerService();
         room = new Room();
-        room.roomInfo = { name: 'Room1', timerPerTurn: '60', dictionary: 'french', gameType: 'classic', maxPlayers: 2 };
+        room.roomInfo = DEFAULT_ROOM_INFO;
         room.currentPlayerPseudo = '';
 
         boardService = new BoardService(
@@ -78,17 +76,13 @@ describe('PlayAreaComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [PlayAreaComponent],
             providers: [
-                { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: FormBuilder, useValue: formBuilder },
-                { provide: BoardService, useValue: boardService },
                 { provide: BoardGridService, useValue: boardGridService },
-                { provide: SocketTestHelper, useValue: socketHelper },
-                { provide: SessionStorageService, useValue: sessionStorageService },
-                { provide: LetterTileService, useValue: letterTileService },
+                { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: CommandInvokerService, useValue: commandInvokerService },
-                { provide: FocusHandlerService, useValue: focusHandlerService },
-                { provide: Player, useValue: player },
+                { provide: BoardService, useValue: boardService },
                 { provide: Room, useValue: room },
+                { provide: FocusHandlerService, useValue: focusHandlerService },
+                { provide: PlayerService, useValue: playerService },
             ],
         }).compileComponents();
     });
@@ -206,7 +200,7 @@ describe('PlayAreaComponent', () => {
             commandInvokerService['cancelStack'] = [placeLetterCommandMock];
             const sendSpy = spyOn(socketServiceMock, 'send');
             const commandMessage = commandInvokerService.commandMessage;
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
 
             componentPrivateAccess.confirmPlacement();
 
@@ -217,7 +211,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should set the focus to chat after a successful placement with mouse', (done) => {
-            player.isItsTurn = false;
+            playerService.player.isItsTurn = false;
             const FAILURE_TIMER = 4000;
 
             // eslint-disable-next-line dot-notation -- we want to access private attribute
@@ -235,7 +229,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should add the command in chat after confirmPlacement', () => {
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
 
             // eslint-disable-next-line dot-notation -- we want to access private attribute
             commandInvokerService['cancelStack'] = [placeLetterCommandMock];
@@ -282,7 +276,7 @@ describe('PlayAreaComponent', () => {
 
         it('should call the correct methods on mouseHitDetect', () => {
             room.roomInfo.isGameOver = false;
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             focusHandlerService.currentFocus.next(CurrentFocus.BOARD);
 
             component.mouseHitDetect(mouseEvent);
@@ -301,7 +295,7 @@ describe('PlayAreaComponent', () => {
 
         it('should not call updateFocus and mouseHitDetect if it is not player turn', () => {
             room.roomInfo.isGameOver = false;
-            player.isItsTurn = false;
+            playerService.player.isItsTurn = false;
             component.mouseHitDetect(mouseEvent);
 
             expect(updateFocusSpy).not.toHaveBeenCalled();
@@ -310,7 +304,7 @@ describe('PlayAreaComponent', () => {
 
         it('should not call mouseHitDetect if the focus is not the board', () => {
             room.roomInfo.isGameOver = false;
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             focusHandlerService.currentFocus.next(CurrentFocus.NONE);
 
             component.mouseHitDetect(mouseEvent);
@@ -372,6 +366,10 @@ describe('PlayAreaComponent', () => {
     });
 
     describe('updateFocus tests', () => {
+        beforeEach(() => {
+            room.roomInfo.isGameOver = false;
+        });
+
         mouseEvent = {
             offsetX: 1,
             offsetY: 2,
@@ -395,27 +393,32 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should not change the focus to board if it is not the player turn', () => {
+            // Expected 'Chat' to equal 'None'.
             focusHandlerService.currentFocus.next(CurrentFocus.NONE);
             const canBeFocusedSpy = spyOn(boardService, 'canBeFocused').and.returnValue(true);
-            player.isItsTurn = false;
+            playerService.player.isItsTurn = false;
             componentPrivateAccess.updateFocus(mouseEvent);
             expect(canBeFocusedSpy).not.toHaveBeenCalled();
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.NONE);
         });
 
         it('should not change the focus to board if cant be focused', () => {
+            // spy never called
+            // Expected 'Chat' to equal 'None'.
             focusHandlerService.currentFocus.next(CurrentFocus.NONE);
             const canBeFocusedSpy = spyOn(boardService, 'canBeFocused').and.returnValue(false);
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             componentPrivateAccess.updateFocus(mouseEvent);
             expect(canBeFocusedSpy).toHaveBeenCalledWith({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.NONE);
         });
 
         it('should update the focus to board if the game is not over, it is the player turn, and it can be focused', () => {
+            // spy never called
+            // expected chat to equal board
             focusHandlerService.currentFocus.next(CurrentFocus.NONE);
             const canBeFocusedSpy = spyOn(boardService, 'canBeFocused').and.returnValue(true);
-            player.isItsTurn = true;
+            playerService.player.isItsTurn = true;
             componentPrivateAccess.updateFocus(mouseEvent);
             expect(canBeFocusedSpy).toHaveBeenCalledWith({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.BOARD);

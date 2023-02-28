@@ -10,6 +10,7 @@ import { Bot } from '@app/interfaces/bot';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HttpService } from '@app/services/http.service';
+import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -34,7 +35,7 @@ export class PlayersInfosComponent implements OnInit {
         private focusHandlerService: FocusHandlerService,
         private httpService: HttpService,
         public room: Room,
-        public player: Player,
+        public playerService: PlayerService,
         private dialog: MatDialog,
     ) {
         this.room.roomInfo.isGameOver = false;
@@ -87,8 +88,8 @@ export class PlayersInfosComponent implements OnInit {
 
     getPlayerInfo(isClient: boolean, info: string): string | number {
         const wantedPlayer = isClient
-            ? this.room.players.find((player) => player.pseudo === this.player.pseudo)
-            : this.room.players.find((player) => player.pseudo !== this.player.pseudo);
+            ? this.room.players.find((player) => player.pseudo === this.playerService.player.pseudo)
+            : this.room.players.find((player) => player.pseudo !== this.playerService.player.pseudo);
 
         let infoToReturn: string | number = '';
         switch (info) {
@@ -139,11 +140,11 @@ export class PlayersInfosComponent implements OnInit {
 
     private configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
-            if (this.player.isItsTurn) {
+            if (this.playerService.player.isItsTurn) {
                 this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             }
             this.currentPlayerTurnPseudo = currentPlayerTurnPseudo;
-            this.player.isItsTurn = this.player.pseudo === currentPlayerTurnPseudo;
+            this.playerService.player.isItsTurn = this.playerService.player.pseudo === currentPlayerTurnPseudo;
             if (this.room.roomInfo.isSolo && this.bot && this.bot.pseudo === currentPlayerTurnPseudo) {
                 this.socketClientBotService.send(SocketEvent.BotPlayAction);
             }
@@ -155,7 +156,9 @@ export class PlayersInfosComponent implements OnInit {
 
         this.socketService.on(SocketEvent.PlayerLeft, (player: Player) => {
             const beginnersNames = this.beginners.map((e) => e.name);
-            const botName = beginnersNames.filter((name) => name !== this.player.pseudo)[Math.floor(Math.random() * beginnersNames.length)];
+            const botName = beginnersNames.filter((name) => name !== this.playerService.player.pseudo)[
+                Math.floor(Math.random() * beginnersNames.length)
+            ];
 
             this.socketClientBotService.send(SocketEvent.ConvertToRoomSoloBot, {
                 roomName: this.room.roomInfo.name,
@@ -190,7 +193,7 @@ export class PlayersInfosComponent implements OnInit {
                 this.room.players.push(bot);
                 return;
             }
-            const playerToSwap = this.room.players.find((player) => player.pseudo !== this.player.pseudo);
+            const playerToSwap = this.room.players.find((player) => player.pseudo !== this.playerService.player.pseudo);
             if (!playerToSwap) return;
             this.room.players[this.room.players.indexOf(playerToSwap)] = bot;
         });

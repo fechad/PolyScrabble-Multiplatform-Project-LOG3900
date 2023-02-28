@@ -1,66 +1,31 @@
-<app-hearder></app-hearder>
-<body>
-    <div *ngIf="dictionaryExistsOnServer">
-        <div class="container-loading">
-            <app-game-wait-loading></app-game-wait-loading>
-        </div>
-
-        <div class="container gray-box">
-            <div class="information-message-container information" *ngIf="roomStatusText">
-                <mat-icon>error_outline</mat-icon>
-                <div class="information-message">{{ roomStatusText }}</div>
-            </div>
-            <div class="button-container">
-                <div>
-                    <button class="button" (click)="leaveRoom()" routerLink="/game/multiplayer/create">Quitter la file d'attente</button>
+<div class="page-container">
+    <div class="page-body">
+        <!-- <div class="waiting-room-header">
+            <div class="game-info-container">
+                <div class="game-info">
+                    <div class="game-info-icon">[+_+]</div>
+                    <div class="game-info-value">Difficile</div>
                 </div>
-                <div>
-                    <button class="button" routerLink="/game/multiplayer/create/solo" [disabled]="otherPlayerExist" (click)="onGoToSolo()">
-                        Jouer en solo
-                    </button>
-                </div>
-                <div>
-                    <button class="button" [disabled]="!otherPlayerExist" (click)="acceptPlayer()">Demarrer</button>
-                </div>
-                <div>
-                    <button class="button important-button" [disabled]="!otherPlayerExist" (click)="rejectPlayer()">Rejeter</button>
+                <div class="game-info">
+                    <div class="game-info-icon">[V]</div>
+                    <div class="game-info-value">1 min</div>
                 </div>
             </div>
-
-            <div class="table-container">
-                <table id="games">
-                    <tr>
-                        <th>Nom salle</th>
-                        <th>Nom du créateur</th>
-                        <th>Nom du second Joueur</th>
-                        <th>Temps par tour</th>
-                        <th>Dictionnaire</th>
-                        <th>Type partie</th>
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <td>{{ room.roomInfo.name }}</td>
-                        <td>{{ firstPlayerPseudo }}</td>
-                        <td>{{ secondPlayerPseudo }}</td>
-                        <td>{{ room.roomInfo.timerPerTurn }}</td>
-                        <td>{{ room.roomInfo.dictionary }}</td>
-                        <td>{{ room.roomInfo.gameType }}</td>
-                    </tr>
-                </table>
+            <div class="game-players">
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg" />
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg" />
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg" />
+                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg" />
             </div>
-        </div>
+            <div class="game-buttons">
+                <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option">Quitter</button>
+                <button class="button important-button" [disabled]="!otherPlayerExist" (click)="rejectPlayer()">Rejeter</button>
+                <button [disabled]="!otherPlayerExist" (click)="acceptPlayer()" class="button">Démarrer</button>
+            </div>
+        </div> -->
+        <div></div>
+        <div></div>
+        <div class="footer"></div>
     </div>
-    <div class="center" *ngIf="!dictionaryExistsOnServer">
-        <div class="gray-box">
-            <div class="error-message-container">
-                <mat-icon>error_outline</mat-icon>
-                <div class="error-message">Votre partie n'existe plus car votre dictionnaire a été effacé</div>
-            </div>
-            <div class="button-container">
-                <div>
-                    <button class="button important-button" routerLink="/main">Retour à la page d'accueil</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+    <app-menu [isWaitMultiPage]="true"></app-menu>
+</div>

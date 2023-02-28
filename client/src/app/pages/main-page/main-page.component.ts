@@ -79,9 +79,7 @@ export class MainPageComponent implements OnInit {
     }
 
     private connect() {
-        if (!this.socketService.isSocketAlive()) {
-            this.socketService.connect();
-        }
+        this.socketService.refreshConnection();
     }
 
     private async getLeaderboardScores(): Promise<Score[][] | undefined> {

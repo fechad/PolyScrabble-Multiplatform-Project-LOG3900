@@ -10,7 +10,7 @@ import { PlayAreaComponent } from '@app/components/play-area/play-area.component
 import { PlayersInfosComponent } from '@app/components/players-infos/players-infos.component';
 import { RackComponent } from '@app/components/rack/rack.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { StartGameComponent } from '@app/components/start-game/start-game.component';
+// import { StartGameComponent } from '@app/components/start-game/start-game.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -37,17 +37,18 @@ import { GoalComponent } from './components/goal/goal.component';
 import { GoalsContainerComponent } from './components/goals-container/goals-container.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LeaderBoardDialogDataComponent } from './components/leaderboard-dialog-data/leaderboard-dialog-data.component';
+import { MenuComponent } from './components/menu/menu.component';
 import { MessagesDisplayComponent } from './components/messages-display/messages-display.component';
 import { StartGameSoloComponent } from './components/start-game-solo/start-game-solo.component';
 import { UploadDictionaryPopupComponent } from './components/upload-dictionary-popup/upload-dictionary-popup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { UserSummaryComponent } from './components/user-summary/user-summary.component';
 import { AdminBotPageComponent } from './pages/admin-bot-page/admin-bot-page.component';
 import { AdminDictionariesPageComponent } from './pages/admin-dictionaries-page/admin-dictionaries-page.component';
 import { AdminGamesPageComponent } from './pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { BestScoresPageComponent } from './pages/best-scores-page/best-scores-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { UserSummaryComponent } from './components/user-summary/user-summary.component';
 
 /**
  * Main module that is used in main.ts.
@@ -65,7 +66,7 @@ import { UserSummaryComponent } from './components/user-summary/user-summary.com
         SidebarComponent,
         GameOptionPageComponent,
         GameCreateMultiplayerPageComponent,
-        StartGameComponent,
+        // StartGameComponent,
         GameJoinMultiplayerPageComponent,
         GameWaitMultiplayerPageComponent,
         ChatComponent,
@@ -102,6 +103,7 @@ import { UserSummaryComponent } from './components/user-summary/user-summary.com
         GeneralChatComponent,
         UserProfileComponent,
         UserSummaryComponent,
+        MenuComponent,
     ],
     imports: [
         AppMaterialModule,

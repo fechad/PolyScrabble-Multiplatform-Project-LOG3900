@@ -9,6 +9,7 @@ import { describe } from 'mocha';
 import * as sinon from 'sinon';
 import { GameManager } from './game-manager';
 
+// TODO: move test of room related to game manager tests here
 const palindromeWord = 'naan';
 describe('GameManager tests', () => {
     const manager: GameManager = new GameManager(DEFAULT_DICTIONARY_PATH);

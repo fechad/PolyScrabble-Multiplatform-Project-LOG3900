@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
-import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room';
 import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
@@ -10,6 +9,7 @@ import { Direction } from '@app/enums/direction';
 import { SocketEvent } from '@app/enums/socket-event';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { LetterTileService } from '@app/services/letter-tile.service';
+import { PlayerService } from '@app/services/player.service';
 import { RackGridService } from '@app/services/rack-grid.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
@@ -29,7 +29,7 @@ export class RackComponent implements OnInit, AfterViewInit {
         private focusHandlerService: FocusHandlerService,
         private rack: Rack,
         private socketService: SocketClientService,
-        private readonly player: Player,
+        private readonly playerService: PlayerService,
         private readonly room: Room,
     ) {
         return;
@@ -123,7 +123,7 @@ export class RackComponent implements OnInit, AfterViewInit {
     }
 
     isExchangeAllowed(): boolean {
-        if (!this.player.isItsTurn) return false;
+        if (!this.playerService.player.isItsTurn) return false;
         if (!this.room.isBankUsable) return false;
         if (!this.areTilesSelectedForExchange()) return false;
         return true;

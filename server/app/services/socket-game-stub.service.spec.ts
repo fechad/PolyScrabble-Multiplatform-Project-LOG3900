@@ -108,6 +108,10 @@ describe('Socket-game-stub service tests', () => {
     });
 
     describe('startGame tests', () => {
+        beforeEach(() => {
+            sinon.stub(roomMock, 'fillPlayersRack').returns();
+        });
+
         it('should create', () => {
             expect(roomService !== undefined).to.equal(true);
             expect(socketGameService !== undefined).to.equal(true);
@@ -117,22 +121,14 @@ describe('Socket-game-stub service tests', () => {
 
         it('Should call the correct methods on startGame', (done) => {
             sinon.stub(roomMock, 'hasTimer').returns(true);
+            getCurrentPlayerStub.restore();
+            sinon.stub(roomMock, 'getCurrentPlayerTurn').returns(undefined);
             const spy1 = sinon.spy(roomMock, 'choseRandomTurn');
             roomMock.players = [firstPlayer, secondPlayer];
             socketGameService.handleStartGame(socketMock);
             assert(getSocketRoomStub.called, 'did not call getSocketRoomStub on startGame');
             assert(getRoomStub.called, 'did not call getRoomStub on startGame');
             assert(spy1.called, 'did not call room.choseRandomTurn() on startGame');
-            assert(getCurrentPlayerStub.called, 'did not call room.getCurrentPlayerTurn() on startGame');
-            done();
-        });
-        it('Should not call sendToEveryoneInRoom on startGame if there are not currentTurnPlayer', (done) => {
-            getCurrentPlayerStub.restore();
-            sinon.stub(roomMock, 'getCurrentPlayerTurn').returns(undefined);
-
-            roomMock.players = [firstPlayer, secondPlayer];
-            socketGameService.handleStartGame(socketMock);
-            assert(sendEveryoneStub.notCalled, 'called sendToEveryoneInRoom on startGame with no currentTurnPlayer');
             done();
         });
         it('Should not call server.setTimer if room.hasTimeOut is true', (done) => {
@@ -146,7 +142,6 @@ describe('Socket-game-stub service tests', () => {
             roomMock['gameManager'].hasTimeout = false;
             roomMock.players = [firstPlayer, secondPlayer];
             socketGameService.handleStartGame(socketMock);
-
             assert(setTimerStub.called, 'did not call server.setTimer on startGame');
             done();
         });

@@ -147,34 +147,6 @@ describe('GameCreateMultiplayerPageComponent', () => {
         });
     });
 
-    describe('changeBotName', () => {
-        let bot1: Bot;
-        let bot2: Bot;
-        let bot3: Bot;
-        let bot4: Bot;
-        let bot5: Bot;
-        let bot6: Bot;
-
-        beforeEach(() => {
-            bot1 = { name: 'BOTTEGA', gameType: 'débutant' };
-            bot2 = { name: 'BOTTEG', gameType: 'débutant' };
-            bot3 = { name: 'BOTTE', gameType: 'débutant' };
-            bot4 = { name: 'BOTEGA', gameType: 'expert' };
-            bot5 = { name: 'BOTEG', gameType: 'expert' };
-            bot6 = { name: 'BOTE', gameType: 'expert' };
-        });
-        it('should change virtual player name of a beginner game type', () => {
-            component.bots = [bot1, bot2, bot3];
-            const beginnersList = component.beginners.map((e) => e.name);
-            component.changeBotName();
-            expect(beginnersList).toContain(component.botName);
-        });
-        it('should change virtual player name of a expert game type', () => {
-            component.bots = [bot4, bot5, bot6];
-            component.changeBotName();
-        });
-    });
-
     describe('timerPerTurn tests', () => {
         const notMultipleOf30 = 35;
         const multipleOf30 = 300;

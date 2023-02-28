@@ -1,29 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
+import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
+import { SocketEvent } from '@app/enums/socket-event';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { of } from 'rxjs';
-import { Socket } from 'socket.io-client';
 import { SocketClientService } from './../../services/socket-client.service';
 import { GamePageComponent } from './game-page.component';
 
 import SpyObj = jasmine.SpyObj;
-
-class SocketClientServiceMock extends SocketClientService {
-    override connect() {
-        return;
-    }
-}
 
 describe('GamePageComponent', () => {
     let component: GamePageComponent;
@@ -32,27 +28,23 @@ describe('GamePageComponent', () => {
     let socketServiceMock: SocketClientServiceMock;
     let socketServiceBotMock: SocketClientServiceMock;
     let socketHelper: SocketTestHelper;
-    let formBuilder: FormBuilder;
     let sessionStorageService: SessionStorageService;
     let focusHandlerService: FocusHandlerService;
 
     let room: Room;
-    let player: Player;
+    let playerService: PlayerService;
     let routerSpy: SpyObj<Router>;
     let dialog: MatDialog;
 
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
-        socketServiceMock = new SocketClientServiceMock();
-        socketServiceBotMock = new SocketClientServiceMock();
-        socketServiceMock.socket = socketHelper as unknown as Socket;
-        socketServiceBotMock.socket = socketHelper as unknown as Socket;
-        formBuilder = new FormBuilder();
+        socketServiceMock = new SocketClientServiceMock(socketHelper);
+        socketServiceBotMock = new SocketClientServiceMock(socketHelper);
 
         room = new Room();
-        room.roomInfo = { name: 'Room1', timerPerTurn: '60', dictionary: 'french', gameType: 'classic', maxPlayers: 2 };
+        room.roomInfo = DEFAULT_ROOM_INFO;
         room.currentPlayerPseudo = '';
-        player = new Player();
+        playerService = new PlayerService();
 
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -64,13 +56,12 @@ describe('GamePageComponent', () => {
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: SocketClientBotService, useValue: socketServiceBotMock },
-                { provide: FormBuilder, useValue: formBuilder },
                 { provide: SessionStorageService, useValue: sessionStorageService },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
-                { provide: Room, useValue: room },
-                { provide: Player, useValue: player },
                 { provide: Router, useValue: routerSpy },
                 { provide: MatDialog, useClass: MatDialogMock },
+                { provide: Room, useValue: room },
+                { provide: PlayerService, useValue: playerService },
             ],
         }).compileComponents();
     });
@@ -175,16 +166,13 @@ describe('GamePageComponent', () => {
 
         describe('Connection tests', () => {
             it('should call the correct socketServiceMock methods on connection', () => {
-                const connectSpy = spyOn(socketServiceMock, 'connect');
-                const isSOcketAliveSpy = spyOn(socketServiceMock, 'isSocketAlive');
-
+                const refreshConnectionSpy = spyOn(socketServiceMock, 'refreshConnection');
                 const connectBotSpy = spyOn(socketServiceBotMock, 'connect');
                 const isSOcketAliveBotSpy = spyOn(socketServiceBotMock, 'isSocketAlive');
                 const configureBaseSocketFeaturesSpy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
                 componentPrivateAccess.connect();
 
-                expect(connectSpy).toHaveBeenCalled();
-                expect(isSOcketAliveSpy).toHaveBeenCalled();
+                expect(refreshConnectionSpy).toHaveBeenCalled();
                 expect(connectBotSpy).toHaveBeenCalled();
                 expect(isSOcketAliveBotSpy).toHaveBeenCalled();
                 expect(configureBaseSocketFeaturesSpy).toHaveBeenCalled();
@@ -229,14 +217,14 @@ describe('GamePageComponent', () => {
             const spy = spyOn(sessionStorageService, 'setItem').and.callThrough();
             componentPrivateAccess.configureBaseSocketFeatures();
             const data = { room: componentPrivateAccess.room, player: new Player() };
-            socketHelper.peerSideEmit('reconnected', data);
+            socketHelper.peerSideEmit(SocketEvent.Reconnected, data);
             expect(spy).toHaveBeenCalled();
         });
 
         it('should set the room correctly on reconnected', () => {
             componentPrivateAccess.configureBaseSocketFeatures();
             const gameInfo = { room: new Room(), player: new Player() };
-            socketHelper.peerSideEmit('reconnected', gameInfo);
+            socketHelper.peerSideEmit(SocketEvent.Reconnected, gameInfo);
             expect(componentPrivateAccess.room.roomInfo.name).toEqual(gameInfo.room.roomInfo.name);
             expect(componentPrivateAccess.room.roomInfo.timerPerTurn).toEqual(gameInfo.room.roomInfo.timerPerTurn);
             expect(componentPrivateAccess.room.roomInfo.dictionary).toEqual(gameInfo.room.roomInfo.dictionary);
@@ -249,12 +237,12 @@ describe('GamePageComponent', () => {
         it('should set the player correctly on reconnected', () => {
             componentPrivateAccess.configureBaseSocketFeatures();
             const gameInfo = { room: new Room(), player: new Player() };
-            socketHelper.peerSideEmit('reconnected', gameInfo);
-            expect(componentPrivateAccess.player.pseudo).toEqual(gameInfo.player.pseudo);
-            expect(componentPrivateAccess.player.socketId).toEqual(gameInfo.player.socketId);
-            expect(componentPrivateAccess.player.points).toEqual(gameInfo.player.points);
-            expect(componentPrivateAccess.player.isCreator).toEqual(gameInfo.player.isCreator);
-            expect(componentPrivateAccess.player.isItsTurn).toEqual(gameInfo.player.isItsTurn);
+            socketHelper.peerSideEmit(SocketEvent.Reconnected, gameInfo);
+            expect(componentPrivateAccess.playerService.player.pseudo).toEqual(gameInfo.player.pseudo);
+            expect(componentPrivateAccess.playerService.player.socketId).toEqual(gameInfo.player.socketId);
+            expect(componentPrivateAccess.playerService.player.points).toEqual(gameInfo.player.points);
+            expect(componentPrivateAccess.playerService.player.isCreator).toEqual(gameInfo.player.isCreator);
+            expect(componentPrivateAccess.playerService.player.isItsTurn).toEqual(gameInfo.player.isItsTurn);
         });
     });
 });

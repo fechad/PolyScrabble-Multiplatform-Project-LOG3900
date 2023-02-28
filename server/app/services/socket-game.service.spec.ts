@@ -159,6 +159,7 @@ describe('socketGameService service tests', () => {
             roomMock.elapsedTime = -1;
         });
         it('should call socketGameService.changeTurn if room.elapsedTime >= room.timerPerTurn', (done) => {
+            roomMock.players = [firstPlayer, firstPlayer];
             const secondPlayer = {
                 ...firstPlayer,
                 replaceRack: () => {

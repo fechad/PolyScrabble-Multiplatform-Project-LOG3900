@@ -9,6 +9,7 @@ import { GameData } from '@app/classes/game-data';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
+import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
 import { HttpService } from '@app/services/http.service';
 import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -48,7 +49,7 @@ describe('StartGameSoloComponent', () => {
         timerPerTurn = '60';
         dictionary = 'French';
         gameDataStub = new GameData();
-        room.roomInfo = { name: 'Room1', timerPerTurn: '60', dictionary: 'french', gameType: 'classic', maxPlayers: 2 };
+        room.roomInfo = DEFAULT_ROOM_INFO;
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock();
         socketServiceMock.socket = socketHelper as unknown as Socket;
@@ -215,23 +216,24 @@ describe('StartGameSoloComponent', () => {
             });
         });
     });
-    describe('gameData tests', () => {
-        it('should set the pseudo of its room to the pseudo value of the form on joinRoom', async () => {
-            spyOn(component, 'dictionarySelectedExists' as any).and.returnValue(of(true));
-            component.gameData = gameDataStub;
-            const formPseudo = gameDataStub.pseudo;
-            await component.joinRoom();
-            expect(component.room.players[0].pseudo).toEqual(formPseudo);
-        });
+    // TODO: Remove obsolete test and file
+    // describe('gameData tests', () => {
+    //     it('should set the pseudo of its room to the pseudo value of the form on joinRoom', async () => {
+    //         spyOn(component, 'dictionarySelectedExists' as any).and.returnValue(of(true));
+    //         component.gameData = gameDataStub;
+    //         const formPseudo = gameDataStub.pseudo;
+    //         await component.joinRoom();
+    //         expect(component.room.players[0].pseudo).toEqual(formPseudo);
+    //     });
 
-        it('should set the timerPerTurn of its room to the timerPerTurn value of the form on joinRoom', async () => {
-            spyOn(component, 'dictionarySelectedExists' as any).and.returnValue(of(true));
-            component.gameData = gameDataStub;
-            const formTimerPerTurn = gameDataStub.timerPerTurn;
-            await component.joinRoom();
-            expect(component.room.roomInfo.timerPerTurn).toEqual(formTimerPerTurn);
-        });
-    });
+    //     it('should set the timerPerTurn of its room to the timerPerTurn value of the form on joinRoom', async () => {
+    //         spyOn(component, 'dictionarySelectedExists' as any).and.returnValue(of(true));
+    //         component.gameData = gameDataStub;
+    //         const formTimerPerTurn = gameDataStub.timerPerTurn;
+    //         await component.joinRoom();
+    //         expect(component.room.roomInfo.timerPerTurn).toEqual(formTimerPerTurn);
+    //     });
+    // });
 
     describe('hasValidGameType tests', () => {
         it('should return true if the room gameType is classic', () => {

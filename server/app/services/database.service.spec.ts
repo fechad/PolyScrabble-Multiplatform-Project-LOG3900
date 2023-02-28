@@ -40,6 +40,7 @@ describe('Database Service', () => {
                 avatarUrl: 'url',
                 bestGames: [],
                 gamesPlayed: [],
+                gamesWon: 0,
             };
             accounts.push(account);
             index++;

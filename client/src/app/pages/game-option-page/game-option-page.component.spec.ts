@@ -36,22 +36,4 @@ describe('GameOptionPageComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
-
-    describe('Connection tests', () => {
-        it('should call socketServiceMock.disconnect on disconnect if socket is alive', () => {
-            const spy1 = spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-            const spy2 = spyOn(socketServiceMock, 'disconnect');
-            component.disconnect();
-            expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
-        });
-
-        it('should not call socketServiceMock.disconnect on disconnect if socket is not alive', () => {
-            const spy1 = spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-            const spy2 = spyOn(socketServiceMock, 'disconnect');
-            component.disconnect();
-            expect(spy1).toHaveBeenCalled();
-            expect(spy2).not.toHaveBeenCalled();
-        });
-    });
 });

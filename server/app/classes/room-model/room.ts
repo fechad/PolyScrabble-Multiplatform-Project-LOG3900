@@ -26,17 +26,32 @@ export class Room {
         this.players = [];
         this.elapsedTime = 0;
         this.startDate = new Date();
-        this.roomInfo = { name: '', timerPerTurn: '', dictionary: DEFAULT_DICTIONARY_TITLE, gameType: '', maxPlayers: 2, surrender: '' };
+
         if (clientRoom) {
             this.roomInfo = {
                 name: '',
+                creatorName: clientRoom.roomInfo.creatorName,
                 timerPerTurn: clientRoom.roomInfo.timerPerTurn,
                 dictionary: clientRoom.roomInfo.dictionary,
                 gameType: clientRoom.roomInfo.gameType,
-                maxPlayers: 2,
+                maxPlayers: 4,
                 surrender: '',
+                isPublic: clientRoom.roomInfo.isPublic,
+                password: clientRoom.roomInfo.password,
             };
-        } else this.roomInfo = { name: '', timerPerTurn: '', dictionary: DEFAULT_DICTIONARY_TITLE, gameType: '', maxPlayers: 2, surrender: '' };
+        } else {
+            this.roomInfo = {
+                name: '',
+                creatorName: '',
+                timerPerTurn: '',
+                dictionary: DEFAULT_DICTIONARY_TITLE,
+                gameType: '',
+                maxPlayers: 4,
+                surrender: '',
+                isPublic: true,
+                password: '',
+            };
+        }
         this.gameManager = new GameManager(new DictionariesFileService().convertTitleIntoFilename(this.roomInfo.dictionary));
         this.isFirstGame = true;
     }
@@ -77,11 +92,17 @@ export class Room {
         this.gameManager.turnPassedCounter = 0;
     }
 
-    addPlayer(player: Player) {
-        if (this.players.length < this.maxPlayers) {
-            this.fillPlayerRack(player);
+    canAddPlayer(password?: string): boolean {
+        if (this.roomInfo.isPublic && this.isSamePassword(password) && this.players.length < this.maxPlayers) return true;
+        if (!this.roomInfo.isPublic && this.players.length < this.maxPlayers) return true;
+        return false;
+    }
+
+    addPlayer(player: Player, password: string) {
+        if (this.canAddPlayer(password)) {
             this.players.push(player);
         }
+
         if (this.isFirstGame && this.players.length !== 0) {
             this.isFirstGame = false;
             this.startDate = new Date();
@@ -90,7 +111,7 @@ export class Room {
 
     createPlayerVirtual(socketId: string, name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
         this.bot = this.gameManager.getNewVirtualPlayer(socketId, name, this.gameManager.fetcher, desiredLevel);
-        this.addPlayer(this.bot);
+        this.addPlayer(this.bot, this.roomInfo.password);
         return this.bot;
     }
 
@@ -104,6 +125,10 @@ export class Room {
 
     getReachedGoals(): ReachedGoal[] {
         return this.gameManager.reachedGoals;
+    }
+
+    fillPlayersRack() {
+        this.gameManager.fillPlayersRack(this.players);
     }
 
     fillPlayerRack(player: Player) {
@@ -124,6 +149,10 @@ export class Room {
 
     getPlayer(playerSocketId: string): Player | undefined {
         return this.players.find((element) => element.socketId === playerSocketId);
+    }
+
+    getPlayerByName(playerName: string): Player | undefined {
+        return this.players.find((element) => element.pseudo === playerName);
     }
 
     getPlayerName(playerSocketId: string): string | undefined {
@@ -149,10 +178,6 @@ export class Room {
         return this.gameManager.getCurrentPlayerTurn(this.players);
     }
 
-    verifyBothPlayersExist(): boolean {
-        return this.gameManager.verifyBothPlayersExist(this.players);
-    }
-
     isGameFinished(): boolean {
         return this.gameManager.isGameFinished(this.players);
     }
@@ -176,5 +201,10 @@ export class Room {
     getBotGreeting(): BotGreeting | undefined {
         if (!this.bot) return undefined;
         return this.bot.greeting;
+    }
+
+    private isSamePassword(password?: string): boolean {
+        if (!password && this.roomInfo.password === '') return true;
+        return this.roomInfo.password === password;
     }
 }

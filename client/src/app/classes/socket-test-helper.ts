@@ -10,10 +10,11 @@ export class SocketTestHelper {
         this.callbacks.get(event)!.push(callback);
     }
 
-    emit(event: string, ...params: any) {
-    }
+    emit(event: string, ...params: any) {}
 
     disconnect() {}
+
+    removeAllListeners() {}
 
     peerSideEmit(event: string, params?: any) {
         if (!this.callbacks.has(event)) {

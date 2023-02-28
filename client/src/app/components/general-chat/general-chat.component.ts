@@ -1,6 +1,4 @@
-import { AfterContentChecked, Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { AfterContentChecked, Component, Input, OnInit } from '@angular/core';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
@@ -13,15 +11,11 @@ import { SocketClientService } from '@app/services/socket-client.service';
     styleUrls: ['./general-chat.component.scss'],
 })
 export class GeneralChatComponent implements OnInit, AfterContentChecked {
-    chats: ChannelMessage[];
+    @Input() discussionChannel: DiscussionChannel;
     enable: boolean;
-    constructor(
-        public dialogRef: MatDialogRef<GeneralChatComponent>,
-        private playerService: PlayerService,
-        private socketService: SocketClientService,
-    ) {
-        this.chats = [];
+    constructor(private playerService: PlayerService, private socketService: SocketClientService) {
         this.enable = false;
+        this.discussionChannel = new DiscussionChannel('');
     }
 
     isSender(chatMessage: ChannelMessage): boolean {
@@ -37,8 +31,6 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
 
     ngOnInit() {
         const delay = 100;
-        this.connect();
-        this.socketService.send(SocketEvent.GetDiscussionChannels);
         const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
         setTimeout(() => chat.scrollTo(0, chat.scrollHeight), delay);
     }
@@ -50,54 +42,13 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
         const channelMessage = {
             system: false,
             message: inputElement.value,
-            time: new Date().toLocaleTimeString([], { hour12: false }),
+            time: new Date().toLocaleTimeString([], { hour12: false }), // TODO: put it server side
             sender: this.playerService.player.pseudo,
-            channelName: 'General Chat',
+            channelName: this.discussionChannel.name,
         };
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         inputElement.value = '';
-        this.chats.push(channelMessage);
+        this.discussionChannel.messages.push(channelMessage);
         setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
-    }
-
-    closeDialog() {
-        this.dialogRef.close();
-    }
-
-    private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.configureBaseSocketFeatures();
-            this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
-            return;
-        }
-        this.tryReconnection();
-    }
-
-    private tryReconnection() {
-        let secondPassed = 0;
-
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                this.socketService.send(SocketEvent.GetDiscussionChannels);
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
-    }
-
-    private configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
-            const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
-            setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
-            this.chats = channelMessages;
-        });
-
-        this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
-            this.chats = channels[0].messages;
-        });
     }
 }
