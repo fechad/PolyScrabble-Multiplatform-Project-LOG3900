@@ -2,6 +2,10 @@
 type CallbackSignature = (params: any) => {};
 
 export class SocketTestHelper {
+    get id() {
+        return 'socketTestHelperId';
+    }
+
     on(event: string, callback: CallbackSignature) {
         if (!this.callbacks.has(event)) {
             this.callbacks.set(event, []);

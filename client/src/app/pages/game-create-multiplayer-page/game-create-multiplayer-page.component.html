@@ -101,14 +101,9 @@
 
                     <div class="confirm-buttons-container">
                         <div *ngIf="isSolo">
-                            <app-start-game-solo
-                                class="start-game"
-                                [gameForm]="gameForm"
-                                [gameData]="gameData"
-                                [botName]="botName"
-                                (dictionaryDeleted)="handleDictionaryDeleted()"
-                                (httpError)="handleHttpError()"
-                            ></app-start-game-solo>
+                            <button class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
+                                Partie solo
+                            </button>
                         </div>
                         <button class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
                             Créer la partie

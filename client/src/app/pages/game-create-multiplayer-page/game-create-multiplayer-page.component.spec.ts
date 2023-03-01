@@ -1,19 +1,25 @@
+/* eslint-disable max-lines */
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
+import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
 import { UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
-import { GameMode } from '@app/enums/game-mode';
+import { SocketEvent } from '@app/enums/socket-event';
 import { Bot } from '@app/interfaces/bot';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { HttpService } from '@app/services/http.service';
+import { PlayerService } from '@app/services/player.service';
+import { SocketClientService } from '@app/services/socket-client.service';
 import { of } from 'rxjs';
 import { GameCreateMultiplayerPageComponent } from './game-create-multiplayer-page.component';
+import SpyObj = jasmine.SpyObj;
 
 class ActivatedRouteMock {
     mode = '';
@@ -30,24 +36,35 @@ describe('GameCreateMultiplayerPageComponent', () => {
     let fixture: ComponentFixture<GameCreateMultiplayerPageComponent>;
     let dialog: MatDialog;
     let formBuilder: FormBuilder;
+    let routerSpy: SpyObj<Router>;
     let httpService: HttpService;
     let fakeBot: Bot;
     let fakeDictionary: Dictionary;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- we want to mock an attribute
+    let socketHelper: SocketTestHelper;
+    let socketServiceMock: SocketClientServiceMock;
+    let playerService: PlayerService;
     let activatedRouteMock: any;
 
     beforeEach(async () => {
         formBuilder = new FormBuilder();
-        activatedRouteMock = new ActivatedRouteMock();
+        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        socketHelper = new SocketTestHelper();
+        socketServiceMock = new SocketClientServiceMock(socketHelper);
+        playerService = new PlayerService();
+        playerService.player.pseudo = 'player1';
 
+        activatedRouteMock = new ActivatedRouteMock();
         await TestBed.configureTestingModule({
             imports: [HttpClientModule, MatDialogModule],
             declarations: [GameCreateMultiplayerPageComponent],
             providers: [
                 { provide: FormBuilder, useValue: formBuilder },
-                { provide: ActivatedRoute, useValue: activatedRouteMock },
+                { provide: Router, useValue: routerSpy },
                 { provide: MatDialog, useClass: MatDialogMock },
                 { provide: HttpService },
+                { provide: PlayerService, useValue: playerService },
+                { provide: SocketClientService, useValue: socketServiceMock },
+                { provide: ActivatedRoute, useValue: activatedRouteMock },
             ],
         }).compileComponents();
     });
@@ -142,8 +159,6 @@ describe('GameCreateMultiplayerPageComponent', () => {
             expect(spy).toHaveBeenCalled();
             expect(component.selectedDictionary).toEqual(DEFAULT_DICTIONARY_TITLE);
             expect(component.dictionaries).toEqual(serverDictionaries);
-            component.handleDictionarySelection(fakeDictionary.title);
-            expect(component.selectedDictionary).toEqual(fakeDictionary.title);
         });
     });
 
@@ -159,32 +174,6 @@ describe('GameCreateMultiplayerPageComponent', () => {
             const control: AbstractControl = component.gameForm.get('timerPerTurn') as AbstractControl;
             control.setValue(multipleOf30);
             expect(control.status).toEqual('VALID');
-        });
-    });
-
-    describe('onInit tests', () => {
-        it('should set a new gameForm if the gameMode is solo', () => {
-            const routeMock = {
-                snapshot: { params: { mode: GameMode.Solo } },
-            } as unknown as ActivatedRoute;
-            // eslint-disable-next-line dot-notation -- we want to access private attribute
-            component['route'] = routeMock;
-            const groupSpy = spyOn(formBuilder, 'group');
-            const onChangeSpy = spyOn(component, 'onChanges');
-
-            component.ngOnInit();
-            expect(groupSpy).toHaveBeenCalled();
-            expect(onChangeSpy).toHaveBeenCalled();
-        });
-
-        it('should not set a new gameForm if the gameMode is not solo', () => {
-            component.mode = GameMode.Multi;
-            const groupSpy = spyOn(formBuilder, 'group');
-            const onChangeSpy = spyOn(component, 'onChanges');
-
-            component.ngOnInit();
-            expect(groupSpy).not.toHaveBeenCalled();
-            expect(onChangeSpy).toHaveBeenCalled();
         });
     });
 
@@ -210,27 +199,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
             expect(control.status).toEqual('VALID');
         });
     });
-    describe('isSelectedDictionary test', () => {
-        it('should return true when it is the selected dictionary', () => {
-            const title = 'spring water';
-            component.gameForm.controls.dictionary.setValue(title);
-            const result = component.isSelectedDictionary(title);
-            expect(result).toBeTrue();
-        });
-        it('should return false when it is not the selected dictionary', () => {
-            component.gameForm.controls.dictionary.setValue('muddy water');
-            const result = component.isSelectedDictionary('spring water');
-            expect(result).toBeFalse();
-        });
-    });
-    describe('handleDictionarySelection tests', () => {
-        it('should set the value of the dictionary in the form', () => {
-            component.gameForm.controls.dictionary.setValue('');
-            component.handleDictionarySelection('400BC slangs');
-            const dictionary = (component.gameForm.controls.dictionary as FormControl).value;
-            expect(dictionary).toEqual('400BC slangs');
-        });
-    });
+
     describe('handleDictionaryDeleted tests', () => {
         it('should call handleRefresh', async () => {
             const spy = spyOn(component, 'handleRefresh').and.resolveTo();
@@ -246,6 +215,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
             expect(spy).toHaveBeenCalled();
         });
     });
+
     describe('updateDictionaries direct tests', () => {
         it('should call httpService.getAllDictionaries', async () => {
             component.gameForm.controls.dictionary.setValue('boo');
@@ -256,6 +226,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
             expect(component.dictionaries).toEqual(serverDictionaries);
         });
     });
+
     describe('handleHttpError tests', () => {
         it('should call showErrorDialog with the http error message ', () => {
             const message = 'watch out !';
@@ -284,5 +255,107 @@ describe('GameCreateMultiplayerPageComponent', () => {
 
         await component.ngAfterViewInit();
         expect(botNames.includes(component.botName)).toBeTrue();
+    });
+
+    describe('socketService.on tests', () => {
+        const validRoomName = 'Room0';
+        const invalidRoomName = '----';
+
+        it('should send createChatChannel event on roomCreated', () => {
+            const createChatChannelEventSpy = spyOn(socketServiceMock, 'send');
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, validRoomName);
+
+            expect(createChatChannelEventSpy).toHaveBeenCalledWith(SocketEvent.CreateChatChannel, {
+                channel: validRoomName,
+                username: {
+                    username: playerService.player.pseudo,
+                    email: '',
+                    avatarURL: '',
+                    level: 0,
+                    badges: [],
+                    highScore: 0,
+                    gamesWon: 0,
+                    totalXp: 0,
+                    gamesPlayed: [],
+                    bestGames: [],
+                },
+            });
+        });
+
+        it('should not send createChatChannel event on roomCreated if the roomName is invalid', () => {
+            const createChatChannelEventSpy = spyOn(socketServiceMock, 'send');
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, invalidRoomName);
+            expect(createChatChannelEventSpy).not.toHaveBeenCalled();
+        });
+
+        it('should set component attributes correctly on roomCreated', () => {
+            component.onProcess = true;
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, validRoomName);
+            expect(component.onProcess).toBeFalse();
+            expect(component.room.roomInfo.name).toEqual(validRoomName);
+        });
+
+        it('should not set component attributes correctly on roomCreated if roomName is invalid', () => {
+            component.onProcess = true;
+            component.room.roomInfo.name = '';
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, invalidRoomName);
+            expect(component.onProcess).toBeFalse();
+            expect(component.room.roomInfo.name).toEqual('');
+        });
+
+        it('should move the player to game wait page on roomCreated', () => {
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, validRoomName);
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/game/multiplayer/wait']);
+        });
+
+        it('should not move the player to game wait page on roomCreated if roomName is invalid', () => {
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, invalidRoomName);
+            expect(routerSpy.navigate).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('createRoom tests', () => {
+        beforeEach(() => {
+            const timerPerTurn = 60;
+            component.gameForm.controls.timerPerTurn.setValue(timerPerTurn);
+            component.gameForm.controls.dictionary.setValue('french');
+            component.gameForm.controls.isPublic.setValue(true);
+            component.gameForm.controls.roomPassword.setValue('123');
+        });
+
+        it('should send createRoom event with good setting on createRoom', () => {
+            component.onProcess = false;
+            const createRoomEventSpy = spyOn(socketServiceMock, 'send');
+            component.createRoom();
+            expect(createRoomEventSpy).toHaveBeenCalledWith(SocketEvent.CreateRoom, component.room);
+        });
+
+        it('should set the room correctly on createRoom', () => {
+            component.createRoom();
+            expect(component.room.currentPlayerPseudo).toEqual(playerService.player.pseudo);
+            expect(component.room.roomInfo.creatorName).toEqual(playerService.player.pseudo);
+            expect(component.room.roomInfo.timerPerTurn).toEqual(component.gameForm.controls.timerPerTurn.value);
+            expect(component.room.roomInfo.dictionary).toEqual(component.gameForm.controls.dictionary.value);
+            expect(component.room.roomInfo.isPublic).toEqual(component.gameForm.controls.isPublic.value);
+            expect(component.room.roomInfo.password).toEqual(component.gameForm.controls.roomPassword.value);
+            expect(component.room.roomInfo.isSolo).toEqual(component.isSolo);
+            expect(playerService.player.isCreator).toBeTruthy();
+            expect(playerService.player.socketId).toEqual(socketServiceMock.socket.id);
+            expect(component.room.players).toEqual([playerService.player]);
+        });
+
+        it('should not set a password if the room is private', () => {
+            component.gameForm.controls.isPublic.setValue(false);
+            component.createRoom();
+            expect(component.room.roomInfo.password).toEqual('');
+            expect(component.room.roomInfo.isPublic).toEqual(false);
+        });
+
+        it('should not send createRoom event if component is on process', () => {
+            component.onProcess = true;
+            const createRoomEventSpy = spyOn(socketServiceMock, 'send');
+            component.createRoom();
+            expect(createRoomEventSpy).not.toHaveBeenCalled();
+        });
     });
 });
