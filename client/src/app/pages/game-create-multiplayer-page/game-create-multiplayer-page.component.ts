@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GameData } from '@app/classes/game-data';
 import { Room } from '@app/classes/room';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
@@ -13,7 +12,6 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { Bot } from '@app/interfaces/bot';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
-import { GameDataService } from '@app/services/game-data.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -26,7 +24,6 @@ import { lastValueFrom } from 'rxjs';
 })
 export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit {
     gameForm: FormGroup;
-    gameData: GameData;
     mode: GameMode;
     botName: string;
     botNames: string[];
@@ -39,18 +36,10 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
         private router: Router,
         public room: Room,
         private playerService: PlayerService,
-        public gameDataService: GameDataService,
         private socketService: SocketClientService,
         private httpService: HttpService,
         private dialog: MatDialog,
     ) {
-        this.gameData = {
-            pseudo: '',
-            timerPerTurn: '' + MINUTE_IN_SECOND,
-            dictionary: DEFAULT_DICTIONARY_TITLE,
-            botName: this.botName,
-        } as GameData;
-
         this.gameForm = this.fb.group({
             timerPerTurn: ['', [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
             dictionary: ['', Validators.required],
@@ -111,22 +100,6 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
                 level: ['beginner', Validators.required],
             });
         }
-
-        this.onChanges();
-    }
-
-    onChanges() {
-        this.gameDataService.data = this.gameData;
-        this.gameForm.valueChanges.subscribe((data) => {
-            this.gameData = {
-                pseudo: data.pseudo,
-                timerPerTurn: data.timerPerTurn,
-                dictionary: this.selectedDictionary,
-                botName: this.botName,
-                isExpertLevel: data.level === 'expert',
-            } as GameData;
-            this.gameDataService.data = this.gameData;
-        });
     }
 
     connect() {
@@ -202,20 +175,6 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
         this.socketService.send(SocketEvent.CreateRoom, this.room);
     }
 
-    handleDictionarySelection(title: string) {
-        this.gameForm.controls.dictionary.setValue(title);
-    }
-
-    changeBotName() {
-        const beginnersNames = this.beginners.map((e) => e.name);
-        const expertsNames = this.experts.map((e) => e.name);
-        const botNames = this.gameForm.value.level === 'beginner' ? beginnersNames : expertsNames;
-
-        const randIndex = Math.floor(Math.random() * botNames.length);
-        this.botName = botNames[randIndex];
-        return this.botName;
-    }
-
     multipleValidator(multiple: number): ValidatorFn {
         return (control: AbstractControl): { [key: string]: unknown } | null => {
             if (control.value % multiple !== 0) {
@@ -236,10 +195,7 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
         };
     }
 
-    isSelectedDictionary(title: string): boolean {
-        return this.selectedDictionary === title;
-    }
-
+    // TODO: remove
     async handleDictionaryDeleted() {
         this.showErrorDialog(`Le dictionnaire "${this.selectedDictionary}" n'existe plus sur notre serveur`);
         await this.handleRefresh();
@@ -274,6 +230,7 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
         });
     }
 
+    // TODO: refactor dictionaries use
     private async updateDictionaries() {
         const dictionaries = await lastValueFrom(this.httpService.getAllDictionaries());
         this.resetDefaultDictionary();

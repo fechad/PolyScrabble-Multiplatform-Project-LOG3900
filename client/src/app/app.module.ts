@@ -10,7 +10,6 @@ import { PlayAreaComponent } from '@app/components/play-area/play-area.component
 import { PlayersInfosComponent } from '@app/components/players-infos/players-infos.component';
 import { RackComponent } from '@app/components/rack/rack.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-// import { StartGameComponent } from '@app/components/start-game/start-game.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -39,7 +38,6 @@ import { HeaderComponent } from './components/header/header.component';
 import { LeaderBoardDialogDataComponent } from './components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MessagesDisplayComponent } from './components/messages-display/messages-display.component';
-import { StartGameSoloComponent } from './components/start-game-solo/start-game-solo.component';
 import { UploadDictionaryPopupComponent } from './components/upload-dictionary-popup/upload-dictionary-popup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserSummaryComponent } from './components/user-summary/user-summary.component';
@@ -66,7 +64,6 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         SidebarComponent,
         GameOptionPageComponent,
         GameCreateMultiplayerPageComponent,
-        // StartGameComponent,
         GameJoinMultiplayerPageComponent,
         GameWaitMultiplayerPageComponent,
         ChatComponent,
@@ -76,7 +73,6 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         LeaderBoardDialogDataComponent,
         GameWaitLoadingComponent,
         ErrorDialogComponent,
-        StartGameSoloComponent,
         AdminPageComponent,
         AdminDictionariesPageComponent,
         EmojisPickerComponent,

@@ -13,32 +13,4 @@ export class DiscussionChannel {
         this.activeUsers = 1;
         this.messages = [];
     }
-
-    addMessage(message: ChannelMessage) {
-        this.messages.push(message);
-    }
-
-    joinChannel(username: string): ChannelMessage {
-        this.activeUsers += 1;
-        const newMessage = {
-            channelName: this.name,
-            system: true,
-            message: `${username} has joined the chat!`,
-            time: new Date().toLocaleTimeString([], { hour12: false }),
-        };
-        this.addMessage(newMessage);
-        return newMessage;
-    }
-
-    leaveChannel(username: string) {
-        this.activeUsers -= 1;
-        const newMessage = {
-            channelName: this.name,
-            system: true,
-            message: `${username} has left the chat!`,
-            time: new Date().toLocaleTimeString([], { hour12: false }),
-        };
-        this.addMessage(newMessage);
-        return newMessage;
-    }
 }
