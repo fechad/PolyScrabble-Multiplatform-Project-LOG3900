@@ -25,9 +25,9 @@ export class DictionaryReader {
     }
     getWordsTrie(): Trie {
         const trie = new Trie();
-        for (const word of this.words.keys()) {
+        [...this.words.keys()].forEach((word) => {
             trie.insert(word);
-        }
+        });
         return trie;
     }
     private formWordsMap(words: string) {

@@ -1,7 +1,7 @@
 import { TrieNode } from './trie-node';
 
 export class Trie {
-    root: TrieNode;
+    private root: TrieNode;
 
     constructor() {
         this.root = new TrieNode('');
@@ -22,7 +22,7 @@ export class Trie {
         current.isEndOfWord = true;
     }
 
-    search(word: string): boolean {
+    check(word: string, onlyCheckSequence: boolean = false): boolean {
         let current = this.root;
         for (const char of word) {
             const index = current.children.findIndex((node) => node.value === char);
@@ -31,6 +31,7 @@ export class Trie {
 
             current = current.children[index];
         }
+        if (onlyCheckSequence) return true;
         return current.isEndOfWord;
     }
 }
