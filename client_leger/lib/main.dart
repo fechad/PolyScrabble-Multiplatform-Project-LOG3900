@@ -1,4 +1,5 @@
 import 'package:client_leger/pages/connexion_page.dart';
+import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:flutter/material.dart';
