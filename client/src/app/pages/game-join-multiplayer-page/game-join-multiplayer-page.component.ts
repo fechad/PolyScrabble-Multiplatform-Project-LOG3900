@@ -37,10 +37,6 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         return '';
     }
 
-    get roomsWithMyGameType(): Room[] {
-        return this.availableRooms.filter((room) => room.roomInfo.gameType === this.room.roomInfo.gameType);
-    }
-
     ngOnInit() {
         this.connect();
         this.getAvailableRooms();
@@ -82,14 +78,9 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
 
     leaveRoom(roomName: string) {
         this.socketService.send(SocketEvent.LeaveRoomOther, roomName);
-        this.room.roomInfo.name = '';
         this.isInRoom = false;
         this.isRejected = true;
         this.room.reinitialize(this.room.roomInfo.gameType);
-    }
-
-    websiteHasAvailableRooms(): boolean {
-        return this.availableRooms && this.availableRooms.length > 0;
     }
 
     private connect() {
@@ -124,6 +115,7 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
 
         this.isPseudoValid = true;
         this.isInRoom = true;
+        // TODO: is this line really necessary? Remove it and see what happens
         this.availableRooms.splice(this.availableRooms.indexOf(room), 1);
 
         this.playerService.player.isCreator = false;

@@ -4,9 +4,11 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
+import { HTMLElementMock } from '@app/classes/test-helpers/html-element-mock';
 import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
+import { SocketEvent } from '@app/enums/socket-event';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
-import { Socket } from 'socket.io-client';
 import { GameJoinMultiplayerPageComponent } from './game-join-multiplayer-page.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -23,11 +25,14 @@ describe('GameJoinMultiplayerPageComponent', () => {
     let sameGameTypeRoom2: Room;
     let player: Player;
 
+    // we want to test private methods
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let componentPrivateAccess: any;
+
     beforeEach(async () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock(socketHelper);
-        socketServiceMock.socket = socketHelper as unknown as Socket;
 
         componentRoom = new Room();
         componentRoom.roomInfo = DEFAULT_ROOM_INFO;
@@ -57,6 +62,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
             declarations: [GameJoinMultiplayerPageComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
+                { provide: PlayerService },
                 { provide: Router, useValue: routerSpy },
                 { provide: Room, useValue: componentRoom },
             ],
@@ -69,6 +75,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
         fixture.detectChanges();
         component.availableRooms = [];
         // component.pseudo = '';
+        componentPrivateAccess = component;
     });
 
     it('should create', () => {
@@ -81,14 +88,6 @@ describe('GameJoinMultiplayerPageComponent', () => {
 
     describe('Receiving events', () => {
         describe('Connection tests', () => {
-            // we want to test private methods
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let componentPrivateAccess: any;
-
-            beforeEach(() => {
-                componentPrivateAccess = component;
-            });
-
             it('should call socketServiceMock.refreshConnection on connection', () => {
                 socketServiceMock.refreshConnection = jasmine.createSpy();
                 componentPrivateAccess.connect();
@@ -102,12 +101,146 @@ describe('GameJoinMultiplayerPageComponent', () => {
             });
         });
 
-        describe('Available rooms tests', () => {
-            it('should change availableRooms on updateAvailableRoom signal', () => {
+        describe('sockets configurations tests', () => {
+            it('should set the room to the serverRoom on playerAccepted', () => {
+                component.room = componentRoom;
+                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
+                expect(component.room.roomInfo.name).toEqual(roomMock.roomInfo.name);
+                expect(component.room.roomInfo.timerPerTurn).toEqual(roomMock.roomInfo.timerPerTurn);
+                expect(component.room.roomInfo.dictionary).toEqual(roomMock.roomInfo.dictionary);
+                expect(component.room.roomInfo.gameType).toEqual(roomMock.roomInfo.gameType);
+                expect(component.room.players).toEqual(roomMock.players);
+            });
+
+            it('should call joinChatChannel with correct info on playerAccepted', () => {
+                socketServiceMock.send = jasmine.createSpy();
+                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
+                expect(socketServiceMock.send).toHaveBeenCalledWith(SocketEvent.JoinChatChannel, {
+                    name: roomMock.roomInfo.name,
+                    user: component.playerService.player.pseudo,
+                });
+            });
+
+            it('should move the player to game wait page on playerAccepted', () => {
+                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
+                expect(routerSpy.navigate).toHaveBeenCalledWith(['/game/multiplayer/wait']);
+            });
+
+            it('should call leaveRoom on playerRejected', () => {
+                component.leaveRoom = jasmine.createSpy();
+                socketHelper.peerSideEmit('playerRejected', roomMock);
+                expect(component.leaveRoom).toHaveBeenCalledWith(roomMock.roomInfo.name);
+            });
+
+            it('should change availableRooms on updateAvailableRoom', () => {
                 const rooms = [roomMock];
                 socketHelper.peerSideEmit('updateAvailableRoom', rooms);
-                expect(component.availableRooms.length).toEqual(1);
+                expect(component.availableRooms).toEqual(rooms);
             });
+        });
+
+        describe('popup tests', () => {
+            const htmlDivElementMock = new HTMLElementMock() as unknown as HTMLDivElement;
+
+            it('should set the selectedRoom correctly on openPasswordPopup()', () => {
+                component.openPasswordPopup(roomMock, htmlDivElementMock, htmlDivElementMock);
+                expect(component.selectedRoom).toEqual(roomMock);
+            });
+        });
+
+        describe('joinRoom and AskToJoinRoom tests', () => {
+            it('should call sendJoinRoomRequest() on joinRoom()', () => {
+                componentPrivateAccess.sendJoinRoomRequest = jasmine.createSpy();
+                component.joinRoom('', roomMock);
+                expect(componentPrivateAccess.sendJoinRoomRequest).toHaveBeenCalledWith(roomMock, '');
+            });
+
+            it('should call sendJoinRoomRequest() on askToJoin() if room is private', () => {
+                roomMock.roomInfo.isPublic = false;
+                componentPrivateAccess.sendJoinRoomRequest = jasmine.createSpy();
+                component.askToJoinRoom(roomMock);
+                expect(componentPrivateAccess.sendJoinRoomRequest).toHaveBeenCalledWith(roomMock, '');
+            });
+
+            it('should not call sendJoinRoomRequest() on askToJoin() if room is public', () => {
+                roomMock.roomInfo.isPublic = true;
+                componentPrivateAccess.sendJoinRoomRequest = jasmine.createSpy();
+                component.askToJoinRoom(roomMock);
+                expect(componentPrivateAccess.sendJoinRoomRequest).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('canJoinCreatorRoom tests', () => {
+            it('should return true on canJoinCreatorRoom() if room.players < max', () => {
+                component.canJoinRoom = true;
+                roomMock.players = [player, player];
+                expect(componentPrivateAccess.canJoinCreatorRoom(roomMock)).toEqual(true);
+                expect(component.canJoinRoom).toBeTruthy();
+            });
+
+            it('should return false on canJoinCreatorRoom() if room.players >= max', () => {
+                component.canJoinRoom = true;
+                roomMock.players = [player, player, player, player];
+                expect(componentPrivateAccess.canJoinCreatorRoom(roomMock)).toEqual(false);
+                expect(component.canJoinRoom).toBeFalsy();
+            });
+
+            it('should return false on canJoinCreatorRoom() if room.players === 0', () => {
+                component.canJoinRoom = true;
+                roomMock.players = [];
+                expect(componentPrivateAccess.canJoinCreatorRoom(roomMock)).toEqual(false);
+                expect(component.canJoinRoom).toBeFalsy();
+            });
+
+            it('should remove the room from availableRooms if room.players >= max on askToJoin()', () => {
+                roomMock.players = [player, player, player, player];
+                component.availableRooms = [roomMock];
+                const previousAvailableRoomsLength = component.availableRooms.length;
+                componentPrivateAccess.canJoinCreatorRoom(roomMock);
+                expect(component.availableRooms.length).toEqual(previousAvailableRoomsLength - 1);
+            });
+
+            it('should remove the room from availableRooms if room.players === 0 on askToJoin()', () => {
+                roomMock.players = [];
+                component.availableRooms = [roomMock];
+                const previousAvailableRoomsLength = component.availableRooms.length;
+                componentPrivateAccess.canJoinCreatorRoom(roomMock);
+                expect(component.availableRooms.length).toEqual(previousAvailableRoomsLength - 1);
+            });
+        });
+
+        describe('sendJoinRoomRequest tests', () => {
+            it('it should set attributes correctly on joinRoom()', () => {
+                component.isRejected = true;
+                component.isPseudoValid = false;
+                component.isInRoom = false;
+                component.playerService.player.isCreator = true;
+                component.playerService.player.socketId = '';
+
+                componentPrivateAccess.sendJoinRoomRequest(roomMock, '');
+                expect(component.isRejected).toBeFalsy();
+                expect(component.isPseudoValid).toBeTruthy();
+                expect(component.isInRoom).toBeTruthy();
+                expect(component.playerService.player.isCreator).toBeFalsy();
+                expect(component.playerService.player.socketId).toEqual(socketServiceMock.socket.id);
+            });
+
+            it('should call socketService.send with good params on joinRoom()', () => {
+                socketServiceMock.send = jasmine.createSpy();
+                const joinRoomForm = { roomName: roomMock.roomInfo.name, player: component.playerService.player, password: '' };
+                componentPrivateAccess.sendJoinRoomRequest(roomMock, '');
+                expect(socketServiceMock.send).toHaveBeenCalledWith(SocketEvent.JoinRoomRequest, joinRoomForm);
+            });
+
+            it('should remove the room from the list of available room on joinRoom()', () => {
+                component.availableRooms = [roomMock];
+                const previousAvailableRoomsLength = component.availableRooms.length;
+                componentPrivateAccess.sendJoinRoomRequest(roomMock, '');
+                expect(component.availableRooms.length).toEqual(previousAvailableRoomsLength - 1);
+            });
+        });
+
+        describe('Available rooms tests', () => {
             it('should call socketServiceMock.send on getAvailableRooms', () => {
                 socketServiceMock.send = jasmine.createSpy();
                 component.getAvailableRooms();
@@ -115,180 +248,31 @@ describe('GameJoinMultiplayerPageComponent', () => {
             });
         });
 
-        // describe('askToJoin tests', () => {
-        //     const validPseudo = 'valid';
-        //     it('should call socketServiceMock.send on askToJoin if component.pseudo is valid', () => {
-        //         component.pseudo = validPseudo;
-        //         socketServiceMock.send = jasmine.createSpy();
-        //         component.askToJoin(roomMock);
-        //         expect(socketServiceMock.send).toHaveBeenCalled();
-        //     });
-
-        //     it('should leave the askToJoin method if component.pseudo is not valid', () => {
-        //         component.pseudo = 'invalidPseudoDueToHighLength';
-        //         socketServiceMock.send = jasmine.createSpy();
-        //         component.askToJoin(roomMock);
-        //         expect(socketServiceMock.send).not.toHaveBeenCalled();
-        //     });
-
-        //     it('should set isInRoom when the player join room if component.pseudo is valid', () => {
-        //         component.pseudo = validPseudo;
-        //         component.askToJoin(roomMock);
-        //         expect(component.isInRoom).toEqual(true);
-        //     });
-
-        //     it('should delete a room when the player ask to join a room if component.pseudo is valid', () => {
-        //         component.pseudo = validPseudo;
-        //         component.availableRooms = [roomMock];
-        //         const nAvailableRooms = component.availableRooms.length;
-        //         component.askToJoin(roomMock);
-        //         expect(component.availableRooms.length).toEqual(nAvailableRooms - 1);
-        //     });
-
-        //     it('should not call askToJoin if the room is empty', () => {
-        //         roomMock.players = [];
-        //         socketServiceMock.send = jasmine.createSpy();
-        //         component.askToJoin(roomMock);
-        //         expect(socketServiceMock.send).not.toHaveBeenCalled();
-        //     });
-
-        //     it('should not call askToJoin if the room is full', () => {
-        //         roomMock.players = [player, player];
-        //         socketServiceMock.send = jasmine.createSpy();
-        //         component.askToJoin(roomMock);
-        //         expect(socketServiceMock.send).not.toHaveBeenCalled();
-        //     });
-        // });
-
-        // describe('joinRandomRoom tests', () => {
-        //     it('should call askToJoin on joinRandomRoom and chose between room with same game type', () => {
-        //         const roomsWithSameGameType = [sameGameTypeRoom1, sameGameTypeRoom2];
-        //         component.availableRooms = [sameGameTypeRoom1, sameGameTypeRoom2, roomMock];
-        //         const spy1 = spyOn(component, 'askToJoin');
-        //         const spy2 = spyOn(Math, 'random');
-        //         component.joinRandomRoom();
-        //         expect(spy1).toHaveBeenCalled();
-        //         expect(spy2).toHaveBeenCalled();
-        //         expect(component.roomsWithMyGameType.length).toEqual(roomsWithSameGameType.length);
-        //     });
-
-        //     it('should not call askToJoin on joinRandomRoom if there are no rooms with same game type', () => {
-        //         component.availableRooms = [roomMock];
-        //         const spy1 = spyOn(component, 'askToJoin');
-        //         const spy2 = spyOn(Math, 'random');
-        //         component.joinRandomRoom();
-        //         expect(spy1).not.toHaveBeenCalled();
-        //         expect(spy2).not.toHaveBeenCalled();
-        //         expect(component.roomsWithMyGameType.length).toEqual(0);
-        //     });
-        //     describe('canJoinCreatorRoom function tests', () => {
-        //         it('should return false when there is an empty room', () => {
-        //             component.canJoinRoom = true;
-        //             const roomTo = new Room();
-        //             // eslint-disable-next-line @typescript-eslint/no-explicit-any -- we want to test private method
-        //             const componentPrivateAccess = component as any;
-        //             componentPrivateAccess.canJoinCreatorRoom(roomTo);
-        //             expect(component.canJoinRoom).toBeFalsy();
-        //         });
-        //     });
-        // });
-
-        // describe('playerAccepted tests', () => {
-        //     it('should call router.navigate if the player is accepted', () => {
-        //         socketHelper.peerSideEmit('playerAccepted', roomMock);
-        //         expect(routerSpy.navigate).toHaveBeenCalled();
-        //     });
-
-        //     it('should make the room.currentPlayerPseudo = to the component pseudo', () => {
-        //         component.pseudo = 'componentPseudo';
-        //         socketHelper.peerSideEmit('playerAccepted', roomMock);
-        //         expect(component.room.currentPlayerPseudo).toEqual(component.pseudo);
-        //     });
-
-        //     it('should make the component.room = to the creatorRoom', () => {
-        //         socketHelper.peerSideEmit('playerAccepted', roomMock);
-        //         roomMock.currentPlayerPseudo = component.pseudo;
-        //         expect(component.room.roomInfo.name).toEqual(roomMock.roomInfo.name);
-        //         expect(component.room.roomInfo.timerPerTurn).toEqual(roomMock.roomInfo.timerPerTurn);
-        //         expect(component.room.roomInfo.dictionary).toEqual(roomMock.roomInfo.dictionary);
-        //         expect(component.room.roomInfo.gameType).toEqual(roomMock.roomInfo.gameType);
-        //         expect(component.room.players).toEqual(roomMock.players);
-        //     });
-        // });
-
-        describe('playerRejected tests', () => {
-            it('should call socketService.send if the player is rejected', () => {
+        describe('leaveRoom tests', () => {
+            it('should call socketService.send on leaveRoom()', () => {
                 socketServiceMock.send = jasmine.createSpy();
-                socketHelper.peerSideEmit('playerRejected', roomMock);
-                expect(socketServiceMock.send).toHaveBeenCalled();
+                component.leaveRoom(roomMock.roomInfo.name);
+                expect(socketServiceMock.send).toHaveBeenCalledWith(SocketEvent.LeaveRoomOther, roomMock.roomInfo.name);
             });
 
-            it('should make the component room name empty if the player is rejected', () => {
-                socketHelper.peerSideEmit('playerRejected', roomMock);
-                expect(component.room.roomInfo.name).toEqual('');
-            });
-
-            it('should set isInRoom to false if the player is rejected', () => {
-                socketHelper.peerSideEmit('playerRejected', roomMock);
+            it('should set isInRoom to false on leaveRoom()', () => {
+                component.isInRoom = true;
+                component.leaveRoom(roomMock.roomInfo.name);
                 expect(component.isInRoom).toEqual(false);
+            });
+
+            it('should set isRejected to true on leaveRoom()', () => {
+                component.isRejected = false;
+                component.leaveRoom(roomMock.roomInfo.name);
+                expect(component.isRejected).toEqual(true);
+            });
+
+            it('should call room.reinitialize on leaveRoom()', () => {
+                component.room = roomMock;
+                component.room.reinitialize = jasmine.createSpy();
+                component.leaveRoom(roomMock.roomInfo.name);
+                expect(component.room.reinitialize).toHaveBeenCalledWith(component.room.roomInfo.gameType);
             });
         });
     });
-
-    // describe('hasValidName tests', () => {
-    //     const validPseudo = 'f'.repeat(MIN_LENGTH_PSEUDO + 1);
-    //     const invalidPseudo = 's'.repeat(MAX_LENGTH_PSEUDO + 1);
-    //     it('should return true if this.pseudo >= minChar and <= maxChar', () => {
-    //         component.pseudo = validPseudo;
-    //         expect(component.hasValidName).toBeTruthy();
-    //     });
-    //     it('should return false if this.pseudo > maxChar', () => {
-    //         component.pseudo = invalidPseudo;
-    //         expect(component.hasValidName).toBeFalsy();
-    //     });
-    //     it('should return false if this.pseudo.length < minChar ', () => {
-    //         component.pseudo = 's'.repeat(MIN_LENGTH_PSEUDO - 1);
-    //         expect(component.hasValidName).toBeFalsy();
-    //     });
-    // });
-    // describe('roomStatusText tests', () => {
-    //     it('should return WAITING_FOR_CONFIRMATION when the player is in a room', () => {
-    //         component.isInRoom = true;
-    //         expect(component.roomStatusText).toEqual(WAITING_FOR_CONFIRMATION);
-    //     });
-    //     it('should return GAME_REJECTION_BY_AVERSARY when the player has been rejected', () => {
-    //         component.isInRoom = false;
-    //         component.isRejected = true;
-    //         expect(component.roomStatusText).toEqual(GAME_REJECTION_BY_ADVERSARY);
-    //     });
-    //     it('should return INVALID_PSEUDO_LENGTH when the player simpliy does not have the right pseudo length to join game', () => {
-    //         component.isInRoom = false;
-    //         component.isRejected = false;
-    //         component.pseudo = 'c'.repeat(MAX_LENGTH_PSEUDO + 1);
-    //         expect(component.roomStatusText).toEqual(INVALID_PSEUDO_LENGTH);
-    //     });
-    //     it('should return INVALID PSEUDO when the pseudo is invalid', () => {
-    //         component.isInRoom = false;
-    //         component.isRejected = false;
-    //         component.pseudo = 'c'.repeat(MIN_LENGTH_PSEUDO + 1);
-    //         component.isPseudoValid = false;
-    //         expect(component.roomStatusText).toEqual(INVALID_PSEUDO);
-    //     });
-    //     it('should return ROOM_ERROR when the user cannot join a room because it is full or it does not exist', () => {
-    //         component.isInRoom = false;
-    //         component.isRejected = false;
-    //         component.pseudo = 'c'.repeat(MIN_LENGTH_PSEUDO + 1);
-    //         component.isPseudoValid = true;
-    //         component.canJoinRoom = false;
-    //         expect(component.roomStatusText).toEqual(ROOM_ERROR);
-    //     });
-    //     it('should return "" when we hit the default case', () => {
-    //         component.isInRoom = false;
-    //         component.isRejected = false;
-    //         component.pseudo = 'c'.repeat(MIN_LENGTH_PSEUDO + 1);
-    //         component.isPseudoValid = true;
-    //         component.canJoinRoom = true;
-    //         expect(component.roomStatusText).toEqual('');
-    //     });
-    // });
 });

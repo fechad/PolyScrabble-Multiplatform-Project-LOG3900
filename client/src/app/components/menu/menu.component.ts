@@ -61,7 +61,9 @@ export class MenuComponent implements OnInit {
     }
 
     showChatChannel(discussionChannelIndex: number) {
+        if (discussionChannelIndex < 0 || discussionChannelIndex > this.availableDiscussionChannels.length) return;
         this.selectedDiscussionChannel = this.availableDiscussionChannels[discussionChannelIndex];
+        if (!this.selectedDiscussionChannel) return;
         this.closeChatMenu();
         this.menuContainer.nativeElement.classList.add('show');
         this.chatContainer.nativeElement.classList.add('show');
@@ -79,12 +81,10 @@ export class MenuComponent implements OnInit {
     leaveRoom() {
         if (this.selectedDiscussionChannel.owner?.username === this.playerService.player.pseudo) {
             this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
-            this.room.reinitialize(this.room.roomInfo.gameType);
-            this.router.navigate(['/main']);
-            return;
+        } else {
+            this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
         }
 
-        this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
         this.room.reinitialize(this.room.roomInfo.gameType);
         this.router.navigate(['/main']);
     }
@@ -112,7 +112,7 @@ export class MenuComponent implements OnInit {
         });
     }
 
-    async acceptPlayer(playerName: string) {
+    acceptPlayer(playerName: string) {
         // TODO: remove currentPlayerPseudo. It is obsolete
         this.room.currentPlayerPseudo = this.playerService.player.pseudo;
         this.socketService.send(SocketEvent.AcceptPlayer, { roomName: this.room.roomInfo.name, playerName });
@@ -127,8 +127,7 @@ export class MenuComponent implements OnInit {
     }
 
     async logOut() {
-        if (!environment.production) return;
-        await lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
+        if (environment.production) await lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
         this.socketService.send(SocketEvent.LeaveChatChannel, { channel: 'General Chat', username: this.playerService.player.pseudo });
         this.playerService.player.pseudo = '';
         this.router.navigate(['/home']);
@@ -170,11 +169,11 @@ export class MenuComponent implements OnInit {
 
     private configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
-            const discussionChannel = this.getDiscussionChannelByName(channelMessages[0].channelName);
+            const discussionChannel = this.getDiscussionChannelByName(channelMessages[0]?.channelName);
             if (!discussionChannel) return;
             discussionChannel.messages = channelMessages;
             const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
-            setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
+            setTimeout(() => chat?.scrollTo(0, chat.scrollHeight), 0);
         });
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {

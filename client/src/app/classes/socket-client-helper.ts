@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { SocketClientService } from '@app/services/socket-client.service';
 import { Socket } from 'socket.io-client';
 import { SocketTestHelper } from './socket-test-helper';
@@ -7,15 +8,14 @@ export class SocketClientServiceMock extends SocketClientService {
         super();
         this.socket = socketHelper as unknown as Socket;
     }
-    override connect() {
-        return;
+
+    override isSocketAlive(): boolean {
+        return true;
     }
 
-    override removeMenuPreviousListeners() {
-        return;
-    }
+    override connect() {}
 
-    override refreshConnection() {
-        return;
-    }
+    override removeMenuPreviousListeners() {}
+
+    override refreshConnection() {}
 }
