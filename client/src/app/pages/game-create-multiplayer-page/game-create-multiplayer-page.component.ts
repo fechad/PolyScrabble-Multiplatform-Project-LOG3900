@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
@@ -22,7 +23,7 @@ import { lastValueFrom } from 'rxjs';
     templateUrl: './game-create-multiplayer-page.component.html',
     styleUrls: ['./game-create-multiplayer-page.component.scss', '../dark-theme.scss'],
 })
-export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit {
+export class GameCreateMultiplayerPageComponent extends PageCommunicationManager implements AfterViewInit, OnInit {
     gameForm: FormGroup;
     mode: GameMode;
     botName: string;
@@ -36,10 +37,11 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
         private router: Router,
         public room: Room,
         private playerService: PlayerService,
-        private socketService: SocketClientService,
+        protected socketService: SocketClientService,
         private httpService: HttpService,
         private dialog: MatDialog,
     ) {
+        super(socketService);
         this.gameForm = this.fb.group({
             timerPerTurn: ['', [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
             dictionary: ['', Validators.required],
@@ -81,7 +83,7 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
 
         this.mode = this.route.snapshot.params.mode as GameMode;
         if (this.isSolo) {
@@ -100,35 +102,6 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
                 level: ['beginner', Validators.required],
             });
         }
-    }
-
-    connect() {
-        this.socketService.refreshConnection();
-        this.configureBaseSocketFeatures();
-    }
-
-    configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.RoomCreated, (serverRoomName: string) => {
-            this.onProcess = false;
-            if (!serverRoomName.startsWith('Room')) return;
-            this.room.roomInfo.name = serverRoomName;
-            this.socketService.send(SocketEvent.CreateChatChannel, {
-                channel: serverRoomName,
-                username: {
-                    username: this.playerService.player.pseudo,
-                    email: '',
-                    avatarURL: '',
-                    level: 0,
-                    badges: [],
-                    highScore: 0,
-                    gamesWon: 0,
-                    totalXp: 0,
-                    gamesPlayed: [],
-                    bestGames: [],
-                },
-            });
-            this.router.navigate(['/game/multiplayer/wait']);
-        });
     }
 
     setPlaceholderAsLabel(labelElement: HTMLLabelElement) {
@@ -203,6 +176,30 @@ export class GameCreateMultiplayerPageComponent implements AfterViewInit, OnInit
 
     handleHttpError() {
         this.showErrorDialog(this.httpService.getErrorMessage());
+    }
+
+    protected configureBaseSocketFeatures() {
+        this.socketService.on(SocketEvent.RoomCreated, (serverRoomName: string) => {
+            this.onProcess = false;
+            if (!serverRoomName.startsWith('Room')) return;
+            this.room.roomInfo.name = serverRoomName;
+            this.socketService.send(SocketEvent.CreateChatChannel, {
+                channel: serverRoomName,
+                username: {
+                    username: this.playerService.player.pseudo,
+                    email: '',
+                    avatarURL: '',
+                    level: 0,
+                    badges: [],
+                    highScore: 0,
+                    gamesWon: 0,
+                    totalXp: 0,
+                    gamesPlayed: [],
+                    bestGames: [],
+                },
+            });
+            this.router.navigate(['/game/multiplayer/wait']);
+        });
     }
 
     private initializeRoom() {

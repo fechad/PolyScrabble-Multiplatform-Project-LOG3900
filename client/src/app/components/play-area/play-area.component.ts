@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Dimension } from '@app/classes/dimension';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
@@ -20,7 +21,7 @@ import {
     DEFAULT_WIDTH,
     specialCases,
 } from '@app/constants/board-constants';
-import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { BoardGridService } from '@app/services/board-grid.service';
@@ -35,7 +36,7 @@ import { SocketClientService } from '@app/services/socket-client.service';
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
 })
-export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
+export class PlayAreaComponent extends ComponentCommunicationManager implements AfterViewInit, OnInit, OnChanges {
     @ViewChild('boardCanvas', { static: false }) private boardCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('letterTilesCanvas', { static: false }) private letterTilesCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('viewPlacementCanvas', { static: false }) private viewPlacementCanvas!: ElementRef<HTMLCanvasElement>;
@@ -48,13 +49,14 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
 
     constructor(
         private readonly boardGridService: BoardGridService,
-        private socketService: SocketClientService,
+        protected socketService: SocketClientService,
         private commandInvoker: CommandInvokerService,
         private boardService: BoardService,
         private focusHandlerService: FocusHandlerService,
         private room: Room,
         private playerService: PlayerService,
     ) {
+        super(socketService);
         this.ratioSize = 1;
         this.letterRatio = BOARD_SCALING_RATIO;
 
@@ -121,7 +123,7 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
 
         this.focusHandlerService.currentFocus.subscribe(() => {
             if (!this.focusHandlerService.isCurrentFocus(CurrentFocus.BOARD)) {
@@ -172,29 +174,19 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
         return this.playerService.player.isItsTurn;
     }
 
-    private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.boardService.removePlacementCommands();
-            this.configureBaseSocketFeatures();
-            return;
-        }
-        this.tryReconnection();
+    protected configureBaseSocketFeatures() {
+        this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
+            const rowNumber = this.matchRowNumber(placementData.row) as number;
+            this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
+        });
     }
 
-    private tryReconnection() {
-        let secondPassed = 0;
+    protected onFirstSocketConnection() {
+        this.boardService.removePlacementCommands();
+    }
 
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                this.boardService.redrawLettersTile();
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
+    protected onRefresh() {
+        this.boardService.redrawLettersTile();
     }
 
     private cancelPlacement() {
@@ -204,14 +196,6 @@ export class PlayAreaComponent implements AfterViewInit, OnInit, OnChanges {
     private drawBoard() {
         this.drawSpecialTiles();
     }
-
-    private configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
-            const rowNumber = this.matchRowNumber(placementData.row) as number;
-            this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
-        });
-    }
-
     private updateFocus(event: MouseEvent) {
         event.stopPropagation();
         if (this.room.roomInfo.isGameOver) {

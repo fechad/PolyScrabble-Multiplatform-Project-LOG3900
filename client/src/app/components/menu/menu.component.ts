@@ -1,10 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
-import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
@@ -21,7 +21,7 @@ import { environment } from 'src/environments/environment';
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent extends ComponentCommunicationManager implements OnInit {
     @Input() isWaitMultiPage: boolean;
     @ViewChild('chatMenu', { static: false }) private chatMenu!: ElementRef<HTMLDivElement>;
     @ViewChild('chatContainer', { static: false }) private chatContainer!: ElementRef<HTMLDivElement>;
@@ -34,9 +34,10 @@ export class MenuComponent implements OnInit {
         public room: Room,
         private httpService: HttpService,
         private router: Router,
-        private socketService: SocketClientService,
+        protected socketService: SocketClientService,
         private dialog: MatDialog,
     ) {
+        super(socketService);
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
         this.availableDiscussionChannels = [];
@@ -47,7 +48,7 @@ export class MenuComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
     }
 
     showChatMenu() {
@@ -133,41 +134,7 @@ export class MenuComponent implements OnInit {
         this.router.navigate(['/home']);
     }
 
-    private handleGameWaitPage() {
-        if (!this.isWaitMultiPage) return;
-        const gameRoomChat = this.getDiscussionChannelByName(this.room.roomInfo.name);
-        if (!gameRoomChat) return;
-        this.showChatChannel(this.availableDiscussionChannels.indexOf(gameRoomChat));
-    }
-
-    private getDiscussionChannelByName(channelName: string): DiscussionChannel | undefined {
-        return this.availableDiscussionChannels.find((discussionChannel: DiscussionChannel) => discussionChannel.name === channelName);
-    }
-
-    private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.configureBaseSocketFeatures();
-            return;
-        }
-        this.tryReconnection();
-    }
-
-    private tryReconnection() {
-        let secondPassed = 0;
-
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
-    }
-
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
             const discussionChannel = this.getDiscussionChannelByName(channelMessages[0]?.channelName);
             if (!discussionChannel) return;
@@ -205,5 +172,16 @@ export class MenuComponent implements OnInit {
 
         this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
         this.updateAvailableChannels();
+    }
+
+    private handleGameWaitPage() {
+        if (!this.isWaitMultiPage) return;
+        const gameRoomChat = this.getDiscussionChannelByName(this.room.roomInfo.name);
+        if (!gameRoomChat) return;
+        this.showChatChannel(this.availableDiscussionChannels.indexOf(gameRoomChat));
+    }
+
+    private getDiscussionChannelByName(channelName: string): DiscussionChannel | undefined {
+        return this.availableDiscussionChannels.find((discussionChannel: DiscussionChannel) => discussionChannel.name === channelName);
     }
 }

@@ -87,20 +87,6 @@ describe('GameJoinMultiplayerPageComponent', () => {
     });
 
     describe('Receiving events', () => {
-        describe('Connection tests', () => {
-            it('should call socketServiceMock.refreshConnection on connection', () => {
-                socketServiceMock.refreshConnection = jasmine.createSpy();
-                componentPrivateAccess.connect();
-                expect(socketServiceMock.refreshConnection).toHaveBeenCalled();
-            });
-
-            it('should call configureBaseSocketFeatures on connection', () => {
-                componentPrivateAccess.configureBaseSocketFeatures = jasmine.createSpy();
-                componentPrivateAccess.connect();
-                expect(componentPrivateAccess.configureBaseSocketFeatures).toHaveBeenCalled();
-            });
-        });
-
         describe('sockets configurations tests', () => {
             it('should set the room to the serverRoom on playerAccepted', () => {
                 component.room = componentRoom;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */ // We want to set private attribute of the class for multiple tests
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentFocus } from '@app/classes/current-focus';
@@ -76,56 +77,6 @@ describe('RackComponent', () => {
             socketHelper.peerSideEmit('drawRack', LETTER);
             expect(spy).toHaveBeenCalledWith(LETTER);
         });
-
-        describe('connect() tests', () => {
-            it('should call configureBaseSocketFeatures if the socket is alive', () => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-                const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.connect();
-                expect(spy).toHaveBeenCalled();
-            });
-
-            it('should try to reconnect if the socket is not alive', () => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                const spy = spyOn(componentPrivateAccess, 'tryReconnection');
-                componentPrivateAccess.connect();
-                expect(spy).toHaveBeenCalled();
-            });
-
-            it('should reconnect if the socket is alive', (done) => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-                const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.tryReconnection();
-
-                setTimeout(() => {
-                    expect(spy).toHaveBeenCalled();
-                    done();
-                }, TIMER_TEST_DELAY);
-            });
-
-            it('should not reconnect if the socket is not alive after 5 sec', (done) => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.tryReconnection();
-
-                setTimeout(() => {
-                    expect(spy).not.toHaveBeenCalled();
-                    done();
-                }, TIMER_TEST_DELAY);
-            });
-        });
-    });
-
-    it('should  call  configureBaseSocketFeatures on connection if socket is  connected', () => {
-        // we want to test private methods
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const componentPrivateAccess = component as any;
-
-        const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures').and.callThrough();
-        socketServiceMock.connect = jasmine.createSpy();
-        socketServiceMock.socket.connected = true;
-        componentPrivateAccess.connect();
-        expect(spy).toHaveBeenCalled();
     });
 
     describe('areTilesSelectedForExchange() tests', () => {
@@ -298,5 +249,33 @@ describe('RackComponent', () => {
             componentPrivateAccess.updateFocus(mouseEvent);
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.RACK);
         });
+    });
+
+    it('should call onFirstSocketConnection on connectSocket', (done) => {
+        spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
+        const configureBaseSocketFeatureSpy = spyOn(component as any, 'configureBaseSocketFeatures');
+        const spy = spyOn(component as any, 'onFirstSocketConnection');
+
+        (component as any).connectSocket();
+
+        setTimeout(() => {
+            expect(configureBaseSocketFeatureSpy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalled();
+            done();
+        }, TIMER_TEST_DELAY);
+    });
+
+    it('should call onRefresh on configureSocketFeaturesOnPageSocketConnection', (done) => {
+        spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
+        const configureBaseSocketFeatureSpy = spyOn(component as any, 'configureBaseSocketFeatures');
+        const spy = spyOn(component as any, 'onRefresh');
+
+        (component as any).configureSocketFeaturesOnPageSocketConnection();
+
+        setTimeout(() => {
+            expect(configureBaseSocketFeatureSpy).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalled();
+            done();
+        }, TIMER_TEST_DELAY);
     });
 });

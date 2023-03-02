@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -7,14 +8,16 @@ import { SocketClientService } from '@app/services/socket-client.service';
     styleUrls: ['./game-wait-multiplayer-page.component.scss'],
     providers: [],
 })
-export class GameWaitMultiplayerPageComponent implements OnInit {
-    constructor(private socketService: SocketClientService) {}
-
-    ngOnInit() {
-        this.connect();
+export class GameWaitMultiplayerPageComponent extends PageCommunicationManager implements OnInit {
+    constructor(protected socketService: SocketClientService) {
+        super(socketService);
     }
 
-    private connect() {
-        this.socketService.refreshConnection();
+    ngOnInit() {
+        this.connectSocket();
+    }
+
+    protected configureBaseSocketFeatures(): void {
+        return;
     }
 }

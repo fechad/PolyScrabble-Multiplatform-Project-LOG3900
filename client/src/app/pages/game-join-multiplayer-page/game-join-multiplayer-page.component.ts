@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { GAME_REJECTION_BY_ADVERSARY, INVALID_PSEUDO, ROOM_ERROR, WAITING_FOR_CONFIRMATION } from '@app/constants/status-constants';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -11,7 +12,7 @@ import { SocketClientService } from '@app/services/socket-client.service';
     templateUrl: './game-join-multiplayer-page.component.html',
     styleUrls: ['./game-join-multiplayer-page.component.scss', '../dark-theme.scss'],
 })
-export class GameJoinMultiplayerPageComponent implements OnInit {
+export class GameJoinMultiplayerPageComponent extends PageCommunicationManager implements OnInit {
     availableRooms: Room[];
     selectedRoom: Room;
     isPseudoValid: boolean;
@@ -19,7 +20,8 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
     isRejected: boolean;
     canJoinRoom: boolean;
 
-    constructor(private socketService: SocketClientService, private router: Router, public room: Room, public playerService: PlayerService) {
+    constructor(protected socketService: SocketClientService, private router: Router, public room: Room, public playerService: PlayerService) {
+        super(socketService);
         this.isPseudoValid = true;
         this.canJoinRoom = true;
         this.isInRoom = false;
@@ -38,7 +40,7 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
         this.getAvailableRooms();
     }
 
@@ -83,12 +85,7 @@ export class GameJoinMultiplayerPageComponent implements OnInit {
         this.room.reinitialize(this.room.roomInfo.gameType);
     }
 
-    private connect() {
-        this.socketService.refreshConnection();
-        this.configureBaseSocketFeatures();
-    }
-
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.PlayerAccepted, (roomCreator: Room) => {
             sessionStorage.removeItem('data');
             this.setRoomServerToThisRoom(roomCreator);

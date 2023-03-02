@@ -400,41 +400,4 @@ describe('ChatComponent', () => {
             expect(component.chatForm.controls['message'].value).toEqual(validText + '😚');
         });
     });
-    describe('connect() tests', () => {
-        it('should call configureBaseSocketFeatures if the socket is alive', () => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-            const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-            componentPrivateAccess.connect();
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should try to reconnect if the socket is not alive', () => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-            const spy = spyOn(componentPrivateAccess, 'tryReconnection');
-            componentPrivateAccess.connect();
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should reconnect if the socket is alive', (done) => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-            const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-            componentPrivateAccess.tryReconnection();
-
-            setTimeout(() => {
-                expect(spy).toHaveBeenCalled();
-                done();
-            }, TIMER_TEST_DELAY);
-        });
-
-        it('should not reconnect if the socket is not alive after 5 sec', (done) => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-            const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-            componentPrivateAccess.tryReconnection();
-
-            setTimeout(() => {
-                expect(spy).not.toHaveBeenCalled();
-                done();
-            }, TIMER_TEST_DELAY);
-        });
-    });
 });

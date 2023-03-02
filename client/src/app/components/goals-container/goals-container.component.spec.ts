@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { DEFAULT_ROOM_INFO, LOG_2990_GAME_TYPE, TIMER_TEST_DELAY } from '@app/constants/constants';
+import { DEFAULT_ROOM_INFO, LOG_2990_GAME_TYPE } from '@app/constants/constants';
 import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalRewards } from '@app/enums/goal-rewards';
 import { GoalTitle } from '@app/enums/goal-titles';
@@ -168,44 +168,6 @@ describe('GoalsContainerComponent', () => {
                 componentPrivateAccess.setOtherPlayerPrivateGoal(privateGoal1);
                 expect(component.otherPlayerPrivateGoal).toEqual(privateGoal1);
             });
-        });
-    });
-
-    describe('connect() tests', () => {
-        it('should call configureBaseSocketFeatures if the socket is alive', () => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-            const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-            componentPrivateAccess.connect();
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should try to reconnect if the socket is not alive', () => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-            const spy = spyOn(componentPrivateAccess, 'tryReconnection');
-            componentPrivateAccess.connect();
-            expect(spy).toHaveBeenCalled();
-        });
-
-        it('should reconnect if the socket is alive', (done) => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-            const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-            componentPrivateAccess.tryReconnection();
-
-            setTimeout(() => {
-                expect(spy).toHaveBeenCalled();
-                done();
-            }, TIMER_TEST_DELAY);
-        });
-
-        it('should not reconnect if the socket is not alive after 5 sec', (done) => {
-            spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-            const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-            componentPrivateAccess.tryReconnection();
-
-            setTimeout(() => {
-                expect(spy).not.toHaveBeenCalled();
-                done();
-            }, TIMER_TEST_DELAY);
         });
     });
 });

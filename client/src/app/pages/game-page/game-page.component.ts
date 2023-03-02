@@ -95,6 +95,7 @@ export class GamePageComponent implements OnInit {
 
     private connect() {
         this.socketService.refreshConnection();
+        // TODO why is configureBaseSocketFeatures called twice?
         this.configureBaseSocketFeatures();
         if (!this.socketServiceBot.isSocketAlive()) {
             this.socketServiceBot.connect();
