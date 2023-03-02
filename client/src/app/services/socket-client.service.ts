@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { SocketEvent } from '@app/enums/socket-event';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 
@@ -14,18 +13,13 @@ export class SocketClientService {
         this.isMenuSocketFeaturesConfigured = false;
     }
 
-    removeMenuPreviousListeners() {
+    removeAllPreviousListeners() {
         if (!this.socket) return;
-        this.socket.removeAllListeners(SocketEvent.ChannelMessage);
-        this.socket.removeAllListeners(SocketEvent.AvailableChannels);
-        this.socket.removeAllListeners(SocketEvent.PlayerAccepted);
-        this.socket.removeAllListeners(SocketEvent.PlayerFound);
-        this.socket.removeAllListeners(SocketEvent.PlayerLeft);
-        this.socket.removeAllListeners(SocketEvent.GameStarted);
+        this.socket.removeAllListeners();
     }
 
     refreshConnection() {
-        this.removeMenuPreviousListeners();
+        this.removeAllPreviousListeners();
         if (!this.isSocketAlive()) {
             this.connect();
         }

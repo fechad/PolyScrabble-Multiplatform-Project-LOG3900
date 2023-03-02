@@ -126,37 +126,18 @@ describe('PlayAreaComponent', () => {
 
             it('should call the correct methods if the socket is alive', () => {
                 spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-
-                componentPrivateAccess.connect();
-                expect(configureBaseSocketFeatureSpy).toHaveBeenCalled();
+                componentPrivateAccess.connectSocket();
                 expect(removePlacementCommandsSpy).toHaveBeenCalled();
-            });
-
-            it('should try to reconnect if the socket is not alive', () => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                const spy = spyOn(componentPrivateAccess, 'tryReconnection');
-                componentPrivateAccess.connect();
-                expect(spy).toHaveBeenCalled();
             });
 
             it('should reconnect and redraw letter tiles if the socket is alive', (done) => {
                 spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
                 const spy = spyOn(boardService, 'redrawLettersTile');
-                componentPrivateAccess.tryReconnection();
+                componentPrivateAccess.configureSocketFeaturesOnPageSocketConnection();
 
                 setTimeout(() => {
                     expect(configureBaseSocketFeatureSpy).toHaveBeenCalled();
                     expect(spy).toHaveBeenCalled();
-                    done();
-                }, TIMER_TEST_DELAY);
-            });
-
-            it('should not reconnect if the socket is not alive after 5 sec', (done) => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                componentPrivateAccess.tryReconnection();
-
-                setTimeout(() => {
-                    expect(configureBaseSocketFeatureSpy).not.toHaveBeenCalled();
                     done();
                 }, TIMER_TEST_DELAY);
             });

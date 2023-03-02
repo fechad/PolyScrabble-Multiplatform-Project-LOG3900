@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room';
-import { MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { DEFAULT_RACK_HEIGHT, DEFAULT_RACK_WIDTH } from '@app/constants/rack-constants';
 import { Direction } from '@app/enums/direction';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -20,7 +20,7 @@ const SWITCH_COMMAND = '!échanger';
     templateUrl: './rack.component.html',
     styleUrls: ['./rack.component.scss'],
 })
-export class RackComponent implements OnInit, AfterViewInit {
+export class RackComponent extends ComponentCommunicationManager implements OnInit, AfterViewInit {
     @ViewChild('rackCanvas', { static: false }) private rackCanvas!: ElementRef<HTMLCanvasElement>;
     private canvasSize = { x: DEFAULT_RACK_WIDTH, y: DEFAULT_RACK_HEIGHT };
     constructor(
@@ -28,11 +28,11 @@ export class RackComponent implements OnInit, AfterViewInit {
         private readonly rackGridService: RackGridService,
         private focusHandlerService: FocusHandlerService,
         private rack: Rack,
-        private socketService: SocketClientService,
+        protected socketService: SocketClientService,
         private readonly playerService: PlayerService,
         private readonly room: Room,
     ) {
-        return;
+        super(socketService);
     }
 
     get width(): number {
@@ -73,7 +73,7 @@ export class RackComponent implements OnInit, AfterViewInit {
         this.rack.rackGridService = this.rackGridService;
     }
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
         this.focusHandlerService.currentFocus.subscribe(() => {
             if (this.focusHandlerService.isCurrentFocus(CurrentFocus.RACK)) {
                 this.rackCanvas.nativeElement.contentEditable = 'true';
@@ -129,30 +129,15 @@ export class RackComponent implements OnInit, AfterViewInit {
         return true;
     }
 
-    private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.configureBaseSocketFeatures();
-        }
-        this.tryReconnection();
+    protected onFirstSocketConnection(): void {
+        this.socketService.send(SocketEvent.GetRackInfos, this.room.roomInfo.name);
     }
 
-    private tryReconnection() {
-        let secondPassed = 0;
-
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                this.socketService.send(SocketEvent.GetRackInfos, this.room.roomInfo.name);
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
+    protected onRefresh(): void {
+        this.socketService.send(SocketEvent.GetRackInfos, this.room.roomInfo.name);
     }
 
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.DrawRack, (letters: string) => {
             this.rack.updateRack(letters);
         });

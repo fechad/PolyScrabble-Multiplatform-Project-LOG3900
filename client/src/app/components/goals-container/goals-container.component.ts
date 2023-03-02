@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
-import { LOG_2990_GAME_TYPE, MAX_RECONNECTION_DELAY, ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { LOG_2990_GAME_TYPE } from '@app/constants/constants';
 import { ERROR, RACK_CAPACITY } from '@app/constants/rack-constants';
 import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalTitle } from '@app/enums/goal-titles';
@@ -14,13 +15,14 @@ import { SocketClientService } from '@app/services/socket-client.service';
     templateUrl: './goals-container.component.html',
     styleUrls: ['./goals-container.component.scss'],
 })
-export class GoalsContainerComponent implements OnInit {
+export class GoalsContainerComponent extends ComponentCommunicationManager implements OnInit {
     lettersBankCount: number;
     publicGoals: Goal[];
     privateGoal: Goal;
     otherPlayerPrivateGoal: Goal;
 
-    constructor(private socketService: SocketClientService, private room: Room, private player: Player) {
+    constructor(protected socketService: SocketClientService, private room: Room, private player: Player) {
+        super(socketService);
         this.lettersBankCount = 0;
         this.publicGoals = [];
         this.privateGoal = {
@@ -39,45 +41,12 @@ export class GoalsContainerComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
         if (this.room.roomInfo.gameType !== LOG_2990_GAME_TYPE) return;
         this.socketService.send(SocketEvent.GetAllGoals);
     }
 
-    private setOtherPlayerPrivateGoal(goal: Goal) {
-        this.otherPlayerPrivateGoal = goal;
-        if (goal.reached) return;
-
-        this.otherPlayerPrivateGoal.title = GoalTitle.UnknownTitle;
-        this.otherPlayerPrivateGoal.reward = undefined as unknown as number;
-        this.otherPlayerPrivateGoal.description = GoalDescription.UnknownDescription;
-    }
-
-    private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.configureBaseSocketFeatures();
-            return;
-        }
-        this.tryReconnection();
-    }
-
-    private tryReconnection() {
-        let secondPassed = 0;
-
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                this.socketService.send(SocketEvent.GetAllGoals);
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
-    }
-
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.LettersBankCountUpdated, (lettersBankCount: number) => {
             this.lettersBankCount = lettersBankCount;
             if (lettersBankCount < RACK_CAPACITY) {
@@ -101,5 +70,14 @@ export class GoalsContainerComponent implements OnInit {
                 });
             });
         });
+    }
+
+    private setOtherPlayerPrivateGoal(goal: Goal) {
+        this.otherPlayerPrivateGoal = goal;
+        if (goal.reached) return;
+
+        this.otherPlayerPrivateGoal.title = GoalTitle.UnknownTitle;
+        this.otherPlayerPrivateGoal.reward = undefined as unknown as number;
+        this.otherPlayerPrivateGoal.description = GoalDescription.UnknownDescription;
     }
 }
