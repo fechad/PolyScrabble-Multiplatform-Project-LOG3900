@@ -55,6 +55,7 @@ dependencies:
     flutter_ringtone_player: ^3.2.0
     collapsible_sidebar: ^2.0.3+2
     mocktail: ^0.3.0
+    quickalert: ^1.0.1
 
 
 dev_dependencies:
