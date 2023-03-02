@@ -63,7 +63,7 @@ export class Trie {
         if (!(structure.value === '_' || structure.value === startNode.value)) return children;
 
         const newWord = base + startNode.value;
-        children.push(newWord);
+        if (startNode.isEndOfWord) children.push(newWord);
 
         structure.children.forEach((structureChild) => {
             startNode.children.forEach((nodeChild) => {

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { Trie } from './trie';
 
-describe('Trie', () => {
+describe.only('Trie', () => {
     let trie = new Trie();
     beforeEach(() => {
         trie = new Trie();
@@ -25,6 +25,7 @@ describe('Trie', () => {
     });
     it('should return expected derivatives', () => {
         trie.insert('bonjour');
+        trie.insert('bons');
         trie.insert('bonsoir');
         const structureTrie = new Trie('bon');
         structureTrie.insert('_o');
@@ -33,5 +34,15 @@ describe('Trie', () => {
         const formableWords = trie.getFormableChildren('bon', structureTrie.rootNode);
         expect(formableWords).to.include('bonjour');
         expect(formableWords).to.include('bonsoir');
+    });
+    it('should not return uncomplete words', () => {
+        trie.insert('bonjour');
+        trie.insert('bonsoir');
+        const structureTrie = new Trie('bon');
+        structureTrie.insert('_o');
+        structureTrie.insert('_ou_');
+        structureTrie.insert('_oi_');
+        const formableWords = trie.getFormableChildren('bon', structureTrie.rootNode);
+        expect(formableWords).to.not.include('bons');
     });
 });
