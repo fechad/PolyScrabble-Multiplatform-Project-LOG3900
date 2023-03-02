@@ -23,8 +23,15 @@ describe('Trie', () => {
         trie.insert('test');
         expect(trie.check('test', true)).to.equal(true);
     });
-    it('should return valid derivatives', () => {
+    it('should return expected derivatives', () => {
         trie.insert('bonjour');
         trie.insert('bonsoir');
+        const structureTrie = new Trie('bon');
+        structureTrie.insert('_o');
+        structureTrie.insert('_ou_');
+        structureTrie.insert('_oi_');
+        const formableWords = trie.getFormableChildren('bon', structureTrie.rootNode);
+        expect(formableWords).to.include('bonjour');
+        expect(formableWords).to.include('bonsoir');
     });
 });
