@@ -31,6 +31,7 @@ class ChatService {
     socket.on(
         'channelMessage',
         (data) => {
+          print('CHANNEL MESSAGE'),
               _discussionChannels[0].messages = [],
               (data as List<dynamic>).forEach((message) => {
                     _discussionChannels[0].messages.add(ChatMessage(
@@ -45,8 +46,6 @@ class ChatService {
     socket.on(
         'availableChannels',
         (data) => {
-              //print('update'),
-              //print(data.runtimeType),
               socket.emit('joinChatChannel',
                   {'General Chat', authenticator.currentUser.username}),
               _discussionChannels = [],
@@ -65,21 +64,16 @@ class ChatService {
   }
 
   ChatModel decodeModel(dynamic data) {
-    //print(data['messages']);
     List<ChatMessage> messages = [];
     for (var j in data['messages']) {
       messages.add(decodeMessage(j));
     }
-    //print('converted all messages');
     ChatModel discussionChannels = ChatModel.fromJson(data, messages);
-    //print('converted channel');
     return discussionChannels;
   }
 
   ChatMessage decodeMessage(dynamic data) {
-    //print(data['system']);
     ChatMessage res = ChatMessage.fromJson(data);
-    //print(res);
     return res;
   }
 
@@ -90,7 +84,6 @@ class ChatService {
   void addDiscussion(String name) {
     socket
         .emit('createChatChannel', [name, authenticator.currentUser.username]);
-    print('Adding new channel');
   }
 
   void deleteDiscussion(String name) {
@@ -100,12 +93,10 @@ class ChatService {
   }
 
   void addMessage({required String channelName, required ChatMessage message}) {
-    print('emitting $message');
     socket.emit('chatChannelMessage', {message});
   }
 
   void joinDiscussion(channelName) {
-    print(_discussionChannels);
     socket.emitWithAck('joinChatChannel',
         {'name': channelName, 'user': authenticator.currentUser.username},
         ack: (data) => _discussionChannels = data);

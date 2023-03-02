@@ -1,13 +1,17 @@
 import 'package:client_leger/components/drawer.dart';
+import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
+import '../classes/constants.dart';
+import '../classes/game.dart';
 import '../components/sidebar.dart';
 import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../services/solo_game_service.dart';
 
 
-const List<String> virtualPlayers = <String>['One', 'Two', 'Three', 'Four'];
-const List<String> difficulty = <String>['Novice', 'Expert'];
-const List<String> time = <String>['0', '1'];
+final soloGameService = SoloGameService(gameData: GameData(pseudo: authenticator.currentUser.username, dictionary: 'dictionnaire par défaut',
+  timerPerTurn: '', botName: '', isExpertLevel: false
+));
 
 class SoloPage extends StatefulWidget {
   const SoloPage({super.key});
@@ -27,13 +31,14 @@ class _SoloPageState extends State<SoloPage> {
   @override
   void initState() {
     super.initState();
+    soloGameService.configureBaseSocketFeatures();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFF9FFF6),
+      backgroundColor: Colors.white,
       drawer: const ChatDrawer(),
       body:
       Stack(
@@ -128,6 +133,7 @@ class _SoloPageState extends State<SoloPage> {
                       // This is called when the user selects an item.
                       setState(() {
                         virtualValue = value!;
+                        soloGameService.gameData.botName = value;
                       });
                     },
                     items: virtualPlayers.map<DropdownMenuItem<String>>((String value) {
@@ -164,7 +170,10 @@ class _SoloPageState extends State<SoloPage> {
                     onChanged: (String? value) {
                       // This is called when the user selects an item.
                       setState(() {
+
                         difficultyValue = value!;
+                        bool val = value == "Expert" ?  true : false;
+                        soloGameService.gameData.isExpertLevel = val;
                       });
                     },
                     items: difficulty.map<DropdownMenuItem<String>>((String value) {
@@ -184,7 +193,7 @@ class _SoloPageState extends State<SoloPage> {
                     hint: Container(
                       width: 250,
                       child: const Text(
-                        "Temps par tour",
+                        "Temps par tour (en secondes)",
                         style: TextStyle(color: Palette.mainColor,
                             fontSize: 16),
                         textAlign: TextAlign.start,
@@ -202,6 +211,7 @@ class _SoloPageState extends State<SoloPage> {
                       // This is called when the user selects an item.
                       setState(() {
                         timeValue = value!;
+                        soloGameService.gameData.timerPerTurn = value;
                       });
                     },
                     items: time.map<DropdownMenuItem<String>>((String value) {
@@ -216,7 +226,11 @@ class _SoloPageState extends State<SoloPage> {
                   padding: const EdgeInsets.symmetric(vertical: 50.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Validate returns true if the form is valid, or false otherwise.
+                      checkFormValues();
+                      //TODO : send to game page
+                      // Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                      //   return const MyHomePage(title: 'PolyScrabble');
+                      // })));
                     },
                     style: ButtonStyle(
                         shape: MaterialStatePropertyAll<
@@ -259,4 +273,10 @@ class _SoloPageState extends State<SoloPage> {
     );
 
   }
+
+  checkFormValues() {
+    if (virtualValue == null|| difficultyValue == null || timeValue == null) return 'Erreur';
+    soloGameService.joinRoom();
+  }
+
 }

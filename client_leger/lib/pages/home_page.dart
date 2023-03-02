@@ -4,10 +4,13 @@ import 'package:client_leger/services/chat_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
+
+import '../classes/game.dart';
 import '../components/sidebar.dart';
 import '../config/colors.dart';
 import '../config/environment.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
+import '../services/multiplayer_game_service.dart';
 import 'connexion_page.dart';
 
 import 'game_page.dart';
@@ -25,6 +28,7 @@ Io.Socket socket = Io.io(
 
 final socketService = SocketService();
 final chatService = ChatService();
+late MultiplayerGameService gameService;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -52,6 +56,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     if (!isProduction) authenticator.setLoggedInEmail('');
+    gameService = MultiplayerGameService(
+        gameData: GameData(
+            pseudo: authenticator.currentUser.username,
+            dictionary: 'dictionnaire par défaut',
+            timerPerTurn: '',
+            botName: '',
+            isExpertLevel: false));
     connect();
   }
 
@@ -63,20 +74,28 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     try {
+      print('config');
+      print(socket.id);
+      gameService.configureSocketFeatures();
+    } catch (e) {
+      print(e);
+    }
+
+    try {
       socket.connect();
       socket.onConnect((data) {
         print('connect');
       });
       socket.on(
           'connect_error',
-              (d) => {
-            print(socket.io.options),
-            print(d),
-            //socket.io.replaceAll(':0', ''),
-            //socket.disconnect().connect(),
-            //socket.io.options.update('transports', (value) => ['polling']),
-            print(socket.io.options)
-          });
+          (d) => {
+                print(socket.io.options),
+                print(d),
+                //socket.io.replaceAll(':0', ''),
+                //socket.disconnect().connect(),
+                //socket.io.options.update('transports', (value) => ['polling']),
+                print(socket.io.options)
+              });
 
       print(socket.connected);
     } catch (e) {
@@ -97,105 +116,101 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFF9FFF6),
+        backgroundColor: Colors.white,
         drawer: const ChatDrawer(),
-        body: Stack(
-          children: <Widget>[
-            Container(
-              child: Center(
-                // Center is a layout widget. It takes a single child and positions it
-                // in the middle of the parent.
-                child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[Align(
-                      alignment: Alignment.topCenter,
-                      child: Image.asset(
-                        "assets/images/scrabble_hero.png",
-                        ),
-                      ),
-                      SizedBox(height: 130),
-                      Text("Modes de jeu" ,
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 35,
-                           decoration: TextDecoration.underline,
+        body: Stack(children: <Widget>[
+          Container(
+            child: Center(
+              // Center is a layout widget. It takes a single child and positions it
+              // in the middle of the parent.
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Image.asset(
+                      "assets/images/scrabble_hero.png",
+                    ),
+                  ),
+                  SizedBox(height: 130),
+                  Text("Modes de jeu",
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 35,
+                        decoration: TextDecoration.underline,
                       )),
-                      SizedBox(height: 60),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Palette.mainColor,
-                          minimumSize: Size(300, 40),
-                          textStyle: const TextStyle(fontSize: 20),
-                        ),
-                        child: const Text('Scrabble Classique'),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MenuPage()));
-                        },
-                      ),
-                      SizedBox(height: 15),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Palette.mainColor,
-                          minimumSize: Size(300, 40),
-                          textStyle: const TextStyle(fontSize: 20),
-                        ),
-                        child: const Text('Scrabble Mania'),
-                        onPressed: () {
-                          // Navigator.push(context,
-                          //     MaterialPageRoute(builder: ((context) {
-                          //       return GeneralChatWidget();
-                          //     })));
-                        },
-                      ),
-                      SizedBox(height: 200),
-                    ],
-                ),
+                  SizedBox(height: 60),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.mainColor,
+                      minimumSize: Size(300, 40),
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
+                    child: const Text('Scrabble Classique'),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MenuPage()));
+                    },
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Palette.mainColor,
+                      minimumSize: Size(300, 40),
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
+                    child: const Text('Scrabble Mania'),
+                    onPressed: () {
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: ((context) {
+                      //       return GeneralChatWidget();
+                      //     })));
+                    },
+                  ),
+                  SizedBox(height: 200),
+                ],
               ),
             ),
-
-            CollapsingNavigationDrawer(),
-          ]
-
-        ),
-        endDrawer: Drawer(
-          child: Container(
-            color: Colors.white,
-            child: Center(
-              child: FFButtonWidget(
-                  onPressed: () {
-                    if (!isProduction) return;
-                    httpService
-                        .logoutUser(authenticator.currentUser.username)
-                        .then((value) => chatService.leaveDiscussion(
-                        'General Chat',
-                        authenticator
-                            .currentUser.username)); //TODO: Envoyer l'email
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ConnexionPageWidget()));
-                  },
-                  text: 'Log out',
-                  options: const FFButtonOptions(
-                    width: 240,
-                    height: 50,
-                    color: Palette.mainColor,
-                    textStyle: TextStyle(
-                      fontFamily: 'Nunito',
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      width: 1,
-                    ),
-                    borderRadius: 2,
-                  )),
-            ),
-          ), // This trailing comma makes auto-formatting nicer for build methods.
-        ));
+          ),
+          CollapsingNavigationDrawer(),
+        ]),
+        // endDrawer: Drawer(
+        //   child: Container(
+        //     color: Colors.white,
+        //     child: Center(
+        //       child: FFButtonWidget(
+        //           onPressed: () {
+        //             if (!isProduction) return;
+        //             httpService
+        //                 .logoutUser(authenticator.currentUser.username)
+        //                 .then((value) => chatService.leaveDiscussion(
+        //                     'General Chat',
+        //                     authenticator
+        //                         .currentUser.username)); //TODO: Envoyer l'email
+        //             Navigator.push(
+        //                 context,
+        //                 MaterialPageRoute(
+        //                     builder: (context) => const ConnexionPageWidget()));
+        //           },
+        //           text: 'Log out',
+        //           options: const FFButtonOptions(
+        //             width: 240,
+        //             height: 50,
+        //             color: Palette.mainColor,
+        //             textStyle: TextStyle(
+        //               fontFamily: 'Nunito',
+        //               color: Colors.white,
+        //               fontSize: 24,
+        //             ),
+        //             borderSide: BorderSide(
+        //               color: Colors.transparent,
+        //               width: 1,
+        //             ),
+        //             borderRadius: 2,
+        //           )),
+        //     ),
+        //   ), // This trailing comma makes auto-formatting nicer for build methods.
+        // )
+    );
   }
 }

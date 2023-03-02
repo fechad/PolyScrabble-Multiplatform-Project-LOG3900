@@ -70,7 +70,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+      backgroundColor: Colors.white,
       drawer: ChatDrawer(),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
