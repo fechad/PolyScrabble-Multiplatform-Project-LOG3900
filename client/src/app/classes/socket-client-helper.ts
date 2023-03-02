@@ -15,7 +15,7 @@ export class SocketClientServiceMock extends SocketClientService {
 
     override connect() {}
 
-    override removeMenuPreviousListeners() {}
+    override removeAllPreviousListeners() {}
 
     override refreshConnection() {}
 }

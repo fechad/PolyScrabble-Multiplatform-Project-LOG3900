@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { Score } from '@app/classes/score';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
@@ -18,22 +19,23 @@ export const DIALOG_WIDTH = '600px';
     templateUrl: './main-page.component.html',
     styleUrls: ['./main-page.component.scss', '../dark-theme.scss'],
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent extends PageCommunicationManager implements OnInit {
     title: string;
     message: BehaviorSubject<string>;
     constructor(
         public room: Room,
         private dialog: MatDialog,
         private httpService: HttpService,
-        private socketService: SocketClientService,
+        protected socketService: SocketClientService,
         private audioService: AudioService,
     ) {
+        super(socketService);
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
         this.audioService.playMainTheme();
     }
 
@@ -78,8 +80,8 @@ export class MainPageComponent implements OnInit {
         });
     }
 
-    private connect() {
-        this.socketService.refreshConnection();
+    protected configureBaseSocketFeatures(): void {
+        return;
     }
 
     private async getLeaderboardScores(): Promise<Score[][] | undefined> {

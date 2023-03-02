@@ -119,10 +119,10 @@ export class PlayersInfosComponent implements OnInit {
             this.configureBaseSocketFeatures();
             return;
         }
-        this.tryReconnection();
+        this.configureSocketFeaturesOnPageSocketConnection();
     }
 
-    private tryReconnection() {
+    private configureSocketFeaturesOnPageSocketConnection() {
         let secondPassed = 0;
 
         const timerInterval = setInterval(() => {

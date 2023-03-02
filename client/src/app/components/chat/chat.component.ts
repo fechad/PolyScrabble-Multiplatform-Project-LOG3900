@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
-import { MAX_MESSAGE_LENGTH, MAX_RECONNECTION_DELAY, MIN_MESSAGE_LENGTH, ONE_SECOND_IN_MS, SERVER_RESPONSE_DELAY } from '@app/constants/constants';
+import { MAX_MESSAGE_LENGTH, MIN_MESSAGE_LENGTH, ONE_SECOND_IN_MS, SERVER_RESPONSE_DELAY } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/message';
@@ -14,7 +15,7 @@ export const SCRABBLE_MESSAGE = '(っ◔◡◔)っ 👑 scrabble 👑';
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent extends ComponentCommunicationManager implements OnInit {
     @ViewChild('messageInput', { static: true }) private messageInput: ElementRef;
     chatForm: FormGroup;
     isEmojiPickerActive: boolean;
@@ -22,7 +23,8 @@ export class ChatComponent implements OnInit {
     private serverResponded: boolean;
     private messageColor: string;
 
-    constructor(private socketService: SocketClientService, private focusHandlerService: FocusHandlerService, private fb: FormBuilder) {
+    constructor(protected socketService: SocketClientService, private focusHandlerService: FocusHandlerService, private fb: FormBuilder) {
+        super(socketService);
         this.chatForm = this.fb.group({
             message: ['', [Validators.required, Validators.minLength(MIN_MESSAGE_LENGTH), Validators.maxLength(MAX_MESSAGE_LENGTH)]],
             chatHistory: this.fb.array([]),
@@ -42,7 +44,7 @@ export class ChatComponent implements OnInit {
     ngOnInit() {
         let isFirstReload = true;
 
-        this.connect();
+        this.connectSocket();
 
         this.focusHandlerService.currentFocus.subscribe(() => {
             if (!this.focusHandlerService.isCurrentFocus(CurrentFocus.CHAT)) {
@@ -107,30 +109,8 @@ export class ChatComponent implements OnInit {
             this.isEmojiPickerActive = false;
         }
     }
-    private connect() {
-        if (this.socketService.isSocketAlive()) {
-            this.configureBaseSocketFeatures();
-            return;
-        }
-        this.tryReconnection();
-    }
 
-    private tryReconnection() {
-        let secondPassed = 0;
-
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
-    }
-
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.Message, (roomMessage: ChatMessage) => {
             this.addMessage(roomMessage);
         });

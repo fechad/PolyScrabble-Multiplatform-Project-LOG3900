@@ -152,7 +152,7 @@ describe('PlayersInfosComponent', () => {
 
             it('should try to reconnect if one of the socket is not alive', () => {
                 spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                const spy = spyOn(componentPrivateAccess, 'tryReconnection');
+                const spy = spyOn(componentPrivateAccess, 'configureSocketFeaturesOnPageSocketConnection');
                 componentPrivateAccess.connect();
                 expect(spy).toHaveBeenCalled();
             });
@@ -161,7 +161,7 @@ describe('PlayersInfosComponent', () => {
                 spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
                 spyOn(socketServiceBotMock, 'isSocketAlive').and.returnValue(true);
                 const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.tryReconnection();
+                componentPrivateAccess.configureSocketFeaturesOnPageSocketConnection();
 
                 setTimeout(() => {
                     expect(spy).toHaveBeenCalled();
@@ -171,7 +171,7 @@ describe('PlayersInfosComponent', () => {
             it('should not reconnect if the socket is not alive after 5 sec', (done) => {
                 spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
                 const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.tryReconnection();
+                componentPrivateAccess.configureSocketFeaturesOnPageSocketConnection();
 
                 setTimeout(() => {
                     expect(spy).not.toHaveBeenCalled();
