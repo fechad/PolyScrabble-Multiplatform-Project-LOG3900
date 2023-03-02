@@ -35,7 +35,7 @@ class _MenuPageState extends State<MenuPage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0xFFF9FFF6),
+      backgroundColor: Colors.white,
       drawer: const ChatDrawer(),
       body: Stack(
           children: <Widget>[
