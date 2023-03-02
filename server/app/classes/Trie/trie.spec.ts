@@ -23,4 +23,8 @@ describe('Trie', () => {
         trie.insert('test');
         expect(trie.check('test', true)).to.equal(true);
     });
+    it('should return valid derivatives', () => {
+        trie.insert('bonjour');
+        trie.insert('bonsoir');
+    });
 });
