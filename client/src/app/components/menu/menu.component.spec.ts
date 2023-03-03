@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -33,7 +34,6 @@ describe('MenuComponent', () => {
     let socketHelper: SocketTestHelper;
     let socketServiceMock: SocketClientServiceMock;
     let playerService: PlayerService;
-    let roomMock: Room;
     let firstPlayer: Player;
     let discussionChannel: DiscussionChannel;
     let channelMessage: ChannelMessage;
@@ -47,9 +47,8 @@ describe('MenuComponent', () => {
         playerService = new PlayerService();
         playerService.player.pseudo = 'player1';
 
-        roomMock = new Room();
-        roomMock.roomInfo = DEFAULT_ROOM_INFO;
-        roomMock.roomInfo.name = roomName;
+        playerService.room.roomInfo = DEFAULT_ROOM_INFO;
+        playerService.room.roomInfo.name = roomName;
 
         firstPlayer = new Player();
         firstPlayer.pseudo = 'player2';
@@ -64,10 +63,10 @@ describe('MenuComponent', () => {
                 { provide: HttpService },
                 { provide: PlayerService, useValue: playerService },
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: Room, useValue: roomMock },
                 { provide: Router, useValue: routerSpy },
                 { provide: MatDialog, useClass: MatDialogMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -84,12 +83,12 @@ describe('MenuComponent', () => {
 
     describe('isGameCreator tests', () => {
         it('should return true if creatorName === playerName', () => {
-            roomMock.roomInfo.creatorName = playerService.player.pseudo;
+            playerService.room.roomInfo.creatorName = playerService.player.pseudo;
             expect(component.isGameCreator).toBeTruthy();
         });
 
         it('should return false if creatorName !== playerName', () => {
-            roomMock.roomInfo.creatorName = '';
+            playerService.room.roomInfo.creatorName = '';
             expect(component.isGameCreator).toBeFalsy();
         });
     });
@@ -160,7 +159,7 @@ describe('MenuComponent', () => {
             const roomMock2 = new Room();
             roomMock2.players = [firstPlayer];
             socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock2);
-            expect(roomMock.players).toEqual(roomMock2.players);
+            expect(playerService.room.players).toEqual(roomMock2.players);
         });
 
         it('it should call handlePlayerFound on PlayerFound', () => {
@@ -172,15 +171,15 @@ describe('MenuComponent', () => {
 
         describe('playerLeft tests', () => {
             it('should remove the player from the room on playerLeft', () => {
-                roomMock.players = [firstPlayer];
-                const previousPlayersLength = roomMock.players.length;
+                playerService.room.players = [firstPlayer];
+                const previousPlayersLength = playerService.room.players.length;
                 socketHelper.peerSideEmit(SocketEvent.PlayerLeft, firstPlayer);
                 expect(component.room.players.length).toEqual(previousPlayersLength - 1);
             });
 
             it('should send setRoomAvailable signal on playerLeft if the new player length is 3', () => {
-                roomMock.players = [firstPlayer, firstPlayer, firstPlayer, firstPlayer];
-                const previousPlayersLength = roomMock.players.length;
+                playerService.room.players = [firstPlayer, firstPlayer, firstPlayer, firstPlayer];
+                const previousPlayersLength = playerService.room.players.length;
                 const socketSendSpy = spyOn(socketServiceMock, 'send');
                 socketHelper.peerSideEmit(SocketEvent.PlayerLeft, firstPlayer);
                 expect(component.room.players.length).toEqual(previousPlayersLength - 1);
@@ -188,8 +187,8 @@ describe('MenuComponent', () => {
             });
 
             it('should not remove a player from the room if he is not in the room', () => {
-                roomMock.players = [firstPlayer];
-                const previousPlayersLength = roomMock.players.length;
+                playerService.room.players = [firstPlayer];
+                const previousPlayersLength = playerService.room.players.length;
                 socketHelper.peerSideEmit(SocketEvent.PlayerLeft, new Player());
                 expect(component.room.players.length).toEqual(previousPlayersLength);
             });
@@ -330,13 +329,13 @@ describe('MenuComponent', () => {
     describe('handleGameWaitPage tests', () => {
         it('should call showChatChannel on handleGameWaitPage if isWaitMultiPage', () => {
             component.isWaitMultiPage = true;
-            discussionChannel.name = roomMock.roomInfo.name;
+            discussionChannel.name = playerService.room.roomInfo.name;
             component.availableDiscussionChannels = [discussionChannel];
             const indexOfDiscussionChannel = 0;
             const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(discussionChannel);
             const showChatChannelSpy = spyOn(component, 'showChatChannel');
             (component as any).handleGameWaitPage();
-            expect(getDiscussionChannelSpy).toHaveBeenCalledWith(roomMock.roomInfo.name);
+            expect(getDiscussionChannelSpy).toHaveBeenCalledWith(playerService.room.roomInfo.name);
             expect(showChatChannelSpy).toHaveBeenCalledWith(indexOfDiscussionChannel);
         });
 
@@ -352,7 +351,7 @@ describe('MenuComponent', () => {
             const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(undefined);
             const showChatChannelSpy = spyOn(component, 'showChatChannel');
             (component as any).handleGameWaitPage();
-            expect(getDiscussionChannelSpy).toHaveBeenCalledWith(roomMock.roomInfo.name);
+            expect(getDiscussionChannelSpy).toHaveBeenCalledWith(playerService.room.roomInfo.name);
             expect(showChatChannelSpy).not.toHaveBeenCalled();
         });
     });

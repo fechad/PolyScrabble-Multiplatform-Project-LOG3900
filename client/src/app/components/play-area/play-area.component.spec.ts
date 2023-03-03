@@ -1,9 +1,9 @@
 /* eslint-disable max-lines */ // Lot of tests to make sure that the code work correctly
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
-import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { Tile } from '@app/classes/tile';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
@@ -44,7 +44,6 @@ describe('PlayAreaComponent', () => {
     let boardService: BoardService;
 
     let playerService: PlayerService;
-    let room: Room;
 
     let removeAllViewLetterSpy: jasmine.Spy;
 
@@ -59,9 +58,8 @@ describe('PlayAreaComponent', () => {
         focusHandlerService = new FocusHandlerService();
 
         playerService = new PlayerService();
-        room = new Room();
-        room.roomInfo = DEFAULT_ROOM_INFO;
-        room.currentPlayerPseudo = '';
+        playerService.room.roomInfo = DEFAULT_ROOM_INFO;
+        playerService.room.currentPlayerPseudo = '';
 
         boardService = new BoardService(
             new PlacementViewTilesService(),
@@ -80,10 +78,10 @@ describe('PlayAreaComponent', () => {
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: CommandInvokerService, useValue: commandInvokerService },
                 { provide: BoardService, useValue: boardService },
-                { provide: Room, useValue: room },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: PlayerService, useValue: playerService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -256,7 +254,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should call the correct methods on mouseHitDetect', () => {
-            room.roomInfo.isGameOver = false;
+            playerService.room.roomInfo.isGameOver = false;
             playerService.player.isItsTurn = true;
             focusHandlerService.currentFocus.next(CurrentFocus.BOARD);
 
@@ -267,7 +265,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should not call updateFocus and mouseHitDetect if game is over', () => {
-            room.roomInfo.isGameOver = true;
+            playerService.room.roomInfo.isGameOver = true;
             component.mouseHitDetect(mouseEvent);
 
             expect(updateFocusSpy).not.toHaveBeenCalled();
@@ -275,7 +273,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should not call updateFocus and mouseHitDetect if it is not player turn', () => {
-            room.roomInfo.isGameOver = false;
+            playerService.room.roomInfo.isGameOver = false;
             playerService.player.isItsTurn = false;
             component.mouseHitDetect(mouseEvent);
 
@@ -284,7 +282,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should not call mouseHitDetect if the focus is not the board', () => {
-            room.roomInfo.isGameOver = false;
+            playerService.room.roomInfo.isGameOver = false;
             playerService.player.isItsTurn = true;
             focusHandlerService.currentFocus.next(CurrentFocus.NONE);
 
@@ -348,7 +346,7 @@ describe('PlayAreaComponent', () => {
 
     describe('updateFocus tests', () => {
         beforeEach(() => {
-            room.roomInfo.isGameOver = false;
+            playerService.room.roomInfo.isGameOver = false;
         });
 
         mouseEvent = {
@@ -368,7 +366,7 @@ describe('PlayAreaComponent', () => {
         });
 
         it('should change the focus to chat on updateFocus if the gameIsOver', () => {
-            room.roomInfo.isGameOver = true;
+            playerService.room.roomInfo.isGameOver = true;
             componentPrivateAccess.updateFocus(mouseEvent);
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.CHAT);
         });
@@ -407,11 +405,11 @@ describe('PlayAreaComponent', () => {
     });
 
     it('should return true if the gameOver attribute of the room is true', () => {
-        room.roomInfo.isGameOver = true;
+        playerService.room.roomInfo.isGameOver = true;
         expect(component.isGameOver).toEqual(true);
     });
     it('should return true if the gameOver attribute of the room is true', () => {
-        room.roomInfo.isGameOver = false;
+        playerService.room.roomInfo.isGameOver = false;
         expect(component.isGameOver).toEqual(false);
     });
 });

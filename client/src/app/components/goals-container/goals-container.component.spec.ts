@@ -1,12 +1,13 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Player } from '@app/classes/player';
-import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { DEFAULT_ROOM_INFO, LOG_2990_GAME_TYPE } from '@app/constants/constants';
 import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalRewards } from '@app/enums/goal-rewards';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { Goal } from '@app/interfaces/goal';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { Socket } from 'socket.io-client';
 import { GoalsContainerComponent } from './goals-container.component';
@@ -24,29 +25,27 @@ describe('GoalsContainerComponent', () => {
     let componentPrivateAccess: any;
     let socketServiceMock: SocketClientServiceMock;
     let socketHelper: SocketTestHelper;
-    let room: Room;
-    let firstPlayer: Player;
+    let playerService: PlayerService;
 
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock();
         socketServiceMock.socket = socketHelper as unknown as Socket;
 
-        room = new Room();
-        room.roomInfo = DEFAULT_ROOM_INFO;
-        room.roomInfo.gameType = LOG_2990_GAME_TYPE;
-        room.currentPlayerPseudo = '';
+        playerService = new PlayerService();
+        playerService.room.roomInfo = DEFAULT_ROOM_INFO;
+        playerService.room.roomInfo.gameType = LOG_2990_GAME_TYPE;
+        playerService.room.currentPlayerPseudo = '';
 
-        firstPlayer = new Player();
-        firstPlayer.pseudo = 'playerOne';
+        playerService.player.pseudo = 'playerOne';
 
         await TestBed.configureTestingModule({
             declarations: [GoalsContainerComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: Player, useValue: firstPlayer },
-                { provide: Room, useValue: room },
+                { provide: PlayerService, useValue: playerService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -69,7 +68,7 @@ describe('GoalsContainerComponent', () => {
         });
 
         it('should not call socketService.send(getAllGoals) if the roomType is not log2990', () => {
-            room.roomInfo.gameType = 'classic';
+            playerService.room.roomInfo.gameType = 'classic';
             const socketSendSpy = spyOn(socketServiceMock, 'send');
             component.ngOnInit();
             expect(socketSendSpy).not.toHaveBeenCalledWith('getAllGoals');
@@ -96,7 +95,7 @@ describe('GoalsContainerComponent', () => {
                 reached: false,
                 reward: GoalRewards.AtLeastFive,
                 isPublic: false,
-                players: [firstPlayer],
+                players: [playerService.player],
             };
             privateGoal2 = {
                 title: GoalTitle.FirstToHundred,
@@ -112,7 +111,7 @@ describe('GoalsContainerComponent', () => {
                 reached: false,
                 reward: GoalRewards.NeedOr,
                 isPublic: true,
-                players: [firstPlayer, secondPlayer],
+                players: [playerService.player, secondPlayer],
             };
             publicGoal2 = {
                 title: GoalTitle.NoChangeNoPass,
@@ -120,7 +119,7 @@ describe('GoalsContainerComponent', () => {
                 reached: false,
                 reward: GoalRewards.NoChangeNoPass,
                 isPublic: true,
-                players: [firstPlayer, secondPlayer],
+                players: [playerService.player, secondPlayer],
             };
         });
         it('should update the lettersBacnkCount when receiving the event "lettersBankCountUpdated"', () => {

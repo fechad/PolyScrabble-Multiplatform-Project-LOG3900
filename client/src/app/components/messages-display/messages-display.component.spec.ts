@@ -1,4 +1,4 @@
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -16,6 +16,7 @@ describe('MessagesDisplayComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [MessagesDisplayComponent],
             providers: [{ provide: ChangeDetectorRef }, { provide: FocusHandlerService, useValue: focusHandlerService }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

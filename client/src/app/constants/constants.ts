@@ -31,3 +31,20 @@ export const DEFAULT_ROOM_INFO = {
     isPublic: true,
     password: '',
 };
+
+export const DEFAULT_ACCOUNT = {
+    username: 'Default Account',
+    email: 'default@mail.com',
+    avatarURL: '',
+    level: {
+        rank: 'rank',
+        currentXP: 0,
+        totalXP: 0,
+    },
+    badges: [],
+    highScore: 0,
+    gamesWon: 0,
+    totalXp: 0,
+    gamesPlayed: [],
+    bestGames: [],
+};

@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Player } from '@app/classes/player';
@@ -19,12 +20,11 @@ describe('GameJoinMultiplayerPageComponent', () => {
     let socketServiceMock: SocketClientServiceMock;
     let routerSpy: SpyObj<Router>;
     let socketHelper: SocketTestHelper;
-    let componentRoom: Room;
     let roomMock: Room;
     let sameGameTypeRoom1: Room;
     let sameGameTypeRoom2: Room;
     let player: Player;
-
+    let playerService: PlayerService;
     // we want to test private methods
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let componentPrivateAccess: any;
@@ -34,9 +34,9 @@ describe('GameJoinMultiplayerPageComponent', () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock(socketHelper);
 
-        componentRoom = new Room();
-        componentRoom.roomInfo = DEFAULT_ROOM_INFO;
-        componentRoom.currentPlayerPseudo = '';
+        playerService = new PlayerService();
+        playerService.room.roomInfo = DEFAULT_ROOM_INFO;
+        playerService.room.currentPlayerPseudo = '';
 
         roomMock = new Room();
         roomMock.roomInfo = DEFAULT_ROOM_INFO;
@@ -62,10 +62,10 @@ describe('GameJoinMultiplayerPageComponent', () => {
             declarations: [GameJoinMultiplayerPageComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: PlayerService },
+                { provide: PlayerService, useValue: playerService },
                 { provide: Router, useValue: routerSpy },
-                { provide: Room, useValue: componentRoom },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -89,7 +89,6 @@ describe('GameJoinMultiplayerPageComponent', () => {
     describe('Receiving events', () => {
         describe('sockets configurations tests', () => {
             it('should set the room to the serverRoom on playerAccepted', () => {
-                component.room = componentRoom;
                 socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
                 expect(component.room.roomInfo.name).toEqual(roomMock.roomInfo.name);
                 expect(component.room.roomInfo.timerPerTurn).toEqual(roomMock.roomInfo.timerPerTurn);
@@ -254,7 +253,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
             });
 
             it('should call room.reinitialize on leaveRoom()', () => {
-                component.room = roomMock;
+                component.playerService.room = roomMock;
                 component.room.reinitialize = jasmine.createSpy();
                 component.leaveRoom(roomMock.roomInfo.name);
                 expect(component.room.reinitialize).toHaveBeenCalledWith(component.room.roomInfo.gameType);

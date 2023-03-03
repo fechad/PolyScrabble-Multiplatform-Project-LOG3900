@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
@@ -35,6 +36,7 @@ describe('UploadDictionaryPopupComponent', () => {
             imports: [HttpClientModule],
             declarations: [UploadDictionaryPopupComponent],
             providers: [{ provide: HttpService }, { provide: MatDialogRef, useClass: MatDialogRefMock }, { provide: MAT_DIALOG_DATA, useValue: [] }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

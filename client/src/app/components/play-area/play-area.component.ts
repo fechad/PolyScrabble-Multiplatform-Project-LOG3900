@@ -53,7 +53,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         private commandInvoker: CommandInvokerService,
         private boardService: BoardService,
         private focusHandlerService: FocusHandlerService,
-        private room: Room,
         private playerService: PlayerService,
     ) {
         super(socketService);
@@ -68,6 +67,10 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         this.canvasSize.y = this.height * this.ratioSize;
 
         this.boardService.initializeBoardService({ width: this.tileWidth, height: this.tileHeight, letterRatio: this.letterRatio });
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     get width(): number {

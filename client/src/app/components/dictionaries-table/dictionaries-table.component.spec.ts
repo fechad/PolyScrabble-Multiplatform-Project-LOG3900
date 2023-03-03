@@ -1,6 +1,7 @@
 // Some methods are private and I needed them for my tests
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
@@ -27,6 +28,7 @@ describe('DictionariesTableComponent', () => {
             imports: [HttpClientModule],
             declarations: [DictionariesTableComponent],
             providers: [{ provide: HttpService }, { provide: MatDialog, useClass: MatDialogMock }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

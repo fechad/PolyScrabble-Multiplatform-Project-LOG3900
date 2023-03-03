@@ -27,9 +27,12 @@ export class GamePageComponent implements OnInit {
         private focusHandlerService: FocusHandlerService,
         private router: Router,
         private dialog: MatDialog,
-        public room: Room,
         public playerService: PlayerService,
     ) {}
+
+    get room(): Room {
+        return this.playerService.room;
+    }
 
     get isGameOver(): boolean {
         return this.room.roomInfo.isGameOver as boolean;
@@ -105,27 +108,9 @@ export class GamePageComponent implements OnInit {
 
     private configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.Reconnected, (data: { room: Room; player: Player }) => {
-            this.setRoom(data.room);
-            this.setPlayer(data.player);
+            this.room.setRoom(data.room);
+            this.playerService.player.setPlayerGameAttributes(data.player);
             this.sessionStorageService.setItem('data', JSON.stringify({ socketId: data.player.socketId, roomName: data.room.roomInfo.name }));
         });
-    }
-
-    private setRoom(roomServer: Room) {
-        this.room.roomInfo.name = roomServer.roomInfo.name;
-        this.room.roomInfo.timerPerTurn = roomServer.roomInfo.timerPerTurn;
-        this.room.roomInfo.dictionary = roomServer.roomInfo.dictionary;
-        this.room.roomInfo.gameType = roomServer.roomInfo.gameType;
-        this.room.roomInfo.maxPlayers = roomServer.roomInfo.maxPlayers;
-        this.room.players = roomServer.players;
-        this.room.elapsedTime = roomServer.elapsedTime;
-    }
-
-    private setPlayer(player: Player) {
-        this.playerService.player.pseudo = player.pseudo;
-        this.playerService.player.socketId = player.socketId;
-        this.playerService.player.points = player.points;
-        this.playerService.player.isCreator = player.isCreator;
-        this.playerService.player.isItsTurn = player.isItsTurn;
     }
 }

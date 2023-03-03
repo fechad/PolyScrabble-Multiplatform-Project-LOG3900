@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -6,8 +7,6 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
@@ -31,7 +30,6 @@ describe('GamePageComponent', () => {
     let sessionStorageService: SessionStorageService;
     let focusHandlerService: FocusHandlerService;
 
-    let room: Room;
     let playerService: PlayerService;
     let routerSpy: SpyObj<Router>;
     let dialog: MatDialog;
@@ -41,10 +39,9 @@ describe('GamePageComponent', () => {
         socketServiceMock = new SocketClientServiceMock(socketHelper);
         socketServiceBotMock = new SocketClientServiceMock(socketHelper);
 
-        room = new Room();
-        room.roomInfo = DEFAULT_ROOM_INFO;
-        room.currentPlayerPseudo = '';
         playerService = new PlayerService();
+        playerService.room.roomInfo = DEFAULT_ROOM_INFO;
+        playerService.room.currentPlayerPseudo = '';
 
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -52,7 +49,7 @@ describe('GamePageComponent', () => {
         focusHandlerService = new FocusHandlerService();
 
         await TestBed.configureTestingModule({
-            declarations: [GamePageComponent, SidebarComponent, PlayAreaComponent],
+            declarations: [GamePageComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: SocketClientBotService, useValue: socketServiceBotMock },
@@ -60,9 +57,9 @@ describe('GamePageComponent', () => {
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: Router, useValue: routerSpy },
                 { provide: MatDialog, useClass: MatDialogMock },
-                { provide: Room, useValue: room },
                 { provide: PlayerService, useValue: playerService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -89,7 +86,7 @@ describe('GamePageComponent', () => {
         });
 
         it('should send reconnect on init if the roomName is empty', () => {
-            room.roomInfo.name = '';
+            playerService.room.roomInfo.name = '';
             const sendSpy = spyOn(socketServiceMock, 'send');
             component.ngOnInit();
             expect(sendSpy).toHaveBeenCalled();
