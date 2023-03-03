@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // we want to test private methods
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
@@ -18,6 +19,7 @@ describe('BestScoresComponent tests', () => {
             imports: [HttpClientModule],
             declarations: [BestScoresTableComponent],
             providers: [{ provide: HttpService }, { provide: MatDialog, useClass: MatDialogMock }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

@@ -30,9 +30,12 @@ export class RackComponent extends ComponentCommunicationManager implements OnIn
         private rack: Rack,
         protected socketService: SocketClientService,
         private readonly playerService: PlayerService,
-        private readonly room: Room,
     ) {
         super(socketService);
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     get width(): number {

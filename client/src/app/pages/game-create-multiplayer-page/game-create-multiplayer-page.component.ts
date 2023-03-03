@@ -35,7 +35,6 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        public room: Room,
         private playerService: PlayerService,
         protected socketService: SocketClientService,
         private httpService: HttpService,
@@ -52,6 +51,10 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         });
         this.dictionaries = [];
         this.onProcess = false;
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     get hasValidGameType(): boolean {

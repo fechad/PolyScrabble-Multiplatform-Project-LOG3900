@@ -1,4 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { EditBotPopupComponent } from '@app/components/edit-bot-popup/edit-bot-popup.component';
@@ -29,6 +30,7 @@ describe('BotsTableComponent', () => {
             imports: [HttpClientModule],
             declarations: [BotsTableComponent],
             providers: [{ provide: HttpService }, { provide: MatDialog, useValue: mockDialogRef }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

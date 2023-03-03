@@ -8,6 +8,7 @@ import { GeneralChatComponent } from '@app/components/general-chat/general-chat.
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { AudioService } from '@app/services/audio.service';
 import { HttpService } from '@app/services/http.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
@@ -23,7 +24,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
     title: string;
     message: BehaviorSubject<string>;
     constructor(
-        public room: Room,
+        public playerService: PlayerService,
         private dialog: MatDialog,
         private httpService: HttpService,
         protected socketService: SocketClientService,
@@ -32,6 +33,10 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
         super(socketService);
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     ngOnInit() {

@@ -2,6 +2,7 @@
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -66,6 +67,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: ActivatedRoute, useValue: activatedRouteMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

@@ -1,8 +1,3 @@
-import { Injectable } from '@angular/core';
-
-@Injectable({
-    providedIn: 'root',
-})
 export class Player {
     email: string;
     pseudo: string;
@@ -17,5 +12,14 @@ export class Player {
         this.points = 0;
         this.isCreator = false; // Remove this from here, obsolete
         this.isItsTurn = false;
+    }
+
+    // tested on game-page.component.spec.ts
+    setPlayerGameAttributes(player: Player) {
+        this.pseudo = player.pseudo;
+        this.socketId = player.socketId;
+        this.points = player.points;
+        this.isCreator = player.isCreator;
+        this.isItsTurn = player.isItsTurn;
     }
 }

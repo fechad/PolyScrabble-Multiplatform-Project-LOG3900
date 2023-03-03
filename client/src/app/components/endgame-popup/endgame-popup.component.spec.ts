@@ -1,8 +1,9 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EndGamePopupComponent } from './endgame-popup.component';
 import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
+import { EndGamePopupComponent } from './endgame-popup.component';
 
 const fakeDescription: InformationalPopupData = { header: '...', body: 'yeap' };
 describe('ConfirmationPopupComponent', () => {
@@ -17,6 +18,7 @@ describe('ConfirmationPopupComponent', () => {
                 { provide: MAT_DIALOG_DATA, useValue: fakeDescription },
                 { provide: MatDialogRef, useClass: MatDialogRefMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

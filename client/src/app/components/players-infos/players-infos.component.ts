@@ -34,12 +34,15 @@ export class PlayersInfosComponent implements OnInit {
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
         private httpService: HttpService,
-        public room: Room,
         public playerService: PlayerService,
         private dialog: MatDialog,
     ) {
         this.room.roomInfo.isGameOver = false;
         if (this.room.players.length >= 2) this.bot = this.room.players[1];
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     get min(): number {
