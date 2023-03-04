@@ -3,6 +3,7 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/pages/home_page.dart';
+import 'package:client_leger/pages/profile_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../config/colors.dart';
@@ -56,6 +57,12 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
           children: <Widget>[
             CollapsingListTile(title: 'Username', icon: Icons.person, animationController: _animationController,
                 // TODO onTap: .... send to user profile
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) {
+                      return UserPage();
+                    })));
+              },
                 ),
             Divider(height: 40.0),
             Expanded(
