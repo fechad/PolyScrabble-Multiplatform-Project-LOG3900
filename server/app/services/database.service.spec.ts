@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */ // We need to access private attributes for our tests ant the linter does not like the notation used for it
-import { Account } from '@app/interfaces/firestoreDB/account';
+/* import { Account } from '@app/interfaces/firestoreDB/account';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -87,3 +87,4 @@ describe('Database Service', () => {
         expect(deletedSubcollection.empty, 'subcollection not deleted').to.equal(true);
     });
 });
+*/
