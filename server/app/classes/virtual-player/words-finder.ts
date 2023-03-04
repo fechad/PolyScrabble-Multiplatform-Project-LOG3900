@@ -26,11 +26,14 @@ export class WordsFinder {
         for (const structureChild of structure.children) {
             for (const nodeChild of startNode.children) {
                 const letterIndex = rackLetters.findIndex((letter) => nodeChild.value === letter);
+                const letterAlreadyPlaced = structureChild.value.toLowerCase() === nodeChild.value;
                 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                if (letterIndex === -1) break;
-                if (rackLetters.includes(nodeChild.value) && !usedLetters.has(letterIndex)) {
+                if (letterIndex === -1 && !letterAlreadyPlaced) continue;
+                const canPlaceLetter = rackLetters.includes(nodeChild.value) && !usedLetters.has(letterIndex);
+                if (canPlaceLetter || letterAlreadyPlaced) {
                     const grandChildren = this.searchChildren(base, structureChild, nodeChild, rackLetters, new Set([...usedLetters, letterIndex]));
-                    usedLetters.add(letterIndex);
+                    // Check that we only add used letters
+                    if (grandChildren.length > 0 && structureChild.value.toLowerCase() === structureChild.value) usedLetters.add(letterIndex);
                     children = children.concat(grandChildren);
                 }
             }
@@ -39,9 +42,7 @@ export class WordsFinder {
     }
     private searchChildren(base: string, structure: TrieNode, startNode: TrieNode, rackLetters: string[], usedLetters: Set<number>): string[] {
         const children: string[] = [];
-
-        if (!(structure.value === '_' || structure.value === startNode.value)) return children;
-
+        if (!(structure.value === '_' || structure.value.toLowerCase() === startNode.value)) return children;
         const newWord = base + startNode.value;
         if (startNode.isEndOfWord && structure.isEndOfWord) children.push(newWord);
         const grandChildren = this.iterate(newWord, structure, startNode, rackLetters, usedLetters);

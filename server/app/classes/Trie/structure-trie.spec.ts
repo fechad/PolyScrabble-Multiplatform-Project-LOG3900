@@ -21,4 +21,10 @@ describe.only('WordStructureTrie', () => {
         expect(trie.check('s___ir', false)).to.equal(true);
         expect(trie.check('s___ir_', false)).to.equal(true);
     });
+    it('should add a word composed only of _', () => {
+        trie.insert('___');
+        expect(trie.check('_', false)).to.equal(true);
+        expect(trie.check('__', false)).to.equal(true);
+        expect(trie.check('___', false)).to.equal(true);
+    });
 });

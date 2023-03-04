@@ -36,6 +36,17 @@ export class Trie {
         return finalNode.isEndOfWord;
     }
 
+    printTrieWords(node?: TrieNode, word: string = ''): void {
+        if (!node) node = this.root;
+        if (word === '') word = this.root.value;
+        if (node.isEndOfWord) {
+            // eslint-disable-next-line no-console
+            console.log(word);
+        }
+        for (const child of node.children) {
+            this.printTrieWords(child, word + child.value);
+        }
+    }
     protected findOrCreateNode(startNode: TrieNode, char: string): TrieNode {
         let index = startNode.children.findIndex((node) => node.value === char);
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers

@@ -10,6 +10,7 @@ export class WordStructureTrie extends Trie {
     override insert(word: string): void {
         let current = this.root;
         const sequences = this.splitOnUnendingSequence(word);
+        // If we ever have a problem where no words are added, add a guard statement here.
         if (sequences[1] === '') return super.insert(sequences[0]);
 
         for (const char of sequences[0]) {
