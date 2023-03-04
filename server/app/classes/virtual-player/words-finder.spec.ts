@@ -11,12 +11,15 @@ describe.only('WordsFinder', () => {
     beforeEach(() => {
         trie = new Trie();
         wordStructureTrie = new WordStructureTrie('bon');
+        wordStructureTrie.insert('_o');
+        wordStructureTrie.insert('s');
+        wordStructureTrie.insert('_ou_');
+        wordStructureTrie.insert('_oi_');
+
         trie.insert('bonjour');
         trie.insert('bons');
         trie.insert('bonsoir');
-        wordStructureTrie.insert('_o');
-        wordStructureTrie.insert('_ou_');
-        wordStructureTrie.insert('_oi_');
+
         finder = new WordsFinder(trie);
     });
     it('should return expected derivatives when letters to form them are provided', () => {
