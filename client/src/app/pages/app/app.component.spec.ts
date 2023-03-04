@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -7,6 +8,7 @@ describe('AppComponent', () => {
         await TestBed.configureTestingModule({
             imports: [AppRoutingModule],
             declarations: [AppComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

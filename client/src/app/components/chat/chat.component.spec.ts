@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */ // lot of tests to be sure that the chat work correctly
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormArray, FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CurrentFocus } from '@app/classes/current-focus';
@@ -48,6 +49,7 @@ describe('ChatComponent', () => {
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

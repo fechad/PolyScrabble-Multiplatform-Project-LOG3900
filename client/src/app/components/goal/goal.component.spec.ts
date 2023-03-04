@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
@@ -20,6 +21,7 @@ describe('GoalComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [GoalComponent],
             providers: [{ provide: MatDialog, useClass: MatDialogMock }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

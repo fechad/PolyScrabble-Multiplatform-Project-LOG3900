@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -9,8 +10,12 @@ import { SocketClientService } from '@app/services/socket-client.service';
     styleUrls: ['./game-option-page.component.scss', '../dark-theme.scss'],
 })
 export class GameOptionPageComponent extends PageCommunicationManager implements OnInit {
-    constructor(public room: Room, protected socketService: SocketClientService) {
+    constructor(public playerService: PlayerService, protected socketService: SocketClientService) {
         super(socketService);
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     ngOnInit() {

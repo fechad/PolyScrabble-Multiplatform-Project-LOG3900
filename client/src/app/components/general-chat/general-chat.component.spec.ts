@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
@@ -27,6 +28,7 @@ describe('GeneralChatComponent', () => {
                 { provide: PlayerService, useValue: playerService },
                 { provide: SocketClientService, useValue: socketServiceMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
 
         fixture = TestBed.createComponent(GeneralChatComponent);

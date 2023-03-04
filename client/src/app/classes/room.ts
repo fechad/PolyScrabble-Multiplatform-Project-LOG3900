@@ -1,11 +1,6 @@
-import { Injectable } from '@angular/core';
 import { Player } from './player';
 import { RoomInfo } from './room-info';
 
-// TODO: Create room service as injectable instead of room
-@Injectable({
-    providedIn: 'root',
-})
 export class Room {
     elapsedTime: number;
     currentPlayerPseudo: string; // Remove this, obsolete
@@ -34,16 +29,14 @@ export class Room {
         this.isBankUsable = true;
     }
 
-    addPlayer(player: Player) {
-        if (this.players.length < this.roomInfo.maxPlayers) {
-            this.players.push(player);
-        }
-    }
-
-    removePlayer(playerSocketId: string) {
-        const playerToRemove = this.players.find((element) => element.socketId === playerSocketId);
-        if (playerToRemove) {
-            this.players.splice(this.players.indexOf(playerToRemove), 1);
-        }
+    // tested on game-page.component.spec.ts
+    setRoom(roomServer: Room) {
+        this.roomInfo.name = roomServer.roomInfo.name;
+        this.roomInfo.timerPerTurn = roomServer.roomInfo.timerPerTurn;
+        this.roomInfo.dictionary = roomServer.roomInfo.dictionary;
+        this.roomInfo.gameType = roomServer.roomInfo.gameType;
+        this.roomInfo.maxPlayers = roomServer.roomInfo.maxPlayers;
+        this.players = roomServer.players;
+        this.elapsedTime = roomServer.elapsedTime;
     }
 }

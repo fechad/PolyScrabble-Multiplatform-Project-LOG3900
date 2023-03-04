@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -24,6 +25,7 @@ describe('GameOptionPageComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [GameOptionPageComponent],
             providers: [{ provide: SocketClientService, useValue: socketServiceMock }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

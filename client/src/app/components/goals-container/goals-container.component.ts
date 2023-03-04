@@ -8,6 +8,7 @@ import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { SocketEvent } from '@app/enums/socket-event';
 import { Goal } from '@app/interfaces/goal';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -21,7 +22,7 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
     privateGoal: Goal;
     otherPlayerPrivateGoal: Goal;
 
-    constructor(protected socketService: SocketClientService, private room: Room, private player: Player) {
+    constructor(protected socketService: SocketClientService, private playerService: PlayerService) {
         super(socketService);
         this.lettersBankCount = 0;
         this.publicGoals = [];
@@ -34,6 +35,14 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
             players: [this.player],
         };
         this.otherPlayerPrivateGoal = { ...this.privateGoal };
+    }
+
+    get room(): Room {
+        return this.playerService.room;
+    }
+
+    get player(): Player {
+        return this.playerService.player;
     }
 
     get is2990GameType(): boolean {

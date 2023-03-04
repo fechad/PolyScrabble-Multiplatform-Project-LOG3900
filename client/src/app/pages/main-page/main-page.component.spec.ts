@@ -1,4 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +30,7 @@ describe('MainPageComponent', () => {
             imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserAnimationsModule],
             declarations: [MainPageComponent],
             providers: [{ provide: MatDialog, useClass: MatDialogMock }, { provide: HttpService }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

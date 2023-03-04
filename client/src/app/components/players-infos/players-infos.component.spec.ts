@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -35,23 +36,21 @@ describe('PlayersInfosComponent', () => {
     let routerSpy: SpyObj<Router>;
     let socketHelper: SocketTestHelper;
     let socketHelper2: SocketTestHelper;
-    let room: Room;
     let playerService: PlayerService;
     let player2: Player;
     let httpService: HttpService;
     let botExpert1: Bot;
     let botBeginner1: Bot;
     beforeEach(async () => {
-        room = new Room();
-        room.roomInfo = DEFAULT_ROOM_INFO;
-        room.currentPlayerPseudo = '';
-
-        playerService = new PlayerService();
         player2 = new Player();
-        playerService.player.pseudo = 'playerPseudo';
         player2.pseudo = 'playerPseudo2';
         player2.isItsTurn = true;
-        room.players = [playerService.player, player2];
+
+        playerService = new PlayerService();
+        playerService.player.pseudo = 'playerPseudo';
+        playerService.room.roomInfo = DEFAULT_ROOM_INFO;
+        playerService.room.currentPlayerPseudo = '';
+        playerService.room.players = [playerService.player, player2];
 
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketHelper = new SocketTestHelper();
@@ -74,10 +73,10 @@ describe('PlayersInfosComponent', () => {
                 { provide: SessionStorageService, useValue: sessionStorageServiceSpy },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: HttpService },
-                { provide: Room, useValue: room },
                 { provide: PlayerService, useValue: playerService },
                 { provide: MatDialog, useClass: MatDialogMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -122,12 +121,12 @@ describe('PlayersInfosComponent', () => {
     describe('get dictionary tests', () => {
         it('should return the dictionary title of the room on get dictionary', () => {
             const expectedResult = 'monDictionnaire';
-            room.roomInfo.dictionary = expectedResult;
+            playerService.room.roomInfo.dictionary = expectedResult;
             expect(component.dictionary).toEqual(expectedResult);
         });
 
         it('should return an empty string if the room is undefined', () => {
-            component.room = undefined as unknown as Room;
+            component.playerService.room = undefined as unknown as Room;
             expect(component.dictionary).toEqual('');
         });
     });
@@ -201,7 +200,7 @@ describe('PlayersInfosComponent', () => {
                 const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
                 componentPrivateAccess.configureBaseSocketFeatures();
                 playerService.player.isItsTurn = true;
-                room.roomInfo.isSolo = true;
+                playerService.room.roomInfo.isSolo = true;
                 // eslint-disable-next-line dot-notation -- we need to set private attribute
                 componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
                 socketHelper.peerSideEmit('playerTurnChanged', playerService.player.pseudo);
@@ -210,7 +209,7 @@ describe('PlayersInfosComponent', () => {
 
             it('should set the flag isGameOver to true when receiving the event "gameIsOver"', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
-                componentPrivateAccess.room.roomInfo.isGameOver = false;
+                componentPrivateAccess.playerService.room.roomInfo.isGameOver = false;
                 socketHelper.peerSideEmit('gameIsOver', []);
                 expect(componentPrivateAccess.isGameOver).toEqual(true);
             });
@@ -224,7 +223,7 @@ describe('PlayersInfosComponent', () => {
                 const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
                 componentPrivateAccess.configureBaseSocketFeatures();
                 playerService.player.isItsTurn = true;
-                room.roomInfo.isSolo = true;
+                playerService.room.roomInfo.isSolo = true;
                 // eslint-disable-next-line dot-notation -- we need to set private attribute
                 componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
                 socketHelper.peerSideEmit('playerLeft', playerService.player.pseudo);
@@ -233,7 +232,7 @@ describe('PlayersInfosComponent', () => {
             it('should call removeItem from sessionStorageService if isSolo on "playerLeft" event', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
                 playerService.player.isItsTurn = true;
-                room.roomInfo.isSolo = true;
+                playerService.room.roomInfo.isSolo = true;
                 // eslint-disable-next-line dot-notation -- we need to set private attribute
                 componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
                 socketHelper.peerSideEmit('playerLeft', playerService.player.pseudo);

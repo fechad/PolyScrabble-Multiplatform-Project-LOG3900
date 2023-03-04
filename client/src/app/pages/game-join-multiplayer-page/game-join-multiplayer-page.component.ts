@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
-import { GAME_REJECTION_BY_ADVERSARY, INVALID_PSEUDO, ROOM_ERROR, WAITING_FOR_CONFIRMATION } from '@app/constants/status-constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -20,7 +19,7 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
     isRejected: boolean;
     canJoinRoom: boolean;
 
-    constructor(protected socketService: SocketClientService, private router: Router, public room: Room, public playerService: PlayerService) {
+    constructor(protected socketService: SocketClientService, private router: Router, public playerService: PlayerService) {
         super(socketService);
         this.isPseudoValid = true;
         this.canJoinRoom = true;
@@ -31,21 +30,13 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         this.availableRooms = [];
     }
 
-    get roomStatusText(): string {
-        if (this.isInRoom) return WAITING_FOR_CONFIRMATION;
-        if (this.isRejected) return GAME_REJECTION_BY_ADVERSARY;
-        if (!this.isPseudoValid) return INVALID_PSEUDO;
-        if (!this.canJoinRoom) return ROOM_ERROR;
-        return '';
+    get room(): Room {
+        return this.playerService.room;
     }
 
     ngOnInit() {
         this.connectSocket();
         this.getAvailableRooms();
-    }
-
-    isRoomStatusTextEmpty(): boolean {
-        return this.roomStatusText === '';
     }
 
     openPasswordPopup(availableRoom: Room, roomPopup: HTMLDivElement, darkBackground: HTMLDivElement) {
@@ -88,7 +79,8 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.PlayerAccepted, (roomCreator: Room) => {
             sessionStorage.removeItem('data');
-            this.setRoomServerToThisRoom(roomCreator);
+            this.room.setRoom(roomCreator);
+
             // TODO: remove currentPlayerPseudo. Obsolete
             this.room.currentPlayerPseudo = this.playerService.player.pseudo;
             this.socketService.send(SocketEvent.JoinChatChannel, {
@@ -131,13 +123,5 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
 
         this.canJoinRoom = true;
         return true;
-    }
-
-    private setRoomServerToThisRoom(roomServer: Room) {
-        this.room.roomInfo.name = roomServer.roomInfo.name;
-        this.room.roomInfo.timerPerTurn = roomServer.roomInfo.timerPerTurn;
-        this.room.roomInfo.dictionary = roomServer.roomInfo.dictionary;
-        this.room.roomInfo.gameType = roomServer.roomInfo.gameType;
-        this.room.players = roomServer.players;
     }
 }

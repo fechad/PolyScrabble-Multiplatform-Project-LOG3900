@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminGamesPageComponent } from './admin-games-page.component';
 
@@ -8,6 +9,7 @@ describe('AdminGamesPageComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [AdminGamesPageComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

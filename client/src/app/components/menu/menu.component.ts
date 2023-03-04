@@ -31,7 +31,6 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     availableDiscussionChannels: DiscussionChannel[];
     constructor(
         private playerService: PlayerService,
-        public room: Room,
         private httpService: HttpService,
         private router: Router,
         protected socketService: SocketClientService,
@@ -41,6 +40,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
         this.availableDiscussionChannels = [];
+    }
+
+    get room(): Room {
+        return this.playerService.room;
     }
 
     get isGameCreator(): boolean {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */ // We want to set private attribute of the class for multiple tests
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
-import { Room } from '@app/classes/room';
 import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { TIMER_TEST_DELAY } from '@app/constants/constants';
@@ -43,6 +43,7 @@ describe('RackComponent', () => {
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: PlayerService, useValue: playerService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -116,21 +117,18 @@ describe('RackComponent', () => {
         });
 
         it('should return false if it the letters bank has not enough letters', () => {
-            const roomService = fixture.debugElement.injector.get(Room);
-            roomService.isBankUsable = false;
+            playerService.room.isBankUsable = false;
             expect(component.isExchangeAllowed()).toBeFalse();
         });
 
         it('should return false if it is its turn but bank is not usable', () => {
-            const roomService = fixture.debugElement.injector.get(Room);
             playerService.player.isItsTurn = true;
-            roomService.isBankUsable = false;
+            playerService.room.isBankUsable = false;
             expect(component.isExchangeAllowed()).toBeFalse();
         });
 
         it('should return true if the conditions are respected ', () => {
-            const roomService = fixture.debugElement.injector.get(Room);
-            roomService.isBankUsable = true;
+            playerService.room.isBankUsable = true;
             playerService.player.isItsTurn = true;
             const spy = spyOn(component, 'areTilesSelectedForExchange').and.returnValues(true);
             const result = component.isExchangeAllowed();
@@ -138,8 +136,7 @@ describe('RackComponent', () => {
             expect(result).toBeTruthy();
         });
         it('should return false if the conditions are not respected ', () => {
-            const roomService = fixture.debugElement.injector.get(Room);
-            roomService.isBankUsable = true;
+            playerService.room.isBankUsable = true;
             playerService.player.isItsTurn = false;
             const spy = spyOn(component, 'areTilesSelectedForExchange').and.returnValues(true);
             const result = component.isExchangeAllowed();

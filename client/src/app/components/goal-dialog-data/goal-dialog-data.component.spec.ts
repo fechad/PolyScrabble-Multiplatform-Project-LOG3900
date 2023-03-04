@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GoalDialogDataComponent } from './goal-dialog-data.component';
@@ -19,6 +20,7 @@ describe('GoalDialogDataComponent', () => {
                 { provide: MAT_DIALOG_DATA, useValue: [] },
                 { provide: MatDialogRef, useClass: MatDialogRefMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

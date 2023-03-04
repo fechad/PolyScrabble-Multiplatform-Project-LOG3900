@@ -1,6 +1,7 @@
 /* eslint-disable dot-notation */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -30,6 +31,7 @@ describe('EditDictionaryPopupComponent', () => {
                 { provide: FormBuilder },
                 { provide: MatDialogRef, useClass: MatDialogRefMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
