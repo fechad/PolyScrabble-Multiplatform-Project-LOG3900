@@ -12,14 +12,8 @@ import '../components/sidebar.dart';
 import '../components/user_resume.dart';
 import '../config/colors.dart';
 import '../config/environment.dart';
-import '../config/flutter_flow/flutter_flow_widgets.dart';
 import '../services/multiplayer_game_service.dart';
-import 'connexion_page.dart';
-
-import 'game_page.dart';
-
 import 'menu_page.dart';
-
 
 Io.Socket socket = Io.io(
     getSocketURL(),
@@ -118,118 +112,119 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Colors.white,
+      key: scaffoldKey,
+      backgroundColor: Colors.white,
 
-        drawer: Drawer(
-            child: page == 0 ? ChatDrawer() : UserResume(),
-          // other drawer controller properties here
-        ),
+      drawer: Drawer(
+        child: page == 0 ? ChatDrawer() : UserResume(),
+        // other drawer controller properties here
+      ),
       onDrawerChanged: (isOpen) {
         // write your callback implementation here
-        if(!isOpen) Timer(Duration(milliseconds: 250), () {
-          setState(() {
-            page = 0;
+        if (!isOpen)
+          Timer(Duration(milliseconds: 250), () {
+            setState(() {
+              page = 0;
+            });
           });
-        });
       },
-        body: Stack(children: <Widget>[
-          Container(
-            child: Center(
-              // Center is a layout widget. It takes a single child and positions it
-              // in the middle of the parent.
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Image.asset(
-                      "assets/images/scrabble_hero.png",
-                    ),
+      body: Stack(children: <Widget>[
+        Container(
+          child: Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    "assets/images/scrabble_hero.png",
                   ),
-                  SizedBox(height: 130),
-                  Text("Modes de jeu",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 35,
-                        decoration: TextDecoration.underline,
-                      )),
-                  SizedBox(height: 60),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Palette.mainColor,
-                      minimumSize: Size(300, 40),
-                      textStyle: const TextStyle(fontSize: 20),
-                    ),
-                    child: const Text('Scrabble Classique'),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const MenuPage()));
-                    },
+                ),
+                SizedBox(height: 130),
+                Text("Modes de jeu",
+                    style: TextStyle(
+                      fontFamily: "Nunito",
+                      fontSize: 35,
+                      decoration: TextDecoration.underline,
+                    )),
+                SizedBox(height: 60),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Palette.mainColor,
+                    minimumSize: Size(300, 40),
+                    textStyle: const TextStyle(fontSize: 20),
                   ),
-                  SizedBox(height: 15),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Palette.mainColor,
-                      minimumSize: Size(300, 40),
-                      textStyle: const TextStyle(fontSize: 20),
-                    ),
-                    child: const Text('Scrabble Mania'),
-                    onPressed: () {
-                      setState(() {
-                        page = 1;
-                        scaffoldKey.currentState?.openDrawer();
-                      });
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: ((context) {
-                      //       return GeneralChatWidget();
-                      //     })));
-                    },
+                  child: const Text('Scrabble Classique'),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const MenuPage()));
+                  },
+                ),
+                SizedBox(height: 15),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Palette.mainColor,
+                    minimumSize: Size(300, 40),
+                    textStyle: const TextStyle(fontSize: 20),
                   ),
-                  SizedBox(height: 200),
-                ],
-              ),
+                  child: const Text('Scrabble Mania'),
+                  onPressed: () {
+                    setState(() {
+                      page = 1;
+                      scaffoldKey.currentState?.openDrawer();
+                    });
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: ((context) {
+                    //       return GeneralChatWidget();
+                    //     })));
+                  },
+                ),
+                SizedBox(height: 200),
+              ],
             ),
           ),
-          CollapsingNavigationDrawer(),
-        ]),
-        // endDrawer: Drawer(
-        //   child: Container(
-        //     color: Colors.white,
-        //     child: Center(
-        //       child: FFButtonWidget(
-        //           onPressed: () {
-        //             if (!isProduction) return;
-        //             httpService
-        //                 .logoutUser(authenticator.currentUser.username)
-        //                 .then((value) => chatService.leaveDiscussion(
-        //                     'General Chat',
-        //                     authenticator
-        //                         .currentUser.username)); //TODO: Envoyer l'email
-        //             Navigator.push(
-        //                 context,
-        //                 MaterialPageRoute(
-        //                     builder: (context) => const ConnexionPageWidget()));
-        //           },
-        //           text: 'Log out',
-        //           options: const FFButtonOptions(
-        //             width: 240,
-        //             height: 50,
-        //             color: Palette.mainColor,
-        //             textStyle: TextStyle(
-        //               fontFamily: 'Nunito',
-        //               color: Colors.white,
-        //               fontSize: 24,
-        //             ),
-        //             borderSide: BorderSide(
-        //               color: Colors.transparent,
-        //               width: 1,
-        //             ),
-        //             borderRadius: 2,
-        //           )),
-        //     ),
-        //   ), // This trailing comma makes auto-formatting nicer for build methods.
-        // )
+        ),
+        CollapsingNavigationDrawer(),
+      ]),
+      // endDrawer: Drawer(
+      //   child: Container(
+      //     color: Colors.white,
+      //     child: Center(
+      //       child: FFButtonWidget(
+      //           onPressed: () {
+      //             if (!isProduction) return;
+      //             httpService
+      //                 .logoutUser(authenticator.currentUser.username)
+      //                 .then((value) => chatService.leaveDiscussion(
+      //                     'General Chat',
+      //                     authenticator
+      //                         .currentUser.username)); //TODO: Envoyer l'email
+      //             Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(
+      //                     builder: (context) => const ConnexionPageWidget()));
+      //           },
+      //           text: 'Log out',
+      //           options: const FFButtonOptions(
+      //             width: 240,
+      //             height: 50,
+      //             color: Palette.mainColor,
+      //             textStyle: TextStyle(
+      //               fontFamily: 'Nunito',
+      //               color: Colors.white,
+      //               fontSize: 24,
+      //             ),
+      //             borderSide: BorderSide(
+      //               color: Colors.transparent,
+      //               width: 1,
+      //             ),
+      //             borderRadius: 2,
+      //           )),
+      //     ),
+      //   ), // This trailing comma makes auto-formatting nicer for build methods.
+      // )
     );
   }
 }

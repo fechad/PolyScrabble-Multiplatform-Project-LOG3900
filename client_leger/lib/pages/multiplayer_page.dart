@@ -185,7 +185,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                               child: Column(
                                 children: [
                                   CheckboxListTile(
-                                      title: Text('Partie publique avec mot de passe',
+                                      title: Text(
+                                          'Partie publique avec mot de passe',
                                           textAlign: TextAlign.start),
                                       controlAffinity:
                                           ListTileControlAffinity.trailing,
@@ -258,7 +259,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                         isExpertLevel:
                                             gameService.gameData.isExpertLevel,
                                         players: gameService.room.players,
-                                    roomName: gameService.room.roomInfo.name);
+                                        roomName:
+                                            gameService.room.roomInfo.name);
                                   })));
                                 },
                                 style: ButtonStyle(
@@ -301,6 +303,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   checkFormValues() {
     if (difficultyValue == null || timeValue == null) return 'Erreur';
-    gameService.joinRoomMultiplayer(checkboxValue, _gamePasswordController.text);
+    gameService.joinRoomMultiplayer(
+        checkboxValue, _gamePasswordController.text);
   }
 }

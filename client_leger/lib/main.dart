@@ -1,8 +1,8 @@
 import 'package:client_leger/pages/connexion_page.dart';
-import 'package:client_leger/pages/game_page.dart';
-import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:flutter/material.dart';
+
+import 'pages/home_page.dart';
 
 AuthService authenticator = AuthService();
 
@@ -36,6 +36,35 @@ class MyApp extends StatelessWidget {
         //home: const MyHomePage(title: 'PolyScrabble'),
         home: isProduction
             ? ConnexionPageWidget()
-            : MyHomePage(title: 'PolyScrabble'));
+            : /*GamePageWidget()); //:*/ MyHomePage(title: 'PolyScrabble'));
   }
+}
+
+class RebuildController {
+  final GlobalKey rebuildKey = GlobalKey();
+
+  void rebuild() {
+    void rebuild(Element el) {
+      print('object');
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+
+    (rebuildKey.currentContext as Element).visitChildren(rebuild);
+  }
+}
+
+class RebuildWrapper extends StatelessWidget {
+  final RebuildController controller;
+  final Widget child;
+
+  const RebuildWrapper(
+      {Key? key, required this.controller, required this.child})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Container(
+        key: controller.rebuildKey,
+        child: child,
+      );
 }
