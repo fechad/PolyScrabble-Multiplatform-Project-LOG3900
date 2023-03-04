@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/services/chat_service.dart';
@@ -7,6 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart' as Io;
 
 import '../classes/game.dart';
 import '../components/sidebar.dart';
+import '../components/user_resume.dart';
 import '../config/colors.dart';
 import '../config/environment.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
@@ -51,7 +54,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   static const bool isProduction = bool.fromEnvironment('dart.vm.product');
-
+  int page = 0;
   @override
   void initState() {
     super.initState();
@@ -117,7 +120,19 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.white,
-        drawer: const ChatDrawer(),
+
+        drawer: Drawer(
+            child: page == 0 ? ChatDrawer() : UserResume(),
+          // other drawer controller properties here
+        ),
+      onDrawerChanged: (isOpen) {
+        // write your callback implementation here
+        if(!isOpen) Timer(Duration(milliseconds: 250), () {
+          setState(() {
+            page = 0;
+          });
+        });
+      },
         body: Stack(children: <Widget>[
           Container(
             child: Center(
@@ -161,6 +176,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     child: const Text('Scrabble Mania'),
                     onPressed: () {
+                      setState(() {
+                        page = 1;
+                        scaffoldKey.currentState?.openDrawer();
+                      });
                       // Navigator.push(context,
                       //     MaterialPageRoute(builder: ((context) {
                       //       return GeneralChatWidget();
