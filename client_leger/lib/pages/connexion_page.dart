@@ -309,8 +309,9 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
     validUsername = true;
     authenticator.setLoggedInEmail(emailController.text);
     chatService.joinDiscussion('General Chat');
+
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
-      return const MyHomePage(title: 'PolyScrabble');
+      return MyHomePage(title: 'PolyScrabble');
     })));
   }
 }

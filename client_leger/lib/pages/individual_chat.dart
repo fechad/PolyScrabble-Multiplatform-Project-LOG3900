@@ -141,7 +141,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                               onPressed: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: ((context) {
-                                  return GeneralChatWidget();
+                                  return GeneralChatWidget(chatName: 'General Chat',);
                                 })));
                               },
                             ),
@@ -263,7 +263,7 @@ class _ChatWidgetState extends State<ChatWidget> {
             InkWell(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                  return const MyHomePage(title: 'PolyScrabble');
+                  return MyHomePage(title: 'PolyScrabble');
                 })));
               },
               child: Icon(

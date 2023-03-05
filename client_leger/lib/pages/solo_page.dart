@@ -124,7 +124,7 @@ class _SoloPageState extends State<SoloPage> {
                     value: virtualValue,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     elevation: 16,
-                    style: const TextStyle(color: Palette.mainColor),
+                    style: const TextStyle(color: Colors.black),
                     underline: Container(
                       height: 1,
                       color: Colors.black,
@@ -162,7 +162,7 @@ class _SoloPageState extends State<SoloPage> {
                     value: difficultyValue,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     elevation: 16,
-                    style: const TextStyle(color: Palette.mainColor),
+                    style: const TextStyle(color: Colors.black),
                     underline: Container(
                       height: 1,
                       color: Colors.black,
@@ -202,7 +202,7 @@ class _SoloPageState extends State<SoloPage> {
                     value: timeValue,
                     icon: const Icon(Icons.keyboard_arrow_down),
                     elevation: 16,
-                    style: const TextStyle(color: Palette.mainColor),
+                    style: const TextStyle(color: Colors.black),
                     underline: Container(
                       height: 1,
                       color: Colors.black,

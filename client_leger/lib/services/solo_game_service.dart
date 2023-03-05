@@ -2,9 +2,8 @@ import 'package:client_leger/main.dart';
 import 'package:client_leger/services/socket_service.dart';
 
 import '../classes/game.dart';
+import 'link_service.dart';
 
-SocketService socketService = SocketService();
-SocketService socketServiceBot = SocketService();
 
 class SoloGameService {
   GameData gameData;
@@ -28,7 +27,7 @@ class SoloGameService {
 
     player = Player(
         pseudo: authenticator.currentUser.username,
-        socketId: socketService.socket.id ?? 'id',
+        socketId: socketService.getSocketID() ?? 'id',
         points: 0,
         isCreator: true,
         isItsTurn: false);
@@ -64,7 +63,7 @@ class SoloGameService {
   setPlayerInfo(String pseudo) {
     player.pseudo = pseudo;
     player.isCreator = true;
-    player.socketId = socketService.socket.id!;
+    player.socketId = socketService.getSocketID()!;
     room.players = [player];
   }
 

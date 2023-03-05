@@ -1,14 +1,14 @@
 //widget from https://github.com/PrateekSharma1712/custom_navigation_drawer/blob/master/lib/commons/collapsing_navigation_drawer_widget.dart
-
-import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/pages/connexion_page.dart';
-import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/pages/profile_page.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../config/colors.dart';
 import '../model/custom_navigation_drawer.dart';
 import 'package:flutter/material.dart';
+import '../pages/home_page.dart';
+import '../services/chat_service.dart';
+
+
+final ChatService chat = chatService;
 
 class CollapsingNavigationDrawer extends StatefulWidget {
   @override

@@ -3,29 +3,16 @@ import 'dart:async';
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/services/chat_service.dart';
-import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart' as Io;
-
 import '../classes/game.dart';
 import '../components/sidebar.dart';
 import '../components/user_resume.dart';
 import '../config/colors.dart';
-import '../config/environment.dart';
+import '../services/init_service.dart';
 import '../services/multiplayer_game_service.dart';
 import 'menu_page.dart';
 
-Io.Socket socket = Io.io(
-    getSocketURL(),
-    Io.OptionBuilder()
-        .setTransports(['websocket'])
-        .setPath('/socket.io')
-        .disableAutoConnect()
-        .build());
-
-final socketService = SocketService();
 final chatService = ChatService();
-late MultiplayerGameService gameService;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -53,55 +40,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     if (!isProduction) authenticator.setLoggedInEmail('');
-    gameService = MultiplayerGameService(
-        gameData: GameData(
-            pseudo: authenticator.currentUser.username,
-            dictionary: 'dictionnaire par défaut',
-            timerPerTurn: '',
-            botName: '',
-            isExpertLevel: false));
     connect();
   }
 
-  void connect() {
-    try {
-      socketService.connect();
-    } catch (e) {
-      print(e);
-    }
 
-    try {
-      print('config');
-      print(socket.id);
-      gameService.configureSocketFeatures();
-    } catch (e) {
-      print(e);
-    }
-
-    try {
-      socket.connect();
-      socket.onConnect((data) {
-        print('connect');
-      });
-      socket.on(
-          'connect_error',
-          (d) => {
-                print(socket.io.options),
-                print(d),
-                //socket.io.replaceAll(':0', ''),
-                //socket.disconnect().connect(),
-                //socket.io.options.update('transports', (value) => ['polling']),
-                print(socket.io.options)
-              });
-
-      print(socket.connected);
-    } catch (e) {
-      print(e);
-    }
-    // socket.on('event', (data) => print(data));
-    // socket.onDisconnect((_) => print('disconnect'));
-    // socket.on('fromServer', (_) => print(_));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-
       drawer: Drawer(
         child: page == 0 ? ChatDrawer() : UserResume(),
         // other drawer controller properties here
@@ -228,3 +169,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+

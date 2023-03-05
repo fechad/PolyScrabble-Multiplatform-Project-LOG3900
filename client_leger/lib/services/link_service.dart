@@ -1,14 +1,26 @@
 import 'package:client_leger/classes/placement.dart';
 import 'package:client_leger/components/tile.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
+import '../classes/game.dart';
 import '../main.dart';
+import 'multiplayer_game_service.dart';
 
 part 'link_service.g.dart';
 
 final RebuildController controller = RebuildController();
 final RebuildController boardController = RebuildController();
+SocketService socketService = SocketService.instance;
+SocketService socketServiceBot = SocketService.instance;
+final gameService = MultiplayerGameService(
+gameData: GameData(
+pseudo: authenticator.currentUser.username,
+dictionary: 'dictionnaire par défaut',
+timerPerTurn: '',
+botName: '',
+isExpertLevel: false));
 
 // ignore: library_private_types_in_public_api
 class LinkService = _LinkService with _$LinkService;
@@ -36,6 +48,9 @@ abstract class _LinkService with Store {
   ]);
 
   @observable
+  Observable<bool> joinButtonPressed = Observable(false);
+
+  @observable
   Observable<int> letterBankCount = Observable(0);
 
   @observable
@@ -52,8 +67,17 @@ abstract class _LinkService with Store {
     return rows;
   }
 
+  bool getJoinButtonPressed() {
+    return joinButtonPressed.value;
+  }
+
   int getLetterBankCount() {
     return letterBankCount.value;
+  }
+
+  @action
+  buttonChange() {
+    joinButtonPressed.value = !joinButtonPressed.value;
   }
 
   @action

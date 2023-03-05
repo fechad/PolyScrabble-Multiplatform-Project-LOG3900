@@ -16,7 +16,7 @@ class OtherMessage extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 1150, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 1070, 0),
             child: (Text(
               time,
               textAlign: TextAlign.start,

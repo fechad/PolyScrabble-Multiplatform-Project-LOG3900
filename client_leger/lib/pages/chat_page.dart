@@ -10,23 +10,28 @@ import '../components/system_message.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
+import '../services/init_service.dart';
+
 class GeneralChatWidget extends StatefulWidget {
+  final String chatName;
+  GeneralChatWidget({super.key, required this.chatName});
   @override
-  _GeneralChatWidgetState createState() => _GeneralChatWidgetState();
+  _GeneralChatWidgetState createState() => _GeneralChatWidgetState(chatName: chatName);
 }
 
 class _GeneralChatWidgetState extends State<GeneralChatWidget> {
+  _GeneralChatWidgetState({required this.chatName});
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController textController = TextEditingController();
   final ScrollController _controller = ScrollController();
+  final String chatName;
   bool isWriting = false;
-  List<ChatMessage> messages = chatService.getDiscussions()[0].messages;
-
-
+  late List<ChatMessage> messages;
 
   @override
   void initState() {
     super.initState();
+    messages = chatService.getDiscussionChannelByName(chatName).messages;
     connect();
     Timer(
         Duration(milliseconds: 0),
@@ -49,6 +54,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                               message: message['message'])),
                         })
               })),
+
         if(messages[messages.length-1].sender != authenticator.currentUser.username){
           FlutterRingtonePlayer.play(
           android: AndroidSounds.notification,
@@ -65,6 +71,12 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   void _scrollDown() {
     _controller.jumpTo(_controller.position.maxScrollExtent + 200.0);
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +106,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
               alignment: const AlignmentDirectional(0, 1),
               child: Container(
                 child: (Text(
-                  'General Chat',
+                  chatName,
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).title1.override(
                         fontFamily: 'Poppins',
@@ -106,7 +118,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
             InkWell(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                  return const MyHomePage(title: 'PolyScrabble');
+                  return MyHomePage(title: 'PolyScrabble');
                 })));
               },
               child: Icon(
@@ -180,10 +192,10 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
     textController.clear();
 
     ChatMessage msg = ChatMessage(
-        channelName: 'General Chat',
+        channelName: chatName,
         sender: authenticator.getCurrentUser().username,
         system: false,
-        time: DateFormat('HH:mm:ss').format(DateTime.now()),
+        time: '',
         message: txt.trim());
 
     chatService.addMessage(message: msg, channelName: msg.channelName);
@@ -227,7 +239,6 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO add condition and see who sends msg to use different layout of msg -- system vs sender vs receiver
-
     if (system)
       return (SystemMessage(txt: message, time: time));
     else if (sender == authenticator.currentUser.username)

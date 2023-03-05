@@ -194,7 +194,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                           .then((value) => Navigator.of(context)
                                               .push(MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const MyHomePage(
+                                                      MyHomePage(
                                                           title:
                                                               'PolyScrabble'))))
                                           .catchError((error) =>
