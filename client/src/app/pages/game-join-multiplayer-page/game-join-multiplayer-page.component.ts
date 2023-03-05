@@ -86,6 +86,7 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
             this.socketService.send(SocketEvent.JoinChatChannel, {
                 name: roomCreator.roomInfo.name,
                 user: this.playerService.player.pseudo,
+                isRoomChannel: true,
             });
             this.router.navigate(['/game/multiplayer/wait']);
         });

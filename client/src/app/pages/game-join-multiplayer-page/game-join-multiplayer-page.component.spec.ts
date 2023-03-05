@@ -103,6 +103,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
                 expect(socketServiceMock.send).toHaveBeenCalledWith(SocketEvent.JoinChatChannel, {
                     name: roomMock.roomInfo.name,
                     user: component.playerService.player.pseudo,
+                    isRoomChannel: true,
                 });
             });
 

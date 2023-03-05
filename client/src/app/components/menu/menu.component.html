@@ -19,6 +19,9 @@
                     <button class="search-button">Search</button>
                 </div>
                 <div></div>
+                <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
+                    {{ roomChannel.name }}
+                </button>
                 <div *ngFor="let discussionChannel of availableDiscussionChannels; index as i" class="chats-list">
                     <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
                         {{ discussionChannel.name }}
@@ -26,7 +29,7 @@
                     <hr *ngIf="i === 0" size="1" width="97%" />
                 </div>
             </div>
-            <button class="button">New Chat</button>
+            <button (click)="createChatChannel('custom channel')" class="button new-channel">New Chat</button>
         </div>
     </div>
     <div #chatContainer class="chat-container">

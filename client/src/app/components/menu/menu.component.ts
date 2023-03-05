@@ -29,6 +29,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     @ViewChild('menuDarkBackground', { static: false }) private menuDarkBackground!: ElementRef<HTMLDivElement>;
     selectedDiscussionChannel: DiscussionChannel;
     availableDiscussionChannels: DiscussionChannel[];
+    roomChannel: DiscussionChannel;
     constructor(
         private playerService: PlayerService,
         private httpService: HttpService,
@@ -40,6 +41,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
         this.availableDiscussionChannels = [];
+        this.roomChannel = new DiscussionChannel('');
     }
 
     get room(): Room {
@@ -73,6 +75,13 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.chatContainer.nativeElement.classList.add('show');
     }
 
+    showRoomChatChannel() {
+        this.selectedDiscussionChannel = this.roomChannel;
+        this.closeChatMenu();
+        this.menuContainer.nativeElement.classList.add('show');
+        this.chatContainer.nativeElement.classList.add('show');
+    }
+
     closeChat() {
         this.menuContainer.nativeElement.classList.remove('show');
         this.chatContainer.nativeElement.classList.remove('show');
@@ -80,6 +89,25 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     updateAvailableChannels() {
         this.socketService.send(SocketEvent.GetDiscussionChannels);
+    }
+
+    createChatChannel(channelName: string) {
+        this.socketService.send(SocketEvent.CreateChatChannel, {
+            channel: channelName,
+            username: {
+                username: this.playerService.player.pseudo,
+                email: '',
+                avatarURL: '',
+                level: 0,
+                badges: [],
+                highScore: 0,
+                gamesWon: 0,
+                totalXp: 0,
+                gamesPlayed: [],
+                bestGames: [],
+            },
+            isRoomChannel: false,
+        });
     }
 
     leaveRoom() {
@@ -148,6 +176,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
             this.availableDiscussionChannels = channels;
+        });
+
+        this.socketService.on(SocketEvent.RoomChannelUpdated, (roomChannel: DiscussionChannel) => {
+            this.roomChannel = roomChannel || new DiscussionChannel('');
             this.handleGameWaitPage();
         });
 
@@ -178,13 +210,17 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     private handleGameWaitPage() {
-        if (!this.isWaitMultiPage) return;
-        const gameRoomChat = this.getDiscussionChannelByName(this.room.roomInfo.name);
-        if (!gameRoomChat) return;
-        this.showChatChannel(this.availableDiscussionChannels.indexOf(gameRoomChat));
+        if (this.isWaitMultiPage && this.roomChannel.name === '') {
+            // TODO warn that creator left;
+            this.router.navigate(['/main']);
+            return;
+        }
+        if (this.isWaitMultiPage) this.showRoomChatChannel();
     }
 
     private getDiscussionChannelByName(channelName: string): DiscussionChannel | undefined {
-        return this.availableDiscussionChannels.find((discussionChannel: DiscussionChannel) => discussionChannel.name === channelName);
+        return this.roomChannel.name === channelName
+            ? this.roomChannel
+            : this.availableDiscussionChannels.find((discussionChannel: DiscussionChannel) => discussionChannel.name === channelName);
     }
 }

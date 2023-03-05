@@ -25,24 +25,32 @@ export class SocketChannelService extends SocketHandlerService {
         super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
     }
 
-    handleCreateChannel(channelName: string, creator: Account) {
+    handleCreateChannel(channelName: string, creator: Account, isRoomChannel?: boolean) {
         if (!channelName) return;
-        const added = this.discussionChannelService.addChannel(channelName, creator);
-        if (added) this.sendToEveryone(SocketEvent.AvailableChannels, this.discussionChannelService.availableChannels);
+        const addedChannel = this.discussionChannelService.addChannel(channelName, creator, isRoomChannel);
+        if (!isRoomChannel) {
+            this.sendToEveryone(SocketEvent.AvailableChannels, this.discussionChannelService.availableChannels);
+            return;
+        }
+        this.sendToEveryoneInRoom(channelName, SocketEvent.RoomChannelUpdated, addedChannel);
     }
 
-    handleJoinChannel(socket: io.Socket, channelName: string, username: string) {
+    handleJoinChannel(socket: io.Socket, channelName: string, username: string, isRoomChannel: boolean) {
         if (!channelName) return;
         this.discussionChannelService.joinChannel(channelName, username);
         this.socketJoin(socket, channelName);
+        if (isRoomChannel) this.socketEmit(socket, SocketEvent.RoomChannelUpdated, this.discussionChannelService.getDiscussionChannel(channelName));
+
         const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
         this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
     }
 
-    handleLeaveChannelCreator(socket: io.Socket, channelName: string) {
+    handleLeaveChannelCreator(socket: io.Socket, channelName: string, isRoomChannel: boolean) {
         const availableChannels = this.discussionChannelService.creatorLeaveChannel(channelName);
         this.socketLeaveRoom(socket, channelName);
-        this.sendToEveryone(SocketEvent.AvailableChannels, availableChannels);
+
+        if (isRoomChannel) this.sendToEveryoneInRoom(channelName, SocketEvent.RoomChannelUpdated, null);
+        else this.sendToEveryone(SocketEvent.AvailableChannels, availableChannels);
     }
 
     handleLeaveChannel(socket: io.Socket, channelName: string, username: string) {
