@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { WordsFinder } from './words-finder';
 
-describe.only('WordsFinder', () => {
+describe('WordsFinder', () => {
     let trie: Trie;
     let wordStructureTrie: WordStructureTrie;
     let finder: WordsFinder;

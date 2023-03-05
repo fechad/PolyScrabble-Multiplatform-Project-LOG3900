@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { WordStructureTrie } from './structure-trie';
 
-describe.only('WordStructureTrie', () => {
+describe('WordStructureTrie', () => {
     let trie: WordStructureTrie;
     beforeEach(() => {
         trie = new WordStructureTrie('bon');
