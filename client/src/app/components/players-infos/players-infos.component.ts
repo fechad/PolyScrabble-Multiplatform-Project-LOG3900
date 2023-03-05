@@ -1,44 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { EndGamePopupComponent } from '@app/components/endgame-popup/endgame-popup.component';
-import { BASE_TEN, MAX_RECONNECTION_DELAY, MINUTE_IN_SECOND, ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { BASE_TEN, MINUTE_IN_SECOND } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
-import { Bot } from '@app/interfaces/bot';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
-import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
-import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
-import { lastValueFrom } from 'rxjs';
 const END_GAME_WIDTH = '400px';
 @Component({
     selector: 'app-players-infos',
     templateUrl: './players-infos.component.html',
     styleUrls: ['./players-infos.component.scss'],
 })
-export class PlayersInfosComponent implements OnInit {
+export class PlayersInfosComponent extends ComponentCommunicationManager implements OnInit {
     remainingTime: number;
     currentPlayerTurnPseudo: string;
     winnerPseudo: string;
     numberOfWinner: number;
-    bot: Player;
-    bots: Bot[];
     constructor(
-        private socketService: SocketClientService,
-        private socketClientBotService: SocketClientBotService,
+        protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
-        private httpService: HttpService,
         public playerService: PlayerService,
         private dialog: MatDialog,
     ) {
+        super(socketService);
         this.room.roomInfo.isGameOver = false;
-        if (this.room.players.length >= 2) this.bot = this.room.players[1];
     }
 
     get room(): Room {
@@ -56,13 +49,6 @@ export class PlayersInfosComponent implements OnInit {
     get isGameOver(): boolean {
         return this.room.roomInfo.isGameOver as boolean;
     }
-    get beginners(): Bot[] {
-        return this.bots.filter((e) => e.gameType === 'débutant');
-    }
-
-    get experts(): Bot[] {
-        return this.bots.filter((e) => e.gameType === 'expert');
-    }
 
     get dictionary(): string {
         if (!this.room) return '';
@@ -70,18 +56,8 @@ export class PlayersInfosComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
         this.remainingTime = 0;
-        this.handleRefresh();
-    }
-
-    async handleRefresh() {
-        const updateBots = await lastValueFrom(this.httpService.getAllBots());
-        if (this.httpService.anErrorOccurred()) {
-            this.bots = [];
-            return;
-        }
-        this.bots = updateBots;
     }
 
     getPlayer(pseudo: string): Player | undefined {
@@ -117,58 +93,20 @@ export class PlayersInfosComponent implements OnInit {
         });
     }
 
-    private connect() {
-        if (this.socketService.isSocketAlive() && this.socketClientBotService.isSocketAlive()) {
-            this.configureBaseSocketFeatures();
-            return;
-        }
-        this.configureSocketFeaturesOnPageSocketConnection();
-    }
-
-    private configureSocketFeaturesOnPageSocketConnection() {
-        let secondPassed = 0;
-
-        const timerInterval = setInterval(() => {
-            if (secondPassed >= MAX_RECONNECTION_DELAY) {
-                clearInterval(timerInterval);
-            }
-            if (this.socketService.isSocketAlive() && this.socketClientBotService.isSocketAlive()) {
-                this.configureBaseSocketFeatures();
-                this.socketService.send(SocketEvent.GetPlayerInfos, this.room.roomInfo.name);
-                clearInterval(timerInterval);
-            }
-            secondPassed++;
-        }, ONE_SECOND_IN_MS);
-    }
-
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.playerService.player.isItsTurn) {
                 this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             }
             this.currentPlayerTurnPseudo = currentPlayerTurnPseudo;
             this.playerService.player.isItsTurn = this.playerService.player.pseudo === currentPlayerTurnPseudo;
-            if (this.room.roomInfo.isSolo && this.bot && this.bot.pseudo === currentPlayerTurnPseudo) {
-                this.socketClientBotService.send(SocketEvent.BotPlayAction);
-            }
         });
 
         this.socketService.on(SocketEvent.TimeUpdated, (room: Room) => {
             this.remainingTime = Math.max(+room.roomInfo.timerPerTurn - room.elapsedTime, 0);
         });
 
-        this.socketService.on(SocketEvent.PlayerLeft, (player: Player) => {
-            const beginnersNames = this.beginners.map((e) => e.name);
-            const botName = beginnersNames.filter((name) => name !== this.playerService.player.pseudo)[
-                Math.floor(Math.random() * beginnersNames.length)
-            ];
-
-            this.socketClientBotService.send(SocketEvent.ConvertToRoomSoloBot, {
-                roomName: this.room.roomInfo.name,
-                botName,
-                points: player.points,
-            });
-
+        this.socketService.on(SocketEvent.PlayerLeft, () => {
             this.sessionStorageService.removeItem('data');
         });
 
@@ -186,23 +124,8 @@ export class PlayersInfosComponent implements OnInit {
             playerToUpdate.points = player.points;
         });
 
-        this.socketService.on(SocketEvent.ConvertToRoomSoloBotStatus, () => {
-            this.room.roomInfo.isSolo = true;
-        });
-
-        this.socketService.on(SocketEvent.BotInfos, (bot: Player) => {
-            this.bot = bot;
-            if (this.room.players.length === 1) {
-                this.room.players.push(bot);
-                return;
-            }
-            const playerToSwap = this.room.players.find((player) => player.pseudo !== this.playerService.player.pseudo);
-            if (!playerToSwap) return;
-            this.room.players[this.room.players.indexOf(playerToSwap)] = bot;
-        });
-
-        this.socketClientBotService.on(SocketEvent.BotPlayedAction, (message: string) => {
-            this.socketClientBotService.send(SocketEvent.Message, message);
+        this.socketService.on(SocketEvent.BotJoinedRoom, (players: Player[]) => {
+            this.room.players = players;
         });
     }
 

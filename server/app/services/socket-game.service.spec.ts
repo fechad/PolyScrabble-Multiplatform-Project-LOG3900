@@ -4,7 +4,6 @@ import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
-import { Timer } from '@app/classes/timer';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { CommandResult } from '@app/interfaces/command-result';
@@ -74,27 +73,6 @@ describe('socketGameService service tests', () => {
 
     afterEach(() => {
         sinon.restore();
-    });
-
-    describe('Bot tests', () => {
-        it('should sendToEveryone in room the action of the bot after 3 seconds on handleBotPlayAction', async () => {
-            getRoomStub.returns(roomMock);
-            const playTurnSpy = sinon.stub(roomMock.bot, 'playTurn');
-            const socketEmitRoomSpy = sinon.spy(socketGameService, 'socketEmitRoom');
-            sinon.stub(Timer, 'wait').withArgs(0);
-
-            await socketGameService.handleBotPlayAction(socketMock);
-            assert(getRoomStub.called, 'did not call roomService.getRoom on handleBotPlayAction');
-            assert(playTurnSpy.called, 'did not call room.bot.playTurnStub on handleBotPlayAction');
-            assert(sendEveryoneStub.calledOnce, 'did not call sendToEveryoneInRoom on handleBotPlayAction');
-            assert(socketEmitRoomSpy.calledOnce, 'did not call socketEmiRoom on handleBotPlatAction');
-        });
-
-        it('should sendToEveryone in room the skip message of the bot on handleBotPlayAction', async () => {
-            await socketGameService.handleBotPlayAction(socketMock);
-            assert(getRoomStub.called, 'did not call roomService.getRoom on handleBotPlayAction');
-            assert(sendEveryoneStub.calledOnce, 'did not call sendToEveryoneInRoom on handleBotPlayAction');
-        });
     });
 
     describe('handleGetAllGoals  tests', () => {
@@ -180,7 +158,7 @@ describe('socketGameService service tests', () => {
             const nTurnPassed = roomMock.turnPassedCounter;
 
             const clock = sinon.useFakeTimers();
-            socketGameService.setTimer(roomMock);
+            socketGameService.setTimer(socketMock, roomMock);
             clock.tick(TIMER_DELAY);
             assert(getCurrentPlayerTurnStub.called, 'did not call room.getCurrentPlayerTurn when conditions were met');
             assert(findStub.called, 'did not call room.players.find when conditions were met');
@@ -193,7 +171,7 @@ describe('socketGameService service tests', () => {
             roomMock.elapsedTime = 10;
 
             const clock = sinon.useFakeTimers();
-            socketGameService.setTimer(roomMock);
+            socketGameService.setTimer(socketMock, roomMock);
             clock.tick(TIMER_DELAY);
             assert(sendEveryoneStub.called, 'did not call sendToEveryoneInRoom when conditions were met');
             done();
@@ -203,7 +181,7 @@ describe('socketGameService service tests', () => {
             roomMock.elapsedTime = -1;
 
             const clock = sinon.useFakeTimers();
-            socketGameService.setTimer(roomMock);
+            socketGameService.setTimer(socketMock, roomMock);
             clock.tick(TIMER_DELAY);
             assert(changeTurnSpy.notCalled, 'called changeTurn when the timer is supposed to be cleared');
             done();

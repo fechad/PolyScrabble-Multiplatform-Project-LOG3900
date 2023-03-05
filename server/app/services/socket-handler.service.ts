@@ -1,6 +1,8 @@
+import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
-import { COUNT_PLAYER_TURN, DEFAULT_ROOM_NAME, DISCONNECT_DELAY, END_TIMER_VALUE, SYSTEM_NAME } from '@app/constants/constants';
+import { DEFAULT_ROOM_NAME, DISCONNECT_DELAY, SYSTEM_NAME } from '@app/constants/constants';
 import { CommandController } from '@app/controllers/command.controller';
+import { GameLevel } from '@app/enums/game-level';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
@@ -29,29 +31,6 @@ export class SocketHandlerService {
         this.commandController = new CommandController(this.chatMessageService);
     }
 
-    handleConvertToRoomSoloBot(socket: io.Socket, data: { roomName: string; botName: string; points: number; isExpertLevel: boolean }) {
-        if (!data.roomName) return;
-        const room = this.roomService.getRoom(data.roomName);
-        if (!room) return;
-        room.createPlayerVirtual(socket.id, data.botName);
-        room.roomInfo.isSolo = true;
-        room.bot.points = data.points;
-        this.socketJoin(socket, room.roomInfo.name);
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotInfos, room.bot);
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ConvertToRoomSoloBotStatus);
-        this.roomService.setUnavailable(room.roomInfo.name);
-        this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
-
-        const systemAlert: ChatMessage = {
-            sender: SYSTEM_NAME,
-            color: MessageSenderColors.SYSTEM,
-            text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + room.bot.pseudo,
-        };
-        this.sendToEveryone(SocketEvent.Message, systemAlert);
-        const botGreeting: ChatMessage = { sender: room.bot.pseudo, color: MessageSenderColors.PLAYER2, text: room.bot.greeting };
-        this.sendToEveryone(SocketEvent.Message, botGreeting);
-    }
-
     sendToEveryoneInRoom(roomName: string, nameEvent: string, dataEvent?: unknown) {
         this.sio.to(roomName).emit(nameEvent, dataEvent);
     }
@@ -71,39 +50,62 @@ export class SocketHandlerService {
         socket.leave(roomName);
     }
 
-    handleDisconnecting(socket: io.Socket) {
-        const roomName = this.getSocketRoom(socket) as string;
-        const room = this.roomService.getRoom(roomName);
-        if (!room) return;
-        if (room.players.length <= 1) {
-            this.roomService.removeRoom(roomName);
-        } else {
+    async handleDisconnecting(socket: io.Socket): Promise<void> {
+        const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
+        if (!room || this.handleOnlyPlayerLeft(room)) return;
+
+        return new Promise((resolve) => {
             setTimeout(() => {
                 const player = room.getPlayer(socket.id);
                 if (!player) return;
-                if (room.bot) {
-                    if (room.turnPassedCounter < COUNT_PLAYER_TURN) {
-                        this.updateLeaderboard(room);
-                    }
-                    room.roomInfo.surrender = 'Mode solo abandonné';
-                    this.updateGame(room).then(() => {
-                        room.removePlayer(player);
-                    });
-                    room.elapsedTime = END_TIMER_VALUE;
-                    player.points = 0;
-                    this.sendToEveryoneInRoom(
-                        roomName,
-                        SocketEvent.GameIsOver,
-                        room.players.filter((playerInRoom) => playerInRoom !== player),
-                    );
-                    this.displayGameResume(room);
+                if (room.isSolo) {
+                    this.handleSoloPlayerLeft(room);
+                    return;
                 }
-                room.removePlayer(player);
-                this.socketEmitRoom(socket, roomName, SocketEvent.PlayerLeft, player);
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
+                resolve(this.handleMultiPlayerLeft(socket, room, player));
             }, DISCONNECT_DELAY);
+        });
+    }
+
+    handleOnlyPlayerLeft(room: Room): boolean {
+        if (room.players.length <= 1) {
+            this.roomService.removeRoom(room.roomInfo.name);
+            return true;
         }
-        this.sendToEveryone('updateAvailableRoom', this.roomService.getRoomsAvailable());
+        return false;
+    }
+
+    handleSoloPlayerLeft(room: Room) {
+        this.roomService.removeRoom(room.roomInfo.name);
+    }
+
+    handleMultiPlayerLeft(socket: io.Socket, room: Room, player: Player) {
+        room.removePlayer(player);
+        if (!room.hasARealPlayerLeft()) {
+            this.roomService.removeRoom(room.roomInfo.name);
+            return;
+        }
+        this.swapPlayerForBot(room, player);
+        this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
+    }
+
+    swapPlayerForBot(room: Room, player: Player) {
+        const desiredLevel = GameLevel.Expert;
+        const bot = room.createPlayerVirtual('Trump', desiredLevel);
+        bot.points = player.points;
+        bot.replaceRack(player.rack);
+
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotJoinedRoom, room.players);
+
+        const systemAlert: ChatMessage = {
+            sender: SYSTEM_NAME,
+            color: MessageSenderColors.SYSTEM,
+            text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + bot.pseudo,
+        };
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemAlert);
+        const botGreeting: ChatMessage = { sender: bot.pseudo, color: MessageSenderColors.PLAYER2, text: bot.greeting };
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, botGreeting);
     }
 
     handleReconnect(socket: io.Socket, playerData: PlayerData) {

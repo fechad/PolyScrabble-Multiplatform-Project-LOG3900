@@ -34,5 +34,12 @@ describe('ComponentCommunicationManager', () => {
             pageCommunicationManager.connectSocket();
             expect(pageCommunicationManager.configureBaseSocketFeatures).toHaveBeenCalled();
         });
+
+        it('should not call socketServiceMock.connect on connection if socket is already connected', () => {
+            socketServiceMock.connect = jasmine.createSpy();
+            socketServiceMock.socket.connected = true;
+            pageCommunicationManager.connectSocket();
+            expect(socketServiceMock.connect).not.toHaveBeenCalled();
+        });
     });
 });

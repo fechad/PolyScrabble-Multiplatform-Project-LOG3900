@@ -1,3 +1,4 @@
+// TODO: delete this class;
 export class Timer {
     static async wait(time: number): Promise<boolean> {
         return new Promise((resolve) => {

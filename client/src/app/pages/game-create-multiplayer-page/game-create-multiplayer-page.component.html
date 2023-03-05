@@ -79,12 +79,12 @@
                         </select>
                     </div>
 
-                    <div class="room-type-container">
+                    <div *ngIf="!isSolo" class="room-type-container">
                         <div>Partie publique</div>
                         <input type="checkbox" formControlName="isPublic" class="room-type-checkbox" />
                     </div>
 
-                    <div [class.hide]="!gameForm.get('isPublic')?.value" class="input-container">
+                    <div *ngIf="!isSolo" [class.hide]="!gameForm.get('isPublic')?.value" class="input-container">
                         <label #roomPasswordLabel (click)="focusInput(roomPasswordInput)" class="simple-label placeholder">Mot de Passe</label>
                         <input
                             #roomPasswordInput
@@ -100,12 +100,10 @@
                     </div>
 
                     <div class="confirm-buttons-container">
-                        <div *ngIf="isSolo">
-                            <button class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
-                                Partie solo
-                            </button>
-                        </div>
-                        <button class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
+                        <button *ngIf="isSolo" class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
+                            Créer la partie
+                        </button>
+                        <button *ngIf="!isSolo" class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
                             Créer la partie
                         </button>
                     </div>

@@ -7,24 +7,17 @@ import * as io from 'socket.io';
 import { SocketHandlerService } from './socket-handler.service';
 
 export class SocketRoomService extends SocketHandlerService {
-    handleJoinRoomSolo(socket: io.Socket, room: Room) {
-        if (!room) return;
-        if (!room.roomInfo.isSolo) return;
-        const availableRoom = this.roomService.createRoom(room);
-        this.socketJoin(socket, availableRoom.roomInfo.name);
-        this.sendToEveryoneInRoom(socket.id, SocketEvent.JoinRoomSoloStatus, availableRoom.roomInfo.name);
-    }
+    handleCreateSoloRoom(socket: io.Socket, data: { room: Room; botName: string; desiredLevel: string }) {
+        if (!data.room) return;
+        if (!data.room.roomInfo.isSolo) return;
 
-    handleJoinRoomSoloBot(socket: io.Socket, data: { roomName: string; botName: string; isExpertLevel: boolean }) {
-        if (!data.roomName) return;
-        const room = this.roomService.getRoom(data.roomName);
-        if (!room) return;
-        const desiredLevel = !data.isExpertLevel ? GameLevel.Beginner : GameLevel.Expert;
-        room.createPlayerVirtual(socket.id, data.botName, desiredLevel);
-        this.socketJoin(socket, room.roomInfo.name);
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotInfos, room.bot);
-        this.roomService.setUnavailable(room.roomInfo.name);
-        this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
+        const availableRoom = this.roomService.createRoom(data.room);
+        const desiredLevel = data.desiredLevel === 'Expert' ? GameLevel.Expert : GameLevel.Beginner;
+        availableRoom.createPlayerVirtual(data.botName, desiredLevel);
+        this.roomService.setUnavailable(availableRoom.roomInfo.name);
+
+        this.socketJoin(socket, availableRoom.roomInfo.name);
+        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
     }
 
     handleCreateRoom(socket: io.Socket, room: Room) {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
@@ -11,7 +12,6 @@ import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
-import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 @Component({
@@ -19,16 +19,17 @@ import { SocketClientService } from '@app/services/socket-client.service';
     templateUrl: './game-page.component.html',
     styleUrls: ['./game-page.component.scss'],
 })
-export class GamePageComponent implements OnInit {
+export class GamePageComponent extends PageCommunicationManager implements OnInit {
     constructor(
-        private socketService: SocketClientService,
-        private socketServiceBot: SocketClientBotService,
+        protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
         private router: Router,
         private dialog: MatDialog,
         public playerService: PlayerService,
-    ) {}
+    ) {
+        super(socketService);
+    }
 
     get room(): Room {
         return this.playerService.room;
@@ -39,7 +40,7 @@ export class GamePageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.connect();
+        this.connectSocket();
         const session = this.sessionStorageService.getPlayerData('data');
         if (this.room.roomInfo.name === '' && session) {
             this.socketService.send(SocketEvent.Reconnect, { socketId: session.socketId, roomName: session.roomName });
@@ -96,17 +97,7 @@ export class GamePageComponent implements OnInit {
         this.router.navigate(['/main']);
     }
 
-    private connect() {
-        this.socketService.refreshConnection();
-        // TODO why is configureBaseSocketFeatures called twice?
-        this.configureBaseSocketFeatures();
-        if (!this.socketServiceBot.isSocketAlive()) {
-            this.socketServiceBot.connect();
-        }
-        this.configureBaseSocketFeatures();
-    }
-
-    private configureBaseSocketFeatures() {
+    protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.Reconnected, (data: { room: Room; player: Player }) => {
             this.room.setRoom(data.room);
             this.playerService.player.setPlayerGameAttributes(data.player);

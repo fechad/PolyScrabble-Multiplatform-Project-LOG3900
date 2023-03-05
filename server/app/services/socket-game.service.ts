@@ -1,9 +1,16 @@
+/* eslint-disable max-lines */
 import { CommandVerbs } from '@app/classes/command/command-verbs';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
-import { Timer } from '@app/classes/timer';
-import { COUNT_PLAYER_TURN, END_TIMER_VALUE, ONE_SECOND_IN_MS, SYSTEM_NAME, THREE_SECONDS_IN_MS } from '@app/constants/constants';
-import { FullCommandVerbs } from '@app/enums/full-command-verbs';
+import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
+import {
+    BOT_COMMAND_TIMEOUT_SEC,
+    COUNT_PLAYER_TURN,
+    END_TIMER_VALUE,
+    ONE_SECOND_IN_MS,
+    SYSTEM_NAME,
+    THREE_SECONDS_IN_MS,
+} from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
@@ -32,36 +39,15 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(roomName, SocketEvent.GoalsUpdated, goals);
     }
 
-    handleMessage(socket: io.Socket, message: string) {
+    async handleMessage(socket: io.Socket, message: string) {
         this.chatMessageService.restore();
         this.sendToEveryoneInRoom(socket.id, SocketEvent.MessageReceived);
         const roomName = this.getSocketRoom(socket) as string;
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
-        const isCommand = this.commandController.hasCommandSyntax(message);
-        if (!isCommand) {
-            const chatMessage = this.convertToChatMessage(room, socket.id, message);
-            this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.Message, chatMessage);
-            return;
-        }
+
         const commandSender = room.getPlayer(socket.id) as Player;
-        const executionResult: CommandResult = this.commandController.executeCommand(message, room, commandSender) as CommandResult;
-        if (this.chatMessageService.isError) {
-            this.chatMessageService.message.sender = SYSTEM_NAME;
-            this.chatMessageService.message.color = MessageSenderColors.SYSTEM;
-            this.sendToEveryoneInRoom(socket.id, SocketEvent.Message, this.chatMessageService.message);
-            return;
-        }
-        if (room.turnPassedCounter >= COUNT_PLAYER_TURN) {
-            this.handleGamePassFinish(room);
-            return;
-        }
-        this.notifyViewBasedOnCommandResult(executionResult, room, commandSender, socket);
-        const currentTurnPlayer = room.getCurrentPlayerTurn();
-        if (!currentTurnPlayer) return;
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
-        if (!room.isGameFinished()) return;
-        this.handleGamePlaceFinish(room, socket.id);
+        this.handleCommand(socket, room, message, commandSender);
     }
 
     handleStartGame(socket: io.Socket) {
@@ -70,8 +56,11 @@ export class SocketGameService extends SocketHandlerService {
         const room = this.roomService.getRoom(roomName) as Room;
         if (!room) return;
         if (room.players.length > room.maxPlayers || room.players.length <= 1) return;
-        const currentTurnPlayer = room.getCurrentPlayerTurn();
-        if (!currentTurnPlayer) room.choseRandomTurn();
+        let currentTurnPlayer = room.getCurrentPlayerTurn();
+        if (!currentTurnPlayer) {
+            room.choseRandomTurn();
+            currentTurnPlayer = room.getCurrentPlayerTurn();
+        }
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
@@ -81,13 +70,71 @@ export class SocketGameService extends SocketHandlerService {
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
 
         if (room.hasTimer()) return;
-        this.setTimer(room);
+        this.setTimer(socket, room);
         room.fillPlayersRack();
+        this.roomService.setUnavailable(room.roomInfo.name);
+        this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         const botGreeting = room.getBotGreeting();
         if (botGreeting) this.handleBotGreeting(room.bot.pseudo, botGreeting, roomName);
+
+        this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
+
         if (room.roomInfo.gameType !== 'log2990') return;
         room.givesPlayerGoals();
+    }
+
+    handleNewPlayerTurn(socket: io.Socket, room: Room, currentTurnPlayer: Player | undefined) {
+        if (currentTurnPlayer instanceof VirtualPlayer === false) return;
+        const virtualPlayer = currentTurnPlayer as VirtualPlayer;
+
+        setTimeout(async () => {
+            if (!virtualPlayer.isItsTurn) return;
+            const message = await virtualPlayer.playTurn();
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, {
+                text: message,
+                sender: virtualPlayer.pseudo,
+                color: MessageSenderColors.PLAYER2,
+            });
+            this.handleCommand(socket, room, message, virtualPlayer);
+        }, THREE_SECONDS_IN_MS);
+    }
+
+    handleCommand(socket: io.Socket, room: Room, message: string, commandSender: Player) {
+        const isCommand = this.commandController.hasCommandSyntax(message);
+        if (!isCommand) {
+            const chatMessage = this.convertToChatMessage(room, socket.id, message);
+            if (commandSender instanceof VirtualPlayer === false) {
+                this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.Message, chatMessage);
+                return;
+            }
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, chatMessage);
+            return;
+        }
+
+        const executionResult = this.commandController.executeCommand(message, room, commandSender) as CommandResult;
+        if (this.chatMessageService.isError) {
+            this.chatMessageService.message.sender = SYSTEM_NAME;
+            this.chatMessageService.message.color = MessageSenderColors.SYSTEM;
+            if (commandSender instanceof VirtualPlayer === false)
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, this.chatMessageService.message);
+            this.chatMessageService.restore();
+            return;
+        }
+        if (room.turnPassedCounter >= COUNT_PLAYER_TURN) {
+            this.handleGamePassFinish(room);
+            return;
+        }
+        this.notifyViewBasedOnCommandResult(executionResult, room, commandSender, socket);
+
+        const currentTurnPlayer = room.getCurrentPlayerTurn();
+        if (!currentTurnPlayer) return;
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
+
+        this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
+
+        if (!room.isGameFinished()) return;
+        this.handleGamePlaceFinish(room, socket.id);
     }
 
     handleStartGameRequest(socket: io.Socket, roomName: string) {
@@ -97,35 +144,21 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(roomName, SocketEvent.GameStarted);
     }
 
-    handleChangeTurn(socket: io.Socket, roomName: string) {
+    async handleChangeTurn(socket: io.Socket, roomName: string) {
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
-        this.changeTurn(room);
+        this.changeTurn(socket, room);
     }
 
-    async handleBotPlayAction(socket: io.Socket) {
-        const roomName = this.getSocketRoom(socket) as string;
-        const room = this.roomService.getRoom(roomName);
-        if (!room) {
-            this.sendToEveryoneInRoom(roomName, SocketEvent.BotPlayedAction, FullCommandVerbs.SKIP);
-            return;
-        }
-
-        await Timer.wait(THREE_SECONDS_IN_MS);
-        const message = await room.bot.playTurn();
-        this.sendToEveryoneInRoom(roomName, SocketEvent.BotPlayedAction, message);
-        this.socketEmitRoom(socket, roomName, SocketEvent.Message, { text: message, sender: room.bot.pseudo, color: MessageSenderColors.PLAYER2 });
-    }
-
-    setTimer(room: Room) {
+    setTimer(socket: io.Socket, room: Room) {
         if (!room) return;
         room.stopOtherTimerCreation();
-        const timerInterval = setInterval(() => {
+        const timerInterval = setInterval(async () => {
             if (room.elapsedTime < 0) {
                 clearInterval(timerInterval);
                 return;
             }
-            ++room.elapsedTime;
+
             if (room.elapsedTime >= +room.roomInfo.timerPerTurn) {
                 const currentPlayer = room.getCurrentPlayerTurn();
                 if (!currentPlayer) return;
@@ -134,6 +167,8 @@ export class SocketGameService extends SocketHandlerService {
                     sender: 'Vous',
                     color: MessageSenderColors.PLAYER1,
                 });
+
+                // TODO: see if this otherPlayerCheck is necessary, or should delete the room if false
                 const otherPlayer = room.players.find((playerInRoom) => playerInRoom !== currentPlayer);
                 if (!otherPlayer) return;
                 this.sendToEveryoneInRoom(otherPlayer.socketId, SocketEvent.Message, {
@@ -141,14 +176,22 @@ export class SocketGameService extends SocketHandlerService {
                     sender: SYSTEM_NAME,
                     color: MessageSenderColors.SYSTEM,
                 });
-                this.changeTurn(room);
-            } else {
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.TimeUpdated, room);
+                this.changeTurn(socket, room);
+                return;
             }
+
+            if (this.mustVerifyBotPlayedHisTurn(room)) {
+                this.handleNewPlayerTurn(socket, room, room.getCurrentPlayerTurn());
+                ++room.elapsedTime;
+                return;
+            }
+
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.TimeUpdated, room);
+            ++room.elapsedTime;
         }, ONE_SECOND_IN_MS);
     }
 
-    changeTurn(room: Room) {
+    changeTurn(socket: io.Socket, room: Room) {
         if (!room) return;
         room.elapsedTime = 0;
         room.incrementTurnPassedCounter();
@@ -160,8 +203,17 @@ export class SocketGameService extends SocketHandlerService {
 
         const currentTurnPlayer = room.getCurrentPlayerTurn();
         if (!currentTurnPlayer) return;
+
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
+        this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
         return;
+    }
+
+    private mustVerifyBotPlayedHisTurn(room: Room): boolean {
+        return (
+            ((room.elapsedTime - 1) % BOT_COMMAND_TIMEOUT_SEC) + 1 === BOT_COMMAND_TIMEOUT_SEC &&
+            room.getCurrentPlayerTurn() instanceof VirtualPlayer === true
+        );
     }
 
     private handleBotGreeting(name: string, greeting: string, roomName: string) {
@@ -239,6 +291,7 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
         this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
     }
+
     private communicateNewAchievements(roomName: string, goalsReached: ReachedGoal[]) {
         goalsReached.forEach((goal) => {
             if (goal.communicated) return;
@@ -251,6 +304,7 @@ export class SocketGameService extends SocketHandlerService {
             goal.communicated = true;
         });
     }
+
     private handleGamePlaceFinish(room: Room, socketId: string) {
         if (!room) return;
         room.setPlayersTurnToFalse();
@@ -301,10 +355,10 @@ export class SocketGameService extends SocketHandlerService {
         }
     }
 
-    private convertToChatMessage(room: Room, socketId: string, message: string): ChatMessage {
+    private convertToChatMessage(room: Room, socketId: string, message: string, pseudo?: string): ChatMessage {
         const chatMessage: ChatMessage = {
             text: message,
-            sender: room.getPlayerName(socketId) as string,
+            sender: pseudo || (room.getPlayerName(socketId) as string),
             color: MessageSenderColors.PLAYER2,
         };
         return chatMessage;

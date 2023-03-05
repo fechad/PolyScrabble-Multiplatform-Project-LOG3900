@@ -4,6 +4,7 @@ export const DEFAULT_DICTIONARY_TITLE = 'dictionnaire par défaut';
 
 export const DEFAULT_ROOM_NAME = 'Room';
 export const ONE_SECOND_IN_MS = 1000;
+export const BOT_COMMAND_TIMEOUT_SEC = 15;
 export const SYSTEM_NAME = 'Maître de jeu';
 export const RACK_CAPACITY = 7;
 export const COUNT_PLAYER_TURN = 6;

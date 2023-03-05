@@ -81,8 +81,8 @@ export class SocketManager {
 
     handleSockets() {
         this.sio.on(SocketEvent.Connection, (socket) => {
-            socket.on(SocketEvent.Disconnection, () => {
-                this.socketHandlerService.handleDisconnecting(socket);
+            socket.on(SocketEvent.Disconnection, async () => {
+                await this.socketHandlerService.handleDisconnecting(socket);
             });
 
             socket.on(SocketEvent.Reconnect, (playerData: PlayerData) => {
@@ -127,19 +127,8 @@ export class SocketManager {
                 this.socketChannelService.handleGetDiscussionChannels(socket);
             });
 
-            socket.on(SocketEvent.JoinRoomSolo, (room: Room) => {
-                this.socketRoomService.handleJoinRoomSolo(socket, room);
-            });
-
-            socket.on(SocketEvent.JoinRoomSoloBot, (data: { roomName: string; botName: string; isExpertLevel: boolean }) => {
-                this.socketRoomService.handleJoinRoomSoloBot(socket, data);
-            });
-
-            socket.on(SocketEvent.ConvertToRoomSoloBot, (data: { roomName: string; botName: string; points: number; isExpertLevel: boolean }) => {
-                this.socketHandlerService.handleConvertToRoomSoloBot(socket, data);
-                const room = this.socketRoomService.roomService.getRoom(data.roomName);
-                this.socketGameService.handleChangeTurn(socket, room?.getCurrentPlayerTurn()?.pseudo as string);
-                this.socketGameService.sendToEveryoneInRoom(data.roomName, 'playerTurnChanged', room?.getCurrentPlayerTurn()?.pseudo);
+            socket.on(SocketEvent.CreateSoloRoom, (data: { room: Room; botName: string; desiredLevel: string }) => {
+                this.socketRoomService.handleCreateSoloRoom(socket, data);
             });
 
             socket.on(SocketEvent.LeaveRoomCreator, (roomName: string) => {
@@ -187,10 +176,6 @@ export class SocketManager {
 
             socket.on(SocketEvent.ChangeTurn, (roomName: string) => {
                 this.socketGameService.handleChangeTurn(socket, roomName);
-            });
-
-            socket.on(SocketEvent.BotPlayAction, async () => {
-                await this.socketGameService.handleBotPlayAction(socket);
             });
 
             socket.on(SocketEvent.GetAllGoals, () => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable dot-notation */ // we want to access private attribute to test them
@@ -30,14 +31,18 @@ const validHintCommand = '!indice';
 const validHelpCommand = '!aide';
 
 const ioServerMock = {
-    // eslint-disable-next-line no-unused-vars -- we want to mock ioServer
     to: (name?: string) => {
         return {
-            // eslint-disable-next-line no-unused-vars -- we want to mock ioServer
             emit: (name2?: string, data?: unknown) => {
                 return;
             },
         };
+    },
+
+    sockets: {
+        emit: (name2?: string, data?: unknown) => {
+            return;
+        },
     },
 } as unknown as io.Server;
 
@@ -331,7 +336,7 @@ describe('Socket-game-stub service tests', () => {
         });
         it('should call the correct methods on changeTurn', (done) => {
             const canChangePlayerTurnStub = sinon.stub(roomMock, 'canChangePlayerTurn').returns(true);
-            socketGameService.changeTurn(roomMock);
+            socketGameService.changeTurn(socketMock, roomMock);
             expect(canChangePlayerTurnStub.called, 'did not call canChangePlayerStub on changeTurn');
             assert(changePlayerTurnStub.called, 'did not call room.changePlayerTurn on changeTurn');
             assert(getCurrentPlayerStub.called, 'did not call room.getCurrentPlayerTurn on changeTurn');
@@ -342,7 +347,7 @@ describe('Socket-game-stub service tests', () => {
             roomMock.elapsedTime = 20;
             const previousCounter = (roomMock['gameManager'].turnPassedCounter = 0);
             const canChangePlayerTurnStub = sinon.stub(roomMock, 'canChangePlayerTurn').returns(true);
-            socketGameService.changeTurn(roomMock);
+            socketGameService.changeTurn(socketMock, roomMock);
             expect(canChangePlayerTurnStub.called, 'did not call canChangePlayerStub on changeTurn');
             expect(roomMock.elapsedTime).to.equal(0);
             expect(roomMock['gameManager'].turnPassedCounter).to.equal(previousCounter + 1);

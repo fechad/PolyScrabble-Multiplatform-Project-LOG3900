@@ -58,8 +58,8 @@ export class GameManager {
         this.goalManager.assignPublicGoals(players);
     }
 
-    getNewVirtualPlayer(socketId: string, name: string, wordFetcher: WordFetcher, desiredLevel: string): VirtualPlayer {
-        return new VirtualPlayer(socketId, name, false, this.boardManipulator, this.letterBank, wordFetcher, desiredLevel);
+    getNewVirtualPlayer(name: string, wordFetcher: WordFetcher, desiredLevel: string): VirtualPlayer {
+        return new VirtualPlayer(name, false, this.boardManipulator, this.letterBank, wordFetcher, desiredLevel);
     }
 
     fillPlayersRack(players: Player[]) {

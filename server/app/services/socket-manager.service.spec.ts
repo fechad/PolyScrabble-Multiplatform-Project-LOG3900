@@ -70,15 +70,6 @@ describe('SocketManager service tests', () => {
             }, RESPONSE_DELAY);
         });
 
-        it('should call handleConvertToRoomSoloBot on convertToRoomSoloBot', (done) => {
-            const stub = sinon.stub(socketManager['socketHandlerService'], 'handleConvertToRoomSoloBot');
-            clientSocket.emit('convertToRoomSoloBot', { roomName: roomMock.roomInfo.name, botName: 'bot' });
-            setTimeout(() => {
-                assert(stub.called, 'did not call socketManager.socketHandlerService.handleConvertToRoomSoloBot on convertToRoomSoloBot');
-                done();
-            }, RESPONSE_DELAY);
-        });
-
         it('should call handleJoinRequest on JoinRoomRequest', (done) => {
             const stub = sinon.stub(socketManager['socketRoomService'], 'handleJoinRequest');
             clientSocket.emit('joinRoomRequest', roomMock);
@@ -175,33 +166,6 @@ describe('SocketManager service tests', () => {
             clientSocket.emit('changeTurn', roomMock.roomInfo.name);
             setTimeout(() => {
                 assert(stub.called, 'did not call socketManager.socketGameService.handleChangeTurn on changeTurn');
-                done();
-            }, RESPONSE_DELAY);
-        });
-
-        it('should call handleBotPlayAction on botPlayAction', (done) => {
-            const stub = sinon.stub(socketManager['socketGameService'], 'handleBotPlayAction');
-            clientSocket.emit('botPlayAction');
-            setTimeout(() => {
-                assert(stub.called, 'did not call socketManager.socketGameService.handleBotPlayAction on availableRooms');
-                done();
-            }, RESPONSE_DELAY);
-        });
-
-        it('should call handleJoinRoomSolo on joinRoomSolo', (done) => {
-            const stub = sinon.stub(socketManager['socketRoomService'], 'handleJoinRoomSolo');
-            clientSocket.emit('joinRoomSolo', roomMock);
-            setTimeout(() => {
-                assert(stub.called, 'did not call socketManager.socketRoomService.handleJoinRoomSolo on joinRoomSolo');
-                done();
-            }, RESPONSE_DELAY);
-        });
-
-        it('should call handleJoinRoomSoloBot on joinRoomSoloBot', (done) => {
-            const stub = sinon.stub(socketManager['socketRoomService'], 'handleJoinRoomSoloBot');
-            clientSocket.emit('joinRoomSoloBot', { roomName: roomMock.roomInfo.name, botName: 'bot' });
-            setTimeout(() => {
-                assert(stub.called, 'did not call socketManager.socketRoomService.handleJoinRoomSoloBot on joinRoomSoloBot');
                 done();
             }, RESPONSE_DELAY);
         });
