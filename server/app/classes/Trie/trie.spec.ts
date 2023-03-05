@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { Trie } from './trie';
 
-describe('Trie', () => {
+describe.only('Trie', () => {
     let trie = new Trie();
     beforeEach(() => {
         trie = new Trie();
