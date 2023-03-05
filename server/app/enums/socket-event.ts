@@ -8,15 +8,17 @@ export enum SocketEvent {
     GetPlayerInfos = 'getPlayerInfos',
     GetRackInfos = 'getRackInfos',
     CreateRoom = 'createRoom',
+    CreateSoloRoom = 'createSoloRoom',
     CreateChatChannel = 'createChatChannel',
     JoinChatChannel = 'joinChatChannel',
     LeaveChatChannel = 'leaveChatChannel',
     CreatorLeaveChatChannel = 'creatorLeaveChatChannel',
     ChatChannelMessage = 'chatChannelMessage',
     GetDiscussionChannels = 'getDiscussionChannels',
+    // TODO: remove the joinRoomSolo and joinRoomSoloBot (they are used in light client)
     JoinRoomSolo = 'joinRoomSolo',
     JoinRoomSoloBot = 'joinRoomSoloBot',
-    ConvertToRoomSoloBot = 'convertToRoomSoloBot',
+    SwapPlayerForBot = 'swapPlayerForBot',
     LeaveRoomCreator = 'leaveRoomCreator',
     LeaveRoomOther = 'leaveRoomOther',
     SetRoomAvailable = 'setRoomAvailable',
@@ -31,7 +33,7 @@ export enum SocketEvent {
     GetAllGoals = 'getAllGoals',
 
     // SOCKET-HANDLER-SERVICE
-    BotInfos = 'botInfos',
+    BotJoinedRoom = 'botJoinedRoom',
     ConvertToRoomSoloBotStatus = 'convertToRoomSoloBotStatus',
     UpdateAvailableRoom = 'updateAvailableRoom',
     PlayerLeft = 'playerLeft',

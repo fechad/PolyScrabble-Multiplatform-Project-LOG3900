@@ -6,17 +6,14 @@ import { PageCommunicationManager } from '@app/classes/communication-manager/pag
 import { Room } from '@app/classes/room';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
-import { MAX_LENGTH_PSEUDO, MINUTE_IN_SECOND, MIN_LENGTH_PSEUDO, TIMER_MULTIPLE } from '@app/constants/constants';
+import { TIMER_MULTIPLE } from '@app/constants/constants';
 import { UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
 import { GameMode } from '@app/enums/game-mode';
 import { SocketEvent } from '@app/enums/socket-event';
-import { Bot } from '@app/interfaces/bot';
-import { Dictionary } from '@app/interfaces/dictionary';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
-import { lastValueFrom } from 'rxjs';
 
 @Component({
     selector: 'app-game-multiplayer-page',
@@ -28,8 +25,6 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
     mode: GameMode;
     botName: string;
     botNames: string[];
-    bots: Bot[];
-    dictionaries: Dictionary[];
     onProcess: boolean;
     constructor(
         private fb: FormBuilder,
@@ -43,13 +38,13 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         super(socketService);
         this.gameForm = this.fb.group({
             timerPerTurn: ['', [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
-            dictionary: ['', Validators.required],
+            dictionary: [DEFAULT_DICTIONARY_TITLE, Validators.required],
             level: ['', Validators.required],
             roomPassword: [''],
             isPublic: [''],
             botName: [''],
         });
-        this.dictionaries = [];
+        this.botNames = [];
         this.onProcess = false;
     }
 
@@ -66,15 +61,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
     }
 
     get isSolo(): boolean {
-        return this.mode === GameMode.Solo;
-    }
-
-    get beginners(): Bot[] {
-        return this.bots.filter((bot) => bot.gameType === 'débutant');
-    }
-
-    get experts(): Bot[] {
-        return this.bots.filter((bot) => bot.gameType === 'expert');
+        return this.room.roomInfo.isSolo || false;
     }
 
     get selectedDictionary(): string {
@@ -88,23 +75,8 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
     ngOnInit() {
         this.connectSocket();
 
-        this.mode = this.route.snapshot.params.mode as GameMode;
-        if (this.isSolo) {
-            this.gameForm = this.fb.group({
-                pseudo: [
-                    this.playerService.player.pseudo,
-                    [
-                        Validators.required,
-                        this.notEqual(this.botName),
-                        Validators.minLength(MIN_LENGTH_PSEUDO),
-                        Validators.maxLength(MAX_LENGTH_PSEUDO),
-                    ],
-                ],
-                timerPerTurn: [MINUTE_IN_SECOND, [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
-                dictionary: [DEFAULT_DICTIONARY_TITLE],
-                level: ['beginner', Validators.required],
-            });
-        }
+        const gameMode = this.route.snapshot.params.mode as GameMode;
+        this.room.roomInfo.isSolo = gameMode === GameMode.Solo;
     }
 
     setPlaceholderAsLabel(labelElement: HTMLLabelElement) {
@@ -121,33 +93,23 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
     }
 
     async ngAfterViewInit() {
-        await this.handleRefresh();
-
-        this.botNames = this.beginners.map((bot) => bot.name);
-
         const randIndex = Math.floor(Math.random() * this.botNames.length);
         this.botName = this.botNames[randIndex];
-    }
-
-    async handleRefresh() {
-        await this.updateBots();
-        await this.updateDictionaries();
-        this.selectDefaultDictionary();
-    }
-
-    async updateBots() {
-        const updateBots = await lastValueFrom(this.httpService.getAllBots());
-        if (this.httpService.anErrorOccurred()) {
-            this.bots = [];
-            return;
-        }
-        this.bots = updateBots;
     }
 
     createRoom() {
         if (this.onProcess) return;
         this.initializeRoom();
         this.onProcess = true;
+
+        if (this.isSolo) {
+            this.socketService.send(SocketEvent.CreateSoloRoom, {
+                room: this.room,
+                botName: this.gameForm.controls.botName.value,
+                desiredLevel: this.gameForm.controls.level.value,
+            });
+            return;
+        }
         this.socketService.send(SocketEvent.CreateRoom, this.room);
     }
 
@@ -171,23 +133,17 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         };
     }
 
-    // TODO: remove
-    async handleDictionaryDeleted() {
-        this.showErrorDialog(`Le dictionnaire "${this.selectedDictionary}" n'existe plus sur notre serveur`);
-        await this.handleRefresh();
-    }
-
     handleHttpError() {
         this.showErrorDialog(this.httpService.getErrorMessage());
     }
 
     protected configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.RoomCreated, (serverRoomName: string) => {
+        this.socketService.on(SocketEvent.RoomCreated, (serverRoom: Room) => {
             this.onProcess = false;
-            if (!serverRoomName.startsWith('Room')) return;
-            this.room.roomInfo.name = serverRoomName;
+            if (!serverRoom.roomInfo.name.startsWith('Room')) return;
+            this.room.roomInfo.name = serverRoom.roomInfo.name;
             this.socketService.send(SocketEvent.CreateChatChannel, {
-                channel: serverRoomName,
+                channel: serverRoom.roomInfo.name,
                 username: {
                     username: this.playerService.player.pseudo,
                     email: '',
@@ -201,10 +157,16 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
                     bestGames: [],
                 },
             });
+            if (this.isSolo) {
+                this.room.players = serverRoom.players;
+                this.router.navigate(['/game']);
+                return;
+            }
             this.router.navigate(['/game/multiplayer/wait']);
         });
     }
 
+    // TODO: create roomMethod
     private initializeRoom() {
         this.room.currentPlayerPseudo = this.playerService.player.pseudo;
         this.room.roomInfo.timerPerTurn = this.gameForm.controls.timerPerTurn.value;
@@ -228,30 +190,5 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
             autoFocus: true,
             data: message,
         });
-    }
-
-    // TODO: refactor dictionaries use
-    private async updateDictionaries() {
-        const dictionaries = await lastValueFrom(this.httpService.getAllDictionaries());
-        this.resetDefaultDictionary();
-        if (this.httpService.anErrorOccurred()) {
-            this.dictionaries = [];
-            return;
-        }
-        this.dictionaries = dictionaries;
-    }
-
-    private selectDefaultDictionary() {
-        const defaultDictionary = this.dictionaries.find((dictionary) => dictionary.title === DEFAULT_DICTIONARY_TITLE);
-        if (!defaultDictionary) {
-            this.resetDefaultDictionary();
-            return;
-        }
-        this.gameForm.controls.dictionary.setValue(defaultDictionary.title);
-    }
-
-    private resetDefaultDictionary() {
-        if (!this.gameForm || !this.gameForm.controls.dictionary) return;
-        this.gameForm.controls.dictionary.setValue('');
     }
 }

@@ -26,7 +26,6 @@ export class VirtualPlayer extends Player {
     private tools: VirtualPlayerTools;
 
     constructor(
-        socketId: string,
         pseudo: string,
         isCreator: boolean,
         boardManipulator: BoardManipulator,
@@ -34,7 +33,7 @@ export class VirtualPlayer extends Player {
         wordFetcher: WordFetcher,
         desiredLevel: string = GameLevel.Beginner,
     ) {
-        super(socketId, pseudo, isCreator);
+        super('', pseudo, isCreator);
         this.basis = { level: desiredLevel, actions: [], scoreIntervals: [] };
         const baseTools: VirtualTools = {
             fetcher: wordFetcher,

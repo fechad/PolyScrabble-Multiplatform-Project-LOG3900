@@ -13,7 +13,6 @@ import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
-import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { of } from 'rxjs';
 import { SocketClientService } from './../../services/socket-client.service';
 import { GamePageComponent } from './game-page.component';
@@ -25,7 +24,6 @@ describe('GamePageComponent', () => {
     let fixture: ComponentFixture<GamePageComponent>;
 
     let socketServiceMock: SocketClientServiceMock;
-    let socketServiceBotMock: SocketClientServiceMock;
     let socketHelper: SocketTestHelper;
     let sessionStorageService: SessionStorageService;
     let focusHandlerService: FocusHandlerService;
@@ -37,7 +35,6 @@ describe('GamePageComponent', () => {
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock(socketHelper);
-        socketServiceBotMock = new SocketClientServiceMock(socketHelper);
 
         playerService = new PlayerService();
         playerService.room.roomInfo = DEFAULT_ROOM_INFO;
@@ -52,7 +49,6 @@ describe('GamePageComponent', () => {
             declarations: [GamePageComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: SocketClientBotService, useValue: socketServiceBotMock },
                 { provide: SessionStorageService, useValue: sessionStorageService },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: Router, useValue: routerSpy },
@@ -152,49 +148,13 @@ describe('GamePageComponent', () => {
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.NONE);
         });
     });
-    describe('Receiving events', () => {
-        // we want to test private methods
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let componentPrivateAccess: any;
 
-        beforeEach(() => {
-            componentPrivateAccess = component;
-        });
-
-        describe('Connection tests', () => {
-            it('should call the correct socketServiceMock methods on connection', () => {
-                const refreshConnectionSpy = spyOn(socketServiceMock, 'refreshConnection');
-                const connectBotSpy = spyOn(socketServiceBotMock, 'connect');
-                const isSOcketAliveBotSpy = spyOn(socketServiceBotMock, 'isSocketAlive');
-                const configureBaseSocketFeaturesSpy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.connect();
-
-                expect(refreshConnectionSpy).toHaveBeenCalled();
-                expect(connectBotSpy).toHaveBeenCalled();
-                expect(isSOcketAliveBotSpy).toHaveBeenCalled();
-                expect(configureBaseSocketFeaturesSpy).toHaveBeenCalled();
-            });
-
-            it('should not call socketServiceMock.connect on connection if socket is already connected', () => {
-                socketServiceMock.connect = jasmine.createSpy();
-                socketServiceMock.socket.connected = true;
-                componentPrivateAccess.connect();
-                expect(socketServiceMock.connect).not.toHaveBeenCalled();
-            });
-
-            it('should call configureBaseSocketFeatures on connection', () => {
-                componentPrivateAccess.configureBaseSocketFeatures = jasmine.createSpy();
-                componentPrivateAccess.connect();
-                expect(componentPrivateAccess.configureBaseSocketFeatures).toHaveBeenCalled();
-            });
-
-            it('should call startGame', () => {
-                const spy = spyOn(socketServiceMock, 'send');
-                component.startGame();
-                expect(spy).toHaveBeenCalled();
-            });
-        });
+    it('should send startGame event on startGame', () => {
+        const spy = spyOn(socketServiceMock, 'send');
+        component.startGame();
+        expect(spy).toHaveBeenCalledWith(SocketEvent.StartGame);
     });
+
     describe('send signals tests', () => {
         // we want to test private methods
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

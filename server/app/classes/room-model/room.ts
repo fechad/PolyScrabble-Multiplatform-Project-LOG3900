@@ -109,10 +109,11 @@ export class Room {
         }
     }
 
-    createPlayerVirtual(socketId: string, name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
-        this.bot = this.gameManager.getNewVirtualPlayer(socketId, name, this.gameManager.fetcher, desiredLevel);
+    createPlayerVirtual(name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
+        const bot = this.gameManager.getNewVirtualPlayer(name, this.gameManager.fetcher, desiredLevel);
+        this.bot = bot;
         this.addPlayer(this.bot, this.roomInfo.password);
-        return this.bot;
+        return bot;
     }
 
     givesPlayerGoals() {
@@ -201,6 +202,10 @@ export class Room {
     getBotGreeting(): BotGreeting | undefined {
         if (!this.bot) return undefined;
         return this.bot.greeting;
+    }
+
+    hasARealPlayerLeft(): boolean {
+        return this.players.find((player: Player) => player instanceof VirtualPlayer === false) ? true : false;
     }
 
     private isSamePassword(password?: string): boolean {

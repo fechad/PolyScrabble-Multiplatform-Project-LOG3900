@@ -8,16 +8,13 @@ import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { DEFAULT_ROOM_INFO, TIMER_TEST_DELAY } from '@app/constants/constants';
-import { Bot } from '@app/interfaces/bot';
+import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
-import { SocketClientBotService } from '@app/services/socket-client-bot.service';
 import { SocketClientService } from '@app/services/socket-client.service';
-import { of } from 'rxjs/internal/observable/of';
 import { Socket } from 'socket.io-client';
 import { PlayersInfosComponent } from './players-infos.component';
 
@@ -39,8 +36,6 @@ describe('PlayersInfosComponent', () => {
     let playerService: PlayerService;
     let player2: Player;
     let httpService: HttpService;
-    let botExpert1: Bot;
-    let botBeginner1: Bot;
     beforeEach(async () => {
         player2 = new Player();
         player2.pseudo = 'playerPseudo2';
@@ -69,7 +64,6 @@ describe('PlayersInfosComponent', () => {
             declarations: [PlayersInfosComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: SocketClientBotService, useValue: socketServiceBotMock },
                 { provide: SessionStorageService, useValue: sessionStorageServiceSpy },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: HttpService },
@@ -84,9 +78,6 @@ describe('PlayersInfosComponent', () => {
         fixture = TestBed.createComponent(PlayersInfosComponent);
         component = fixture.componentInstance;
         httpService = fixture.debugElement.injector.get(HttpService);
-        botExpert1 = { name: 'BOT A', gameType: 'expert' };
-        botBeginner1 = { name: 'BOT B', gameType: 'débutant' };
-        component.bots = [botExpert1, botBeginner1];
         fixture.detectChanges();
     });
     describe('showEndGame tests', () => {
@@ -108,16 +99,6 @@ describe('PlayersInfosComponent', () => {
         expect(routerSpy.navigate).toBeDefined();
     });
 
-    describe('get tests', () => {
-        it('should return  expert bots', () => {
-            const result = component.experts;
-            expect(component.bots[0]).toEqual(result[0]);
-        });
-        it('should return  debutant bots', () => {
-            const result = component.beginners;
-            expect(component.bots[1]).toEqual(result[0]);
-        });
-    });
     describe('get dictionary tests', () => {
         it('should return the dictionary title of the room on get dictionary', () => {
             const expectedResult = 'monDictionnaire';
@@ -140,44 +121,6 @@ describe('PlayersInfosComponent', () => {
             componentPrivateAccess = component;
         });
 
-        describe('connect() tests', () => {
-            it('should call configureBaseSocketFeatures when both socket are alive', () => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-                spyOn(socketServiceBotMock, 'isSocketAlive').and.returnValue(true);
-                const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.connect();
-                expect(spy).toHaveBeenCalled();
-            });
-
-            it('should try to reconnect if one of the socket is not alive', () => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                const spy = spyOn(componentPrivateAccess, 'configureSocketFeaturesOnPageSocketConnection');
-                componentPrivateAccess.connect();
-                expect(spy).toHaveBeenCalled();
-            });
-
-            it('should reconnect if the socket is alive', (done) => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-                spyOn(socketServiceBotMock, 'isSocketAlive').and.returnValue(true);
-                const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.configureSocketFeaturesOnPageSocketConnection();
-
-                setTimeout(() => {
-                    expect(spy).toHaveBeenCalled();
-                    done();
-                }, TIMER_TEST_DELAY);
-            });
-            it('should not reconnect if the socket is not alive after 5 sec', (done) => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(false);
-                const spy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
-                componentPrivateAccess.configureSocketFeaturesOnPageSocketConnection();
-
-                setTimeout(() => {
-                    expect(spy).not.toHaveBeenCalled();
-                    done();
-                }, TIMER_TEST_DELAY);
-            });
-        });
         describe('otherEvents', () => {
             it('should update the currentPlayerTurnPseudo when receiving the event "playerTurnChanged" with a pseudo', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
@@ -196,17 +139,6 @@ describe('PlayersInfosComponent', () => {
                 expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.CHAT);
             });
 
-            it('should send botPlayAction if isSolo on "playerTurnChanged" event when it is the playerTurn', () => {
-                const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
-                componentPrivateAccess.configureBaseSocketFeatures();
-                playerService.player.isItsTurn = true;
-                playerService.room.roomInfo.isSolo = true;
-                // eslint-disable-next-line dot-notation -- we need to set private attribute
-                componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
-                socketHelper.peerSideEmit('playerTurnChanged', playerService.player.pseudo);
-                expect(spy).toHaveBeenCalled();
-            });
-
             it('should set the flag isGameOver to true when receiving the event "gameIsOver"', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
                 componentPrivateAccess.playerService.room.roomInfo.isGameOver = false;
@@ -219,16 +151,7 @@ describe('PlayersInfosComponent', () => {
                 expect(playerService.player.isItsTurn).toEqual(false);
                 expect(player2.isItsTurn).toEqual(false);
             });
-            it('should send convertToRoomSoloBot if isSolo on "playerLeft" event', () => {
-                const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
-                componentPrivateAccess.configureBaseSocketFeatures();
-                playerService.player.isItsTurn = true;
-                playerService.room.roomInfo.isSolo = true;
-                // eslint-disable-next-line dot-notation -- we need to set private attribute
-                componentPrivateAccess['bot'] = { pseudo: playerService.player.pseudo };
-                socketHelper.peerSideEmit('playerLeft', playerService.player.pseudo);
-                expect(spy).toHaveBeenCalled();
-            });
+
             it('should call removeItem from sessionStorageService if isSolo on "playerLeft" event', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
                 playerService.player.isItsTurn = true;
@@ -253,11 +176,6 @@ describe('PlayersInfosComponent', () => {
                 socketHelper.peerSideEmit('updatePlayerScore', player2);
                 expect(playerService.player.points).toEqual(points);
             });
-            it('should set isSolo to true when player received does not exist', () => {
-                componentPrivateAccess.configureBaseSocketFeatures();
-                socketHelper.peerSideEmit('convertToRoomSoloBotStatus');
-                expect(component.room.roomInfo.isSolo).toEqual(true);
-            });
 
             it('should not update the score of the players when player received does not exist', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
@@ -273,33 +191,6 @@ describe('PlayersInfosComponent', () => {
                 const initialPoints = playerService.player.points;
                 socketHelper.peerSideEmit('updatePlayerScore', player2);
                 expect(playerService.player.points).toEqual(initialPoints);
-            });
-
-            it('should swap the leaving player to a bot when receiving the event "botInfos"', () => {
-                playerService.player.isItsTurn = true;
-                player2.isItsTurn = true;
-                const randomPlayer = new Player();
-                randomPlayer.pseudo = 'pseudo';
-                componentPrivateAccess.room.players = [playerService.player, randomPlayer];
-                componentPrivateAccess.configureBaseSocketFeatures();
-                socketHelper.peerSideEmit('botInfos', player2);
-                expect(componentPrivateAccess.bot).toEqual(player2);
-                expect(componentPrivateAccess.room.players.includes(player2)).toEqual(true);
-            });
-
-            it('should add the bot to the room on botInfos if the room length === 1', () => {
-                componentPrivateAccess.room.players = [playerService.player];
-                componentPrivateAccess.configureBaseSocketFeatures();
-                socketHelper.peerSideEmit('botInfos', player2);
-                expect(componentPrivateAccess.bot).toEqual(player2);
-                expect(componentPrivateAccess.room.players.includes(player2)).toEqual(true);
-            });
-
-            it('when receiving the event "botPlayedAction"', () => {
-                const spy = spyOn(socketServiceBotMock, 'send').and.callThrough();
-                componentPrivateAccess.configureBaseSocketFeatures();
-                socketHelper2.peerSideEmit('botPlayedAction', 'message');
-                expect(spy).toHaveBeenCalled();
             });
 
             it('The winnerPseudo should become the pseudo of the player that won the game', () => {
@@ -348,20 +239,6 @@ describe('PlayersInfosComponent', () => {
             component.room.players = [playerService.player, player2];
             expect(component.getPlayerInfo(true, 'score')).toEqual(playerService.player.points);
             expect(component.getPlayerInfo(false, 'score')).toEqual(player2.points);
-        });
-    });
-    describe('handleRefresh() tests', () => {
-        it('should call getAllBots', async () => {
-            const spy = spyOn(httpService, 'getAllBots').and.returnValue(of([]));
-            await component.handleRefresh();
-            expect(spy).toHaveBeenCalled();
-        });
-        it('should clear the bots when an error has occurred', async () => {
-            component.bots = [botExpert1];
-            spyOn(httpService, 'getAllBots').and.returnValue(of(undefined as unknown as Bot[]));
-            spyOn(httpService, 'anErrorOccurred').and.returnValue(true);
-            await component.handleRefresh();
-            expect(component.bots).toEqual([]);
         });
     });
 });

@@ -55,6 +55,7 @@ export class DiscussionChannelService {
     addChannelMessage(channelName: string, message: ChannelMessage): boolean {
         const channelToUpdate = this.availableChannels.find((channel) => channel.name === channelName);
         if (channelToUpdate) {
+            message.time = new Date().toLocaleTimeString([], { hour12: false });
             channelToUpdate.addMessage(message);
             return true;
         }
