@@ -155,6 +155,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
                     gamesPlayed: [],
                     bestGames: [],
                 },
+                isRoomChannel: true,
             });
         });
 

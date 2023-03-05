@@ -63,4 +63,5 @@ export enum SocketEvent {
     // SOCKET-CHANNEL-SERVICE
     AvailableChannels = 'availableChannels',
     ChannelMessage = 'channelMessage',
+    RoomChannelUpdated = 'roomChannelUpdated',
 }

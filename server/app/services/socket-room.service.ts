@@ -24,7 +24,7 @@ export class SocketRoomService extends SocketHandlerService {
         if (!room) return;
         const availableRoom = this.roomService.createRoom(room);
         this.socketJoin(socket, availableRoom.roomInfo.name);
-        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom.roomInfo.name);
+        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
     }
 

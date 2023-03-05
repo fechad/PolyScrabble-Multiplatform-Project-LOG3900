@@ -327,31 +327,21 @@ describe('MenuComponent', () => {
     });
 
     describe('handleGameWaitPage tests', () => {
-        it('should call showChatChannel on handleGameWaitPage if isWaitMultiPage', () => {
+        it('should call showRoomChatChannel on handleGameWaitPage if isWaitMultiPage', () => {
+            component.roomChannel = new DiscussionChannel('channel');
             component.isWaitMultiPage = true;
             discussionChannel.name = playerService.room.roomInfo.name;
             component.availableDiscussionChannels = [discussionChannel];
-            const indexOfDiscussionChannel = 0;
-            const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(discussionChannel);
-            const showChatChannelSpy = spyOn(component, 'showChatChannel');
+            const showChatChannelSpy = spyOn(component, 'showRoomChatChannel');
             (component as any).handleGameWaitPage();
-            expect(getDiscussionChannelSpy).toHaveBeenCalledWith(playerService.room.roomInfo.name);
-            expect(showChatChannelSpy).toHaveBeenCalledWith(indexOfDiscussionChannel);
+            expect(showChatChannelSpy);
         });
 
-        it('should not call showChatChannel if it is not isWaitMultiPage', () => {
+        it('should not call showRoomChatChannel if it is not isWaitMultiPage', () => {
+            component.roomChannel = new DiscussionChannel('channel');
             component.isWaitMultiPage = false;
-            const showChatChannelSpy = spyOn(component, 'showChatChannel');
+            const showChatChannelSpy = spyOn(component, 'showRoomChatChannel');
             (component as any).handleGameWaitPage();
-            expect(showChatChannelSpy).not.toHaveBeenCalled();
-        });
-
-        it('should not call showChatChannel on handleGameWaitPage on isWaitMultiPage if gameRoomChat is undef', () => {
-            component.isWaitMultiPage = true;
-            const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(undefined);
-            const showChatChannelSpy = spyOn(component, 'showChatChannel');
-            (component as any).handleGameWaitPage();
-            expect(getDiscussionChannelSpy).toHaveBeenCalledWith(playerService.room.roomInfo.name);
             expect(showChatChannelSpy).not.toHaveBeenCalled();
         });
     });

@@ -101,21 +101,21 @@ export class SocketManager {
                 this.socketRoomService.handleCreateRoom(socket, room);
             });
 
-            socket.on(SocketEvent.CreateChatChannel, (data: { channel: string; username: Account }) => {
-                this.socketChannelService.handleCreateChannel(data.channel, data.username);
+            socket.on(SocketEvent.CreateChatChannel, (data: { channel: string; username: Account; isRoomChannel?: boolean }) => {
+                this.socketChannelService.handleCreateChannel(data.channel, data.username, data.isRoomChannel);
             });
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             socket.on(SocketEvent.JoinChatChannel, (data: any) => {
-                this.socketChannelService.handleJoinChannel(socket, data.name, data.user);
+                this.socketChannelService.handleJoinChannel(socket, data.name, data.user, data.isRoomChannel);
             });
 
             socket.on(SocketEvent.LeaveChatChannel, (data: { channel: string; username: string }) => {
                 this.socketChannelService.handleLeaveChannel(socket, data.channel, data.username);
             });
 
-            socket.on(SocketEvent.CreatorLeaveChatChannel, (channel: string) => {
-                this.socketChannelService.handleLeaveChannelCreator(socket, channel);
+            socket.on(SocketEvent.CreatorLeaveChatChannel, (data: { channel: string; isRoomChannel: boolean }) => {
+                this.socketChannelService.handleLeaveChannelCreator(socket, data.channel, data.isRoomChannel);
             });
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,7 +133,7 @@ export class SocketManager {
 
             socket.on(SocketEvent.LeaveRoomCreator, (roomName: string) => {
                 this.socketRoomService.handleLeaveRoomCreator(socket, roomName);
-                this.socketChannelService.handleLeaveChannelCreator(socket, roomName);
+                this.socketChannelService.handleLeaveChannelCreator(socket, roomName, true);
             });
 
             socket.on(SocketEvent.LeaveRoomOther, (roomName: string) => {

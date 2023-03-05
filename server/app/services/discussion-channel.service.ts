@@ -6,6 +6,7 @@ import { Service } from 'typedi';
 @Service()
 export class DiscussionChannelService {
     availableChannels: DiscussionChannel[];
+    roomChannels: DiscussionChannel[];
 
     constructor() {
         this.availableChannels = [
@@ -20,45 +21,55 @@ export class DiscussionChannelService {
             time: new Date().toLocaleTimeString([], { hour12: false }),
             message: 'Welcome to PolyScrabble!',
         } as ChannelMessage);
+
+        this.roomChannels = [];
     }
 
-    getDiscussionChannel(channelName: string): DiscussionChannel | undefined {
-        return this.availableChannels.find((channel: DiscussionChannel) => channel.name === channelName);
+    addChannel(channelName: string, owner: Account, isRoomChannel?: boolean): DiscussionChannel {
+        const addedChannel = new DiscussionChannel(channelName, owner);
+        if (isRoomChannel) {
+            this.roomChannels.push(addedChannel);
+            return addedChannel;
+        }
+        this.availableChannels.push(addedChannel);
+        return addedChannel;
     }
 
-    addChannel(name: string, owner: Account): boolean {
-        this.availableChannels.push(new DiscussionChannel(name, owner));
-        return true;
-    }
-
-    deleteChannel(name: string): boolean {
+    deleteChannel(name: string) {
         this.availableChannels = this.availableChannels.filter((channel) => channel.name !== name);
-        return true;
     }
 
     joinChannel(channelName: string, username: string): ChannelMessage | undefined {
-        const channelToJoin = this.availableChannels.find((channel) => channel.name === channelName);
+        const channelToJoin = this.getDiscussionChannel(channelName);
         return channelToJoin?.joinChannel(username);
     }
 
     leaveChannel(channelName: string, username: string): ChannelMessage | undefined {
-        const channelToLeave = this.availableChannels.find((channel) => channel.name === channelName);
+        const channelToLeave = this.getDiscussionChannel(channelName);
         return channelToLeave?.leaveChannel(username);
     }
 
     creatorLeaveChannel(channelName: string): DiscussionChannel[] {
-        const channelToLeave = this.availableChannels.find((channel) => channel.name === channelName);
+        const channelToLeave = this.getDiscussionChannel(channelName);
         if (channelToLeave) this.deleteChannel(channelToLeave.name);
         return this.availableChannels;
     }
 
     addChannelMessage(channelName: string, message: ChannelMessage): boolean {
-        const channelToUpdate = this.availableChannels.find((channel) => channel.name === channelName);
+        const channelToUpdate = this.getDiscussionChannel(channelName);
+
         if (channelToUpdate) {
             message.time = new Date().toLocaleTimeString([], { hour12: false });
             channelToUpdate.addMessage(message);
             return true;
         }
         return false;
+    }
+
+    getDiscussionChannel(channelName: string): DiscussionChannel | undefined {
+        return (
+            this.availableChannels.find((channel) => channel.name === channelName) ||
+            this.roomChannels.find((channel) => channel.name === channelName)
+        );
     }
 }

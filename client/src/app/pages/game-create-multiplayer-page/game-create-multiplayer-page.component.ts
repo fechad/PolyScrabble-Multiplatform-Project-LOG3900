@@ -156,6 +156,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
                     gamesPlayed: [],
                     bestGames: [],
                 },
+                isRoomChannel: true,
             });
             if (this.isSolo) {
                 this.room.players = serverRoom.players;
