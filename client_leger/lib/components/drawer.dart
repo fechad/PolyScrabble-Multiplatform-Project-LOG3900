@@ -104,6 +104,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
             ),
           ),
           const SizedBox(height: 20),
+          ChatCard(chatModel: chatService.getRoomChannel()),
           ChatCard(chatModel: chatService.getDiscussions()[0]),
           const Padding(
             padding: EdgeInsets.only(right: 20, left: 20),
@@ -125,7 +126,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                   })),
           FFButtonWidget(
             onPressed: () {
-              chatService.addDiscussion('New Chanel');
+              chatService.addDiscussion('Nouveau canal');
               setState(() {});
             },
             text: 'New Chat',

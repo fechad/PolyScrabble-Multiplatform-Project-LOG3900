@@ -24,6 +24,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get joinButtonPressed {
+    _$valueAtom.reportRead();
+    return super.joinButtonPressed;
+  }
+
+  @override
   set value(ObservableList<Tile> rack) {
     _$valueAtom.reportWrite(rack, super.tempRack, () {
       super.tempRack = rack;
@@ -32,6 +38,17 @@ mixin _$LinkService on _LinkService, Store {
 
   late final _$_LinkServiceActionController =
       ActionController(name: '_LinkService');
+
+  @override
+  void buttonChange() {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.buttonChange');
+    try {
+      return super.buttonChange();
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setRows(x, y, square) {

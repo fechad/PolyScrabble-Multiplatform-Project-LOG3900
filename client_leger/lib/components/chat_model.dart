@@ -13,7 +13,6 @@ class ChatModel {
 
   ChatModel.fromJson(dynamic json, jsonMessages)
       : name = json['name'],
-        owner = json['owner'],
         activeUsers = json['activeUsers']
             .toString()
             .replaceAll('[', '')

@@ -1,28 +1,54 @@
 import 'package:client_leger/main.dart';
+import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
+import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/game.dart';
 import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../services/init_service.dart';
+import '../services/solo_game_service.dart';
 import 'avatar.dart';
 
-class GameCard extends StatelessWidget {
-  GameCard(
-      {super.key,
-      required this.difficulty,
-      required this.time,
-      required this.password,
-      required this.roomName});
+class GameCard extends StatefulWidget {
+  GameCard({super.key,
+    required this.difficulty,
+    required this.time,
+    required this.password,
+    required this.roomName});
 
   final String difficulty;
   final String time;
   final String password;
   final String roomName;
-  final Player player = Player(pseudo: authenticator.currentUser.username,
-    socketId: socketService.socket.id!,
-    isCreator: false, points: 0, isItsTurn: false,
+
+  @override
+  _GameCardState createState() => _GameCardState(difficulty: difficulty, time: time, password: password, roomName: roomName);
+}
+
+class _GameCardState extends State<GameCard> {
+  _GameCardState({required this.difficulty, required this.time, required this.password, required this.roomName});
+  final String difficulty;
+  final String time;
+  final String password;
+  final String roomName;
+  final Player player = Player(
+    pseudo: authenticator.currentUser.username,
+    socketId: homeSocketService.getSocketID()!,
+    isCreator: false,
+    points: 0,
+    isItsTurn: false,
   );
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void buttonChange() {
+    linkService.buttonChange();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +77,9 @@ class GameCard extends StatelessWidget {
               child: Text(
                 "🤖 $difficulty",
                 style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Nunito',
-                      fontSize: 20,
-                    ),
+                  fontFamily: 'Nunito',
+                  fontSize: 20,
+                ),
                 textAlign: TextAlign.start,
               ),
             ),
@@ -63,9 +89,9 @@ class GameCard extends StatelessWidget {
               child: Text(
                 "⏱ $time",
                 style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Nunito',
-                      fontSize: 20,
-                    ),
+                  fontFamily: 'Nunito',
+                  fontSize: 20,
+                ),
                 textAlign: TextAlign.end,
               ),
             ),
@@ -92,18 +118,11 @@ class GameCard extends StatelessWidget {
                         child: this.password != ''
                             ? const Text('Joindre 🔑')
                             : const Text('Joindre'),
-                        onPressed: () {
-                          socketService.socket.emit('joinRoomRequest', {
-                            "roomName": roomName,
-                            //TODO : isItsTurn?? should be determined by server??
-                            "player": player,//TODO: Add a real player object
-                            "password": password
-                          });
-                          // Navigator.push(context,
-                          //     MaterialPageRoute(builder: ((context) {
-                          //       return const MultiplayerPage();
-                          //     })));
-                        },
+                        onPressed:
+                        linkService.getJoinButtonPressed() ? null : () {
+                          sendJoinRequest();
+                          buttonChange();
+                        }
                       ),
                     ),
                   ],
@@ -115,4 +134,15 @@ class GameCard extends StatelessWidget {
       ),
     );
   }
+
+  sendJoinRequest() {
+    homeSocketService.send('joinRoomRequest', {
+      "roomName": roomName,
+      //TODO : isItsTurn?? should be determined by server??
+      "player": player,
+      "password": password
+    });
+  }
 }
+
+

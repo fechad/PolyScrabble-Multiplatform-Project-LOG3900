@@ -15,7 +15,7 @@ class SenderMessage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(1008, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(940, 0, 0, 0),
             child: (Text(
               time,
               textAlign: TextAlign.end,

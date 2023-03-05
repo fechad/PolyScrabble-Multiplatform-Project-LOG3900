@@ -2,10 +2,16 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/solo_game_service.dart';
 
 import '../classes/game.dart';
+import '../components/chat_model.dart';
 import '../main.dart';
+import '../pages/home_page.dart';
+import 'chat_service.dart';
+import 'link_service.dart';
 
 class MultiplayerGameService extends SoloGameService {
   List<Room> availableRooms = [];
+  List<ChatModel> availableChannels = [];
+
   MultiplayerGameService({required super.gameData}) {
     room = Room(
         elapsedTime: 0,
@@ -22,7 +28,7 @@ class MultiplayerGameService extends SoloGameService {
         isBankUsable: false);
     player = Player(
         pseudo: authenticator.currentUser.username,
-        socketId: socketService.socket.id ?? 'id',
+        socketId: socketService.getSocketID() ?? 'id',
         points: 0,
         isCreator: true,
         isItsTurn: false);
@@ -30,6 +36,7 @@ class MultiplayerGameService extends SoloGameService {
 
   configureSocketFeatures() {
     socketService.send("availableRooms");
+    socketService.send("getDiscussionChannels");
 
     socketService.on(
       "updateAvailableRoom",
@@ -44,22 +51,55 @@ class MultiplayerGameService extends SoloGameService {
 
     socketService.on(
         "roomCreated",
-        (roomName) => {
-              room.roomInfo.name = roomName,
-            });
+            (serverRoom) => {
+          room = decodeModel(serverRoom),
+          socketService.send("createChatChannel", {"channel": room.roomInfo.name, "username":
+          Account(username: authenticator.currentUser.username,
+            email: '',
+            defaultLanguage: '',
+            defaultTheme: '',
+            highscore: 0,
+            totalXP: 0,
+            avatarUrl: '', badges: [], bestGames: [], gamesPlayed: [], gamesWon: 0,),
+            'isRoomChannel': true,
+          })
+        }
+    );
+
+    socketService.on(
+      "availableChannels",
+          (channels) => {
+        availableChannels = [],
+        for (var channel in channels)
+          {
+            availableChannels.add(chatService.decodeModel(channel))
+          },
+            if (room.roomInfo.name != '') {
+                chatService.getDiscussionChannelByName(room.roomInfo.name)
+            }
+      },
+    );
+
+    socketService.on(
+        "roomChannelUpdated",
+            (channel) => {
+          chatService.setRoomChannel(chatService.decodeModel(channel)),
+        }
+    );
 
     socketService.on(
         "playerAccepted",
         (room) => {
               room = decodeModel(room),
-              //socketService.send("joinChatChannel", {'name': room.roomInfo.name, 'user': authenticator.currentUser.username}),
+          if(room.roomInfo.creatorName != authenticator.getCurrentUser().username)
+            socketService.send("joinChatChannel", {'name': room.roomInfo.name, 'user': authenticator.currentUser.username, 'isRoomChannel': true}),
             });
 
     socketService.on(
         "playerRejected",
         (room) => {
               room = decodeModel(room),
-              leaveRoomOther(room),
+              leaveRoomOther(),
             });
 
     socketService.on(
@@ -76,6 +116,7 @@ class MultiplayerGameService extends SoloGameService {
   setRoomInfoMultiplayer(bool isPublic, String pswd) {
     room.roomInfo.timerPerTurn = gameData.timerPerTurn;
     room.roomInfo.dictionary = gameData.dictionary;
+    room.roomInfo.gameType = 'classic'; //TODO get variable for game type
     room.roomInfo.isGameOver = false;
     room.roomInfo.isSolo = false;
     room.roomInfo.isPublic = isPublic;
@@ -92,24 +133,25 @@ class MultiplayerGameService extends SoloGameService {
     socketService.send("createRoom", room);
   }
 
-  leaveRoom() {
+  leaveRoomCreator() {
     socketService.send("leaveRoomCreator", room.roomInfo.name);
     reinitializeRoom();
   }
 
-  leaveRoomOther(Room room) {
+  leaveRoomOther() {
     socketService.send("leaveRoomOther", room.roomInfo.name);
     reinitializeRoom();
   }
 
   reinitializeRoom() {
+    chatService.setRoomChannel(ChatModel(name: '', activeUsers: [], messages: []));
     room.roomInfo.name = '';
-    room.roomInfo.creatorName = '';
     room.roomInfo.timerPerTurn = '';
     room.roomInfo.gameType = '';
     room.roomInfo.isPublic = true;
     room.roomInfo.password = '';
   }
+
 
   requestGameStart() {
     socketService.send("startGameRequest", room.roomInfo.name);
@@ -121,4 +163,9 @@ class MultiplayerGameService extends SoloGameService {
         {'roomName': room.roomInfo.name, 'playerName': playerName});
     print('accepted');
   }
+
+  rejectPlayer(String playerName){
+    socketService.send("rejectPlayer", {'roomName': room.roomInfo.name, 'playerName': playerName});
+  }
+
 }

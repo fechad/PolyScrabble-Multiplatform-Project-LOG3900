@@ -2,14 +2,17 @@ import 'package:client_leger/components/chat_model.dart';
 import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/chat_page.dart';
-import 'package:client_leger/pages/home_page.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:intl/intl.dart';
+
+import 'init_service.dart';
 
 class ChatService {
   List<ChatModel> _discussionChannels = [
     ChatModel(name: 'General Chat', activeUsers: [], messages: [])
   ];
-
+  ChatModel _roomChannel = ChatModel(name: '', activeUsers: [], messages: []);
+  String chatName = '';
   ChatService() {
     _configureSocket();
     _askForDiscussions();
@@ -27,20 +30,36 @@ class ChatService {
     return _discussionChannels;
   }
 
+  ChatModel getRoomChannel() {
+    return _roomChannel;
+  }
+
+  setRoomChannel(ChatModel chat) {
+    _roomChannel = chat;
+  }
+
   void _configureSocket() async {
     socket.on(
         'channelMessage',
         (data) => {
-          print('CHANNEL MESSAGE'),
-              _discussionChannels[0].messages = [],
-              (data as List<dynamic>).forEach((message) => {
-                    _discussionChannels[0].messages.add(ChatMessage(
+          chatName = (data as List<dynamic>)[0]['channelName'],
+          getDiscussionChannelByName(chatName).messages = [],
+              (data).forEach((message) => {
+                getDiscussionChannelByName(chatName).messages.add(ChatMessage(
                         channelName: message['channelName'],
                         system: message['system'],
                         sender: message['sender'],
                         time: message['time'],
                         message: message['message'])),
-                  })
+                  }),
+
+            FlutterRingtonePlayer.play(
+            android: AndroidSounds.notification,
+            ios: IosSounds.receivedMessage,
+            looping: false, // Android only - API >= 28
+            volume: 0.5, // Android only - API >= 28
+            asAlarm: false, // Android only - all APIs
+          ),
             });
 
     socket.on(
@@ -107,5 +126,13 @@ class ChatService {
       'channel': channelName,
       'username': authenticator.currentUser.username
     });
+  }
+
+   ChatModel getDiscussionChannelByName(String name){
+    if (name == _roomChannel.name) return _roomChannel;
+    for (var channel in getDiscussions()){
+      if (channel.name == name) return channel;
+    }
+    return ChatModel(name: '', activeUsers: [], messages: []);
   }
 }
