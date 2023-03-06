@@ -4,12 +4,11 @@ import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
-import '../classes/game.dart';
+
 import '../components/sidebar.dart';
 import '../components/user_resume.dart';
 import '../config/colors.dart';
 import '../services/init_service.dart';
-import '../services/multiplayer_game_service.dart';
 import 'menu_page.dart';
 
 final chatService = ChatService();
@@ -43,7 +42,10 @@ class _MyHomePageState extends State<MyHomePage> {
     connect();
   }
 
-
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,44 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         CollapsingNavigationDrawer(),
       ]),
-      // endDrawer: Drawer(
-      //   child: Container(
-      //     color: Colors.white,
-      //     child: Center(
-      //       child: FFButtonWidget(
-      //           onPressed: () {
-      //             if (!isProduction) return;
-      //             httpService
-      //                 .logoutUser(authenticator.currentUser.username)
-      //                 .then((value) => chatService.leaveDiscussion(
-      //                     'General Chat',
-      //                     authenticator
-      //                         .currentUser.username)); //TODO: Envoyer l'email
-      //             Navigator.push(
-      //                 context,
-      //                 MaterialPageRoute(
-      //                     builder: (context) => const ConnexionPageWidget()));
-      //           },
-      //           text: 'Log out',
-      //           options: const FFButtonOptions(
-      //             width: 240,
-      //             height: 50,
-      //             color: Palette.mainColor,
-      //             textStyle: TextStyle(
-      //               fontFamily: 'Nunito',
-      //               color: Colors.white,
-      //               fontSize: 24,
-      //             ),
-      //             borderSide: BorderSide(
-      //               color: Colors.transparent,
-      //               width: 1,
-      //             ),
-      //             borderRadius: 2,
-      //           )),
-      //     ),
-      //   ), // This trailing comma makes auto-formatting nicer for build methods.
-      // )
     );
   }
 }
-

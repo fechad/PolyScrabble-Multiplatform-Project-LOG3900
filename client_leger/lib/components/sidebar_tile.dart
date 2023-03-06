@@ -1,24 +1,21 @@
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../config/colors.dart';
-
 import 'package:flutter/material.dart';
-
-
 
 class CollapsingListTile extends StatefulWidget {
   final String title;
   final IconData icon;
   final AnimationController? animationController;
   final bool isSelected;
+  final bool notifiable;
   final Function()? onTap;
 
-  CollapsingListTile(
-      {required this.title,
-        required this.icon,
-        this.animationController,
-        this.isSelected = false, this.onTap,
-        });
+  CollapsingListTile({
+    required this.title,
+    required this.icon,
+    this.animationController,
+    this.isSelected = false,
+    this.onTap,
+    required this.notifiable,
+  });
 
   @override
   _CollapsingListTileState createState() => _CollapsingListTileState();
@@ -30,9 +27,7 @@ class _CollapsingListTileState extends State<CollapsingListTile> {
   @override
   void initState() {
     super.initState();
-    sizedBoxAnimation =
-        Tween<double>(begin: 10, end: 0);
-
+    sizedBoxAnimation = Tween<double>(begin: 10, end: 0);
   }
 
   @override
@@ -51,17 +46,13 @@ class _CollapsingListTileState extends State<CollapsingListTile> {
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Row(
           children: <Widget>[
-            Icon(
-              widget.icon,
-              color: widget.isSelected ? Colors.white : Colors.white30,
-              size: 38.0,
-            ),
-            // (widthAnimation.value >= 190)
-            //     ? Text(widget.title,
-            //     style: widget.isSelected
-            //         ? TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.w600)
-            //         : TextStyle(color: Colors.white70, fontSize: 20.0, fontWeight: FontWeight.w600))
-            //     : Container()
+            Stack(children: <Widget>[
+              Icon(
+                widget.icon,
+                color: widget.isSelected ? Colors.white : Colors.white30,
+                size: 38.0,
+              ),
+            ]),
           ],
         ),
       ),

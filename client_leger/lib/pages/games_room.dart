@@ -1,5 +1,4 @@
 import 'package:client_leger/components/drawer.dart';
-import 'package:client_leger/pages/home_page.dart';
 import 'package:client_leger/pages/waiting_page.dart';
 import 'package:flutter/material.dart';
 
@@ -7,12 +6,8 @@ import '../classes/game.dart';
 import '../components/game_avail_card.dart';
 import '../components/sidebar.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
-import '../main.dart';
-import '../services/init_service.dart';
 import '../services/link_service.dart';
-import '../services/solo_game_service.dart';
 import 'game_page.dart';
-
 
 const List<String> virtualPlayers = <String>['One', 'Two', 'Three', 'Four'];
 const List<String> difficulty = <String>['Novice', 'Expert'];
@@ -36,65 +31,65 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
     connect();
     gameService.configureSocketFeatures();
 
-    if(linkService.getJoinButtonPressed() == true) linkService.buttonChange();
+    if (linkService.getJoinButtonPressed() == true) linkService.buttonChange();
   }
 
   connect() {
     socketService.on(
       "updateAvailableRoom",
-          (rooms) => {
+      (rooms) => {
         availableRooms = [],
         for (var r in rooms)
           {
             availableRooms.add(gameService.decodeModel(r)),
           },
-            if(mounted){
-              setState(() =>
-              availableRooms
-              ),
-            }
+        if (mounted)
+          {
+            setState(() => availableRooms),
+          }
       },
     );
 
-    socketService.on("playerAccepted", (serverRoom) =>
-    {
-      gameService.room = gameService.decodeModel(serverRoom),
-    Navigator.push(context,
-        MaterialPageRoute(builder: ((context) {
-              return WaitingPage(
-                  timer:
-                  gameService.gameData.timerPerTurn,
-                  isExpertLevel:
-                  gameService.gameData.isExpertLevel,
-                  players: gameService.room.players);
-        })))
-    });
+    socketService.on(
+        "playerAccepted",
+        (serverRoom) => {
+              gameService.room = gameService.decodeModel(serverRoom),
+              linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return WaitingPage(
+                    timer: gameService.gameData.timerPerTurn,
+                    isExpertLevel: gameService.gameData.isExpertLevel,
+                    players: gameService.room.players);
+              })))
+            });
 
-    socketService.on("gameStarted", (data) =>
-    {
-      Navigator.push(context,
-          MaterialPageRoute(builder: ((context) {
-            return GamePageWidget();
-    })))
-  });
+    socketService.on(
+        "gameStarted",
+        (data) => {
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return GamePageWidget();
+              })))
+            });
 
-    socketService.on("playerRejected", (serverRoom) => {
-      myRoom = gameService.decodeModel(serverRoom),
-      socketService.send("leaveRoomOther", myRoom.roomInfo.name),
-      linkService.buttonChange(),
-     }
-    );
+    socketService.on(
+        "playerRejected",
+        (serverRoom) => {
+              myRoom = gameService.decodeModel(serverRoom),
+              socketService.send("leaveRoomOther", myRoom.roomInfo.name),
+              linkService.buttonChange(),
+            });
 
-    socketService.on("playerLeft", (player) => {
-      //remove player from room info
-      print('received'),
-      //setState(() => pressed = false)
-    }
-    );
+    socketService.on(
+        "playerLeft",
+        (player) => {
+              //remove player from room info
+              // TODO: wtf is suppose to be here ??
+              //setState(() => pressed = false)
+            });
   }
 
-
-  @override dispose(){
+  @override
+  dispose() {
     super.dispose();
   }
 
@@ -144,8 +139,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                           difficulty: availableRooms[index].roomInfo.gameType,
                           time: availableRooms[index].roomInfo.timerPerTurn,
                           password: availableRooms[index].roomInfo.password,
-                          roomName:
-                              availableRooms[index].roomInfo.name,
+                          roomName: availableRooms[index].roomInfo.name,
                         );
                       })),
             ])),

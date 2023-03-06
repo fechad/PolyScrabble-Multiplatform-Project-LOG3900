@@ -30,6 +30,24 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get newMessage {
+    _$valueAtom.reportRead();
+    return super.newMessage;
+  }
+
+  @override
+  ObservableList<String> get channelWithNewMessages {
+    _$valueAtom.reportRead();
+    return super.channelWithNewMessages;
+  }
+
+  @override
+  Observable<String> get currentOpenedChat {
+    _$valueAtom.reportRead();
+    return super.currentOpenedChat;
+  }
+
+  @override
   set value(ObservableList<Tile> rack) {
     _$valueAtom.reportWrite(rack, super.tempRack, () {
       super.tempRack = rack;
@@ -51,11 +69,55 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  void newMessageChange() {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.newMessageChange');
+    try {
+      return super.newMessageChange();
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setRows(x, y, square) {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
         name: '_LinkService.setTempRows');
     try {
       return super.setRows(x, y, square);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCurrentOpenedChat(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setCurrentOpenedChat');
+    try {
+      return super.setCurrentOpenedChat(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void pushNewChannel(name) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.pushNewChannel');
+    try {
+      return super.pushNewChannel(name);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void popChannel(name) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.popChannel');
+    try {
+      return super.popChannel(name);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }

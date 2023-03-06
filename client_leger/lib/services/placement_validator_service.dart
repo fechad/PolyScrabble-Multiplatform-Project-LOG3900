@@ -44,7 +44,6 @@ class PlacementValidatorService {
       validPlacement = false;
       return;
     }
-    print('x: $x, y: $y  horizontal: $isHorizontal');
 
     letters += letter;
   }

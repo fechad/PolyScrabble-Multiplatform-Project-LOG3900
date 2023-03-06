@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../pages/chat_page.dart';
+import '../pages/game_page.dart';
 import '../pages/waiting_page.dart';
 import '../services/link_service.dart';
 import 'chat_model.dart';
@@ -14,20 +15,22 @@ class ChatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (chatModel.name.startsWith("Room")){
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => WaitingPage(
-                  timer:
-                  gameService.gameData.timerPerTurn,
-                  isExpertLevel:
-                  gameService.gameData.isExpertLevel,
-                  players: gameService.room.players),
+        if (chatModel.name.startsWith("Room")) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WaitingPage(
+                    timer: gameService.gameData.timerPerTurn,
+                    isExpertLevel: gameService.gameData.isExpertLevel,
+                    players: gameService.room.players),
               ));
-        }
-        else {
+        } else {
           //TODO: Join chat channel because by default we only join the general chat
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => GeneralChatWidget(chatName: chatModel.name)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      GeneralChatWidget(chatName: chatModel.name)));
         }
       },
       child: Column(
@@ -35,10 +38,24 @@ class ChatCard extends StatelessWidget {
           ListTile(
               title: Padding(
                   padding: EdgeInsets.only(top: 0, left: 20, right: 20),
-                  child: Text(
-                    chatModel.name,
-                    style: GoogleFonts.nunito(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                  child: Stack(
+                    children: [
+                      Text(
+                        chatModel.name,
+                        style: GoogleFonts.nunito(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      if (linkService
+                          .getChannelWithNewMessages()
+                          .contains(chatModel.name))
+                        const Positioned(
+                          // draw a red marble
+                          top: 5.0,
+                          right: 20.0,
+                          child: Icon(Icons.brightness_1,
+                              size: 16.0, color: Colors.redAccent),
+                        )
+                    ],
                   ))),
         ],
       ),

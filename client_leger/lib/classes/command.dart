@@ -1,9 +1,7 @@
 import 'package:client_leger/pages/game_page.dart';
 
 import '../components/tile.dart';
-import '../pages/home_page.dart';
 import '../services/link_service.dart';
-import '../services/solo_game_service.dart';
 
 class PlacementCommand {
   String letter;
@@ -14,7 +12,7 @@ class PlacementCommand {
 
   execute() {
     String command = '!placer $position $direction $letter';
-    print(command);
+
     socketService.send('message', command);
   }
 }
@@ -33,7 +31,7 @@ class ExchangeCommand {
     }
 
     String command = '!échanger $lettersToExchange';
-    print(command);
+
     socketService.send('message', command);
   }
 }
