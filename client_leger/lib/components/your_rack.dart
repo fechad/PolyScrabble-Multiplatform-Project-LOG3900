@@ -47,7 +47,6 @@ class _YourRackState extends State<YourRack> {
         ),
         child: NotificationListener<TileNotification>(
             onNotification: (notification) {
-              print(notification.data);
               tileChange(notification.data);
               return true;
             },

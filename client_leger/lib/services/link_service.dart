@@ -15,12 +15,12 @@ final RebuildController boardController = RebuildController();
 SocketService socketService = SocketService.instance;
 SocketService socketServiceBot = SocketService.instance;
 final gameService = MultiplayerGameService(
-gameData: GameData(
-pseudo: authenticator.currentUser.username,
-dictionary: 'dictionnaire par défaut',
-timerPerTurn: '',
-botName: '',
-isExpertLevel: false));
+    gameData: GameData(
+        pseudo: authenticator.currentUser.username,
+        dictionary: 'dictionnaire par défaut',
+        timerPerTurn: '',
+        botName: '',
+        isExpertLevel: false));
 
 // ignore: library_private_types_in_public_api
 class LinkService = _LinkService with _$LinkService;
@@ -51,6 +51,15 @@ abstract class _LinkService with Store {
   Observable<bool> joinButtonPressed = Observable(false);
 
   @observable
+  Observable<bool> newMessage = Observable(false);
+
+  @observable
+  Observable<String> currentOpenedChat = Observable('');
+
+  @observable
+  ObservableList<String> channelWithNewMessages = ObservableList.of([]);
+
+  @observable
   Observable<int> letterBankCount = Observable(0);
 
   @observable
@@ -62,13 +71,24 @@ abstract class _LinkService with Store {
     return tempRack;
   }
 
+  String getCurrentOpenedChat() {
+    return currentOpenedChat.value;
+  }
+
+  List<String> getChannelWithNewMessages() {
+    return channelWithNewMessages;
+  }
+
   List<Widget> getRows() {
-    print('enteres');
     return rows;
   }
 
   bool getJoinButtonPressed() {
     return joinButtonPressed.value;
+  }
+
+  bool getNewMessageBoolean() {
+    return newMessage.value;
   }
 
   int getLetterBankCount() {
@@ -81,8 +101,17 @@ abstract class _LinkService with Store {
   }
 
   @action
+  newMessageChange() {
+    newMessage.value = !newMessage.value;
+  }
+
+  @action
+  setCurrentOpenedChat(String data) {
+    currentOpenedChat.value = data;
+  }
+
+  @action
   setRows(int x, int y, Container square) {
-    print(((rows[y] as Row).children[x]).runtimeType);
     Placement placement = Placement(
         x: x,
         y: y,
@@ -91,6 +120,19 @@ abstract class _LinkService with Store {
             (rows[y] as Row).children[x] as DragTarget<Map<dynamic, dynamic>>);
     placementStack.add(placement);
     (rows[y] as Row).children[x] = placement.currentSquare;
+  }
+
+  @action
+  pushNewChannel(String name) {
+    if (channelWithNewMessages.contains(name)) return;
+    channelWithNewMessages.add(name);
+  }
+
+  @action
+  popChannel(String name) {
+    if (!channelWithNewMessages.contains(name)) return;
+    channelWithNewMessages.remove(name);
+    if (channelWithNewMessages.length == 0) newMessage.value = false;
   }
 
   @action
@@ -125,7 +167,6 @@ abstract class _LinkService with Store {
 
   @action
   resetRack() {
-    print('resetting rack');
     tempRack.clear();
     for (Tile letter in rack) {
       final deepCopy = Tile(
@@ -145,7 +186,6 @@ abstract class _LinkService with Store {
       Tile newTile = Tile(letter: letter, index: index);
       rack.add(newTile);
     }
-    print("updated rack");
     resetRack();
   }
 }

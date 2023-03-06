@@ -14,7 +14,6 @@ class HttpService {
   }
 
   Future<http.Response> logoutUser(String username) {
-    print('logout $username');
     String loginUrl = '$url/api/$authUrl/logout';
     return http.put(Uri.parse(loginUrl), body: {"username": username});
   }

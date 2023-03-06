@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../components/drawer.dart';
-import '../components/user_resume.dart';
 
 class UserPage extends StatefulWidget {
   @override
@@ -14,38 +13,40 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         drawer: const ChatDrawer(),
-      body: Row(
-        children: [
-          CollapsingNavigationDrawer(),
-          Expanded(
-            child: Column(
+        body: Row(
+          children: [
+            CollapsingNavigationDrawer(),
+            Expanded(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.all(20) ,
-                    child:Text(
-                        "Top G",
+                    padding: EdgeInsets.all(20),
+                    child: Text("Top G",
                         style: GoogleFonts.nunito(
-                            textStyle: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold
-                            ),
-                    ))
-                ),
+                          textStyle: TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.bold),
+                        ))),
                 Level(),
                 HighScores(),
                 OutObj(),
               ],
-            )
-          ),
-
-        ],
-      )
-    );
+            )),
+          ],
+        ));
   }
 }

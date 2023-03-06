@@ -5,7 +5,6 @@ import '../classes/game.dart';
 import '../components/chat_model.dart';
 import '../main.dart';
 import '../pages/home_page.dart';
-import 'chat_service.dart';
 import 'link_service.dart';
 
 class MultiplayerGameService extends SoloGameService {
@@ -51,48 +50,55 @@ class MultiplayerGameService extends SoloGameService {
 
     socketService.on(
         "roomCreated",
-            (serverRoom) => {
-          room = decodeModel(serverRoom),
-          socketService.send("createChatChannel", {"channel": room.roomInfo.name, "username":
-          Account(username: authenticator.currentUser.username,
-            email: '',
-            defaultLanguage: '',
-            defaultTheme: '',
-            highscore: 0,
-            totalXP: 0,
-            avatarUrl: '', badges: [], bestGames: [], gamesPlayed: [], gamesWon: 0,),
-            'isRoomChannel': true,
-          })
-        }
-    );
+        (serverRoom) => {
+              room = decodeModel(serverRoom),
+              socketService.send("createChatChannel", {
+                "channel": room.roomInfo.name,
+                "username": Account(
+                  username: authenticator.currentUser.username,
+                  email: '',
+                  defaultLanguage: '',
+                  defaultTheme: '',
+                  highscore: 0,
+                  totalXP: 0,
+                  avatarUrl: '',
+                  badges: [],
+                  bestGames: [],
+                  gamesPlayed: [],
+                  gamesWon: 0,
+                ),
+                'isRoomChannel': true,
+              })
+            });
 
     socketService.on(
       "availableChannels",
-          (channels) => {
+      (channels) => {
         availableChannels = [],
         for (var channel in channels)
-          {
-            availableChannels.add(chatService.decodeModel(channel))
-          },
-            if (room.roomInfo.name != '') {
-                chatService.getDiscussionChannelByName(room.roomInfo.name)
-            }
+          {availableChannels.add(chatService.decodeModel(channel))},
+        if (room.roomInfo.name != '')
+          {chatService.getDiscussionChannelByName(room.roomInfo.name)}
       },
     );
 
     socketService.on(
         "roomChannelUpdated",
-            (channel) => {
-          chatService.setRoomChannel(chatService.decodeModel(channel)),
-        }
-    );
+        (channel) => {
+              chatService.setRoomChannel(chatService.decodeModel(channel)),
+            });
 
     socketService.on(
         "playerAccepted",
         (room) => {
               room = decodeModel(room),
-          if(room.roomInfo.creatorName != authenticator.getCurrentUser().username)
-            socketService.send("joinChatChannel", {'name': room.roomInfo.name, 'user': authenticator.currentUser.username, 'isRoomChannel': true}),
+              if (room.roomInfo.creatorName !=
+                  authenticator.getCurrentUser().username)
+                socketService.send("joinChatChannel", {
+                  'name': room.roomInfo.name,
+                  'user': authenticator.currentUser.username,
+                  'isRoomChannel': true
+                }),
             });
 
     socketService.on(
@@ -144,7 +150,8 @@ class MultiplayerGameService extends SoloGameService {
   }
 
   reinitializeRoom() {
-    chatService.setRoomChannel(ChatModel(name: '', activeUsers: [], messages: []));
+    chatService
+        .setRoomChannel(ChatModel(name: '', activeUsers: [], messages: []));
     room.roomInfo.name = '';
     room.roomInfo.timerPerTurn = '';
     room.roomInfo.gameType = '';
@@ -152,20 +159,17 @@ class MultiplayerGameService extends SoloGameService {
     room.roomInfo.password = '';
   }
 
-
   requestGameStart() {
     socketService.send("startGameRequest", room.roomInfo.name);
   }
 
   acceptPlayer(String playerName) {
-    print('accepting');
     socketService.send("acceptPlayer",
         {'roomName': room.roomInfo.name, 'playerName': playerName});
-    print('accepted');
   }
 
-  rejectPlayer(String playerName){
-    socketService.send("rejectPlayer", {'roomName': room.roomInfo.name, 'playerName': playerName});
+  rejectPlayer(String playerName) {
+    socketService.send("rejectPlayer",
+        {'roomName': room.roomInfo.name, 'playerName': playerName});
   }
-
 }

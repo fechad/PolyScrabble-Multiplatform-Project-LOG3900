@@ -106,7 +106,6 @@ class _BoardState extends State<Board> {
         colorTile(i, j);
       }
     }
-    print('init board');
   }
 
   void placeTile(
@@ -144,7 +143,6 @@ class _BoardState extends State<Board> {
               ],
             )));
     setState(() {
-      print('index : $index');
       linkService.setRows(x, y, square);
       linkService.removeLetter(Tile(letter: letter, index: index!));
       alertGamePage(placementValidator.letters);
@@ -205,7 +203,6 @@ class _BoardState extends State<Board> {
         },
         onAccept: (data) {
           setState(() {
-            print('data index: ${data['index']}');
             placeTile(x, y, data["value"], data["letter"], data['index'],
                 Color(0xFFFFC7C7));
           });
@@ -298,8 +295,6 @@ class _BoardState extends State<Board> {
   //(rows[0] as Row).children[0] to access a children
   @override
   Widget build(BuildContext context) {
-    print('building board');
-    //constructBoard();
     return Column(
         key: GlobalKey<ScaffoldState>(),
         mainAxisAlignment: MainAxisAlignment.center,

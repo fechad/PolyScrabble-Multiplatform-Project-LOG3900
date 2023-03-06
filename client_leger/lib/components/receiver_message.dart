@@ -29,21 +29,21 @@ class OtherMessage extends StatelessWidget {
           ),
           Row(
             children: [
-              // Padding(
-              //   padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-              //   child: Container(
-              //     width: 80,
-              //     height: 80,
-              //     clipBehavior: Clip.antiAlias,
-              //     decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //     ),
-              //     child: Image.network(
-              //       'https://picsum.photos/seed/540/600',
-              //       fit: BoxFit.cover,
-              //     ),
-              //   ),
-              // ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.network(
+                    'https://picsum.photos/seed/540/600',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
                 child: Container(

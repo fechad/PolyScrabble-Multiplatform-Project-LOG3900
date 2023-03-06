@@ -45,7 +45,6 @@ class RebuildController {
 
   void rebuild() {
     void rebuild(Element el) {
-      print('object');
       el.markNeedsBuild();
       el.visitChildren(rebuild);
     }
