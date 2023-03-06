@@ -21,9 +21,9 @@ export class Board {
     private wordsValidator: WordsValidator;
     private letterValues: Map<string, number>;
 
-    constructor(letterValues: Map<string, number>, dictionaryName?: string) {
+    constructor(letterValues: Map<string, number>) {
         this.translator = new IndexationTranslator();
-        this.wordsValidator = new WordsValidator(dictionaryName);
+        this.wordsValidator = new WordsValidator();
         this.table = new Array<BoardNode>(this.translator.caseCount);
         this.letterValues = letterValues;
         this.iterator = new BoardNodesIterator(this.table);

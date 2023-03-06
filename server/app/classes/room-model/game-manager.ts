@@ -5,11 +5,11 @@ import { Goal } from '@app/classes/goals/goal';
 import { GoalManager } from '@app/classes/goals/goal-manager';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
-import { DictionaryReader } from '@app/classes/readers/dictionary-reader';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { WordFetcher } from '@app/classes/virtual-placement-logic/word-fetcher';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { COUNT_PLAYER_TURN, DEFAULT_DICTIONARY_PATH } from '@app/constants/constants';
+import { DICTIONARY_READER } from '@app/constants/reader-constant';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
@@ -25,11 +25,11 @@ export class GameManager {
 
     constructor(dictionaryName: string = DEFAULT_DICTIONARY_PATH) {
         this.letterBank = new LetterBank();
-        this.boardManipulator = new BoardManipulator(this.letterBank.produceValueMap(), dictionaryName);
+        this.boardManipulator = new BoardManipulator(this.letterBank.produceValueMap());
         this.turnPassedCounter = 0;
         this.hasTimeout = false;
         this.wordFetcher = new WordFetcher();
-        this.wordFetcher.setWordsMap(new DictionaryReader(dictionaryName).getWords(), dictionaryName);
+        this.wordFetcher.setWordsMap(DICTIONARY_READER.getWords(), dictionaryName);
         this.goalManager = new GoalManager();
         const tools: VirtualTools = {
             fetcher: this.wordFetcher,

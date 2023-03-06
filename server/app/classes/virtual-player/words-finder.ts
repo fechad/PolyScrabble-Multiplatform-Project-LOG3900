@@ -1,12 +1,12 @@
-import { DictionaryReader } from '@app/classes/readers/dictionary-reader';
 import { Trie } from '@app/classes/Trie/trie';
 import { TrieNode } from '@app/classes/Trie/trie-node';
+import { DICTIONARY_READER } from '@app/constants/reader-constant';
 
 export class WordsFinder {
     private dictionaryTrie: Trie;
     constructor(trie?: Trie) {
         if (trie) this.dictionaryTrie = trie;
-        else this.dictionaryTrie = new DictionaryReader().getWordsTrie();
+        else this.dictionaryTrie = DICTIONARY_READER.getWordsTrie();
     }
 
     findFormableChildren(base: string, structure: TrieNode, rackLetters: string[]): string[] {
