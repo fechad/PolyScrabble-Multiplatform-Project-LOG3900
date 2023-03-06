@@ -11,8 +11,8 @@ const MAX_LENGTH_REWARD = 50;
 export class BoardManipulator {
     protected board: Board;
 
-    constructor(letterValues: Map<string, number>, dictionaryName?: string) {
-        this.board = new Board(letterValues, dictionaryName);
+    constructor(letterValues: Map<string, number>) {
+        this.board = new Board(letterValues);
     }
 
     placeLetters(letters: string[], row: string, columnIndex: number, direction?: string, isPhantomPlacement?: boolean): BoardMessage {

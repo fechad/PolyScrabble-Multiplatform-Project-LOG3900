@@ -1,10 +1,9 @@
-import { DictionaryReader } from '@app/classes/readers/dictionary-reader';
-import { DEFAULT_DICTIONARY_PATH } from '@app/constants/constants';
+import { DICTIONARY_READER } from '@app/constants/reader-constant';
 
 export class WordsValidator {
     private dictionaryReader;
-    constructor(dictionaryName: string = DEFAULT_DICTIONARY_PATH) {
-        this.dictionaryReader = new DictionaryReader(dictionaryName);
+    constructor() {
+        this.dictionaryReader = DICTIONARY_READER;
     }
     isValidWords(words: string[]): boolean {
         return words.every((word) => {

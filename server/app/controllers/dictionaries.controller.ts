@@ -1,6 +1,6 @@
-import { DictionaryReader } from '@app/classes/readers/dictionary-reader';
 import { ScoreMapper } from '@app/classes/virtual-placement-logic/score-mapper';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { DICTIONARY_READER } from '@app/constants/reader-constant';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { DictionariesFileService } from '@app/services/dictionaries-files.service';
 import { DictionariesService } from '@app/services/dictionaries.service';
@@ -43,8 +43,8 @@ export class DictionariesController {
         this.router.get('/:title', async (req: Request, res: Response) => {
             const title = decodeURIComponent(req.params.title);
             try {
-                const reader = new DictionaryReader();
-                let dictionary: Dictionary = { title: DEFAULT_DICTIONARY_TITLE, description: 'KEKZ BOIS', words: [...reader.getWords().keys()] };
+                const reader = DICTIONARY_READER;
+                let dictionary: Dictionary = { title: DEFAULT_DICTIONARY_TITLE, description: 'standard dict', words: [...reader.getWords().keys()] };
                 if (!dictionary) {
                     res.status(StatusCodes.GONE).send({});
                     return;

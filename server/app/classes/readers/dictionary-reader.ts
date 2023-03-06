@@ -5,6 +5,7 @@ import { JsonObject } from 'swagger-ui-express';
 
 const DEFAULT_DICTIONARY = 'dictionnaire-par-defaut.json';
 export class DictionaryReader {
+    trie: Trie;
     private words: Map<string, number>;
     constructor(dictionaryName: string = DEFAULT_DICTIONARY) {
         const jsonReader = new JsonReader();
@@ -24,10 +25,12 @@ export class DictionaryReader {
         return this.words;
     }
     getWordsTrie(): Trie {
+        if (this.trie) return this.trie;
         const trie = new Trie();
         [...this.words.keys()].forEach((word) => {
             trie.insert(word);
         });
+        this.trie = trie;
         return trie;
     }
     private formWordsMap(words: string) {
