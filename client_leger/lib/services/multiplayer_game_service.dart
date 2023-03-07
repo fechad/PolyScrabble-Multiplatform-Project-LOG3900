@@ -88,18 +88,19 @@ class MultiplayerGameService extends SoloGameService {
               chatService.setRoomChannel(chatService.decodeModel(channel)),
             });
 
-    socketService.on(
-        "playerAccepted",
-        (room) => {
-              room = decodeModel(room),
-              if (room.roomInfo.creatorName !=
-                  authenticator.getCurrentUser().username)
-                socketService.send("joinChatChannel", {
-                  'name': room.roomInfo.name,
-                  'user': authenticator.currentUser.username,
-                  'isRoomChannel': true
-                }),
-            });
+    // socketService.on(
+    //     "playerAccepted",
+    //     (room) => {
+    //       print('player accepted in service'),
+    //           room = decodeModel(room),
+    //           if (room.roomInfo.creatorName !=
+    //               authenticator.getCurrentUser().username)
+    //             socketService.send("joinChatChannel", {
+    //               'name': room.roomInfo.name,
+    //               'user': authenticator.currentUser.username,
+    //               'isRoomChannel': true
+    //             }),
+    //         });
 
     socketService.on(
         "playerRejected",
