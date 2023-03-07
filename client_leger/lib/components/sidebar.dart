@@ -12,6 +12,7 @@ import '../pages/game_page.dart';
 import '../pages/home_page.dart';
 import '../services/chat_service.dart';
 import '../services/init_service.dart';
+import '../services/link_service.dart';
 
 final ChatService chat = chatService;
 
@@ -109,6 +110,14 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
             });
 
     socket.on('addChannel', (data) => {chatService.addDiscussion(data)});
+
+    //for public games
+    // socketService.on(
+    //     "playerAccepted",
+    //         (serverRoom) => {
+    // print('player accepted in sidebar'),
+    //       gameService.room = gameService.decodeModel(serverRoom),
+    //     });
 
     socket.on(
         'deleteChannel',

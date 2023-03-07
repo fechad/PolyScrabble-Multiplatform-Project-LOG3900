@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:client_leger/classes/command.dart';
+import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/objective_box.dart';
 import 'package:client_leger/components/your_rack.dart';
 import 'package:client_leger/main.dart';
@@ -7,9 +10,11 @@ import 'package:client_leger/services/placement_validator_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../components/avatar.dart';
 import '../components/avatar_list.dart';
 import '../components/board.dart';
 import '../components/sidebar.dart';
+import '../components/user_resume.dart';
 import '../config/colors.dart';
 import '../services/game_command_service.dart';
 
@@ -26,14 +31,39 @@ class GamePageWidget extends StatefulWidget {
 
 class _GamePageWidgetState extends State<GamePageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final pageKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
   int numberOfLettersSelected = 0;
   List<int> letterIndexesToExchange = [];
+  List<Widget> Avatars = [];
   String lettersPlaced = '';
+  int drawer = 0;
 
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i < 4; i++){
+      Avatars.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+          GestureDetector(
+            onTap: () {
+              setState(() =>
+              {
+                drawer = 1,
+                pageKey.currentState?.openDrawer()
+              });
+            },
+            child:
+            Avatar(),
+          ),
+          SizedBox(height: 10),
+          Text("251", style: TextStyle(fontSize: 14, color: Colors.black))
+        ]
+        ),
+      );
+    }
   }
 
   @override
@@ -64,7 +94,18 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
     return Scaffold(
+        key: pageKey,
         backgroundColor: Color.fromRGBO(249, 255, 246, 1),
+        drawer: drawer == 0 ? ChatDrawer() : UserResume(),
+        onDrawerChanged: (isOpen) {
+          // write your callback implementation here
+          if (!isOpen)
+            Timer(Duration(milliseconds: 250), () {
+              setState(() {
+                drawer = 0;
+              });
+            });
+        },
         body: Row(children: [
           CollapsingNavigationDrawer(),
           Column(children: [
@@ -113,7 +154,10 @@ class _GamePageWidgetState extends State<GamePageWidget> {
               Icon(Icons.lightbulb_outline_rounded, size: 40)
             ]),
             SizedBox(height: 20),
-            AvatarList(),
+            Row(
+              children:
+                      Avatars,
+                ),
             SizedBox(height: 10),
             ObjectiveBox(),
             SizedBox(height: 32),

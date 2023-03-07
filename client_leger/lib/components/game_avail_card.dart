@@ -40,6 +40,7 @@ class _GameCardState extends State<GameCard> {
     points: 0,
     isItsTurn: false,
   );
+  TextEditingController _pswdController = TextEditingController();
 
   @override
   void initState() {
@@ -120,8 +121,65 @@ class _GameCardState extends State<GameCard> {
                             : const Text('Joindre'),
                         onPressed:
                         linkService.getJoinButtonPressed() ? null : () {
-                          sendJoinRequest();
-                          buttonChange();
+                          if(password.isEmpty) {
+                            sendJoinRequest();
+                            buttonChange();
+                          }
+                          else {
+                            showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return
+                              Container(
+                              child:
+                            AlertDialog(
+                                title: Text("Partie privée"),
+                                content: TextFormField(
+                                controller: _pswdController,
+                                decoration: const InputDecoration(
+                                    hintText: 'Veuillez entrer le mot de passe pour joindre la partie',
+                                ),
+                                obscureText: true,
+                                  validator: (value) {
+                                  if (value!.isEmpty){
+                                    return 'Mot de passe requis';
+                                  }
+                                  if (value == password) {
+                                    _pswdController.text = value;
+                                  }
+                                  else return 'Mot de passe invalide';
+                            },
+                                ),
+                              actions: [
+                                ElevatedButton(
+                                  child: Text('Quitter'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    textStyle: const TextStyle(fontSize: 20),
+                                  ),
+                                  onPressed: () => {
+                                    _pswdController.clear(),
+                                    Navigator.pop(context),}
+                                ),
+                                ElevatedButton(
+                                  child: Text('Joindre'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Palette.mainColor,
+                                    textStyle: const TextStyle(fontSize: 20),
+                                  ),
+                                  onPressed: () {
+                                    if(_pswdController.text == password) {
+                                      sendJoinRequest();
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                              );
+                            }
+                            );
+                          }
                         }
                       ),
                     ),
@@ -142,6 +200,14 @@ class _GameCardState extends State<GameCard> {
       "player": player,
       "password": password
     });
+
+    if(password.isNotEmpty) {
+      homeSocketService.send("joinChatChannel", {
+                  'name': roomName,
+                  'user': authenticator.currentUser.username,
+                  'isRoomChannel': true,
+                });
+    }
   }
 }
 

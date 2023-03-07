@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
@@ -7,7 +6,6 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-
 import '../classes/game.dart';
 import '../components/avatar.dart';
 import '../components/sidebar.dart';
@@ -149,7 +147,6 @@ class _WaitingPageState extends State<WaitingPage> {
                   })
             });
 
-    //for public games
     socketService.on(
         "playerAccepted",
         (serverRoom) => {
