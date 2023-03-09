@@ -1,15 +1,17 @@
+import { getAuth } from 'firebase-admin/auth';
 import { Auth } from 'firebase-admin/lib/auth/auth';
 import { UpdateRequest } from 'firebase-admin/lib/auth/auth-config';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 import { Service } from 'typedi';
+
 // eslint-disable-next-line no-restricted-imports
-import { auth } from '../firebase-config';
 
 @Service()
 export class Authentificator {
     auth: Auth;
     userNames: string[];
     constructor() {
-        this.auth = auth;
+        this.auth = getAuth();
         this.userNames = [];
     }
 
@@ -29,11 +31,15 @@ export class Authentificator {
         }
     }
 
+    async resetUserPassword(email: string) {
+        return this.findUserByEmail(email);
+    }
+
     async getFindUser(uid: string) {
         return this.auth.getUser(uid);
     }
 
-    async findUserByEmail(email: string) {
+    async findUserByEmail(email: string): Promise<UserRecord> {
         return this.auth.getUserByEmail(email);
     }
 

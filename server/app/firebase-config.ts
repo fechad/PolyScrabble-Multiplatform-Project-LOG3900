@@ -1,5 +1,4 @@
-import admin from 'firebase-admin';
-import { ServiceAccount } from 'firebase-admin/app';
+import admin, { ServiceAccount } from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 import serviceAccount from './service-account.json';
 
