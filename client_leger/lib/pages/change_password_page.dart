@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:client_leger/config/colors.dart';
 import 'package:client_leger/main.dart';
-import 'package:client_leger/pages/forgot_password_page.dart';
+import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/pages/home_page.dart';
-import 'package:client_leger/pages/signup_page.dart';
 import 'package:flutter/material.dart';
 
 import '../config/flutter_flow/flutter_flow_theme.dart';
@@ -12,45 +11,34 @@ import '../services/http_service.dart';
 
 final httpService = HttpService();
 
-class ConnexionPageWidget extends StatefulWidget {
-  const ConnexionPageWidget({Key? key}) : super(key: key);
+class ChangePasswordPageWidget extends StatefulWidget {
+  final String email;
+  const ChangePasswordPageWidget({Key? key, required this.email})
+      : super(key: key);
 
   @override
-  _ConnexionPageWidgetState createState() => _ConnexionPageWidgetState();
+  _ChangePasswordPageWidgetState createState() =>
+      _ChangePasswordPageWidgetState();
 }
 
-class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
+class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
   final _unfocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final temporaryPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmNewPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late List<String> usernames;
-  final TextEditingController textController = TextEditingController();
   bool isWriting = false;
-  bool validUsername = false;
 
   @override
   void initState() {
     super.initState();
-    httpService.getUsernames().then((names) => {usernames = names});
   }
 
   @override
   void dispose() {
     _unfocusNode.dispose();
     super.dispose();
-  }
-
-  Future<bool> checkWithAvailableNames(String value) async {
-    await httpService.getUsernames().then((names) => {usernames = names});
-    if (usernames
-        .toString()
-        .toLowerCase()
-        .contains('"${value?.toLowerCase()}"')) {
-      return false;
-    }
-    return true;
   }
 
   @override
@@ -98,7 +86,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                         children: [
                           Center(
                             child: Text(
-                              'Connexion',
+                              'Changement de mot de passe',
                               style: FlutterFlowTheme.of(context)
                                   .bodyText1
                                   .override(
@@ -114,16 +102,16 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                           SizedBox(
                             width: 400,
                             child: TextFormField(
-                              controller: emailController,
+                              controller: temporaryPasswordController,
                               decoration: const InputDecoration(
-                                hintText: 'Entrez votre adresse courriel',
-                                labelText: 'Adresse courriel',
+                                hintText:
+                                    'Entrez le mot de passe envoyé à votre courriel',
+                                labelText: 'Email temporaire',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
-                                checkWithAvailableNames(value!);
                                 if (value == null || value.isEmpty) {
-                                  return "Entrez un nom d'utilisateur valide";
+                                  return "Mot de passe temporaire requis";
                                 }
                               },
                             ),
@@ -132,14 +120,13 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                             width: 400,
                             child: TextFormField(
                               obscureText: true,
-                              controller: passwordController,
+                              controller: newPasswordController,
                               decoration: const InputDecoration(
-                                hintText: 'Entrez votre mot de passe',
-                                labelText: 'Mot de passe',
+                                hintText: 'Entrez votre nouveau mot de passe',
+                                labelText: 'Nouveau mot de passe',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
-                                checkWithAvailableNames(value!);
                                 if (value == null || value.isEmpty) {
                                   return 'Entrez un mot de passe valide';
                                 }
@@ -148,43 +135,24 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                           ),
                           SizedBox(
                             width: 400,
-                            height: 40,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Mot de passe oublié?',
-                                  style: FlutterFlowTheme.of(context)
-                                      .bodyText1
-                                      .override(
-                                        color: Color(0x80000000),
-                                        fontFamily: 'Nunito',
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                                SizedBox(width: 4),
-                                InkWell(
-                                  child: Text(
-                                    'Cliquez ici',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyText1
-                                        .override(
-                                          color: Color(0xFF7DAF6B),
-                                          fontFamily: 'Nunito',
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: ((context) {
-                                      return ForgotPasswordPageWidget();
-                                    })));
-                                  },
-                                )
-                              ],
+                            child: TextFormField(
+                              obscureText: true,
+                              controller: confirmNewPasswordController,
+                              decoration: const InputDecoration(
+                                hintText:
+                                    'Confirmez votre nouveau mot de passe',
+                                labelText: 'Confirmet le nouveau mot de passe',
+                              ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Entrez un mot de passe valide';
+                                }
+                                if (newPasswordController.text !=
+                                    confirmNewPasswordController.text) {
+                                  return 'Les mots de passe ne corespondent pas';
+                                }
+                              },
                             ),
                           ),
                           Padding(
@@ -194,15 +162,17 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                 // Validate returns true if the form is valid, or false otherwise.
                                 if (_formKey.currentState!.validate()) {
                                   //loginUser(textController.text);
+                                  // TODO: authenticator modify user passoword
                                   authenticator
-                                      .signInUser(emailController.text,
-                                          passwordController.text)
+                                      .changeUserPassword(
+                                          widget.email,
+                                          temporaryPasswordController.text,
+                                          newPasswordController.text)
                                       .then((value) => Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (context) =>
                                                   //authenticator.setValidate();
-                                                  MyHomePage(
-                                                      title: 'PolyScrabble'))))
+                                                  ConnexionPageWidget())))
                                       .catchError((error) => ScaffoldMessenger
                                               .of(context)
                                           .showSnackBar(SnackBar(
@@ -216,7 +186,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                           duration:
                                               Duration(milliseconds: 1000),
                                           content: Text(
-                                              'Vérification de la connexion ...')));
+                                              'Changement réussi, reconnexion en cours ...')));
                                   Timer(const Duration(milliseconds: 1000),
                                       (() => {}));
                                 }
@@ -244,45 +214,6 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 400,
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Pas encore inscrit?',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyText1
-                                        .override(
-                                          color: Color(0x80000000),
-                                          fontFamily: 'Nunito',
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SignupPageWidget()));
-                                    },
-                                    child: Text(
-                                      "M'inscrire",
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyText1
-                                          .override(
-                                            color: Color(0xFF7DAF6B),
-                                            fontFamily: 'Nunito',
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
-                                ]),
-                          ),
                         ],
                       ),
                     ),
@@ -306,16 +237,9 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
             backgroundColor: Colors.red[300],
             duration: const Duration(milliseconds: 1000),
             content: const Text('Erreur de connexion: nom déjà pris'))));
-
-    setState(() {
-      isWriting = false;
-      usernames;
-    });
   }
 
   void navigate() {
-    validUsername = true;
-    authenticator.setLoggedInEmail(emailController.text);
     chatService.joinDiscussion('General Chat');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {

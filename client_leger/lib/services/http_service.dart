@@ -27,6 +27,11 @@ class HttpService {
         body: {"email": email, "username": username});
   }
 
+  Future<http.Response> resetUserPassword(String email) {
+    return http.post(Uri.parse('$url/api/$authUrl/user/reset/$email'),
+        body: {"email": email});
+  }
+
   Future<List<String>> getUsernames() async {
     final response = await http.get(Uri.parse('$url/api/$authUrl/usernames'));
     if (response.statusCode != 200) {

@@ -1,6 +1,7 @@
 //widget from https://github.com/PrateekSharma1712/custom_navigation_drawer/blob/master/lib/commons/collapsing_navigation_drawer_widget.dart
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/pages/profile_page.dart';
+import 'package:client_leger/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
@@ -10,6 +11,8 @@ import '../model/custom_navigation_drawer.dart';
 import '../pages/chat_page.dart';
 import '../pages/game_page.dart';
 import '../pages/home_page.dart';
+import '../pages/leaderboard_page.dart';
+import '../pages/observer_page.dart';
 import '../services/chat_service.dart';
 import '../services/init_service.dart';
 import '../services/link_service.dart';
@@ -160,6 +163,18 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                 },
                 notifiable: false,
               ),
+              CollapsingListTile(
+                title: 'Home', icon: Icons.home,
+                animationController: _animationController,
+                // TODO onTap: .... send to user profile
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                    return MyHomePage(title: 'PolyScrabble');
+                  })));
+                },
+                notifiable: false,
+              ),
               Divider(height: 40.0),
               Expanded(
                 child: ListView.separated(
@@ -169,11 +184,15 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                   itemBuilder: (context, counter) {
                     return (counter == 2)
                         ? Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 280),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 240),
                             child: CollapsingListTile(
                               onTap: () {
                                 setState(() {
                                   currentSelectedIndex = counter;
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: ((context) {
+                                    return ObserverPage();
+                                  })));
                                 });
                               },
                               isSelected: currentSelectedIndex == counter,
@@ -199,15 +218,6 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                                       .length ==
                                                   0)
                                             linkService.newMessageChange();
-                                        }
-                                        // TODO : put function here depending on what we click on
-                                        if (counter ==
-                                            navigationItems.length - 1) {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: ((context) {
-                                            return ConnexionPageWidget();
-                                          })));
                                         }
                                       });
                                     },
@@ -238,7 +248,17 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                         linkService.newMessageChange();
                                     }
                                     // TODO : put function here depending on what we click on
-                                    if (counter == navigationItems.length - 1) {
+                                    else if (counter == 1) {
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: ((context) {
+                                        return LeaderBoardPage();
+                                      })));
+                                    } else if (counter == 3) {
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: ((context) {
+                                        return SettingsPage();
+                                      })));
+                                    } else if (counter == 4) {
                                       Navigator.push(context, MaterialPageRoute(
                                           builder: ((context) {
                                         return ConnexionPageWidget();
