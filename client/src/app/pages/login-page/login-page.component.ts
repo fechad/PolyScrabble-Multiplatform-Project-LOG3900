@@ -29,7 +29,7 @@ export class LoginPageComponent implements AfterViewInit {
         private httpService: HttpService,
         private authService: Authenticator,
     ) {
-        if (!environment.production) {
+        if (environment.production) {
             this.playerService.player.email = 'Chad@gmail.com';
             this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
             router.navigateByUrl('/main');
@@ -157,6 +157,10 @@ export class LoginPageComponent implements AfterViewInit {
                     this.loginError = errorMessage;
                 }
             });
+    }
+
+    forgotPassword() {
+        this.router.navigate(['/reset-password']);
     }
 
     submitRegistration() {

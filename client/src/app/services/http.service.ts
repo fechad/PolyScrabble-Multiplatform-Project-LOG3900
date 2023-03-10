@@ -46,6 +46,17 @@ export class HttpService {
         return this.http.get<unknown[]>(`${this.baseUrl}/${this.authUrl}/user/${email}`).pipe(catchError(this.handleError<string[]>('loginUser')));
     }
 
+    resetUserPassword(email: string) {
+        this.clearError();
+        return this.http
+            .post<{ email: string }>(
+                `${this.baseUrl}/${this.authUrl}/user/reset/${email}`,
+                { email },
+                { headers: this.createCacheHeaders(), observe: 'response' },
+            )
+            .pipe(catchError(this.handleError<HttpResponse<string[]>>('resetUserPassword')));
+    }
+
     signUpUser(email: string, username?: string) {
         this.clearError();
         // TODO: Connect to server user creation route
