@@ -47,6 +47,7 @@ import { AdminGamesPageComponent } from './pages/admin-games-page/admin-games-pa
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { BestScoresPageComponent } from './pages/best-scores-page/best-scores-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { ForgotPasswordPageComponent } from './pages/forgot-password-page/forgot-password-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -100,6 +101,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         UserProfileComponent,
         UserSummaryComponent,
         MenuComponent,
+        ForgotPasswordPageComponent,
     ],
     imports: [
         AppMaterialModule,

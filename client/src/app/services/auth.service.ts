@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Auth, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updatePassword } from 'firebase/auth';
 // eslint-disable-next-line no-restricted-imports
 import { app } from '../../firebase-config';
 
@@ -21,8 +21,10 @@ export class Authentificator {
         return createUserWithEmailAndPassword(this.auth, email, password);
     }
 
-    async changePassword() {
+    async changePassword(newPassword: string) {
         // TODO:
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return updatePassword(this.auth.currentUser!, newPassword);
     }
 
     async getUserEmail() {

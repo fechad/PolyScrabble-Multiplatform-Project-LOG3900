@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //home: const MyHomePage(title: 'PolyScrabble'),
-        home: isProduction
+        home: true //isProduction
             ? ConnexionPageWidget()
             : /*GamePageWidget()); //:*/ MyHomePage(title: 'PolyScrabble'));
   }
