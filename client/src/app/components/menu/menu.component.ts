@@ -158,6 +158,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.socketService.send(SocketEvent.StartGameRequest, this.room.roomInfo.name);
     }
 
+    navigateSettings() {
+        this.router.navigate(['/settings']);
+    }
+
     async logOut() {
         if (environment.production) await lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
         this.socketService.send(SocketEvent.LeaveChatChannel, { channel: 'General Chat', username: this.playerService.player.pseudo });

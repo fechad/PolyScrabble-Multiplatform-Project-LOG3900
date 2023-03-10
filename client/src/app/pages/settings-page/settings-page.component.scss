@@ -1,0 +1,86 @@
+.settings-title {
+    padding-top: 10%;
+}
+
+.page-options {
+    display: flex;
+    flex-direction: column;
+
+    .section-title {
+        font-size: 24px;
+        padding-right: 10%;
+    }
+
+    .radio-button-option {
+        padding-right: 5%;
+    }
+    .avatar-section {
+    }
+    .theme-section,
+    .language-section {
+        display: inline-flex;
+        align-items: baseline;
+        min-width: 400px;
+    }
+
+    .victory-music-section {
+        //display: inline;
+        min-width: 400px;
+        #music {
+            width: 15%;
+        }
+    }
+    .password-section {
+        display: flex;
+        justify-content: start;
+        width: 200px;
+        height: 50px;
+        align-items: center;
+        color: white;
+        font-size: 16px;
+        background: #a8bbff;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        border-style: none;
+        border-color: rgb(178, 178, 178);
+
+        &:hover {
+            cursor: pointer;
+            background: #899ad7;
+        }
+
+        &:active {
+            cursor: pointer;
+            background: #9dace0;
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    .save-button {
+        position: absolute;
+        bottom: 100px;
+        right: 100px;
+        align-items: center;
+        color: white;
+        font-size: 16px;
+        height: 40px;
+        width: fit-content;
+        padding-left: 2%;
+        padding-right: 2%;
+        background: #7daf6b;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        border-style: none;
+
+        &:hover {
+            cursor: pointer;
+            background: #608b50;
+        }
+
+        &:active {
+            cursor: pointer;
+            background: #6e9d5d;
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+        }
+    }
+}
