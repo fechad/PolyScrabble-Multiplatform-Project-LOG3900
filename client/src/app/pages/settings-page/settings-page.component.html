@@ -1,0 +1,55 @@
+<div class="page-container">
+    <div class="page-body">
+        <div class="body-main-container">
+            <div class="page-title">
+                <div class="form-title settings-title">Settings</div>
+                <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
+            </div>
+            <form [formGroup]="settingsForm">
+                <div class="page-options">
+                    <div class="avatar-section">
+                        <div class="avatar-circle"></div>
+                        <div class="circle-icon"></div>
+                    </div>
+                    <div class="theme-section">
+                        <p class="section-title">Thème de couleur</p>
+                        <div class="radio-button-option">
+                            <input type="radio" id="dark" name="theme" value="Dark" formControlName="theme" />
+                            <label for="dark">Sombre</label><br />
+                        </div>
+                        <div>
+                            <input type="radio" id="light" name="theme" value="Light" formControlName="theme" />
+                            <label for="light">Clair</label><br />
+                        </div>
+                    </div>
+                    <div class="language-section">
+                        <p class="section-title">Language</p>
+                        <div class="radio-button-option">
+                            <input type="radio" id="french" name="language" value="Français" formControlName="language" />
+                            <label for="french">Français</label><br />
+                        </div>
+                        <div>
+                            <input type="radio" id="english" name="language" value="English" formControlName="language" />
+                            <label for="english">English</label><br />
+                        </div>
+                    </div>
+                    <div class="victory-music-section">
+                        <label for="music" class="section-title">Musique de victoire: </label>
+                        <select name="Music" id="music">
+                            <option value="volvo">Default</option>
+                            <option value="saab">Choix 1</option>
+                            <option value="opel">Choix 2</option>
+                            <option value="audi">Choix 3</option>
+                        </select>
+                        <br /><br />
+                    </div>
+                    <button class="password-section">Changer le mot de passe</button>
+
+                    <input class="save-button" type="submit" value="Sauvegarder" (click)="sendData()" />
+                </div>
+            </form>
+        </div>
+        <div class="footer"></div>
+    </div>
+    <app-menu></app-menu>
+</div>

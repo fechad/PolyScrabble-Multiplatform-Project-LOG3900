@@ -15,6 +15,7 @@ import { GameWaitMultiplayerPageComponent } from '@app/pages/game-wait-multiplay
 import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { SettingsPageComponent } from '@app/pages/settings-page/settings-page.component';
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: LoginPageComponent },
@@ -31,6 +32,7 @@ export const routes: Routes = [
     { path: 'admin/bots', component: AdminBotPageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'user', component: UserProfileComponent },
+    { path: 'settings', component: SettingsPageComponent },
     { path: 'reset-password', component: ForgotPasswordPageComponent },
     { path: '**', redirectTo: '/home' },
 ];
