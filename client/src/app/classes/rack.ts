@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Position } from '@app/classes/position';
 import { DEFAULT_STARTING_POSITION } from '@app/constants/board-constants';
-import { DEFAULT_TILE_COLOR, DEFAULT_TILE_HEIGHT, DEFAULT_TILE_WIDTH, ERROR, RACK_CAPACITY, RACK_SCALING_RATIO } from '@app/constants/rack-constants';
+import { A_ASCII } from '@app/constants/constants';
+import { DEFAULT_TILE_COLOR, DEFAULT_TILE_HEIGHT, DEFAULT_TILE_WIDTH, ERROR, POINTS, RACK_CAPACITY } from '@app/constants/rack-constants';
 import { Direction } from '@app/enums/direction';
 import { SelectionType } from '@app/enums/selection-type';
-import { LetterTileService } from '@app/services/letter-tile.service';
-import { RackGridService } from '@app/services/rack-grid.service';
 import { Tile } from './tile';
 
 const RACK_START_Y_AXIS = 10;
@@ -20,12 +19,14 @@ const BLANK_TILE = ' ';
     providedIn: 'root',
 })
 export class Rack {
+    isDraggingATile: boolean;
     private currentSelectionType: SelectionType;
     private selectedTileIndex: number;
     private rack: Tile[];
-    constructor(public letterTileService: LetterTileService, public rackGridService: RackGridService) {
+    constructor() {
         this.currentSelectionType = SelectionType.UNSELECTED;
         this.rack = new Array<Tile>(RACK_CAPACITY);
+        this.isDraggingATile = false;
         this.selectedTileIndex = ERROR;
         this.updateRack('');
     }
@@ -39,6 +40,15 @@ export class Rack {
         return word;
     }
 
+    get rackTiles(): Tile[] {
+        return this.rack;
+    }
+
+    get selectedTile(): Tile | null {
+        if (this.selectedTileIndex === ERROR) return null;
+        return this.rack[this.selectedTileIndex];
+    }
+
     updateRack(word: string) {
         let letterOffsetPosition = DEFAULT_STARTING_POSITION;
         for (let i = 0; i < RACK_CAPACITY; i++) {
@@ -48,12 +58,11 @@ export class Rack {
                 { width: DEFAULT_TILE_WIDTH, height: DEFAULT_TILE_HEIGHT },
                 word[i],
                 DEFAULT_TILE_COLOR,
-                this.letterTileService.tileScore(word[i] as string),
+                this.tileScore(word[i] as string),
             );
             this.rack[i] = tile;
             letterOffsetPosition += DEFAULT_TILE_WIDTH;
         }
-        this.drawRackContent();
     }
 
     mouseHitDetect(event: MouseEvent) {
@@ -66,6 +75,18 @@ export class Rack {
 
         this.selectTileForPlacement(this.getTileClickedOn({ x: event.offsetX, y: event.offsetY }) as Tile);
         this.setCaseSelectedIndex({ x: event.offsetX, y: event.offsetY });
+    }
+
+    endTileDragging() {
+        const buffer = 50;
+        setTimeout(() => {
+            this.isDraggingATile = false;
+        }, buffer);
+    }
+
+    selectTileForManipulation(tile: Tile) {
+        this.isDraggingATile = true;
+        this.selectTileForPlacement(tile);
     }
 
     selectLetterTile(letter: string) {
@@ -103,7 +124,6 @@ export class Rack {
         const index = this.rackWord.indexOf(letter);
         this.rack[index].content = BLANK_TILE;
         this.rack[index].points = ERROR;
-        this.drawRackContent();
     }
 
     addLetter(letter: string) {
@@ -144,7 +164,6 @@ export class Rack {
     cancelExchange() {
         for (const tile of this.rack) {
             tile.updateSelectionType(SelectionType.UNSELECTED);
-            this.rackGridService.drawBorder(tile);
         }
         this.currentSelectionType = SelectionType.UNSELECTED;
     }
@@ -168,6 +187,28 @@ export class Rack {
         const tile = this.getTileClickedOn({ x: clickX, y: clickY });
         if (!tile) return;
         this.selectTileForExchange(tile);
+    }
+
+    selectTileForExchange(tile: Tile) {
+        if (!tile) return;
+        const selection = this.isTileSelectedForExchange(tile) ? SelectionType.UNSELECTED : SelectionType.EXCHANGE;
+        tile.updateSelectionType(selection);
+        this.updateSelectionType(SelectionType.EXCHANGE);
+    }
+
+    selectTileForPlacement(tile: Tile) {
+        this.updateSelectionType(SelectionType.UNSELECTED);
+
+        if (!tile) {
+            this.selectedTileIndex = ERROR;
+            return;
+        }
+
+        const selection = this.isTileSelectedForPlacement(tile) ? SelectionType.UNSELECTED : SelectionType.PLACEMENT;
+        tile.updateSelectionType(selection);
+        this.updateSelectionType(SelectionType.PLACEMENT);
+
+        this.selectedTileIndex = this.rack.indexOf(tile);
     }
 
     transformSpecialChar(letter: string): string {
@@ -199,6 +240,13 @@ export class Rack {
         return letterToTest;
     }
 
+    private tileScore(letter: string): number {
+        if (letter === '' || letter === undefined || letter === '*') return 0;
+        const normalLetter = letter;
+        if (normalLetter.toLowerCase() !== normalLetter) return 0;
+        return POINTS[letter.charCodeAt(0) - A_ASCII];
+    }
+
     private deselectLetterForManipulation() {
         this.selectedTileIndex = ERROR;
     }
@@ -210,27 +258,12 @@ export class Rack {
         }
         return undefined;
     }
-    private drawRackTile(letterIndex: number) {
-        this.rackGridService.drawLetterTile(this.rack[letterIndex], { width: DEFAULT_TILE_WIDTH, height: DEFAULT_TILE_HEIGHT }, RACK_SCALING_RATIO);
-    }
-    private drawRackContent() {
-        for (let i = 0; i < RACK_CAPACITY; i++) {
-            this.drawRackTile(i);
-        }
-    }
     private selectFirstInstanceOfLetter(letterIndexes: number[]) {
         this.selectedTileIndex = letterIndexes[0];
     }
     private selectNextInstanceOfSameLetter(letterIndexes: number[]) {
         const updatedIndexes = letterIndexes.filter((index) => index > this.selectedTileIndex);
         this.selectedTileIndex = updatedIndexes[0];
-    }
-    private selectTileForExchange(tile: Tile) {
-        if (!tile) return;
-        const selection = this.isTileSelectedForExchange(tile) ? SelectionType.UNSELECTED : SelectionType.EXCHANGE;
-        tile.updateSelectionType(selection);
-        this.rackGridService.drawBorder(tile);
-        this.updateSelectionType(SelectionType.EXCHANGE);
     }
     private isLastOrInvalidSelectedLetter(letterIndexes: number[]): boolean {
         if (this.selectedTileIndex === letterIndexes[letterIndexes.length - 1] || this.selectedTileIndex === ERROR) return true;
@@ -264,20 +297,11 @@ export class Rack {
         return true;
     }
 
-    private selectTileForPlacement(tile: Tile) {
-        if (!tile) return;
-        const selection = this.isTileSelectedForPlacement(tile) ? SelectionType.UNSELECTED : SelectionType.PLACEMENT;
-        tile.updateSelectionType(selection);
-        this.rackGridService.drawBorder(tile);
-        this.updateSelectionType(SelectionType.PLACEMENT);
-    }
-
     private updateSelectionType(selection: SelectionType) {
         let allTilesAreUnselected = true;
         for (const tile of this.rack) {
             if (tile.typeOfSelection !== selection) {
                 tile.updateSelectionType(SelectionType.UNSELECTED);
-                this.rackGridService.drawBorder(tile);
             } else {
                 allTilesAreUnselected = false;
             }

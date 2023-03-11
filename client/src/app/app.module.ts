@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -114,6 +115,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         HttpClientModule,
         ReactiveFormsModule,
         MatSlideToggleModule,
+        DragDropModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

@@ -1,16 +1,17 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room';
-import { DEFAULT_RACK_HEIGHT, DEFAULT_RACK_WIDTH } from '@app/constants/rack-constants';
+import { Tile } from '@app/classes/tile';
 import { Direction } from '@app/enums/direction';
+import { SelectionType } from '@app/enums/selection-type';
 import { SocketEvent } from '@app/enums/socket-event';
+import { BoardService } from '@app/services/board.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
-import { LetterTileService } from '@app/services/letter-tile.service';
 import { PlayerService } from '@app/services/player.service';
-import { RackGridService } from '@app/services/rack-grid.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
 const MESSAGE = 'message';
@@ -20,14 +21,12 @@ const SWITCH_COMMAND = '!échanger';
     templateUrl: './rack.component.html',
     styleUrls: ['./rack.component.scss'],
 })
-export class RackComponent extends ComponentCommunicationManager implements OnInit, AfterViewInit {
-    @ViewChild('rackCanvas', { static: false }) private rackCanvas!: ElementRef<HTMLCanvasElement>;
-    private canvasSize = { x: DEFAULT_RACK_WIDTH, y: DEFAULT_RACK_HEIGHT };
+export class RackComponent extends ComponentCommunicationManager implements OnInit {
+    @ViewChild('rackContainer', { static: false }) private rackContainer!: ElementRef<HTMLCanvasElement>;
     constructor(
-        private readonly letterTileService: LetterTileService,
-        private readonly rackGridService: RackGridService,
         private focusHandlerService: FocusHandlerService,
-        private rack: Rack,
+        protected rack: Rack,
+        protected boardService: BoardService,
         protected socketService: SocketClientService,
         private readonly playerService: PlayerService,
     ) {
@@ -38,15 +37,29 @@ export class RackComponent extends ComponentCommunicationManager implements OnIn
         return this.playerService.room;
     }
 
-    get width(): number {
-        return this.canvasSize.x;
+    get selectionType(): typeof SelectionType {
+        return SelectionType;
     }
 
-    get height(): number {
-        return this.canvasSize.y;
+    mouseScrollDetect(event: WheelEvent) {
+        if (event.deltaY < 0) {
+            this.rack.moveTile(Direction.Right);
+        } else {
+            this.rack.moveTile(Direction.Left);
+        }
     }
 
-    @HostListener('keydown', ['$event'])
+    ngOnInit() {
+        this.connectSocket();
+        this.focusHandlerService.currentFocus.subscribe(() => {
+            if (this.focusHandlerService.isCurrentFocus(CurrentFocus.RACK)) {
+                this.rackContainer.nativeElement.focus();
+                return;
+            }
+            this.unselect();
+        });
+    }
+
     buttonDetect(event: KeyboardEvent) {
         switch (event.key) {
             case KeyboardKeys.ArrowRight:
@@ -61,30 +74,22 @@ export class RackComponent extends ComponentCommunicationManager implements OnIn
         }
     }
 
-    @HostListener('mousewheel', ['$event'])
-    mouseScrollDetect(event: WheelEvent) {
-        if (event.deltaY < 0) {
-            this.rack.moveTile(Direction.Right);
-        } else {
-            this.rack.moveTile(Direction.Left);
+    // TODO: add this on mouseOver Event for firefox navigator
+    onMouseOver(container: HTMLDivElement) {
+        if (this.boardService.isDraggingATile) {
+            container.dispatchEvent(new Event('mouseup'));
         }
     }
 
-    ngAfterViewInit(): void {
-        this.rackGridService.gridContext = this.rackCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.rack.letterTileService = this.letterTileService;
-        this.rack.rackGridService = this.rackGridService;
+    dragEnd() {
+        if (!this.playerService.player.isItsTurn) return;
+        if (!this.boardService.isDraggingATile) return;
+        this.boardService.removeManipulatedTile();
+        this.boardService.isDraggingATile = false;
     }
-    ngOnInit() {
-        this.connectSocket();
-        this.focusHandlerService.currentFocus.subscribe(() => {
-            if (this.focusHandlerService.isCurrentFocus(CurrentFocus.RACK)) {
-                this.rackCanvas.nativeElement.contentEditable = 'true';
-                this.rackCanvas.nativeElement.focus();
-                return;
-            }
-            this.unselect();
-        });
+
+    drop(event: CdkDragDrop<Tile[]>) {
+        moveItemInArray(this.rack.rackTiles, event.previousIndex, event.currentIndex);
     }
 
     updateFocus(event: MouseEvent) {

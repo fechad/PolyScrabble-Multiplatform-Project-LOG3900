@@ -1,15 +1,12 @@
 /* eslint-disable dot-notation */ // we want to access private attribute
 import { TestBed } from '@angular/core/testing';
-import { BOARD_SCALING_RATIO, DEFAULT_CASE_COUNT, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/board-constants';
 import { PlaceLetter } from '@app/classes/command/place-letter';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Rack } from '@app/classes/rack';
 import { Tile } from '@app/classes/tile';
+import { BOARD_SCALING_RATIO, DEFAULT_CASE_COUNT, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/board-constants';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
 import { CommandInvokerService } from './command-invoker.service';
-import { LetterTileService } from './letter-tile.service';
-import { PlacementViewTilesService } from './placement-view-tiles.service';
-import { RackGridService } from './rack-grid.service';
 
 describe('CommandInvokerService', () => {
     let service: CommandInvokerService;
@@ -18,11 +15,8 @@ describe('CommandInvokerService', () => {
     let placeLetter2: PlaceLetter;
     let arrowDirection: string;
     let isFirstPlaced: boolean;
-    let placementViewTileService: PlacementViewTilesService;
     let placeLetterInfo1: PlaceLetterInfo;
     let placeLetterInfo2: PlaceLetterInfo;
-    let letterTileService: LetterTileService;
-    let rackGridService: RackGridService;
     let tile1: Tile;
     let tile2: Tile;
 
@@ -32,8 +26,6 @@ describe('CommandInvokerService', () => {
 
         arrowDirection = RIGHT_ARROW;
         isFirstPlaced = true;
-        rackGridService = new RackGridService();
-        letterTileService = new LetterTileService();
 
         const boardTileWidth = DEFAULT_WIDTH / DEFAULT_CASE_COUNT;
         const boardTileHeight = DEFAULT_HEIGHT / DEFAULT_CASE_COUNT;
@@ -46,7 +38,7 @@ describe('CommandInvokerService', () => {
 
         placeLetterInfo1 = {
             lettersInBoard: new Array<Tile[]>(),
-            rack: new Rack(letterTileService, rackGridService),
+            rack: new Rack(),
             tile: tile1,
             dimension: { width: boardTileWidth, height: boardTileHeight, letterRatio },
             letter: tile1.content,
@@ -55,15 +47,15 @@ describe('CommandInvokerService', () => {
 
         placeLetterInfo2 = {
             lettersInBoard: new Array<Tile[]>(),
-            rack: new Rack(letterTileService, rackGridService),
+            rack: new Rack(),
             tile: tile2,
             dimension: { width: boardTileWidth, height: boardTileHeight, letterRatio },
             letter: tile2.content,
             indexes: { x: 0, y: 1 },
         };
 
-        placeLetter1 = new PlaceLetter(placementViewTileService, placeLetterInfo1, arrowDirection, isFirstPlaced);
-        placeLetter2 = new PlaceLetter(placementViewTileService, placeLetterInfo2, arrowDirection, isFirstPlaced);
+        placeLetter1 = new PlaceLetter(placeLetterInfo1, arrowDirection, isFirstPlaced);
+        placeLetter2 = new PlaceLetter(placeLetterInfo2, arrowDirection, isFirstPlaced);
     });
 
     it('should be created', () => {
@@ -87,6 +79,7 @@ describe('CommandInvokerService', () => {
             service.firstSelectedCaseForPlacement = 'a1';
             placeLetter1.arrowDirection = DOWN_ARROW;
             placeLetter2.arrowDirection = DOWN_ARROW;
+            placeLetter2.getPlaceInfo().lettersInBoard = [[tile1, tile2]];
             service['cancelStack'] = [placeLetter1, placeLetter2];
             expect(service.commandMessage).toEqual('!placer a1v ab');
         });

@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnChanges, OnInit } from '@angular/core';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Dimension } from '@app/classes/dimension';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
 import { Position } from '@app/classes/position';
+import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room';
 import { Tile } from '@app/classes/tile';
 import {
@@ -11,7 +12,6 @@ import {
     DEFAULT_BOARD_BACKGROUND_COLOR,
     DEFAULT_BOARD_BORDER_COLOR,
     DEFAULT_BOARD_INDEXES_COLOR,
-    DEFAULT_BOARD_LETTER_SIZE,
     DEFAULT_BOARD_LINE_WIDTH,
     DEFAULT_CASE_COUNT,
     DEFAULT_HEIGHT,
@@ -22,9 +22,10 @@ import {
     specialCases,
 } from '@app/constants/board-constants';
 import { ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { SelectionType } from '@app/enums/selection-type';
 import { SocketEvent } from '@app/enums/socket-event';
+import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
 import { PlacementData } from '@app/interfaces/placement-data';
-import { BoardGridService } from '@app/services/board-grid.service';
 import { BoardService } from '@app/services/board.service';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -36,26 +37,23 @@ import { SocketClientService } from '@app/services/socket-client.service';
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
 })
-export class PlayAreaComponent extends ComponentCommunicationManager implements AfterViewInit, OnInit, OnChanges {
-    @ViewChild('boardCanvas', { static: false }) private boardCanvas!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('letterTilesCanvas', { static: false }) private letterTilesCanvas!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('viewPlacementCanvas', { static: false }) private viewPlacementCanvas!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridContainer', { static: false }) private gridContainer: ElementRef;
-
+export class PlayAreaComponent extends ComponentCommunicationManager implements OnInit, OnChanges {
     letterRatio: number;
+    isBoardReady: boolean;
+    protected board: Tile[][];
     private ratioSize: number;
-    private board: Tile[][];
     private canvasSize: Position;
 
     constructor(
-        private readonly boardGridService: BoardGridService,
         protected socketService: SocketClientService,
+        protected rack: Rack,
         private commandInvoker: CommandInvokerService,
-        private boardService: BoardService,
+        protected boardService: BoardService,
         private focusHandlerService: FocusHandlerService,
         private playerService: PlayerService,
     ) {
         super(socketService);
+        this.isBoardReady = false;
         this.ratioSize = 1;
         this.letterRatio = BOARD_SCALING_RATIO;
 
@@ -63,10 +61,16 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
         this.buildBoardArray();
 
-        this.canvasSize.x = this.width * this.ratioSize;
-        this.canvasSize.y = this.height * this.ratioSize;
-
         this.boardService.initializeBoardService({ width: this.tileWidth, height: this.tileHeight, letterRatio: this.letterRatio });
+
+        const buffer = 50;
+        setTimeout(() => {
+            this.isBoardReady = true;
+        }, buffer);
+    }
+
+    get selectionType(): typeof SelectionType {
+        return SelectionType;
     }
 
     get room(): Room {
@@ -114,15 +118,36 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         }
     }
 
-    mouseHitDetect(event: MouseEvent) {
+    canShowPoint(tile: Tile) {
+        return tile.content && tile.content !== RIGHT_ARROW && tile.content !== DOWN_ARROW;
+    }
+
+    // TODO: add this on mouseOver Event for firefox navigator
+    onMouseOver(container: HTMLDivElement) {
+        if (this.rack.isDraggingATile) {
+            container.dispatchEvent(new Event('mouseup'));
+        }
+    }
+
+    dragEnd(tileIndexes: Position) {
+        if (!this.playerService.player.isItsTurn) return;
+        if (this.rack.isDraggingATile) {
+            this.boardService.dragEndDetect(tileIndexes);
+            this.rack.isDraggingATile = false;
+        } else if (this.boardService.isDraggingATile) {
+            this.boardService.dragEndDetect(tileIndexes);
+        }
+    }
+
+    mouseHitDetect(mouseEvent: MouseEvent, tileIndexes: Position) {
         if (this.room.roomInfo.isGameOver) {
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
         if (!this.playerService.player.isItsTurn) return;
-        this.updateFocus(event);
+        this.updateFocus(mouseEvent, tileIndexes);
         if (this.focusHandlerService.currentFocus.value !== CurrentFocus.BOARD) return;
-        this.boardService.mouseHitDetect({ x: event.offsetX, y: event.offsetY });
+        this.boardService.mouseHitDetect(tileIndexes);
     }
 
     ngOnInit() {
@@ -133,17 +158,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
                 this.boardService.removeAllViewLetters();
             }
         });
-    }
-
-    ngAfterViewInit() {
-        this.boardGridService.gridContext = this.boardCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.boardService.setupTileServicesContexts(
-            this.letterTilesCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D,
-            this.viewPlacementCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D,
-        );
-
-        this.gridContainer.nativeElement.style.height = DEFAULT_HEIGHT + 'px';
-        this.gridContainer.nativeElement.style.width = DEFAULT_WIDTH + 'px';
 
         this.drawBoard();
     }
@@ -199,14 +213,15 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
     private drawBoard() {
         this.drawSpecialTiles();
     }
-    private updateFocus(event: MouseEvent) {
+
+    private updateFocus(event: MouseEvent, tileIndexes: Position) {
         event.stopPropagation();
         if (this.room.roomInfo.isGameOver) {
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
         if (!this.playerService.player.isItsTurn) return;
-        if (!this.boardService.canBeFocused({ x: event.offsetX, y: event.offsetY })) return;
+        if (!this.boardService.canBeFocused(tileIndexes)) return;
         this.focusHandlerService.currentFocus.next(CurrentFocus.BOARD);
     }
 
@@ -229,18 +244,8 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         }, ONE_SECOND_IN_MS * 3);
     }
 
-    private drawLetter(tile: Tile) {
-        this.boardGridService.drawBoardLetter(tile, DEFAULT_BOARD_LETTER_SIZE * this.letterRatio);
-    }
-
     private drawSpecialTiles() {
         this.setSpecialTiles();
-        for (let i = DEFAULT_STARTING_POSITION; i < DEFAULT_CASE_COUNT; i++) {
-            for (let j = DEFAULT_STARTING_POSITION; j < DEFAULT_CASE_COUNT; j++) {
-                this.boardGridService.drawBoardTile(this.board[i][j]);
-                this.drawLetter(this.board[i][j]);
-            }
-        }
     }
 
     private setSpecialTiles() {
@@ -270,7 +275,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
     private initializeRowIndex() {
         for (let i = DEFAULT_STARTING_POSITION + 1; i < DEFAULT_CASE_COUNT; i++) {
-            this.board[0][i].content = DEFAULT_ROWS[i];
+            this.board[0][i].content = '' + i;
             this.board[0][i].color = DEFAULT_BOARD_INDEXES_COLOR;
             this.board[0][i].textColor = DEFAULT_INDEX_COLOR;
         }
@@ -287,7 +292,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
             row[0].border = { color: DEFAULT_BOARD_BORDER_COLOR, width: DEFAULT_BOARD_LINE_WIDTH };
             xPosition += this.tileWidth;
             tileBoard[j] = row;
-            content = '' + (j + 1);
+            content = DEFAULT_ROWS[j + 1];
             row[0].textColor = DEFAULT_INDEX_COLOR;
         }
     }

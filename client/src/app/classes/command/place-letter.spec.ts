@@ -8,36 +8,27 @@ import { Tile } from '@app/classes/tile';
 import { BOARD_SCALING_RATIO, DEFAULT_CASE_COUNT, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/board-constants';
 import { ERROR, RACK_CAPACITY } from '@app/constants/rack-constants';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
-import { LetterTileService } from '@app/services/letter-tile.service';
-import { PlacementViewTilesService } from '@app/services/placement-view-tiles.service';
-import { RackGridService } from '@app/services/rack-grid.service';
 
 describe('Place-letter tests', () => {
     let placeLetter: PlaceLetter;
     let arrowDirection: string;
     let isFirstPlaced: boolean;
-    let placementViewTileService: PlacementViewTilesService;
     let placeLetterInfo: PlaceLetterInfo;
-    let letterTileService: LetterTileService;
-    let rackGridService: RackGridService;
     beforeEach(() => {
         arrowDirection = RIGHT_ARROW;
         isFirstPlaced = true;
-        rackGridService = new RackGridService();
-        letterTileService = new LetterTileService();
-        placementViewTileService = new PlacementViewTilesService();
         const boardTileWidth = DEFAULT_WIDTH / DEFAULT_CASE_COUNT;
         const boardTileHeight = DEFAULT_HEIGHT / DEFAULT_CASE_COUNT;
         const letterRatio = BOARD_SCALING_RATIO;
         placeLetterInfo = {
             lettersInBoard: new Array<Tile[]>(),
-            rack: new Rack(letterTileService, rackGridService),
+            rack: new Rack(),
             tile: new Tile(),
             dimension: { width: boardTileWidth, height: boardTileHeight, letterRatio },
             letter: 'h',
             indexes: { x: 0, y: 0 },
         };
-        placeLetter = new PlaceLetter(placementViewTileService, placeLetterInfo, arrowDirection, isFirstPlaced);
+        placeLetter = new PlaceLetter(placeLetterInfo, arrowDirection, isFirstPlaced);
     });
 
     it('should create', () => {
@@ -68,22 +59,7 @@ describe('Place-letter tests', () => {
             placeLetter.execute();
             expect(spy).toHaveBeenCalled();
         });
-        it('should call removeLetterTile() ', () => {
-            placeLetter.arrowDirection = 'fakeDirection';
-            const spy = spyOn(placementViewTileService as any, 'removeLetterTile').and.callFake(() => {
-                return;
-            });
-            placeLetter.execute();
-            expect(spy).toHaveBeenCalled();
-        });
-        it('should call drawLetterTile() ', () => {
-            placeLetter.arrowDirection = 'fakeDirection';
-            const spy = spyOn(placementViewTileService as any, 'drawLetterTile').and.callFake(() => {
-                return;
-            });
-            placeLetter.execute();
-            expect(spy).toHaveBeenCalled();
-        });
+
         it('should call removeLetterOnRack() ', () => {
             placeLetter.arrowDirection = 'fakeDirection';
             const spy = spyOn(placeLetter as any, 'removeLetterOnRack').and.callThrough();
@@ -117,12 +93,7 @@ describe('Place-letter tests', () => {
             expect(spy1).toHaveBeenCalled();
             expect(spy2).toHaveBeenCalled();
         });
-        it('should call removeLetterTile() if nextPlaceLetterInfo is not undefined ', () => {
-            const spy1 = spyOn(placementViewTileService as any, 'removeLetterTile');
-            placeLetter['nextPlaceLetterInfo'] = placeLetterInfo;
-            placeLetter.cancel();
-            expect(spy1).toHaveBeenCalled();
-        });
+
         it('should call decrementNextLetterPosition() if nextPlaceLetterInfo is not undefined ', () => {
             const spy1 = spyOn(placeLetter as any, 'decrementNextLetterPosition');
             placeLetter['nextPlaceLetterInfo'] = placeLetterInfo;
@@ -131,31 +102,25 @@ describe('Place-letter tests', () => {
         });
         it('should call handleFirstTilePlacedCancel() if it is firstPlaced', () => {
             const spy1 = spyOn(placeLetter as any, 'handleFirstTilePlacedCancel');
-            const spy2 = spyOn(placementViewTileService as any, 'drawArrow');
             placeLetter['nextPlaceLetterInfo'] = placeLetterInfo;
             placeLetter.cancel();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).not.toHaveBeenCalled();
         });
         it('should call drawArrow() if it is not firstPlaced', () => {
             const spy1 = spyOn(placeLetter as any, 'handleFirstTilePlacedCancel');
-            const spy2 = spyOn(placementViewTileService as any, 'drawArrow');
             placeLetter['nextPlaceLetterInfo'] = placeLetterInfo;
             placeLetter['isFirstPlaced'] = false;
             placeLetter.cancel();
             expect(spy1).not.toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
         });
     });
     describe('forceCancel() tests', () => {
         it('should call addLetterOnRack(), removeLetterTile(),reinitializeContents()', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             const spy1 = spyOn(placeLetterPrivateAccess, 'addLetterOnRack');
-            const spy2 = spyOn(placementViewTileService, 'removeLetterTile');
             const spy3 = spyOn(placeLetterPrivateAccess.tile, 'reinitializeContents');
             placeLetterPrivateAccess.forceCancel();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
             expect(spy3).toHaveBeenCalled();
         });
     });
@@ -192,30 +157,19 @@ describe('Place-letter tests', () => {
         });
     });
     describe('handleEdgePositionOnCancel() tests', () => {
-        it('should call removeLetterTile if nextPlaceLetterInfo is undefined', () => {
-            const placeLetterPrivateAccess = placeLetter as any;
-            const spy = spyOn(placementViewTileService, 'removeLetterTile');
-            placeLetterPrivateAccess['nextPlaceLetterInfo'] = undefined;
-            placeLetterPrivateAccess.handleEdgePositionOnCancel();
-            expect(spy).toHaveBeenCalled();
-        });
         it('should call handleFirstTilePlacedCancel if it is first Placed', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             placeLetterPrivateAccess['isFirstPlaced'] = true;
             const spy1 = spyOn(placeLetterPrivateAccess, 'handleFirstTilePlacedCancel');
-            const spy2 = spyOn(placementViewTileService, 'drawArrow');
             placeLetterPrivateAccess.handleEdgePositionOnCancel();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).not.toHaveBeenCalled();
         });
         it('should call drawArrow if it is not first Placed', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             placeLetterPrivateAccess['isFirstPlaced'] = false;
             const spy1 = spyOn(placeLetterPrivateAccess, 'handleFirstTilePlacedCancel');
-            const spy2 = spyOn(placementViewTileService, 'drawArrow');
             placeLetterPrivateAccess.handleEdgePositionOnCancel();
             expect(spy1).not.toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
         });
     });
     describe('getDimensionToRemove() tests', () => {
@@ -272,14 +226,6 @@ describe('Place-letter tests', () => {
             placeLetterPrivateAccess.removeNextLetterTile();
             expect(spy).toHaveBeenCalled();
         });
-        it('should call removeLetter if it has arrow as content ', () => {
-            const placeLetterPrivateAccess = placeLetter as any;
-            placeLetterPrivateAccess['nextPlaceLetterInfo'] = placeLetterInfo;
-            placeLetterPrivateAccess['nextPlaceLetterInfo']['tile'].content = RIGHT_ARROW;
-            const spy = spyOn(placementViewTileService, 'removeLetterTile');
-            placeLetterPrivateAccess.removeNextLetterTile();
-            expect(spy).toHaveBeenCalled();
-        });
         it('should not set content to empty ', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             placeLetterPrivateAccess['nextPlaceLetterInfo'] = placeLetterInfo;
@@ -290,29 +236,9 @@ describe('Place-letter tests', () => {
         });
     });
     describe('selectNextCase() tests', () => {
-        it('should not call drawArrow if xIndex + 1 > 15', () => {
-            const spy = spyOn(placementViewTileService, 'drawArrow');
-            const placeLetterPrivateAccess = placeLetter as any;
-            placeLetterPrivateAccess.arrowDirection = RIGHT_ARROW;
-            placeLetterPrivateAccess['placeLetterInfo'].indexes.x = 20;
-            placeLetterPrivateAccess.selectNextCase();
-            expect(spy).not.toHaveBeenCalled();
-        });
-        it('should not call drawArrow if xIndex + 1 < 15 but nextTile is undefined', () => {
-            const spy = spyOn(placementViewTileService, 'drawArrow');
-            const placeLetterPrivateAccess = placeLetter as any;
-            placeLetterPrivateAccess.arrowDirection = RIGHT_ARROW;
-            placeLetterPrivateAccess['placeLetterInfo'].indexes.x = 1;
-            placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex + 1] = new Tile();
-            placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex + 1][placeLetterPrivateAccess.yIndex] = new Tile();
-            placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex + 1][placeLetterPrivateAccess.yIndex] = undefined;
-            placeLetterPrivateAccess.selectNextCase();
-            expect(spy).not.toHaveBeenCalled();
-        });
         it('should  call drawArrow if xIndex + 1 < 15 but nextTile is not undefined', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             const spy1 = spyOn(placeLetterPrivateAccess, 'updatePlaceLetterInfo');
-            const spy2 = spyOn(placementViewTileService, 'drawArrow');
             placeLetterPrivateAccess.arrowDirection = RIGHT_ARROW;
             placeLetterPrivateAccess['placeLetterInfo'].indexes.x = 1;
             placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex + 1] = new Tile();
@@ -320,13 +246,11 @@ describe('Place-letter tests', () => {
 
             placeLetterPrivateAccess.selectNextCase();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
         });
 
         it('should  call drawArrow if xIndex + 1 < 15 but nextTile has a content horizontally', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             const spy1 = spyOn(placeLetterPrivateAccess, 'updatePlaceLetterInfo');
-            const spy2 = spyOn(placementViewTileService, 'drawArrow');
             placeLetterPrivateAccess.arrowDirection = RIGHT_ARROW;
             placeLetterPrivateAccess['placeLetterInfo'].indexes.x = 1;
             const tileWithContent = new Tile();
@@ -338,31 +262,10 @@ describe('Place-letter tests', () => {
 
             placeLetterPrivateAccess.selectNextCase();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
-        });
-        it('should not call drawArrow if yIndex + 1 > 15', () => {
-            const spy = spyOn(placementViewTileService, 'drawArrow');
-            const placeLetterPrivateAccess = placeLetter as any;
-            placeLetterPrivateAccess.arrowDirection = DOWN_ARROW;
-            placeLetterPrivateAccess['placeLetterInfo'].indexes.y = 20;
-            placeLetterPrivateAccess.selectNextCase();
-            expect(spy).not.toHaveBeenCalled();
-        });
-        it('should not call drawArrow if yIndex + 1 < 15 but nextTile is undefined', () => {
-            const spy = spyOn(placementViewTileService, 'drawArrow');
-            const placeLetterPrivateAccess = placeLetter as any;
-            placeLetterPrivateAccess.arrowDirection = DOWN_ARROW;
-            placeLetterPrivateAccess['placeLetterInfo'].indexes.y = 1;
-            placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex] = new Tile();
-            placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex][placeLetterPrivateAccess.yIndex + 1] = new Tile();
-            placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex][placeLetterPrivateAccess.yIndex + 1] = undefined;
-            placeLetterPrivateAccess.selectNextCase();
-            expect(spy).not.toHaveBeenCalled();
         });
         it('should  call drawArrow if yIndex + 1 < 15 but nextTile is not undefined', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             const spy1 = spyOn(placeLetterPrivateAccess, 'updatePlaceLetterInfo');
-            const spy2 = spyOn(placementViewTileService, 'drawArrow');
             placeLetterPrivateAccess.arrowDirection = DOWN_ARROW;
             placeLetterPrivateAccess['placeLetterInfo'].indexes.y = 1;
             placeLetterPrivateAccess.lettersInBoard[placeLetterPrivateAccess.xIndex] = new Tile();
@@ -370,12 +273,10 @@ describe('Place-letter tests', () => {
 
             placeLetterPrivateAccess.selectNextCase();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
         });
         it('should  call drawArrow if xIndex + 1 < 15 but nextTile has a content vertically', () => {
             const placeLetterPrivateAccess = placeLetter as any;
             const spy1 = spyOn(placeLetterPrivateAccess, 'updatePlaceLetterInfo');
-            const spy2 = spyOn(placementViewTileService, 'drawArrow');
             placeLetterPrivateAccess.arrowDirection = DOWN_ARROW;
             placeLetterPrivateAccess['placeLetterInfo'].indexes.y = 1;
             const tileWithContent = new Tile();
@@ -386,7 +287,6 @@ describe('Place-letter tests', () => {
 
             placeLetterPrivateAccess.selectNextCase();
             expect(spy1).toHaveBeenCalled();
-            expect(spy2).toHaveBeenCalled();
         });
     });
 });

@@ -6,13 +6,9 @@ import { Tile } from '@app/classes/tile';
 import { ERROR, RACK_CAPACITY } from '@app/constants/rack-constants';
 import { Direction } from '@app/enums/direction';
 import { SelectionType } from '@app/enums/selection-type';
-import { LetterTileService } from '@app/services/letter-tile.service';
-import { RackGridService } from '@app/services/rack-grid.service';
 
 describe('Rack', () => {
     let rack: Rack;
-    let letterTileService: LetterTileService;
-    let rackGridService: RackGridService;
     const lastPositionIndex = 6;
     const firstPositionIndex = 0;
     const randomLetters = '*aebcda';
@@ -20,38 +16,39 @@ describe('Rack', () => {
     const randomLetterNotInRack = 'f';
 
     beforeEach(async () => {
-        rackGridService = new RackGridService();
-        letterTileService = new LetterTileService();
-        rack = new Rack(letterTileService, rackGridService);
+        rack = new Rack();
     });
 
     it('should create', () => {
         expect(rack).toBeTruthy();
     });
 
-    it('updateRack should call drawRackContent ', () => {
-        const spy = spyOn(rack as any, 'drawRackContent');
+    it('updateRack should set rack tiles ', () => {
         rack.updateRack(randomLetters);
-        expect(spy).toHaveBeenCalled();
+        for (let i = 0; i < rack.rackTiles.length; i++) {
+            expect(rack.rackTiles[i].content).toEqual(randomLetters[i]);
+        }
     });
 
     describe('removeLetter tests', () => {
         it('should set the attribute correctly when removing the letter', () => {
             rack.updateRack(randomLetters);
-            const drawRackContentSpy = spyOn(rack as any, 'drawRackContent');
             const letterIndex = rack.rackWord.indexOf(randomLetterInRack);
             rack.removeLetter(randomLetterInRack);
 
             expect(rack['rack'][letterIndex].content).toEqual(' ');
             expect(rack['rack'][letterIndex].points).toEqual(ERROR);
-            expect(drawRackContentSpy).toHaveBeenCalled();
         });
 
         it('should not remove any letter if it is not in the rack', () => {
+            const BLANK_TILE = ' ';
+
             rack.updateRack(randomLetters);
             rack.removeLetter(randomLetterNotInRack);
-            const drawRackContentSpy = spyOn(rack as any, 'drawRackContent');
-            expect(drawRackContentSpy).not.toHaveBeenCalled();
+            for (const tile of rack.rackTiles) {
+                expect(tile.content).not.toEqual(BLANK_TILE);
+                expect(tile.points).not.toEqual(ERROR);
+            }
         });
     });
 

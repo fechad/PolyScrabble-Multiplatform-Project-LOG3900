@@ -9,14 +9,10 @@ import { Tile } from '@app/classes/tile';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { DEFAULT_ROOM_INFO, TIMER_TEST_DELAY } from '@app/constants/constants';
 import { PlacementData } from '@app/interfaces/placement-data';
-import { BoardGridService } from '@app/services/board-grid.service';
 import { BoardService } from '@app/services/board.service';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
-import { LetterTileService } from '@app/services/letter-tile.service';
-import { PlacementViewTilesService } from '@app/services/placement-view-tiles.service';
 import { PlayerService } from '@app/services/player.service';
-import { RackGridService } from '@app/services/rack-grid.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { Socket } from 'socket.io-client';
@@ -35,9 +31,7 @@ describe('PlayAreaComponent', () => {
     let socketServiceMock: SocketClientServiceMock;
     let socketHelper: SocketTestHelper;
     let placement: PlacementData;
-    let boardGridService: BoardGridService;
     let sessionStorageService: SessionStorageService;
-    let letterTileService: LetterTileService;
     let commandInvokerService: CommandInvokerService;
     let focusHandlerService: FocusHandlerService;
     let mouseEvent: MouseEvent;
@@ -51,9 +45,7 @@ describe('PlayAreaComponent', () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock();
         socketServiceMock.socket = socketHelper as unknown as Socket;
-        boardGridService = new BoardGridService();
         sessionStorageService = new SessionStorageService();
-        letterTileService = new LetterTileService();
         commandInvokerService = new CommandInvokerService();
         focusHandlerService = new FocusHandlerService();
 
@@ -61,20 +53,13 @@ describe('PlayAreaComponent', () => {
         playerService.room.roomInfo = DEFAULT_ROOM_INFO;
         playerService.room.currentPlayerPseudo = '';
 
-        boardService = new BoardService(
-            new PlacementViewTilesService(),
-            letterTileService,
-            sessionStorageService,
-            commandInvokerService,
-            new Rack(letterTileService, new RackGridService()),
-        );
+        boardService = new BoardService(sessionStorageService, commandInvokerService, new Rack());
 
         placement = { word: 'bonjour', row: 'h', column: '7', direction: 'h' };
 
         await TestBed.configureTestingModule({
             declarations: [PlayAreaComponent],
             providers: [
-                { provide: BoardGridService, useValue: boardGridService },
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: CommandInvokerService, useValue: commandInvokerService },
                 { provide: BoardService, useValue: boardService },
@@ -166,7 +151,7 @@ describe('PlayAreaComponent', () => {
         beforeEach(() => {
             placeLetterCommandMock = {
                 getPlaceInfo: () => {
-                    return { tile: new Tile() };
+                    return { tile: new Tile(), indexes: { x: 0, y: 0 } };
                 },
                 cancel: () => {
                     return;
@@ -236,10 +221,12 @@ describe('PlayAreaComponent', () => {
 
     describe('mouseHitDetect tests', () => {
         let expectedPosition: Position;
+        let tileIndexes: Position;
         let updateFocusSpy: jasmine.Spy;
         let mouseHitDetectSpy: jasmine.Spy;
         beforeEach(() => {
             expectedPosition = { x: 625, y: 466 };
+            tileIndexes = { x: 1, y: 1 };
             mouseEvent = {
                 offsetX: expectedPosition.x,
                 offsetY: expectedPosition.y,
@@ -258,15 +245,15 @@ describe('PlayAreaComponent', () => {
             playerService.player.isItsTurn = true;
             focusHandlerService.currentFocus.next(CurrentFocus.BOARD);
 
-            component.mouseHitDetect(mouseEvent);
+            component.mouseHitDetect(mouseEvent, tileIndexes);
 
-            expect(updateFocusSpy).toHaveBeenCalledWith(mouseEvent);
-            expect(mouseHitDetectSpy).toHaveBeenCalledWith(expectedPosition);
+            expect(updateFocusSpy).toHaveBeenCalled();
+            expect(mouseHitDetectSpy).toHaveBeenCalled();
         });
 
         it('should not call updateFocus and mouseHitDetect if game is over', () => {
             playerService.room.roomInfo.isGameOver = true;
-            component.mouseHitDetect(mouseEvent);
+            component.mouseHitDetect(mouseEvent, tileIndexes);
 
             expect(updateFocusSpy).not.toHaveBeenCalled();
             expect(mouseHitDetectSpy).not.toHaveBeenCalled();
@@ -275,7 +262,7 @@ describe('PlayAreaComponent', () => {
         it('should not call updateFocus and mouseHitDetect if it is not player turn', () => {
             playerService.room.roomInfo.isGameOver = false;
             playerService.player.isItsTurn = false;
-            component.mouseHitDetect(mouseEvent);
+            component.mouseHitDetect(mouseEvent, tileIndexes);
 
             expect(updateFocusSpy).not.toHaveBeenCalled();
             expect(mouseHitDetectSpy).not.toHaveBeenCalled();
@@ -286,9 +273,9 @@ describe('PlayAreaComponent', () => {
             playerService.player.isItsTurn = true;
             focusHandlerService.currentFocus.next(CurrentFocus.NONE);
 
-            component.mouseHitDetect(mouseEvent);
+            component.mouseHitDetect(mouseEvent, tileIndexes);
 
-            expect(updateFocusSpy).toHaveBeenCalledWith(mouseEvent);
+            expect(updateFocusSpy).toHaveBeenCalled();
             expect(mouseHitDetectSpy).not.toHaveBeenCalled();
         });
     });
@@ -388,7 +375,7 @@ describe('PlayAreaComponent', () => {
             const canBeFocusedSpy = spyOn(boardService, 'canBeFocused').and.returnValue(false);
             playerService.player.isItsTurn = true;
             componentPrivateAccess.updateFocus(mouseEvent);
-            expect(canBeFocusedSpy).toHaveBeenCalledWith({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
+            expect(canBeFocusedSpy).toHaveBeenCalled();
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.NONE);
         });
 
@@ -399,7 +386,7 @@ describe('PlayAreaComponent', () => {
             const canBeFocusedSpy = spyOn(boardService, 'canBeFocused').and.returnValue(true);
             playerService.player.isItsTurn = true;
             componentPrivateAccess.updateFocus(mouseEvent);
-            expect(canBeFocusedSpy).toHaveBeenCalledWith({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
+            expect(canBeFocusedSpy).toHaveBeenCalled();
             expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.BOARD);
         });
     });
