@@ -29,8 +29,8 @@ export class LoginPageComponent implements AfterViewInit {
         private httpService: HttpService,
         private authService: Authenticator,
     ) {
-        if (environment.production) {
-            this.playerService.player.email = 'Chad@gmail.com';
+        if (!environment.production) {
+            this.playerService.player.email = 'kurama@polyscrabble.ca';
             this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
             router.navigateByUrl('/main');
         }
