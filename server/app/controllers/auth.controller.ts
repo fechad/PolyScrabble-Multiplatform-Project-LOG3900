@@ -1,3 +1,4 @@
+import { DEFAULT_USER_SETTINGS } from '@app/constants/default-user-settings';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Authentificator } from '@app/services/auth.service';
 import { DatabaseService } from '@app/services/database.service';
@@ -64,15 +65,13 @@ export class AuthController {
                 const account: Account = {
                     email: req.body.email,
                     username: req.body?.username,
-                    defaultLanguage: 'french',
-                    defaultTheme: 'light',
+                    userSettings: DEFAULT_USER_SETTINGS,
                     avatarUrl: '',
                     badges: [],
                     bestGames: [],
                     gamesPlayed: [],
                     gamesWon: 0,
                     totalXP: 0,
-                    highscore: 0,
                 };
                 await this.databaseService
                     .batchSave('accounts', [account], (entry: Account) => entry.email)

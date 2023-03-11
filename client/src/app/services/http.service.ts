@@ -11,6 +11,7 @@ import {
 import { Bot } from '@app/interfaces/bot';
 import { Dictionary } from '@app/interfaces/dictionary';
 import { Game } from '@app/interfaces/game';
+import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -24,6 +25,9 @@ export class HttpService {
     private readonly botBaseUrl: string;
     private readonly gameBaseUrl: string;
     private readonly authUrl: string;
+    private readonly userInfoUrl: string;
+    private readonly avatarUrl: string;
+    private readonly badgeUrl: string;
     private baseUrl: string;
     private errorMessage: string;
     constructor(private http: HttpClient) {
@@ -32,6 +36,9 @@ export class HttpService {
         this.gameBaseUrl = 'games';
         this.botBaseUrl = 'bots';
         this.authUrl = 'auth';
+        this.userInfoUrl = 'userInfo';
+        this.avatarUrl = 'images/avatars';
+        this.badgeUrl = 'images/badges';
         this.baseUrl = environment.serverUrl;
         this.errorMessage = '';
     }
@@ -40,7 +47,18 @@ export class HttpService {
         this.clearError();
         return this.http.get<string[]>(`${this.baseUrl}/${this.authUrl}/usernames`).pipe(catchError(this.handleError<string[]>('getUsers')));
     }
-
+    getUserInfo(email: string) {
+        this.clearError();
+        return this.http.get<ClientAccountInfo>(`${this.baseUrl}/${this.userInfoUrl}/${email}`);
+    }
+    getAvatarURL(imageId: string) {
+        this.clearError();
+        return `${this.baseUrl}/${this.avatarUrl}/${imageId}`;
+    }
+    getBadgeURL(badgeId: string) {
+        this.clearError();
+        return `${this.baseUrl}/${this.badgeUrl}/${badgeId}`;
+    }
     loginUser(email: string) {
         this.clearError();
         return this.http.get<unknown[]>(`${this.baseUrl}/${this.authUrl}/user/${email}`).pipe(catchError(this.handleError<string[]>('loginUser')));

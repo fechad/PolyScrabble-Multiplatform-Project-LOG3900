@@ -13,7 +13,9 @@ import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
 import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
+import { ImageController } from './image.controllet';
 import { ScoresController } from './scores.controller';
+import { UserInfoController } from './user-info.controller';
 
 describe('ScoresController', () => {
     let scoresController: ScoresController;
@@ -25,7 +27,9 @@ describe('ScoresController', () => {
     let authController: AuthController;
     let botsService: BotsService;
     let botsController: BotsController;
+    let userInfoController: UserInfoController;
     let application: Application;
+    let imageController: ImageController;
     let scores: Score[];
 
     before(async () => {
@@ -47,8 +51,19 @@ describe('ScoresController', () => {
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         authController = new AuthController({} as any, {} as any, {} as any);
+        imageController = new ImageController();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        userInfoController = new UserInfoController({} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
-        application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController, authController);
+        application = new Application(
+            scoresController,
+            dictionariesController,
+            botsController,
+            gamesHistoryController,
+            authController,
+            userInfoController,
+            imageController,
+        );
         scores = [{ points: 20, author: 'David', gameType: 'log2990', dictionary: 'English', date: new Date().toISOString() }];
     });
 

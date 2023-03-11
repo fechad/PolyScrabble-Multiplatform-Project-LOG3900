@@ -18,7 +18,13 @@
     background-color: #ccc;
     border-radius: 100%;
 }
-
+.avatar {
+    aspect-ratio: 1 / 1;
+    height: 64px;
+    margin: 0 4px;
+    background-color: #ccc;
+    border-radius: 100%;
+}
 .level {
     display: flex;
     width: 90%;

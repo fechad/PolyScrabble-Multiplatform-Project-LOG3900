@@ -9,7 +9,9 @@ import { AuthController } from './controllers/auth.controller';
 import { BotsController } from './controllers/bots.controller';
 import { DictionariesController } from './controllers/dictionaries.controller';
 import { GamesHistoryController } from './controllers/game.history.controller';
+import { ImageController } from './controllers/image.controllet';
 import { ScoresController } from './controllers/scores.controller';
+import { UserInfoController } from './controllers/user-info.controller';
 
 @Service()
 export class Application {
@@ -22,6 +24,8 @@ export class Application {
         private botsController: BotsController,
         private gamesHistoryController: GamesHistoryController,
         private authController: AuthController,
+        private userInfoController: UserInfoController,
+        private imageController: ImageController,
     ) {
         this.internalError = StatusCodes.INTERNAL_SERVER_ERROR;
         this.app = express();
@@ -37,6 +41,8 @@ export class Application {
         this.app.use('/api/bots', this.botsController.router);
         this.app.use('/api/games', this.gamesHistoryController.router);
         this.app.use('/api/auth', this.authController.router);
+        this.app.use('/api/userInfo', this.userInfoController.router);
+        this.app.use('/api/images', this.imageController.router);
         this.errorHandling();
     }
 
