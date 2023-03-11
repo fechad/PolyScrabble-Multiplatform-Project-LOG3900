@@ -128,7 +128,7 @@ class AuthService {
   void setDefaultUser() {
     currentUser = UserModel(
       username: 'User ${DateFormat('HH:mm:ss').format(DateTime.now())}',
-      email: 'gigaChad@gmail.com',
+      email: 'kurama@polyscrabble.ca',
       avatarURL: '',
       level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
       badges: [],

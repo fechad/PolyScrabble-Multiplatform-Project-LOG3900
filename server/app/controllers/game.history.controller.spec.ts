@@ -43,7 +43,7 @@ describe('GamesHistoryController', () => {
         botsController = new BotsController(botsService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        authController = new AuthController({} as any, {} as any);
+        authController = new AuthController({} as any, {} as any, {} as any);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         gamesHistoryService = new GamesHistoryService({} as any);

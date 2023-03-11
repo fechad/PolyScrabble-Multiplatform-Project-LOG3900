@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
@@ -180,9 +181,22 @@ describe('GameCreateMultiplayerPageComponent', () => {
             expect(component.room.roomInfo.name).toEqual('');
         });
 
-        it('should move the player to game wait page on roomCreated', () => {
+        it('should move the player to game wait page on roomCreated if multi', () => {
             socketHelper.peerSideEmit(SocketEvent.RoomCreated, roomValidName);
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/game/multiplayer/wait']);
+        });
+
+        it('should move the player to game page on roomCreated if solo', () => {
+            component.room.roomInfo.isSolo = true;
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, roomValidName);
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/game']);
+        });
+
+        it('should set the client room player to the server room player on solo', () => {
+            component.room.roomInfo.isSolo = true;
+            roomInvalidName.players = [new Player()];
+            socketHelper.peerSideEmit(SocketEvent.RoomCreated, roomValidName);
+            expect(component.room.players).toEqual(roomValidName.players);
         });
 
         it('should not move the player to game wait page on roomCreated if roomName is invalid', () => {
@@ -200,11 +214,23 @@ describe('GameCreateMultiplayerPageComponent', () => {
             component.gameForm.controls.roomPassword.setValue('123');
         });
 
-        it('should send createRoom event with good setting on createRoom', () => {
+        it('should send createRoom event with good setting on createRoom if multi', () => {
             component.onProcess = false;
             const createRoomEventSpy = spyOn(socketServiceMock, 'send');
             component.createRoom();
             expect(createRoomEventSpy).toHaveBeenCalledWith(SocketEvent.CreateRoom, component.room);
+        });
+
+        it('should send createRoom event with good setting on createRoom if solo', () => {
+            component.onProcess = false;
+            component.room.roomInfo.isSolo = true;
+            const createRoomEventSpy = spyOn(socketServiceMock, 'send');
+            component.createRoom();
+            expect(createRoomEventSpy).toHaveBeenCalledWith(SocketEvent.CreateSoloRoom, {
+                room: component.room,
+                botName: component.gameForm.controls.botName.value,
+                desiredLevel: component.gameForm.controls.level.value,
+            });
         });
 
         it('should set the room correctly on createRoom', () => {
