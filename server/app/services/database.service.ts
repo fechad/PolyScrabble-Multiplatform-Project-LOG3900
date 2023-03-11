@@ -1,4 +1,6 @@
+import { EINSTEIN_BADGE, MOZART_BADGE, SANTA_BADGE, SERENA_BADGE, TRUMP_BADGE } from '@app/constants/bot-badges';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { DEFAULT_USER_SETTINGS } from '@app/constants/default-user-settings';
 import { app } from '@app/firebase-config';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Score } from '@app/interfaces/score';
@@ -62,16 +64,14 @@ export class DatabaseService {
         );
     }
     async addDummyAccounts(): Promise<WriteResult[]> {
-        const usernames: string[] = ['Homer en mer', 'Aymen amen', 'Frankkk drankkk', 'Fedwin for the win', 'Etienne à Vienne', 'Anna kin'];
+        const usernames: string[] = ['Homer en mer', 'Aymen amen', 'Frankkk drankkk', 'Fedwin for the win', 'Etienne à Vienne', 'Anna kin', 'kurama'];
         const accounts: Account[] = [];
         for (const name of usernames) {
             const account: Account = {
                 username: name,
                 email: `${name}@polyscrabble.ca`,
-                defaultLanguage: 'french',
-                badges: ['dev'],
-                defaultTheme: 'dark',
-                highscore: 666,
+                badges: [SANTA_BADGE, EINSTEIN_BADGE, TRUMP_BADGE, MOZART_BADGE, SERENA_BADGE],
+                userSettings: DEFAULT_USER_SETTINGS,
                 totalXP: 9999,
                 avatarUrl: 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large',
                 bestGames: [],

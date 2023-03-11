@@ -13,7 +13,9 @@ import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
 import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
+import { ImageController } from './image.controllet';
 import { ScoresController } from './scores.controller';
+import { UserInfoController } from './user-info.controller';
 
 describe('GamesHistoryController', () => {
     let scoresController: ScoresController;
@@ -25,6 +27,8 @@ describe('GamesHistoryController', () => {
     let gamesHistoryService: GamesHistoryService;
     let gamesHistoryController: GamesHistoryController;
     let authController: AuthController;
+    let imageController: ImageController;
+    let userInfoController: UserInfoController;
     let application: Application;
     let games: Game[];
 
@@ -41,14 +45,25 @@ describe('GamesHistoryController', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         botsService = new BotsService({} as any);
         botsController = new BotsController(botsService);
+        imageController = new ImageController();
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         authController = new AuthController({} as any, {} as any, {} as any);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         gamesHistoryService = new GamesHistoryService({} as any);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        userInfoController = new UserInfoController({} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
-        application = new Application(scoresController, dictionariesController, botsController, gamesHistoryController, authController);
+        application = new Application(
+            scoresController,
+            dictionariesController,
+            botsController,
+            gamesHistoryController,
+            authController,
+            userInfoController,
+            imageController,
+        );
         games = [
             {
                 startDatetime: 'date1',

@@ -1,3 +1,6 @@
+import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
+import { DEFAULT_USER_SETTINGS } from './default-user-settings';
+
 export const MAX_MESSAGE_LENGTH = 512;
 export const MIN_MESSAGE_LENGTH = 1;
 export const MAX_NUMBER_PLAYER = 2;
@@ -33,19 +36,15 @@ export const DEFAULT_ROOM_INFO = {
     password: '',
 };
 
-export const DEFAULT_ACCOUNT = {
+export const DEFAULT_ACCOUNT: ClientAccountInfo = {
     username: 'Default Account',
-    email: 'default@mail.com',
-    avatarURL: '',
-    level: {
-        rank: 'rank',
-        currentXP: 0,
-        totalXP: 0,
-    },
+    email: 'kurama@polyscrabble.ca',
+    avatarUrl: '',
+    userSettings: DEFAULT_USER_SETTINGS,
+    highscores: {},
+    progressInfo: { totalXP: 0, currentLevel: 0, xpForNextLevel: 200, currentLevelXp: 0, victoriesCount: 0 },
     badges: [],
-    highScore: 0,
     gamesWon: 0,
-    totalXp: 0,
     gamesPlayed: [],
     bestGames: [],
 };

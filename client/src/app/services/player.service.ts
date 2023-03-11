@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { DEFAULT_ACCOUNT } from '@app/constants/constants';
-import { Account } from '@app/interfaces/account';
+import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
+import { HttpService } from './http.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,10 +11,17 @@ import { Account } from '@app/interfaces/account';
 export class PlayerService {
     player: Player;
     room: Room;
-    account: Account;
-    constructor() {
+    account: ClientAccountInfo = DEFAULT_ACCOUNT;
+    constructor(private httpService?: HttpService) {
         this.room = new Room();
         this.player = new Player();
-        this.account = DEFAULT_ACCOUNT;
+        // TODO: remove this bypass for disabled logging
+        this.player.email = 'kurama@polyscrabble.ca';
+        // TODO: Remove this call once logging is re enabled
+        this.getPlayerInfo();
+    }
+    getPlayerInfo() {
+        if (!this.httpService) return;
+        this.httpService.getUserInfo(this.player.email).subscribe((userInfo) => (this.account = userInfo));
     }
 }

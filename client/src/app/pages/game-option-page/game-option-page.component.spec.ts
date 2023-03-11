@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
@@ -21,8 +22,8 @@ describe('GameOptionPageComponent', () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock();
         socketServiceMock.socket = socketHelper as unknown as Socket;
-
         await TestBed.configureTestingModule({
+            imports: [HttpClientModule],
             declarations: [GameOptionPageComponent],
             providers: [{ provide: SocketClientService, useValue: socketServiceMock }],
             schemas: [NO_ERRORS_SCHEMA],

@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -9,6 +10,7 @@ describe('UserProfileComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
+            imports: [HttpClientModule],
             declarations: [UserProfileComponent],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

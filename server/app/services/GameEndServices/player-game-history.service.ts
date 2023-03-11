@@ -20,8 +20,9 @@ export class PlayerGameHistoryService {
             const previousBestGameIndex = player.bestGames.findIndex((bestGame) => bestGame.type === game.gameType);
 
             // TODO: Update with correct xp gain instead of place holder 20
-            player.totalXP += 20;
-            if (player.highscore < entry.score) player.highscore = entry.score;
+            player.totalXP += 200;
+            // TODO: add highscore update logic depending on game type instead of commented line
+            // if (player.highscore < entry.score) player.highscore = entry.score;
 
             // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             if (previousBestGameIndex === -1) {
