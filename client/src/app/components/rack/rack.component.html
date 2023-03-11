@@ -1,13 +1,38 @@
-<div (click)="updateFocus($event)" #rackContainer id="mouse-position-display">
-    <canvas
-        id="rackCanvas"
-        #rackCanvas
-        (click)="mouseHitDetect($event)"
-        (contextmenu)="onRightClick($event.offsetX, $event.offsetY)"
-        oncontextmenu="return false"
-        [attr.width]="width"
-        [attr.height]="height + 12"
-    ></canvas>
+<div
+    (click)="updateFocus($event)"
+    (keydown)="buttonDetect($event)"
+    (wheel)="mouseScrollDetect($event)"
+    tabindex="0"
+    #rackContainer
+    id="mouse-position-display"
+>
+    <div
+        #container
+        (mouseup)="dragEnd()"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        [cdkDropListData]="rack.rackTiles"
+        (cdkDropListDropped)="drop($event)"
+        class="rack-container"
+    >
+        <div
+            (click)="rack.selectTileForPlacement(tile)"
+            (contextmenu)="rack.selectTileForExchange(tile)"
+            oncontextmenu="return false"
+            cdkDrag
+            (cdkDragStarted)="rack.selectTileForManipulation(tile)"
+            (cdkDragEnded)="rack.endTileDragging()"
+            [cdkDragData]="tile"
+            *ngFor="let tile of rack.rackTiles"
+            #rackLetter
+            [class.placement]="tile.typeOfSelection === selectionType.PLACEMENT"
+            [class.exchange]="tile.typeOfSelection === selectionType.EXCHANGE"
+            class="rack-letter"
+        >
+            <div *ngIf="tile.content && tile.content !== ' '" class="tile-content">{{ tile.content.toUpperCase() }}</div>
+            <div *ngIf="tile.content && tile.content !== ' '" class="tile-point">{{ tile.points }}</div>
+        </div>
+    </div>
     <div class="button-container">
         <button *ngIf="areTilesSelectedForExchange()" class="button" (click)="cancelExchange()">Annuler</button>
         <button *ngIf="areTilesSelectedForExchange()" class="button" (click)="exchangeLetters()" [disabled]="!isExchangeAllowed()">Echanger</button>

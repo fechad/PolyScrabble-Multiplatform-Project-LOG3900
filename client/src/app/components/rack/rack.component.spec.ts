@@ -11,7 +11,6 @@ import { Direction } from '@app/enums/direction';
 import { SelectionType } from '@app/enums/selection-type';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { PlayerService } from '@app/services/player.service';
-import { RackGridService } from '@app/services/rack-grid.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { RackComponent } from './rack.component';
 
@@ -23,14 +22,12 @@ describe('RackComponent', () => {
     let fixture: ComponentFixture<RackComponent>;
     let socketServiceMock: SocketClientServiceMock;
     let socketHelper: SocketTestHelper;
-    let rackGridService: RackGridService;
     let focusHandlerService: FocusHandlerService;
     let playerService: PlayerService;
 
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock(socketHelper);
-        rackGridService = new RackGridService();
         focusHandlerService = new FocusHandlerService();
         playerService = new PlayerService();
 
@@ -38,7 +35,6 @@ describe('RackComponent', () => {
             declarations: [RackComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: RackGridService, useValue: rackGridService },
                 { provide: SocketTestHelper, useValue: socketHelper },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: PlayerService, useValue: playerService },

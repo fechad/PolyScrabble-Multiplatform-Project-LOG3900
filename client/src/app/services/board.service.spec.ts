@@ -10,45 +10,13 @@ import { BOARD_SCALING_RATIO } from '@app/constants/board-constants';
 import { Direction } from '@app/enums/direction';
 import { SelectionType } from '@app/enums/selection-type';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
-import { LetterTileService } from '@app/services/letter-tile.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { BoardService } from './board.service';
 import { CommandInvokerService } from './command-invoker.service';
-import { PlacementViewTilesService } from './placement-view-tiles.service';
-import { RackGridService } from './rack-grid.service';
 
 const RANDOM_VALID_CASE = 5;
 const RANDOM_INVALID_CASE = -2;
 const INVALID_TILE = 16;
-
-class GridContextMock {
-    font = '';
-    fillStyle = '';
-    textAlign = '';
-    textBaseline = '';
-
-    clearRect() {
-        return;
-    }
-    fillRect() {
-        return;
-    }
-    fillText() {
-        return;
-    }
-    beginPath() {
-        return;
-    }
-    moveTo() {
-        return;
-    }
-    lineTo() {
-        return;
-    }
-    stroke() {
-        return;
-    }
-}
 
 describe('BoardService', () => {
     const randomLetter = 'a';
@@ -61,28 +29,18 @@ describe('BoardService', () => {
     let rack: Rack;
 
     let sessionStorageService: SessionStorageService;
-    let letterTileService: LetterTileService;
-    let placementViewTileService: PlacementViewTilesService;
     let commandInvokerService: CommandInvokerService;
-    let rackGridService: RackGridService;
 
     let servicePrivateAccess: any;
-    let letterTileServiceGridMock: any;
-    let placementViewTileServiceGridMock: any;
 
     beforeEach(async () => {
         sessionStorageService = new SessionStorageService();
-        letterTileService = new LetterTileService();
-        placementViewTileService = new PlacementViewTilesService();
-        rackGridService = new RackGridService();
         commandInvokerService = new CommandInvokerService();
-        rack = new Rack(letterTileService, rackGridService);
+        rack = new Rack();
         TestBed.configureTestingModule({
             declarations: [],
             providers: [
                 { provide: SessionStorageService, useValue: sessionStorageService },
-                { provide: LetterTileService, useValue: letterTileService },
-                { provide: PlacementViewTilesService, useValue: placementViewTileService },
                 { provide: CommandInvokerService, useValue: commandInvokerService },
                 { provide: Rack, useValue: rack },
             ],
@@ -112,10 +70,6 @@ describe('BoardService', () => {
             indexes: { x: 0, y: 1 },
         };
 
-        letterTileServiceGridMock = new GridContextMock();
-        placementViewTileServiceGridMock = new GridContextMock();
-
-        service.setupTileServicesContexts(letterTileServiceGridMock, placementViewTileServiceGridMock);
         service.initializeBoardService({ width: tile.width, height: tile.height, letterRatio: BOARD_SCALING_RATIO });
         servicePrivateAccess = service as any;
     });
@@ -127,17 +81,10 @@ describe('BoardService', () => {
     describe('mouseHitDetect tests', () => {
         const mousePosition: Position = { x: 300, y: 300 };
         it('should not detect any new hit if commandInvoker.canSelectFirstCaseForPlacement is false', () => {
-            const drawArrowSpy = spyOn(placementViewTileService, 'drawArrow');
+            const spy = spyOn(service as any, 'updateSelectedTileOnMouseHitDetect');
             commandInvokerService.canSelectFirstCaseForPlacement = false;
             service.mouseHitDetect(mousePosition);
-            expect(drawArrowSpy).not.toHaveBeenCalled();
-        });
-
-        it('should call removeLetterTile after a mouseHit if there was a previousTile', () => {
-            const removeLetterTileSpy = spyOn(placementViewTileService, 'removeLetterTile');
-            commandInvokerService.selectedTile = placeLetterInfo1;
-            service.mouseHitDetect(mousePosition);
-            expect(removeLetterTileSpy).toHaveBeenCalled();
+            expect(spy).not.toHaveBeenCalled();
         });
 
         it('should set the previousTile to empty string if the new selectedTile is not the same', () => {
@@ -146,16 +93,7 @@ describe('BoardService', () => {
             commandInvokerService.selectedTile = placeLetterInfo1;
 
             service.mouseHitDetect(mousePosition);
-            expect(getSelectedTileSpy).toHaveBeenCalledWith(mousePosition);
-            expect(placeLetterInfo1.tile.content).toEqual('');
-        });
-
-        it('should not call drawArrow if there are no selected tile', () => {
-            spyOn(service as any, 'getSelectedTile');
-            const drawArrowSpy = spyOn(placementViewTileService, 'drawArrow');
-
-            service.mouseHitDetect(mousePosition);
-            expect(drawArrowSpy).not.toHaveBeenCalled();
+            expect(getSelectedTileSpy).toHaveBeenCalled();
             expect(placeLetterInfo1.tile.content).toEqual('');
         });
 
@@ -164,24 +102,20 @@ describe('BoardService', () => {
             placeLetterInfo1.tile.content = randomLetter;
             placeLetterInfo2.tile.content = randomLetter;
             spyOn(service as any, 'getSelectedTile').and.returnValue(placeLetterInfo2);
-            const drawArrowSpy = spyOn(placementViewTileService, 'drawArrow');
 
             const undefinedPlaceLetterInfo: any = undefined;
 
             service.mouseHitDetect(mousePosition);
-            expect(drawArrowSpy).not.toHaveBeenCalled();
             expect(commandInvokerService.selectedTile).toEqual(undefinedPlaceLetterInfo);
         });
 
         it('should update selectionType and draw the right Arrow if there is no content in the tile', () => {
             const getSelectedTileSpy = spyOn(service as any, 'getSelectedTile').and.returnValue(placeLetterInfo1);
             const updateSelectionSpy = spyOn(tile, 'updateSelectionType').and.callThrough();
-            const drawArrowSpy = spyOn(placementViewTileService, 'drawArrow');
 
             service.mouseHitDetect(mousePosition);
-            expect(getSelectedTileSpy).toHaveBeenCalledWith(mousePosition);
+            expect(getSelectedTileSpy).toHaveBeenCalled();
             expect(updateSelectionSpy).toHaveBeenCalledWith(SelectionType.BOARD);
-            expect(drawArrowSpy).toHaveBeenCalled();
             expect(tile.content).toEqual(RIGHT_ARROW);
         });
 
@@ -189,23 +123,19 @@ describe('BoardService', () => {
             placeLetterInfo1.tile.content = RIGHT_ARROW;
             const getSelectedTileSpy = spyOn(service as any, 'getSelectedTile').and.returnValue(placeLetterInfo1);
             const updateSelectionSpy = spyOn(tile, 'updateSelectionType').and.callThrough();
-            const drawArrowSpy = spyOn(placementViewTileService, 'drawArrow');
 
             service.mouseHitDetect(mousePosition);
-            expect(getSelectedTileSpy).toHaveBeenCalledWith(mousePosition);
+            expect(getSelectedTileSpy).toHaveBeenCalled();
             expect(updateSelectionSpy).toHaveBeenCalledWith(SelectionType.BOARD);
-            expect(drawArrowSpy).toHaveBeenCalled();
             expect(tile.content).toEqual(DOWN_ARROW);
         });
 
         it('should not update selectionType and draw the correct Arrow if the mouse position is inTheFirstRow or Column', () => {
             const invalidMousePosition = { x: 0, y: 0 };
             const updateSelectionSpy = spyOn(tile, 'updateSelectionType').and.callThrough();
-            const drawArrowSpy = spyOn(placementViewTileService, 'drawArrow');
 
             service.mouseHitDetect(invalidMousePosition);
             expect(updateSelectionSpy).not.toHaveBeenCalledWith(SelectionType.BOARD);
-            expect(drawArrowSpy).not.toHaveBeenCalled();
         });
     });
 
@@ -287,13 +217,6 @@ describe('BoardService', () => {
             const removeAllViewLettersSpy = spyOn(commandInvokerService, 'removeAllViewLetters');
             service.removeAllViewLetters();
             expect(removeAllViewLettersSpy).toHaveBeenCalled();
-        });
-
-        it('should call removeLetterTile if there is a selectedTile', () => {
-            commandInvokerService.selectedTile = placeLetterInfo1;
-            const removeLetterTileSpy = spyOn(placementViewTileService, 'removeLetterTile');
-            service.removeAllViewLetters();
-            expect(removeLetterTileSpy).toHaveBeenCalled();
         });
     });
 
@@ -379,7 +302,6 @@ describe('BoardService', () => {
         });
         it('should return false when the tile"s content is not empty', () => {
             tile.content = 'a';
-            spyOn(service, 'getCaseIndex' as any).and.returnValue(position);
             // eslint-disable-next-line dot-notation -- we need to access private attribute
             service['lettersInBoard'][position.x][position.y] = tile;
             spyOn(service, 'isFirstRowOrColumn' as any).and.returnValue(false);
@@ -387,7 +309,6 @@ describe('BoardService', () => {
         });
         it('should return false when the tile"s content is empty', () => {
             tile.content = '';
-            spyOn(service, 'getCaseIndex' as any).and.returnValue(position);
             // eslint-disable-next-line dot-notation -- we need to access private attribute
             service['lettersInBoard'][position.x][position.y] = tile;
             spyOn(service, 'isFirstRowOrColumn' as any).and.returnValue(false);
@@ -395,18 +316,11 @@ describe('BoardService', () => {
         });
         it('should return true when the tile"s content is empty and it is not on the first row/column', () => {
             tile.content = '';
-            spyOn(service, 'getCaseIndex' as any).and.returnValue(position);
             // eslint-disable-next-line dot-notation -- we need to access private attribute
             service['lettersInBoard'][position.x][position.y] = tile;
             spyOn(service, 'isFirstRowOrColumn' as any).and.returnValue(false);
             expect(service.canBeFocused(position)).toBeTrue();
         });
-    });
-
-    it('should not call drawLetterTile if the tile content is empty', () => {
-        const spy = spyOn(letterTileService, 'drawLetterTile');
-        servicePrivateAccess.drawLetterTile(tile);
-        expect(spy).not.toHaveBeenCalled();
     });
 
     it('should add 1 to xPosition when direction is horizontal', () => {

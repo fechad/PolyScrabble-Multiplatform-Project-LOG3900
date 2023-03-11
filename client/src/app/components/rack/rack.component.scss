@@ -1,18 +1,11 @@
 #mouse-position-display {
+    min-height: 140px;
     border-radius: 10px;
     border: 3px solid #515151;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0px 10px;
-    height: 150px;
-}
-
-#rackCanvas {
-    cursor: default;
-}
-#rackCanvas[contenteditable] {
-    outline: 0px solid transparent;
 }
 
 .button-container {
@@ -32,4 +25,64 @@
 
 #mouse-position-display .button {
     max-width: 150px;
+}
+
+.rack-letter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+    min-height: 50px;
+    background-color: #ecba8c;
+    border: black 1px solid;
+    border-radius: 4px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.rack-letter.placement {
+    border: 3px solid red;
+}
+
+.rack-letter.exchange {
+    border: 3px solid green;
+}
+
+.rack-container {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    min-width: 300px;
+    display: block;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.tile-content {
+    font-size: 20px;
+}
+
+.tile-point {
+    align-self: end;
+    margin-right: 2px;
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.rack-container.cdk-drop-list-dragging .rack-letter:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

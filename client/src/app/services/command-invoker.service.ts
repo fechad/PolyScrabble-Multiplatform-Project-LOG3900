@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/command/abstract-command';
+import { PlaceDraggedLetter } from '@app/classes/command/place-dragged-letter';
 import { PlaceLetter } from '@app/classes/command/place-letter';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Tile } from '@app/classes/tile';
-import { DOWN_ARROW } from '@app/enums/tile-constants';
+import { A_ASCII } from '@app/constants/constants';
+import { PlacementType } from '@app/enums/placement-type';
+import { ANY_ARROW, DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
 
 const PLACE_COMMAND = '!placer';
 @Injectable({
@@ -24,13 +27,32 @@ export class CommandInvokerService {
 
     get commandMessage(): string {
         if (this.cancelStack.length === 0) return '';
-        let placeLetterCommand = this.cancelStack[this.cancelStack.length - 1] as PlaceLetter;
-        let commandMessage = `${PLACE_COMMAND} ${this.firstSelectedCaseForPlacement}${this.translateArrow(placeLetterCommand.arrowDirection)} `;
-        for (const command of this.cancelStack) {
-            placeLetterCommand = command as PlaceLetter;
-            commandMessage += placeLetterCommand.getPlaceInfo().tile.content;
+        const sortedPlacementCommand = this.getCommandStackInCommandOrder();
+        const firstCommand = sortedPlacementCommand[0];
+
+        const placementCase =
+            firstCommand instanceof PlaceDraggedLetter === true
+                ? this.numberToLetter((firstCommand as PlaceDraggedLetter).getPlaceInfo().indexes.y) +
+                  (firstCommand as PlaceDraggedLetter).getPlaceInfo().indexes.x
+                : this.firstSelectedCaseForPlacement;
+        let commandMessage = `${PLACE_COMMAND} ${placementCase}${this.translateArrow(this.getPlacementArrowDirection())} `;
+
+        if (!this.isCommandValid(sortedPlacementCommand)) return 'Placement invalide';
+        for (const command of sortedPlacementCommand) {
+            commandMessage += (command as PlaceLetter).getPlaceInfo().tile.content;
         }
         return commandMessage;
+    }
+
+    get lastPlacement(): PlaceLetter | null {
+        if (this.cancelStack.length === 0) return null;
+        return this.cancelStack[this.cancelStack.length - 1] as PlaceLetter;
+    }
+
+    get placementType(): PlacementType {
+        if (this.cancelStack.length === 0) return PlacementType.None;
+        if (this.cancelStack[0] instanceof PlaceDraggedLetter === true) return PlacementType.DragAndDrop;
+        return PlacementType.Simple;
     }
 
     executeCommand(command: Command) {
@@ -50,15 +72,14 @@ export class CommandInvokerService {
         if (placeLetterCommand) {
             this.selectedTile = placeLetterCommand.getPlaceInfo();
         }
-        const commandToCancel = this.cancelStack.pop() as PlaceLetter;
+        const commandToCancel = this.cancelStack.pop();
 
         if (this.cancelStack.length <= 0) {
-            commandToCancel.isFirstPlaced = true;
             this.canSelectFirstCaseForPlacement = true;
             this.selectedTile = undefined;
         }
 
-        commandToCancel.cancel();
+        commandToCancel?.cancel();
     }
 
     removeAllViewLetters() {
@@ -71,22 +92,89 @@ export class CommandInvokerService {
         return this.cancelStack.length === 0;
     }
 
-    cancelTilePlacementCommand(tile: Tile) {
+    cancelTilePlacementCommand(tile: Tile, isDragCancel?: boolean) {
         const commandToCancel = this.findCommandToCancel(tile);
         if (!commandToCancel) return;
 
         commandToCancel.forceCancel();
 
         const previousCommand = this.getPreviousCommand(commandToCancel);
-        if (previousCommand) {
+        if (previousCommand && !isDragCancel) {
             previousCommand.decrementNextLetterPosition();
         }
 
         this.removeCommand(commandToCancel as Command);
 
+        if (this.cancelStack.length === 1) {
+            (this.cancelStack[0] as PlaceLetter).arrowDirection = ANY_ARROW;
+        }
+
         if (this.cancelStack.length <= 0) {
             this.canSelectFirstCaseForPlacement = true;
         }
+    }
+
+    isHorizontalPlacement(): boolean {
+        if (this.canSelectFirstCaseForPlacement) return false;
+        if (this.lastPlacement?.arrowDirection !== ANY_ARROW && this.lastPlacement?.arrowDirection !== RIGHT_ARROW) return false;
+
+        return this.selectedTile?.indexes.y === this.lastPlacement?.getPlaceInfo().indexes.y;
+    }
+
+    isVerticalPlacement(): boolean {
+        if (this.canSelectFirstCaseForPlacement) return false;
+        if (this.lastPlacement?.arrowDirection !== ANY_ARROW && this.lastPlacement?.arrowDirection !== DOWN_ARROW) return false;
+        return this.selectedTile?.indexes.x === this.lastPlacement?.getPlaceInfo().indexes.x;
+    }
+
+    private getCommandStackInCommandOrder(): Command[] {
+        let sortedStack = this.cancelStack;
+        switch (this.getPlacementArrowDirection()) {
+            case RIGHT_ARROW:
+                sortedStack = this.cancelStack.sort((placeLetterA: Command, placeLetterB: Command) => {
+                    return (placeLetterA as PlaceLetter).getPlaceInfo().indexes.x - (placeLetterB as PlaceLetter).getPlaceInfo().indexes.x;
+                });
+                break;
+            case DOWN_ARROW:
+                sortedStack = this.cancelStack.sort((placeLetterA: Command, placeLetterB: Command) => {
+                    return (placeLetterA as PlaceLetter).getPlaceInfo().indexes.y - (placeLetterB as PlaceLetter).getPlaceInfo().indexes.y;
+                });
+                break;
+            default:
+                break;
+        }
+        return sortedStack;
+    }
+
+    private getPlacementArrowDirection(): string {
+        for (const command of this.cancelStack) {
+            if ((command as PlaceLetter).arrowDirection !== ANY_ARROW) return (command as PlaceLetter).arrowDirection;
+        }
+        return RIGHT_ARROW;
+    }
+
+    private isCommandValid(sortedCommandStack: Command[]): boolean {
+        const firstCommand = (sortedCommandStack[0] as PlaceLetter).getPlaceInfo();
+        const lastCommand = (sortedCommandStack[sortedCommandStack.length - 1] as PlaceLetter).getPlaceInfo();
+        const finalBoardState = lastCommand.lettersInBoard;
+
+        if ((sortedCommandStack[sortedCommandStack.length - 1] as PlaceLetter).arrowDirection === RIGHT_ARROW) {
+            const lengthBetweenFirstAndLastCommand = lastCommand.indexes.x - firstCommand.indexes.x;
+            for (let i = 0; i < lengthBetweenFirstAndLastCommand; i++) {
+                if (finalBoardState[firstCommand.indexes.x + i][firstCommand.indexes.y].content === '') return false;
+            }
+        } else {
+            const lengthBetweenFirstAndLastCommand = lastCommand.indexes.y - firstCommand.indexes.y;
+            for (let i = 0; i < lengthBetweenFirstAndLastCommand; i++) {
+                if (finalBoardState[firstCommand.indexes.x][firstCommand.indexes.y + i].content === '') return false;
+            }
+        }
+
+        return true;
+    }
+
+    private numberToLetter(number: number): string {
+        return String.fromCharCode(A_ASCII + number - 1);
     }
 
     private removeCommand(command: Command) {

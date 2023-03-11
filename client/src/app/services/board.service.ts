@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 import { Injectable } from '@angular/core';
 import { BoardMessage } from '@app/classes/board-message';
+import { PlaceDraggedLetter } from '@app/classes/command/place-dragged-letter';
 import { PlaceLetter } from '@app/classes/command/place-letter';
 import { Dimension } from '@app/classes/dimension';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
@@ -13,30 +15,33 @@ import {
     DEFAULT_CASE_COUNT,
     DEFAULT_STARTING_POSITION,
 } from '@app/constants/board-constants';
-import { DEFAULT_TILE_COLOR } from '@app/constants/rack-constants';
+import { A_ASCII } from '@app/constants/constants';
+import { DEFAULT_TILE_COLOR, POINTS } from '@app/constants/rack-constants';
 import { Direction } from '@app/enums/direction';
+import { PlacementType } from '@app/enums/placement-type';
 import { SelectionType } from '@app/enums/selection-type';
+import { ANY_ARROW, DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
-import { LetterTileService } from './letter-tile.service';
-import { PlacementViewTilesService } from './placement-view-tiles.service';
 import { SessionStorageService } from './session-storage.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class BoardService {
-    private lettersInBoard: Tile[][];
+    lettersInBoard: Tile[][];
+    selectedTileForManipulation: Tile | null;
+    isDraggingATile: boolean;
     private placementCommands: PlacementCommand[];
     private tileDimension: Dimension;
 
     constructor(
-        private placementViewTileService: PlacementViewTilesService,
-        private letterTileService: LetterTileService,
         private sessionStorageService: SessionStorageService,
         private commandInvoker: CommandInvokerService,
 
         private readonly rack: Rack,
     ) {
+        this.selectedTileForManipulation = null;
+        this.isDraggingATile = false;
         this.tileDimension = { width: 0, height: 0, letterRatio: 0 };
         this.placementCommands = [];
     }
@@ -53,21 +58,35 @@ export class BoardService {
         return this.tileDimension.letterRatio;
     }
 
+    endTileDragging() {
+        const buffer = 50;
+        setTimeout(() => {
+            this.isDraggingATile = false;
+            this.selectedTileForManipulation = null;
+        }, buffer);
+    }
+
+    selectTileForManipulation(tile: Tile) {
+        if (!this.canDragTile(tile)) return;
+        this.isDraggingATile = true;
+        this.selectedTileForManipulation = tile;
+    }
+
+    removeManipulatedTile() {
+        if (!this.selectedTileForManipulation) return;
+        this.commandInvoker.cancelTilePlacementCommand(this.selectedTileForManipulation, true);
+    }
+
     initializeBoardService(tileDimension: Dimension) {
         this.tileDimension = { ...tileDimension };
         this.reinitializeLettersTiles();
     }
 
-    setupTileServicesContexts(letterTileServiceContext: CanvasRenderingContext2D, placementViewTileServiceContext: CanvasRenderingContext2D) {
-        this.letterTileService.gridContext = letterTileServiceContext;
-        this.placementViewTileService.gridContext = placementViewTileServiceContext;
-    }
+    mouseHitDetect(tileIndexes: Position) {
+        if (this.commandInvoker.placementType !== PlacementType.Simple && this.commandInvoker.placementType !== PlacementType.None) return;
+        if (!this.canSelectCase(tileIndexes)) return;
 
-    mouseHitDetect(mousePosition: Position) {
-        if (!this.canSelectCase(mousePosition)) return;
-
-        this.handlePreviousTileOnMouseHitDetect();
-        this.updateSelectedTileOnMouseHitDetect(mousePosition);
+        this.updateSelectedTileOnMouseHitDetect(tileIndexes);
 
         if (!this.commandInvoker.selectedTile) return;
         if (this.commandInvoker.selectedTile.tile.content !== '' && !this.commandInvoker.selectedTile.tile.hasArrowAsContent()) {
@@ -76,28 +95,90 @@ export class BoardService {
         }
 
         this.commandInvoker.selectedTile.tile.updateSelectionType(SelectionType.BOARD);
-        this.placementViewTileService.drawArrow(this.commandInvoker.selectedTile.tile, this.tileDimension, this.letterRatio as number);
     }
 
-    placeLetterInBoard(letter: string) {
+    dragEndDetect(tileIndexes: Position) {
+        if (this.commandInvoker.placementType !== PlacementType.DragAndDrop && this.commandInvoker.placementType !== PlacementType.None) return;
+        if (!this.rack.selectedTile) return;
+
+        if (this.isFirstRowOrColumn(tileIndexes)) return;
+        this.updateSelectedTileOnMouseHitDetect(tileIndexes);
+        if (!this.commandInvoker.selectedTile) return;
+
+        if (this.commandInvoker.selectedTile.tile.content !== '' && !this.commandInvoker.selectedTile.tile.hasArrowAsContent()) {
+            this.commandInvoker.selectedTile = undefined;
+            return;
+        }
+
+        if (this.commandInvoker.isHorizontalPlacement()) {
+            if (this.isDraggingATile) {
+                this.moveLetterInBoard(RIGHT_ARROW);
+                return;
+            }
+            this.placeLetterInBoard(this.rack.selectedTile?.content, true, RIGHT_ARROW);
+            return;
+        } else if (this.commandInvoker.isVerticalPlacement()) {
+            if (this.isDraggingATile) {
+                this.moveLetterInBoard(DOWN_ARROW);
+                return;
+            }
+            this.placeLetterInBoard(this.rack.selectedTile?.content, true, DOWN_ARROW);
+            return;
+        }
+
+        if (this.commandInvoker.canSelectFirstCaseForPlacement) {
+            this.placeLetterInBoard(this.rack.selectedTile?.content, true, this.commandInvoker.lastPlacement?.arrowDirection || ANY_ARROW);
+        }
+    }
+
+    placeLetterInBoard(letter: string, isDragPlacement?: boolean, direction?: string) {
         let transformedLetter = this.rack.transformSpecialChar(letter);
         if (!this.commandInvoker.selectedTile) return;
         if (!this.rack.rackWord.includes(transformedLetter) || transformedLetter === '' || transformedLetter === ' ') return;
-        if (!this.commandInvoker.selectedTile.tile.hasArrowAsContent()) return;
+        if (!isDragPlacement && !this.commandInvoker.selectedTile.tile.hasArrowAsContent()) return;
 
         if (transformedLetter === '*') {
             transformedLetter = this.rack.transformSpecialChar(letter.toLowerCase()).toUpperCase();
         }
 
         this.commandInvoker.selectedTile.letter = transformedLetter;
-        const placeLetterCommand = new PlaceLetter(
-            this.placementViewTileService,
+        const placementType = this.commandInvoker.placementType;
+        if (!isDragPlacement && (placementType === PlacementType.Simple || placementType === PlacementType.None)) {
+            const placeLetterCommand = new PlaceLetter(
+                this.commandInvoker.selectedTile,
+                this.commandInvoker.selectedTile.tile.content,
+                this.commandInvoker.canSelectFirstCaseForPlacement,
+            );
+            this.commandInvoker.executeCommand(placeLetterCommand);
+            return;
+        }
+        if (placementType !== PlacementType.DragAndDrop && placementType !== PlacementType.None) return;
+        const placeDraggedLetterCommand = new PlaceDraggedLetter(
             this.commandInvoker.selectedTile,
-            this.commandInvoker.selectedTile.tile.content,
+            direction || ANY_ARROW,
             this.commandInvoker.canSelectFirstCaseForPlacement,
         );
+        this.commandInvoker.executeCommand(placeDraggedLetterCommand);
+    }
 
-        this.commandInvoker.executeCommand(placeLetterCommand);
+    moveLetterInBoard(direction: string) {
+        if (!this.selectedTileForManipulation) return;
+        const transformedLetter = this.rack.transformSpecialChar(this.selectedTileForManipulation?.content);
+
+        if (!this.commandInvoker.selectedTile) return;
+        this.commandInvoker.selectedTile.letter = transformedLetter;
+
+        const placementType = this.commandInvoker.placementType;
+        if (placementType !== PlacementType.DragAndDrop && placementType !== PlacementType.None) return;
+
+        this.removeManipulatedTile();
+
+        const placeDraggedLetterCommand = new PlaceDraggedLetter(
+            this.commandInvoker.selectedTile,
+            direction || ANY_ARROW,
+            this.commandInvoker.canSelectFirstCaseForPlacement,
+        );
+        this.commandInvoker.executeCommand(placeDraggedLetterCommand);
     }
 
     removeAllViewLetters() {
@@ -105,11 +186,6 @@ export class BoardService {
         if (!this.commandInvoker.selectedTile) return;
         this.commandInvoker.selectedTile.tile.content = '';
         this.commandInvoker.selectedTile.tile.updateSelectionType(SelectionType.UNSELECTED);
-        this.placementViewTileService.removeLetterTile(this.commandInvoker.selectedTile.tile, {
-            width: this.tileWidth,
-            height: this.tileHeight,
-            letterRatio: this.letterRatio,
-        });
     }
 
     removePlacementCommands() {
@@ -143,15 +219,20 @@ export class BoardService {
         this.setUpTiles(this.lettersInBoard);
     }
 
-    canBeFocused(position: Position): boolean {
-        const caseIndexes = this.getCaseIndex(position);
-        if (this.isFirstRowOrColumn(position)) return false;
-        if (this.lettersInBoard[caseIndexes.x][caseIndexes.y].content !== '') return false;
+    canBeFocused(tileIndexes: Position): boolean {
+        if (this.isFirstRowOrColumn(tileIndexes)) return false;
+        if (this.lettersInBoard[tileIndexes.x][tileIndexes.y].content !== '') return false;
         return true;
     }
 
-    private canSelectCase(mousePosition: Position): boolean {
-        if (!this.commandInvoker.canSelectFirstCaseForPlacement || this.isFirstRowOrColumn(mousePosition)) return false;
+    private canDragTile(tile: Tile): boolean {
+        return (
+            tile.content !== '' && tile.content !== RIGHT_ARROW && tile.content !== DOWN_ARROW && tile.typeOfSelection !== SelectionType.UNSELECTED
+        );
+    }
+
+    private canSelectCase(tileIndexes: Position): boolean {
+        if (!this.commandInvoker.canSelectFirstCaseForPlacement || this.isFirstRowOrColumn(tileIndexes)) return false;
         return true;
     }
     private handleLetterInCurrentPosition(letter: string, position: Position, direction: string) {
@@ -177,39 +258,33 @@ export class BoardService {
     private drawLetterTile(letterTile: Tile) {
         if (letterTile.content === '') return;
         letterTile.color = DEFAULT_TILE_COLOR;
-        letterTile.points = this.letterTileService.tileScore(letterTile.content as string);
-        this.letterTileService.drawLetterTile(letterTile, { width: this.tileWidth, height: this.tileHeight }, this.letterRatio as number);
+        letterTile.points = this.tileScore(letterTile.content as string);
     }
 
-    private isFirstRowOrColumn(position: Position): boolean {
-        const caseIndexes = this.getCaseIndex(position);
-        if (caseIndexes.x === 0 || caseIndexes.y === 0) return true;
+    // TODO: put this duplicated method somewhere that it makes sense
+    private tileScore(letter: string): number {
+        if (letter === '' || letter === undefined || letter === '*') return 0;
+        const normalLetter = letter;
+        if (normalLetter.toLowerCase() !== normalLetter) return 0;
+        return POINTS[letter.charCodeAt(0) - A_ASCII];
+    }
+
+    private isFirstRowOrColumn(tileIndexes: Position): boolean {
+        if (tileIndexes.x === 0 || tileIndexes.y === 0) return true;
         return false;
     }
 
-    private handlePreviousTileOnMouseHitDetect() {
+    private updateSelectedTileOnMouseHitDetect(tileIndexes: Position) {
         const previousTile = this.commandInvoker.selectedTile;
-        if (previousTile) {
-            this.placementViewTileService.removeLetterTile(previousTile.tile, {
-                width: this.tileWidth,
-                height: this.tileHeight,
-                letterRatio: this.letterRatio,
-            });
-        }
-    }
-
-    private updateSelectedTileOnMouseHitDetect(mousePosition: Position) {
-        const previousTile = this.commandInvoker.selectedTile;
-        this.commandInvoker.selectedTile = this.getSelectedTile(mousePosition);
+        this.commandInvoker.selectedTile = this.getSelectedTile(tileIndexes);
         if (previousTile && previousTile.tile !== this.commandInvoker.selectedTile?.tile) {
             previousTile.tile.content = '';
         }
     }
 
-    private getSelectedTile(mousePosition: Position): PlaceLetterInfo {
-        const caseIndex = this.getCaseIndex(mousePosition);
+    private getSelectedTile(tileIndexes: Position): PlaceLetterInfo {
         if (this.commandInvoker.canSelectFirstCaseForPlacement) {
-            this.commandInvoker.firstSelectedCaseForPlacement = '' + this.letterTileService.numberToLetter(caseIndex.y) + caseIndex.x;
+            this.commandInvoker.firstSelectedCaseForPlacement = '' + this.numberToLetter(tileIndexes.y) + tileIndexes.x;
         }
 
         return {
@@ -221,13 +296,13 @@ export class BoardService {
                 height: this.tileHeight,
                 letterRatio: this.letterRatio,
             },
-            tile: this.lettersInBoard[caseIndex.x][caseIndex.y],
-            indexes: caseIndex,
+            tile: this.lettersInBoard[tileIndexes.x][tileIndexes.y],
+            indexes: tileIndexes,
         };
     }
 
-    private getCaseIndex(position: Position): Position {
-        return { x: parseInt('' + position.x / this.tileWidth, 10), y: parseInt('' + position.y / this.tileHeight, 10) };
+    private numberToLetter(number: number): string {
+        return String.fromCharCode(A_ASCII + number - 1);
     }
 
     private updatePosition(direction: string, position: Position) {

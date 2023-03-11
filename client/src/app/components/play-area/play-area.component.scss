@@ -1,3 +1,6 @@
+$tileWIdth: 45px;
+$tileDragWidth: 38px;
+
 .play-area-flex-container {
     display: flex;
     align-items: center;
@@ -48,22 +51,98 @@
     width: 112px;
 }
 
-#grid-container {
+.board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
     box-shadow: 2px 10px 10px #c0c0c0;
 }
 
-#grid-container canvas {
+.y-axis {
+    gap: 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.placed-tile-points {
+    font-size: 11px;
+    width: 100%;
+    margin-right: 4px;
+    text-align: end;
+}
+
+.tile-drag {
+    font-size: 18px;
+    color: black;
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: $tileDragWidth;
+    max-width: $tileDragWidth;
+    max-height: $tileDragWidth;
+    min-height: $tileDragWidth;
 }
 
-#board-canvas {
-    z-index: 0;
+.tile-drag.placement {
+    background-color: #ecba8c;
 }
 
-#view-placement-canvas {
-    z-index: 1;
+.tile-drag.placement.new {
+    border: 3px solid red;
 }
 
-#letter-tiles-canvas {
-    z-index: 2;
+.tile-drag.pink {
+    background-color: pink;
+}
+
+.tile {
+    cursor: default;
+    font-size: 15px;
+    color: rgb(102, 102, 102);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: $tileWIdth;
+    max-width: $tileWIdth;
+    max-height: $tileWIdth;
+    min-height: $tileWIdth;
+    background-color: #ffebce;
+}
+
+.tile.star {
+    background-color: #ffc7c7;
+}
+
+.tile.letter2-multiplier {
+    background-color: #bbbeca;
+}
+
+.tile.letter3-multiplier {
+    background-color: #a8bbff;
+}
+
+.tile.word2-multiplier {
+    background-color: #ffc7c7;
+}
+
+.tile.word3-multiplier {
+    background-color: #e8a1a1;
+}
+
+.tile.edge {
+    background-color: white;
 }

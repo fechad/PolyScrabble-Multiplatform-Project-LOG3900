@@ -52,6 +52,8 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
 
     updateFocus(event: MouseEvent) {
         event.stopPropagation();
+        // TODO: see with charge if it is ok to not remove focus on game page click
+        if (event) return;
         this.focusHandlerService.currentFocus.next(CurrentFocus.NONE);
     }
 

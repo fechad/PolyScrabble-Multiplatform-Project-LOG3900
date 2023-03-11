@@ -19,6 +19,7 @@ export const DEFAULT_BOTS_NAME = ['Trump', 'Zemmour', 'Legault', 'Ulrich', 'Augu
 export const BEGINNER_BOT_NAMES = ['Bot A', 'Bot B', 'Bot C'];
 export const EXPERT_BOT_NAMES = ['Bot AA', 'Bot BB', 'Bot CC'];
 export const LOG_2990_GAME_TYPE = 'log2990';
+export const A_ASCII = 97;
 
 // TESTS CONSTANTS
 export const DEFAULT_ROOM_INFO = {
