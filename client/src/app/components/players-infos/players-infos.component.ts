@@ -6,6 +6,7 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { EndGamePopupComponent } from '@app/components/endgame-popup/endgame-popup.component';
 import { BASE_TEN, MINUTE_IN_SECOND } from '@app/constants/constants';
+import { RACK_CAPACITY } from '@app/constants/rack-constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -19,6 +20,7 @@ const END_GAME_WIDTH = '400px';
     styleUrls: ['./players-infos.component.scss'],
 })
 export class PlayersInfosComponent extends ComponentCommunicationManager implements OnInit {
+    lettersBankCount: number;
     remainingTime: number;
     currentPlayerTurnPseudo: string;
     winnerPseudo: string;
@@ -32,6 +34,10 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
+    }
+
+    get isActivePlayer(): boolean {
+        return this.playerService.player.isItsTurn;
     }
 
     get room(): Room {
@@ -93,7 +99,17 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         });
     }
 
+    changePlayerTurn() {
+        this.socketService.send(SocketEvent.Message, '!passer');
+    }
+
     protected configureBaseSocketFeatures() {
+        this.socketService.on(SocketEvent.LettersBankCountUpdated, (lettersBankCount: number) => {
+            this.lettersBankCount = lettersBankCount;
+            if (lettersBankCount < RACK_CAPACITY) {
+                this.room.isBankUsable = false;
+            }
+        });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.playerService.player.isItsTurn) {
                 this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);

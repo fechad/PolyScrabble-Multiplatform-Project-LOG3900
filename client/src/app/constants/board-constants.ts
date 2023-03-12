@@ -5,7 +5,7 @@ import { MultiplierType } from '@app/enums/multiplier-type';
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 export const DEFAULT_ROWS: string[] = [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'];
 export const DEFAULT_CASE_COUNT = 16;
-export const BOARD_SCALING_RATIO = 1.5;
+export const BOARD_SCALING_RATIO = 2;
 export const DEFAULT_WIDTH = 725;
 export const DEFAULT_HEIGHT = 725;
 export const DEFAULT_STARTING_POSITION = 0;

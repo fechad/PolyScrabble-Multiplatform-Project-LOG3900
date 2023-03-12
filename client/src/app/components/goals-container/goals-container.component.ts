@@ -25,7 +25,24 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
     constructor(protected socketService: SocketClientService, private playerService: PlayerService) {
         super(socketService);
         this.lettersBankCount = 0;
-        this.publicGoals = [];
+        this.publicGoals = [
+            {
+                title: GoalTitle.AtLeastFive,
+                description: GoalDescription.AtLeastFive,
+                reward: 30,
+                reached: false,
+                isPublic: true,
+                players: [this.player],
+            },
+            {
+                title: GoalTitle.FirstToHundred,
+                description: GoalDescription.FirstToHundred,
+                reward: 30,
+                reached: true,
+                isPublic: true,
+                players: [this.player],
+            },
+        ];
         this.privateGoal = {
             title: GoalTitle.Error,
             description: GoalDescription.Error,
