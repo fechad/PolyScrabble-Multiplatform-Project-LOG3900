@@ -1,5 +1,4 @@
 <div class="play-area-flex-container">
-    <input name="selectSize" [(ngModel)]="letterRatio" type="range" min="1.4" max="2" step="0.0001" (input)="editLetterSize()" />
 
     <div #boardContainer *ngIf="isBoardReady" class="board-container">
         <div cdkDropList [id]="'' + i" class="y-axis" *ngFor="let yAxis of board; index as i">
@@ -33,16 +32,6 @@
                     <div>{{ tile.content }}</div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="flex-container">
-        <div class="side-button-container">
-            <button class="button" (click)="changePlayerTurn()" [disabled]="!isActivePlayer || isGameOver">Passer</button>
-        </div>
-        <app-rack id="rack"></app-rack>
-        <div class="side-button-container">
-            <button [disabled]="!isPlayerTurn()" class="button" (click)="confirmPlacement()">Jouer</button>
         </div>
     </div>
 </div>

@@ -1,15 +1,64 @@
+
+
 #dictionary-text {
     text-align: center;
     font-family: 'Nunito';
     font-size: 20px;
 }
 
-.player-panel.player-active {
+.reserve {
+    margin: 8px;
+}
+
+.head-info{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100px;
+}
+
+.avatar.player-active {
     border: #38cb3e 5px solid;
 }
 
 .player-panel.player-winner {
     background-color: #e9af4e;
+}
+
+.avatar {
+    border-radius: 100%;
+    width: 64px;
+    height: 64px;
+    background-color: gray;
+}
+
+.fa-clone, .fa-eye {
+    font-size: 36px;
+}
+
+.fa-forward {
+    color: #7DAF6B;
+    font-size: 56px;
+    margin-right: 16px;
+    cursor: pointer;
+}
+
+.disabled {
+    color: rgba(128, 128, 128, 0.2);
+    cursor: default;
+}
+
+.gamers-displayer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gamers {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 .client-player.player-panel.player-active {
@@ -23,7 +72,7 @@
 .players-names {
     display: flex;
     padding: 10px;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -35,9 +84,8 @@
     padding: 10px;
 
     background-color: #ffffff;
-    border: #515151 5px solid;
-    width: 100px;
-    height: 70px;
+    width: 64px;
+    height: 120px;
     border-radius: 5px;
     margin-right: 10px;
 

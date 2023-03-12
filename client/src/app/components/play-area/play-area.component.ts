@@ -19,7 +19,8 @@ import {
     DEFAULT_ROWS,
     DEFAULT_STARTING_POSITION,
     DEFAULT_WIDTH,
-    specialCases,
+    // eslint-disable-next-line prettier/prettier
+    specialCases
 } from '@app/constants/board-constants';
 import { ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { SelectionType } from '@app/enums/selection-type';

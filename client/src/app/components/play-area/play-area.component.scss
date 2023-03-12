@@ -2,10 +2,15 @@ $tileWIdth: 45px;
 $tileDragWidth: 38px;
 
 .play-area-flex-container {
+    padding-top: 16px;
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
     gap: 20px;
+}
+.rack{
+    height: 50px;
 }
 
 .flex-container .button {
