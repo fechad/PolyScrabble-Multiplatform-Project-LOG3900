@@ -207,7 +207,7 @@ describe('socketGameService service tests', () => {
             expect(reachedGoal.communicated).to.equal(true);
         });
 
-        it('should not communicate new achievement on notifyViewBasedOnCommandResult if gameType is not log2990', () => {
+        it('should communicate new achievement on notifyViewBasedOnCommandResult if gameType is not log2990', () => {
             const reachedGoal = { title: GoalTitle.AtLeastFive, playerName: firstPlayer.pseudo, communicated: false, reward: 1 };
             roomMock.roomInfo.gameType = 'classic';
             sinon.stub(roomMock, 'getReachedGoals').returns([reachedGoal]);
@@ -219,10 +219,10 @@ describe('socketGameService service tests', () => {
                 socketMock,
             );
             assert(
-                communicateNewAchievementsSpy.notCalled,
-                'called communicateNewAchievements on notifyViewBasedOnCommandResult on !log2990 gameType',
+                communicateNewAchievementsSpy.called,
+                'did not called communicateNewAchievements on notifyViewBasedOnCommandResult on !log2990 gameType',
             );
-            expect(reachedGoal.communicated).to.equal(false);
+            expect(reachedGoal.communicated).to.equal(true);
         });
     });
 

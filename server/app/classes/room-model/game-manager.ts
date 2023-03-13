@@ -52,9 +52,6 @@ export class GameManager {
         return this.letterBank;
     }
     givePlayerGoals(players: Player[]) {
-        players.forEach((player) => {
-            this.goalManager.assignPrivateGoal(player);
-        });
         this.goalManager.assignPublicGoals(players);
     }
 

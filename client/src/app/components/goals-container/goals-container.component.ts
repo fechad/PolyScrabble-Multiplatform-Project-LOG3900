@@ -68,7 +68,6 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
 
     ngOnInit() {
         this.connectSocket();
-        if (this.room.roomInfo.gameType !== LOG_2990_GAME_TYPE) return;
         this.socketService.send(SocketEvent.GetAllGoals);
     }
 

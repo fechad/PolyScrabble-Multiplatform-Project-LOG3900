@@ -9,7 +9,8 @@ import {
     END_TIMER_VALUE,
     ONE_SECOND_IN_MS,
     SYSTEM_NAME,
-    THREE_SECONDS_IN_MS,
+    // eslint-disable-next-line prettier/prettier
+    THREE_SECONDS_IN_MS
 } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -80,7 +81,6 @@ export class SocketGameService extends SocketHandlerService {
 
         this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
 
-        if (room.roomInfo.gameType !== 'log2990') return;
         room.givesPlayerGoals();
     }
 
@@ -287,7 +287,6 @@ export class SocketGameService extends SocketHandlerService {
             const systemMessage: ChatMessage = { text: report.message, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemMessage);
         }
-        if (room.roomInfo.gameType !== 'log2990') return;
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
         this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
     }

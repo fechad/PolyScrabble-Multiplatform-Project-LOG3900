@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
@@ -20,6 +21,7 @@ const END_GAME_WIDTH = '400px';
     styleUrls: ['./players-infos.component.scss'],
 })
 export class PlayersInfosComponent extends ComponentCommunicationManager implements OnInit {
+    @Input() inputSideNav: MatSidenav;
     lettersBankCount: number;
     remainingTime: number;
     currentPlayerTurnPseudo: string;
