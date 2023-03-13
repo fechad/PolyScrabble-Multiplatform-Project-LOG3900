@@ -71,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           });
       },
+      endDrawer: UserResume(),
       body: Stack(children: <Widget>[
         Container(
           child: Center(

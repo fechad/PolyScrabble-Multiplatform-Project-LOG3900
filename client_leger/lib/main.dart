@@ -1,4 +1,5 @@
 import 'package:client_leger/pages/connexion_page.dart';
+import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -34,9 +35,11 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //home: const MyHomePage(title: 'PolyScrabble'),
-        home: true //isProduction
+        home: isProduction
             ? ConnexionPageWidget()
-            : /*GamePageWidget()); //:*/ MyHomePage(title: 'PolyScrabble'));
+            :
+        //GamePageWidget());
+        MyHomePage(title: 'PolyScrabble'));
   }
 }
 

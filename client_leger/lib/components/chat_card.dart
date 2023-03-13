@@ -25,7 +25,6 @@ class ChatCard extends StatelessWidget {
                     players: gameService.room.players),
               ));
         } else {
-          //TODO: Join chat channel because by default we only join the general chat
           Navigator.push(
               context,
               MaterialPageRoute(

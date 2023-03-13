@@ -48,6 +48,9 @@ abstract class _LinkService with Store {
   ]);
 
   @observable
+  Observable<bool> myTurn = Observable(false);
+
+  @observable
   Observable<bool> joinButtonPressed = Observable(false);
 
   @observable
@@ -67,6 +70,7 @@ abstract class _LinkService with Store {
 
   List<Placement> placementStack = [];
 
+
   ObservableList<Tile> getRack() {
     return tempRack;
   }
@@ -83,6 +87,10 @@ abstract class _LinkService with Store {
     return rows;
   }
 
+  bool getMyTurn() {
+    return myTurn.value;
+  }
+
   bool getJoinButtonPressed() {
     return joinButtonPressed.value;
   }
@@ -96,6 +104,11 @@ abstract class _LinkService with Store {
   }
 
   @action
+  changeTurn() {
+    myTurn.value = !myTurn.value;
+  }
+
+  @action
   buttonChange() {
     joinButtonPressed.value = !joinButtonPressed.value;
   }
@@ -103,6 +116,11 @@ abstract class _LinkService with Store {
   @action
   newMessageChange() {
     newMessage.value = !newMessage.value;
+  }
+
+  @action
+  setTurn(bool value) {
+    myTurn.value = value;
   }
 
   @action

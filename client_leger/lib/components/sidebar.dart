@@ -114,14 +114,6 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
 
     socket.on('addChannel', (data) => {chatService.addDiscussion(data)});
 
-    //for public games
-    // socketService.on(
-    //     "playerAccepted",
-    //         (serverRoom) => {
-    // print('player accepted in sidebar'),
-    //       gameService.room = gameService.decodeModel(serverRoom),
-    //     });
-
     socket.on(
         'deleteChannel',
         (name) => {
