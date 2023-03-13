@@ -2,14 +2,14 @@
     <div class="page-body">
         <div class="body-main-container">
             <div class="page-title">
-                <div class="form-title settings-title">Settings</div>
+                <div class="form-title settings-title">Paramètre</div>
                 <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
             <form [formGroup]="settingsForm">
                 <div class="page-options">
                     <div class="avatar-section">
-                        <div class="avatar-circle"></div>
-                        <div class="circle-icon"></div>
+                        <img (click)="openAvatarUrlsChoices()" [src]="avatarURL" class="avatar-img" />
+                        <button (click)="openAvatarUrlsChoices()" class="circle-icon">editer</button>
                     </div>
                     <div class="theme-section">
                         <p class="section-title">Thème de couleur</p>

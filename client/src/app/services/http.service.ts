@@ -15,6 +15,8 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
+const CLOUD_NAME = 'dejrgre8q';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -40,6 +42,17 @@ export class HttpService {
         this.errorMessage = '';
     }
 
+    getCloudinarySignature(): Observable<{ timestamp: string; signature: string; apiKey: string }> {
+        return this.http
+            .get<{ timestamp: string; signature: string; apiKey: string }>(`${this.baseUrl}/images/signature`)
+            .pipe(catchError(this.handleError<{ timestamp: string; signature: string; apiKey: string }>('getPredefinedAvatarsURL')));
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    uploadFile(data: FormData): Observable<any> {
+        return this.http.post(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, data);
+    }
+
     getUsernames() {
         this.clearError();
         return this.http.get<string[]>(`${this.baseUrl}/${this.authUrl}/usernames`).pipe(catchError(this.handleError<string[]>('getUsers')));
@@ -48,6 +61,12 @@ export class HttpService {
         this.clearError();
         return this.http.get<ClientAccountInfo>(`${this.baseUrl}/${this.userInfoUrl}/${email}`);
     }
+
+    getPredefinedAvatarsURL(): Observable<string[]> {
+        this.clearError();
+        return this.http.get<string[]>(`${this.baseUrl}/${this.avatarUrl}`).pipe(catchError(this.handleError<string[]>('getPredefinedAvatarsURL')));
+    }
+
     getAvatarURL(imageId: string) {
         this.clearError();
         return `${this.baseUrl}/${this.avatarUrl}/${imageId}`;

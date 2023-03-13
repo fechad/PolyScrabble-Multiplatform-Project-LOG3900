@@ -1,6 +1,7 @@
 import { HttpException } from '@app/classes/http.exception';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import 'dotenv/config';
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import logger from 'morgan';

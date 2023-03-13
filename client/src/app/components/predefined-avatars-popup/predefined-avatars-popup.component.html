@@ -1,0 +1,21 @@
+<h1>Choisissez votre avatar</h1>
+<div class="avatar-section">
+    <div class="avatar-section">
+        <img [src]="currentAvatarURL || defaultAvatarUrl" class="avatar-img" />
+    </div>
+    <div class="avatars-img-container">
+        <img
+            *ngFor="let avatarUrl of predefinedAvatarsUrl"
+            [src]="avatarUrl"
+            (click)="selectPredefinedAvatar(avatarUrl)"
+            [class.selected]="isSelected(avatarUrl)"
+            class="predefined-avatar-img"
+        />
+        <div (click)="profileImgUpload.click()" class="custom-avatar-button">+</div>
+    </div>
+    <input #profileImgUpload class="file-input-button" type="file" accept="image/png, image/jpeg" (change)="onProfilePictureSelected($event)" />
+    <div class="buttons-container">
+        <button class="button cancel-button" (click)="closePopup()">Annuler</button>
+        <button class="button" (click)="handleUserChoice()" [disabled]="!currentAvatar && !currentAvatarURL">Confirmer</button>
+    </div>
+</div>

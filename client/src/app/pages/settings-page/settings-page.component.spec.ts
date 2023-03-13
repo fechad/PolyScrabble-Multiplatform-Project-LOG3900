@@ -1,6 +1,10 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { HttpService } from '@app/services/http.service';
 
 import { SettingsPageComponent } from './settings-page.component';
 
@@ -10,7 +14,8 @@ describe('SettingsPageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            providers: [{ provide: FormBuilder }],
+            imports: [HttpClientModule],
+            providers: [{ provide: FormBuilder }, { provide: HttpService }, { provide: MatDialog, useClass: MatDialogMock }],
             schemas: [NO_ERRORS_SCHEMA],
             declarations: [SettingsPageComponent],
         }).compileComponents();

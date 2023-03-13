@@ -21,6 +21,7 @@ import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameWaitMultiplayerPageComponent } from '@app/pages/game-wait-multiplayer-page/game-wait-multiplayer-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { CloudinaryModule } from '@cloudinary/ng';
 import { BestScoresTableComponent } from './components/best-scores-table/best-scores-table.component';
 import { BotsTableComponent } from './components/bots-table/bots-table.component';
 import { ConfirmationPopupComponent } from './components/confirmation-popup/confirmation-popup.component';
@@ -37,6 +38,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { LeaderBoardDialogDataComponent } from './components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MessagesDisplayComponent } from './components/messages-display/messages-display.component';
+import { PredefinedAvatarsPopupComponent } from './components/predefined-avatars-popup/predefined-avatars-popup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserSummaryComponent } from './components/user-summary/user-summary.component';
 import { AdminBotPageComponent } from './pages/admin-bot-page/admin-bot-page.component';
@@ -99,6 +101,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         MenuComponent,
         SettingsPageComponent,
         ForgotPasswordPageComponent,
+        PredefinedAvatarsPopupComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -110,6 +113,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         ReactiveFormsModule,
         MatSlideToggleModule,
         DragDropModule,
+        CloudinaryModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
