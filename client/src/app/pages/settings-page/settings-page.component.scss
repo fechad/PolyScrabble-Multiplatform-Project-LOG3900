@@ -15,6 +15,38 @@
         padding-right: 5%;
     }
     .avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .avatar-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 150px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 3px solid black;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .circle-icon {
+            position: relative;
+            bottom: 150px;
+            left: 60px;
+            min-width: 50px;
+            min-height: 50px;
+            border-radius: 50px;
+            background-color: white;
+            border: 2px solid black;
+            text-align: center;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
     .theme-section,
     .language-section {
