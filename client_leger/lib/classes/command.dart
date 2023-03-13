@@ -43,3 +43,14 @@ class HelpCommand {
     socketService.send('message', letter);
   }
 }
+
+class ReserveCommand {
+    String letter = '!réserve';
+    ReserveCommand();
+    execute(){
+      socketService.send('message', letter);
+    }
+}
+
+
+

@@ -150,9 +150,6 @@ class _WaitingPageState extends State<WaitingPage> {
     socketService.on(
         "playerAccepted",
         (serverRoom) => {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text("Accepted player"),
-              )),
               gameService.room = gameService.decodeModel(serverRoom),
               setState(() => {
                     canStart = true,
@@ -184,27 +181,6 @@ class _WaitingPageState extends State<WaitingPage> {
   void _scrollDown() {
     _controller.jumpTo(_controller.position.maxScrollExtent + 200.0);
   }
-
-  //see which alert to use
-  // void showAlert(){
-  //   QuickAlert.show(
-  //     context: context,
-  //     type: QuickAlertType.confirm,
-  //     title: "Demande d'accès à la partie",
-  //     text: "Voulez-vous accepter ${gameService.room.players[gameService.room.players.length-1].pseudo} dans la salle de jeu?",
-  //     confirmBtnText: 'Oui',
-  //     cancelBtnText: 'Non',
-  //     confirmBtnColor: Colors.red,
-  //     onConfirmBtnTap: () => {
-  //       gameService.acceptPlayer(
-  //           gameService.room.players[gameService.room.players.length - 1]
-  //               .pseudo),
-  //       Navigator.pop(context),
-  //     },
-  //     // onCancelBtnTap: gameService.rejectPlayer(gameService.room.players[gameService.room.players.length - 1]
-  //     //     .pseudo),
-  //   );
-  // }
 
   @override
   dispose() {
@@ -269,7 +245,10 @@ class _WaitingPageState extends State<WaitingPage> {
                           ),
                           child: const Text('Quitter'),
                           onPressed: () {
-                            leave();
+                            gameService.leave();
+                            Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                              return MyHomePage(title: "polyscrabble");
+                            })));
                           },
                         ),
                         SizedBox(width: 40),
@@ -376,18 +355,5 @@ class _WaitingPageState extends State<WaitingPage> {
       messages;
       _scrollDown();
     });
-  }
-
-  leave() {
-    if (gameService.room.roomInfo.creatorName ==
-        authenticator.currentUser.username)
-      gameService.leaveRoomCreator();
-    else
-      gameService.leaveRoomOther();
-    linkService.buttonChange();
-    linkService.setCurrentOpenedChat('');
-    Navigator.push(context, MaterialPageRoute(builder: ((context) {
-      return MyHomePage(title: "polyscrabble");
-    })));
   }
 }

@@ -88,19 +88,18 @@ class MultiplayerGameService extends SoloGameService {
               chatService.setRoomChannel(chatService.decodeModel(channel)),
             });
 
-    // socketService.on(
-    //     "playerAccepted",
-    //     (room) => {
-    //       print('player accepted in service'),
-    //           room = decodeModel(room),
-    //           if (room.roomInfo.creatorName !=
-    //               authenticator.getCurrentUser().username)
-    //             socketService.send("joinChatChannel", {
-    //               'name': room.roomInfo.name,
-    //               'user': authenticator.currentUser.username,
-    //               'isRoomChannel': true
-    //             }),
-    //         });
+    socketService.on(
+        "playerAccepted",
+        (room) => {
+              room = decodeModel(room),
+              if (room.roomInfo.creatorName !=
+                  authenticator.getCurrentUser().username)
+                socketService.send("joinChatChannel", {
+                  'name': room.roomInfo.name,
+                  'user': authenticator.currentUser.username,
+                  'isRoomChannel': true
+                }),
+            });
 
     socketService.on(
         "playerRejected",
@@ -116,7 +115,11 @@ class MultiplayerGameService extends SoloGameService {
 
     socketService.on(
       "drawRack",
-      (rack) => {linkService.updateRack(rack as String)},
+      (rack) => {
+        print('receiving rack letters'),
+        print(rack),
+        linkService.updateRack(rack as String)
+      },
     );
   }
 
@@ -173,4 +176,17 @@ class MultiplayerGameService extends SoloGameService {
     socketService.send("rejectPlayer",
         {'roomName': room.roomInfo.name, 'playerName': playerName});
   }
+
+  leave() {
+    if (room.roomInfo.creatorName ==
+        authenticator.currentUser.username) {
+      leaveRoomCreator();
+    }
+    else {
+      leaveRoomOther();
+    }
+    linkService.buttonChange();
+    linkService.setCurrentOpenedChat('');
+  }
+
 }

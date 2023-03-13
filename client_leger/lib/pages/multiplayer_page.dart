@@ -21,8 +21,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   FocusNode _focusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  String? difficultyValue;
-  String? timeValue;
+  String difficultyValue = 'Débutant';
+  String timeValue = '30';
   bool checkboxValue = false;
   final TextEditingController _gamePasswordController = TextEditingController();
   bool _passwordVisible = false;
@@ -30,6 +30,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   @override
   void initState() {
     super.initState();
+    gameService.gameData.timerPerTurn = timeValue;
+    gameService.gameData.isExpertLevel = false;
   }
 
   @override dispose(){
@@ -115,7 +117,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                   child: Text(
                                     "Difficulté du joueur virtuel",
                                     style: TextStyle(
-                                        color: Palette.mainColor, fontSize: 16),
+                                        color: Colors.black, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
                                 ),
@@ -173,7 +175,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                   // This is called when the user selects an item.
                                   setState(() {
                                     timeValue = value!;
-                                    gameService.gameData.timerPerTurn = value;
+                                    gameService.gameData.timerPerTurn = timeValue;
                                   });
                                 },
                                 items: time.map<DropdownMenuItem<String>>(
@@ -307,4 +309,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
               players: gameService.room.players);
         })));
   }
+
+
 }

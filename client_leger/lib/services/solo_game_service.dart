@@ -67,12 +67,12 @@ class SoloGameService {
     room.players = [player];
   }
 
-  joinRoom() {
+  joinRoom(String botName, String desiredLevel) {
     String pseudo = gameData.pseudo;
     setRoomInfo(pseudo);
     setPlayerInfo(pseudo);
     onProcess = true;
-    socketService.send("joinRoomSolo", room);
+    socketService.send("createSoloRoom", {'room': room, 'botName': botName, 'desiredLevel': desiredLevel});
   }
 
   Room decodeModel(dynamic data) {

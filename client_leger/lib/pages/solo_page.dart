@@ -7,7 +7,9 @@ import '../classes/game.dart';
 import '../components/sidebar.dart';
 import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../services/link_service.dart';
 import '../services/solo_game_service.dart';
+import 'game_page.dart';
 
 final soloGameService = SoloGameService(
     gameData: GameData(
@@ -27,14 +29,16 @@ class SoloPage extends StatefulWidget {
 class _SoloPageState extends State<SoloPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  String? virtualValue;
-  String? difficultyValue;
-  String? timeValue;
+  String virtualValue = 'A';
+  String difficultyValue = 'Débutant';
+  String timeValue = '30';
 
   @override
   void initState() {
     super.initState();
     soloGameService.configureBaseSocketFeatures();
+    gameService.gameData.timerPerTurn = timeValue;
+    gameService.gameData.isExpertLevel = false;
   }
 
   @override
@@ -120,7 +124,7 @@ class _SoloPageState extends State<SoloPage> {
                                   child: Text(
                                     "Nom du joueur virtuel",
                                     style: TextStyle(
-                                        color: Palette.mainColor, fontSize: 16),
+                                        color: Colors.black, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
                                 ),
@@ -136,7 +140,7 @@ class _SoloPageState extends State<SoloPage> {
                                   // This is called when the user selects an item.
                                   setState(() {
                                     virtualValue = value!;
-                                    soloGameService.gameData.botName = value;
+                                    gameService.gameData.botName = value;
                                   });
                                 },
                                 items: virtualPlayers
@@ -160,7 +164,7 @@ class _SoloPageState extends State<SoloPage> {
                                   child: Text(
                                     "Difficulté du joueur virtuel",
                                     style: TextStyle(
-                                        color: Palette.mainColor, fontSize: 16),
+                                        color: Colors.black, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
                                 ),
@@ -177,7 +181,7 @@ class _SoloPageState extends State<SoloPage> {
                                   setState(() {
                                     difficultyValue = value!;
                                     bool val = value == "Expert" ? true : false;
-                                    soloGameService.gameData.isExpertLevel =
+                                    gameService.gameData.isExpertLevel =
                                         val;
                                   });
                                 },
@@ -201,7 +205,7 @@ class _SoloPageState extends State<SoloPage> {
                                   child: const Text(
                                     "Temps par tour (en secondes)",
                                     style: TextStyle(
-                                        color: Palette.mainColor, fontSize: 16),
+                                        color: Colors.black, fontSize: 16),
                                     textAlign: TextAlign.start,
                                   ),
                                 ),
@@ -217,7 +221,7 @@ class _SoloPageState extends State<SoloPage> {
                                   // This is called when the user selects an item.
                                   setState(() {
                                     timeValue = value!;
-                                    soloGameService.gameData.timerPerTurn =
+                                    gameService.gameData.timerPerTurn =
                                         value;
                                   });
                                 },
@@ -236,10 +240,6 @@ class _SoloPageState extends State<SoloPage> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   checkFormValues();
-                                  //TODO : send to game page
-                                  // Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                                  //   return const MyHomePage(title: 'PolyScrabble');
-                                  // })));
                                 },
                                 style: ButtonStyle(
                                     shape: MaterialStatePropertyAll<
@@ -282,6 +282,9 @@ class _SoloPageState extends State<SoloPage> {
   checkFormValues() {
     if (virtualValue == null || difficultyValue == null || timeValue == null)
       return 'Erreur';
-    soloGameService.joinRoom();
+    soloGameService.joinRoom(virtualValue, difficultyValue);
+    Navigator.push(context, MaterialPageRoute(builder: ((context) {
+      return GamePageWidget();
+    })));
   }
 }

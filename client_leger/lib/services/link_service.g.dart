@@ -24,6 +24,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get myTurn {
+    _$valueAtom.reportRead();
+    return super.myTurn;
+  }
+
+  @override
   Observable<bool> get joinButtonPressed {
     _$valueAtom.reportRead();
     return super.joinButtonPressed;
@@ -58,6 +64,17 @@ mixin _$LinkService on _LinkService, Store {
       ActionController(name: '_LinkService');
 
   @override
+  void changeTurn() {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.changeTurn');
+    try {
+      return super.changeTurn();
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void buttonChange() {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
         name: '_LinkService.buttonChange');
@@ -85,6 +102,17 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setTempRows');
     try {
       return super.setRows(x, y, square);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTurn(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setTurn' );
+    try {
+      return super.setTurn(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }
