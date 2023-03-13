@@ -16,17 +16,12 @@
     </div>
     <div class = "gamers-displayer">
         <div class = "gamers">
-            <div class="player-panel client-player"          
+            <div class="player-panel"    *ngFor = "let player of room.players"      
             [class.player-winner]="winnerPseudo === getPlayerInfo(true, 'pseudo') || numberOfWinner > 1">
-                <div class = avatar  [class.player-active]="getPlayerInfo(true, 'pseudo') === currentPlayerTurnPseudo"></div>
-                <div>{{ getPlayerInfo(true, 'score') }}</div>
+                <div class = avatar  [class.player-active]="player.pseudo === currentPlayerTurnPseudo" (click) = "inputSideNav.toggle()"></div>
+                <div>{{ player.points }}</div>
             </div>
-            <div class="player-panel"
-                [class.player-winner]="winnerPseudo === getPlayerInfo(false, 'pseudo') || numberOfWinner > 1">
-                    <!-- {{ getPlayerInfo(false, 'pseudo') }} -->
-                <div class = avatar [class.player-active]="getPlayerInfo(false, 'pseudo') === currentPlayerTurnPseudo"></div> 
-                <div>{{ getPlayerInfo(false, 'score') }}</div>
-            </div>
+            
         </div>
         <div class="side-button-container">
             <!-- [disabled]="!isActivePlayer || isGameOver" -->

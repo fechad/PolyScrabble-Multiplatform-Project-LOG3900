@@ -1,26 +1,33 @@
-<div (click)="updateFocus($event)">
-    <div id="main-page-container" class="test">
-            <div id="left-panel">
-              
-                <i class="material-symbols-outlined" (click)="confirmLeaving()" *ngIf="!isGameOver">emoji_objects</i>
-                <i class="fa fa-comment" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
-                <i class="fa fa-flag" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
+<mat-sidenav-container>
+    <mat-sidenav #drawer>
+        <app-user-summary></app-user-summary>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div (click)="updateFocus($event)">
+            <div id="main-page-container" class="test">
+                    <div id="left-panel">
+                      
+                        <i class="material-symbols-outlined" (click)="confirmLeaving()" *ngIf="!isGameOver">emoji_objects</i>
+                        <i class="fa fa-comment" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
+                        <i class="fa fa-flag" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
+                    </div>
+                    <!-- <app-chat style="width: 350px"></app-chat> -->
+                    <!-- <div class="commands-container flex-row">
+                        <button class="command" (click)="helpCommand()">AIDE</button>
+                        <button class="command" (click)="hintCommand()">INDICE</button>
+                        <button class="command" (click)="letterBankCommand()">RÉSERVE</button>
+                    </div> -->
+            
+                <div id="board-rack">
+                    <app-play-area></app-play-area>
+                </div>
+                <div
+                 class = "right-panel">
+                    <app-players-infos [inputSideNav]="drawer"></app-players-infos>
+                    <app-goals-container></app-goals-container>
+                    <app-rack id="rack"></app-rack>
+                </div>
             </div>
-            <!-- <app-chat style="width: 350px"></app-chat> -->
-            <!-- <div class="commands-container flex-row">
-                <button class="command" (click)="helpCommand()">AIDE</button>
-                <button class="command" (click)="hintCommand()">INDICE</button>
-                <button class="command" (click)="letterBankCommand()">RÉSERVE</button>
-            </div> -->
-    
-        <div id="board-rack">
-            <app-play-area></app-play-area>
         </div>
-        <div
-         class = "right-panel">
-            <app-players-infos></app-players-infos>
-            <app-goals-container></app-goals-container>
-            <app-rack id="rack"></app-rack>
-        </div>
-    </div>
-</div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

@@ -67,11 +67,11 @@ describe('GoalsContainerComponent', () => {
             expect(socketSendSpy).toHaveBeenCalledWith('getAllGoals');
         });
 
-        it('should not call socketService.send(getAllGoals) if the roomType is not log2990', () => {
+        it('should call socketService.send(getAllGoals) if the roomType is not log2990', () => {
             playerService.room.roomInfo.gameType = 'classic';
             const socketSendSpy = spyOn(socketServiceMock, 'send');
             component.ngOnInit();
-            expect(socketSendSpy).not.toHaveBeenCalledWith('getAllGoals');
+            expect(socketSendSpy).toHaveBeenCalledWith('getAllGoals');
         });
     });
 

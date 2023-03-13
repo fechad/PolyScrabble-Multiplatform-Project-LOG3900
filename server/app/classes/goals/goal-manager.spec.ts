@@ -2,7 +2,15 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 import { Player } from '@app/classes/player';
-import { AT_LEAST_5_GOAL, NEED_OR_GOAL, NO_CHANGE_NO_PASS_GOAL, PALINDROME_GOAL, TARGET_GOAL_COUNT } from '@app/constants/goals-constants';
+import {
+    AT_LEAST_5_GOAL,
+    FIRST_TO_HUNDRED_GOAL,
+    NEED_OR_GOAL,
+    NO_CHANGE_NO_PASS_GOAL,
+    PALINDROME_GOAL,
+    // eslint-disable-next-line prettier/prettier
+    TARGET_GOAL_COUNT
+} from '@app/constants/goals-constants';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { expect } from 'chai';
 import { assert } from 'console';
@@ -34,19 +42,27 @@ describe('GoalManager tests', () => {
         beforeEach(() => {
             Matcher.goalManagers = [];
             manager = new GoalManager();
-            manager['goals'] = [{ ...AT_LEAST_5_GOAL }, { ...PALINDROME_GOAL }, { ...NEED_OR_GOAL }, { ...NO_CHANGE_NO_PASS_GOAL }];
+            manager['goals'] = [
+                { ...AT_LEAST_5_GOAL },
+                { ...PALINDROME_GOAL },
+                { ...NEED_OR_GOAL },
+                { ...NO_CHANGE_NO_PASS_GOAL },
+                { ...FIRST_TO_HUNDRED_GOAL },
+            ];
             firstPlayer = new Player('socketId', 'pseudo1', true);
             secondPlayer = new Player('socketId', 'pseudo2', false);
         });
 
-        it('assignPublicGoals should assign the first two public goals to the players ', () => {
+        it('assignPublicGoals should assign the first four public goals to the players ', () => {
             const allGoals = (manager as any).goals as Goal[];
             const publicGoals = allGoals.filter((goal) => goal.isPublic);
             const players = [firstPlayer, secondPlayer];
             manager.assignPublicGoals([firstPlayer, secondPlayer]);
             expect(publicGoals[0].players, 'First goal did not have the players assigned').to.deep.equals(players);
             expect(publicGoals[1].players, 'Second goal did not have the players assigned').to.deep.equals(players);
-            expect(publicGoals[2].players, 'Third goal had the players assigned').to.not.deep.equals(players);
+            expect(publicGoals[2].players, 'Third goal did not had the players assigned').to.deep.equals(players);
+            expect(publicGoals[3].players, 'Fourth goal did not had the players assigned').to.deep.equals(players);
+            expect(publicGoals[4].players, 'Fifth goal had the players assigned').to.not.deep.equals(players);
         });
 
         it('fetchGoalsByExposure should only return the goals with correct exposure', () => {

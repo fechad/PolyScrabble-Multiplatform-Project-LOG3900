@@ -160,14 +160,14 @@ describe('Socket-game-stub service tests', () => {
             assert(givePlayerGoalsStub.called, 'did not call room.givesPlayerGoals when gameType was log2990');
             done();
         });
-        it('Should not call room.givesPlayerGoals() if room is not log2990', (done) => {
+        it('Should call room.givesPlayerGoals() if room is not log2990', (done) => {
             roomMock['gameManager'].hasTimeout = false;
             roomMock.roomInfo.gameType = 'classic';
             roomMock.players = [firstPlayer, secondPlayer];
             const givePlayerGoalsStub = sinon.stub(roomMock, 'givesPlayerGoals');
             socketGameService.handleStartGame(socketMock);
 
-            assert(givePlayerGoalsStub.notCalled, 'called room.givesPlayerGoals when gameType was not log2990');
+            assert(givePlayerGoalsStub.called, 'did not called room.givesPlayerGoals when gameType was not log2990');
             done();
         });
         it('Should call handleBotGreeting() with correct attributes on handleStartGame', (done) => {

@@ -5,7 +5,7 @@ import { GoalRewards } from '@app/enums/goal-rewards';
 import { GoalTitle } from '@app/enums/goal-titles';
 
 export const TARGET_GOAL_COUNT = 4;
-export const PUBLIC_GOAL_COUNT = 2;
+export const PUBLIC_GOAL_COUNT = 4;
 export const TOTAL_POINTS_NEEDED_FOR_REWARD = 100;
 export const THIRTY_POINTS_NEEDED_FOR_REWARD = 30;
 
