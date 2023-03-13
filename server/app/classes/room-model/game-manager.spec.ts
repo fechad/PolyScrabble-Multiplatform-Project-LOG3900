@@ -1,6 +1,5 @@
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
-import { DEFAULT_DICTIONARY_PATH } from '@app/constants/constants';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { expect } from 'chai';
@@ -12,7 +11,7 @@ import { GameManager } from './game-manager';
 // TODO: move test of room related to game manager tests here
 const palindromeWord = 'naan';
 describe('GameManager tests', () => {
-    const manager: GameManager = new GameManager(DEFAULT_DICTIONARY_PATH);
+    const manager: GameManager = new GameManager();
     const player1 = new Player('id', 'test', true);
     it('reached goals should return an empty array initially', () => {
         const data: PlacementData = { word: palindromeWord, row: 'h', column: 8, direction: PlacementDirections.Horizontal };

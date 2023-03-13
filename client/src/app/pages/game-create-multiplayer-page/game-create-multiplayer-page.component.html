@@ -32,8 +32,8 @@
                             [class.invalid]="false"
                             formControlName="botName"
                         >
-                            <option [value]="'beginner'">Trump</option>
-                            <option [value]="'expert'">Serena Williams</option>
+                            <option [value]="'Trump'">Trump</option>
+                            <option [value]="'Serena Williams'">Serena Williams</option>
                         </select>
                     </div>
 
@@ -50,8 +50,9 @@
                             [class.invalid]="false"
                             formControlName="level"
                         >
-                            <option [value]="'beginner'">Débutant</option>
-                            <option [value]="'expert'">Expert</option>
+                            <option [value]="'beginner'">{{ gameLevel.Beginner }}</option>
+                            <option [value]="'expert'">{{ gameLevel.Expert }}</option>
+                            <option [value]="'adaptatif'">{{ gameLevel.Adaptative }}</option>
                         </select>
                     </div>
 

@@ -1,15 +1,13 @@
+import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { BoardMessage } from '@app/classes/board-model/board-message';
-import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
 import { Goal } from '@app/classes/goals/goal';
 import { GoalManager } from '@app/classes/goals/goal-manager';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
-import { WordFetcher } from '@app/classes/virtual-placement-logic/word-fetcher';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { COUNT_PLAYER_TURN, DEFAULT_DICTIONARY_PATH } from '@app/constants/constants';
-import { DICTIONARY_READER } from '@app/constants/reader-constant';
+import { COUNT_PLAYER_TURN } from '@app/constants/constants';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
@@ -21,26 +19,19 @@ export class GameManager {
     boardManipulator: BoardManipulator;
     goalManager: GoalManager;
     private letterBank: LetterBank;
-    private wordFetcher: WordFetcher;
 
-    constructor(dictionaryName: string = DEFAULT_DICTIONARY_PATH) {
+    constructor() {
         this.letterBank = new LetterBank();
         this.boardManipulator = new BoardManipulator(this.letterBank.produceValueMap());
         this.turnPassedCounter = 0;
         this.hasTimeout = false;
-        this.wordFetcher = new WordFetcher();
-        this.wordFetcher.setWordsMap(DICTIONARY_READER.getWords(), dictionaryName);
         this.goalManager = new GoalManager();
         const tools: VirtualTools = {
-            fetcher: this.wordFetcher,
             bank: this.letterBank,
             manipulator: this.boardManipulator,
             translator: new IndexationTranslator(),
         };
         this.placementFinder = new PlacementFinder(tools);
-    }
-    get fetcher(): WordFetcher {
-        return this.wordFetcher;
     }
     get allGoals(): Goal[] {
         return this.goalManager.fetchAllGoals();
@@ -58,8 +49,8 @@ export class GameManager {
         this.goalManager.assignPublicGoals(players);
     }
 
-    getNewVirtualPlayer(name: string, wordFetcher: WordFetcher, desiredLevel: string): VirtualPlayer {
-        return new VirtualPlayer(name, false, this.boardManipulator, this.letterBank, wordFetcher, desiredLevel);
+    getNewVirtualPlayer(name: string, desiredLevel: string): VirtualPlayer {
+        return new VirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
     }
 
     fillPlayersRack(players: Player[]) {

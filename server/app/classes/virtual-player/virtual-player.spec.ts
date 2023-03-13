@@ -1,10 +1,9 @@
 /* eslint-disable dot-notation */ // we want to access private attribute to test them
 /* eslint-disable @typescript-eslint/no-explicit-any */ // we want to test private methods
-import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
+import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Rack } from '@app/classes/rack';
 import { Timer } from '@app/classes/timer';
-import { WordFetcher } from '@app/classes/virtual-placement-logic/word-fetcher';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
 import { PlacementDirections } from '@app/enums/placement-directions';
@@ -19,7 +18,6 @@ import { VirtualPlayer } from './virtual-player';
 describe('VirtualPlayer tests', () => {
     let letterBank: LetterBank = new LetterBank();
     let manipulator: BoardManipulator;
-    let wordFetcher: WordFetcher;
     let virtualPlayer: VirtualPlayer;
     let virtualPlayerPrivateAccess: any;
     let rack: Rack;
@@ -27,10 +25,9 @@ describe('VirtualPlayer tests', () => {
     const randomLetters = 'abcdefg';
     beforeEach(async () => {
         letterBank = new LetterBank();
-        wordFetcher = new WordFetcher();
         manipulator = new BoardManipulator(letterBank.produceValueMap());
         rack = new Rack(randomLetters);
-        virtualPlayer = new VirtualPlayer('Botnet', false, manipulator, letterBank, wordFetcher, 'débutant');
+        virtualPlayer = new VirtualPlayer('Botnet', false, manipulator, letterBank, 'débutant');
         virtualPlayer.rack = rack;
         virtualPlayerPrivateAccess = virtualPlayer as any;
         virtualPlayerPrivateAccess.possiblePlacements = possiblePlacements;
@@ -44,9 +41,6 @@ describe('VirtualPlayer tests', () => {
     });
     it('should return the correct level', () => {
         expect(virtualPlayer.level).to.equals('débutant');
-    });
-    it('should return the correct wordFetcher', () => {
-        expect(virtualPlayer.wordFetcher).to.equals(wordFetcher);
     });
     it('should call chooseAction methods with the right action', async () => {
         const playTurnSpy = sinon.spy(virtualPlayer as any, 'chooseAction');
@@ -79,21 +73,14 @@ describe('VirtualPlayer tests', () => {
                 return [];
             });
         });
-
-        it('should call getScoreInterval method', () => {
-            const intervalSpy = sinon.spy(virtualPlayerPrivateAccess, 'getScoreInterval');
-            virtualPlayerPrivateAccess.placeLettersAction();
-            assert(intervalSpy.called, 'did not call getScoreInterval on placeLetterAction');
-        });
-
         it('should call getPlacement on PlaceLettersAction', () => {
-            virtualPlayerPrivateAccess.placeLettersAction();
+            virtualPlayerPrivateAccess.placeLettersActionExpert();
             assert(getPlacementStub.called, 'did not call getPlacement on placeLettersAction');
         });
         it('should call switchLetterAction inside placeLetterAction method when possiblePlacement is empty', () => {
             virtualPlayer['possiblePlacements'] = [];
             const switchLetterSpy = sinon.spy(virtualPlayerPrivateAccess, 'switchLettersAction');
-            virtualPlayerPrivateAccess.placeLettersAction();
+            virtualPlayerPrivateAccess.placeLettersActionExpert();
             assert(switchLetterSpy.called, 'did not call  on switchLetterAction on placeLettersAction');
         });
         it('should take the first sorted placement if it finds new placements after initially being at 0', () => {
@@ -101,7 +88,7 @@ describe('VirtualPlayer tests', () => {
             getPlacementStub.callsFake(() => {
                 return [placement];
             });
-            expect(virtualPlayerPrivateAccess.placeLettersAction()).to.equal(
+            expect(virtualPlayerPrivateAccess.placeLettersActionExpert()).to.equal(
                 `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`,
             );
         });
@@ -109,7 +96,7 @@ describe('VirtualPlayer tests', () => {
             getPlacementStub.callsFake(() => {
                 return [placement];
             });
-            expect(virtualPlayerPrivateAccess.placeLettersAction()).to.equal(
+            expect(virtualPlayerPrivateAccess.placeLettersActionExpert()).to.equal(
                 `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`,
             );
         });
@@ -144,7 +131,7 @@ describe('VirtualPlayer tests', () => {
             getActionStub.callsFake(() => {
                 return VirtualPlayerActions.PlaceLetters;
             });
-            const placeLettersActionSpy = sinon.spy(virtualPlayerPrivateAccess, 'placeLettersAction');
+            const placeLettersActionSpy = sinon.spy(virtualPlayerPrivateAccess, 'placeLettersActionExpert');
             virtualPlayerPrivateAccess.chooseAction();
             assert(placeLettersActionSpy.called, 'did not call placeLetterAction on chooseAction when action === placeLetters');
         });

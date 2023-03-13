@@ -1,4 +1,3 @@
-import { RACK_CAPACITY } from '@app/constants/constants';
 import { BoardMessageContent } from '@app/enums/board-message-content';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { Board } from './board';
@@ -7,7 +6,6 @@ import { DirectionHandler } from './handlers/direction-handler';
 import { IndexationTranslator } from './handlers/indexation.translator';
 import { BoardNode } from './nodes/board-node';
 
-const MAX_LENGTH_REWARD = 50;
 export class BoardManipulator {
     protected board: Board;
 
@@ -15,18 +13,11 @@ export class BoardManipulator {
         this.board = new Board(letterValues);
     }
 
-    placeLetters(letters: string[], row: string, columnIndex: number, direction?: string, isPhantomPlacement?: boolean): BoardMessage {
+    placeLetters(letters: string[], row: string, columnIndex: number, direction?: string): BoardMessage {
         if (letters.length === 0) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NoLetters };
-        const result = this.board.placeLetter(
-            letters.join(''),
-            row,
-            columnIndex,
-            DirectionHandler.getPlacementDirections(direction as string),
-            isPhantomPlacement,
-        );
+        const result = this.board.placeLetter(letters.join(''), row, columnIndex, DirectionHandler.getPlacementDirections(direction as string));
         if (result.title === BoardMessageTitle.RulesBroken) return result;
         result.score = this.board.getScore();
-        if (letters.length === RACK_CAPACITY) result.score += MAX_LENGTH_REWARD;
         return result;
     }
 

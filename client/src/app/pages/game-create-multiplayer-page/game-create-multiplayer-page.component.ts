@@ -4,10 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
-import { DEFAULT_DICTIONARY_TITLE } from '@app/components/dictionaries-table/dictionaries-table.component';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { TIMER_MULTIPLE } from '@app/constants/constants';
 import { UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
+import { GameLevel } from '@app/enums/game-level';
 import { GameMode } from '@app/enums/game-mode';
 import { SocketEvent } from '@app/enums/socket-event';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
@@ -15,6 +15,7 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
+const DEFAULT_DICTIONARY_TITLE = 'dictionnaire par défaut';
 @Component({
     selector: 'app-game-multiplayer-page',
     templateUrl: './game-create-multiplayer-page.component.html',
@@ -46,6 +47,10 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         });
         this.botNames = [];
         this.onProcess = false;
+    }
+
+    get gameLevel(): typeof GameLevel {
+        return GameLevel;
     }
 
     get room(): Room {

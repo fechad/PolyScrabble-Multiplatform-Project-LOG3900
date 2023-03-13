@@ -146,13 +146,6 @@ describe('HttpService tests', () => {
         });
     });
 
-    it('should handle http server error safely', () => {
-        lastValueFrom(service.deleteAllDictionariesExceptDefault()).then((response) => {
-            expect(response).toBeUndefined();
-        });
-        const req = httpMock.expectOne(`${baseUrl}/dictionaries`);
-        req.flush({}, { status: 500, statusText: 'Internal Server Error' });
-    });
     describe('getErrorMessage() tests', () => {
         it('should return the value of the attribute errorMessage', () => {
             // The attribute errorMessage is private and I need to set it to test the getter

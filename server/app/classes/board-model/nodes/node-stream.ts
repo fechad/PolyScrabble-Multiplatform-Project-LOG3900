@@ -1,4 +1,5 @@
 import { DirectionHandler } from '@app/classes/board-model/handlers/direction-handler';
+import { MAX_WORD_LENGTH_REWARD, RACK_CAPACITY } from '@app/constants/constants';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { BoardNode } from './board-node';
 
@@ -28,24 +29,41 @@ export class NodeStream {
         return this.flows.get(direction);
     }
 
+    shadowPlacementScore(lettersToPlace: string, direction: PlacementDirections): number {
+        // placing and removing letters may be dangerous
+        const mainFlow = (this.getFlows(direction) as BoardNode[][])[0];
+        let letterCount = 0;
+        for (const node of mainFlow) {
+            if (!node.content && letterCount < lettersToPlace.length) node.setLetter(lettersToPlace[letterCount++]);
+        }
+        const score = this.getScore();
+        for (const node of mainFlow) {
+            if (node.isNewValue) node.undoPlacement();
+        }
+        return score;
+    }
+
     getScore(): number {
         let score = 0;
         let wordScore = 0;
         let wordMultiplier = 1;
-        let isNewWord = false;
+        let needsBonus = false;
+        let newLettersCount = 0;
         this.flows.forEach((direction) => {
             direction.forEach((word) => {
-                isNewWord = false;
                 wordScore = 0;
                 wordMultiplier = 1;
+                newLettersCount = 0;
                 word.forEach((letter) => {
                     wordScore += letter.getScore();
-                    isNewWord = isNewWord || letter.isNewValue;
-                    wordMultiplier *= letter.getWordMultiplier();
+                    wordMultiplier *= letter.isNewValue ? letter.getWordMultiplier() : 1;
+                    if (letter.isNewValue) newLettersCount++;
                 });
-                if (isNewWord) score += wordScore * wordMultiplier;
+                score += wordScore * wordMultiplier;
+                if (newLettersCount === RACK_CAPACITY) needsBonus = true;
             });
         });
+        if (needsBonus) score += MAX_WORD_LENGTH_REWARD;
         return score;
     }
 
@@ -78,12 +96,17 @@ export class NodeStream {
 
             if (
                 !this.isChildProcess &&
+                !currentNode.content &&
                 (currentNode.getNeighbor(DirectionHandler.towardsWordBeginning(opposite))?.content ||
                     currentNode.getNeighbor(DirectionHandler.towardsWordEnd(opposite))?.content)
             ) {
                 const oppositeDirectionStream = new NodeStream(currentNode, opposite, 1, true);
                 if ((oppositeDirectionStream.getFlows(opposite) as BoardNode[][])[0].length === 0) continue;
-                this.flows.set(opposite, oppositeDirectionStream.getFlows(opposite) as BoardNode[][]);
+                if (this.flows.has(opposite)) {
+                    this.flows.get(opposite)?.push((oppositeDirectionStream.getFlows(opposite) as BoardNode[][])[0]);
+                } else {
+                    this.flows.set(opposite, oppositeDirectionStream.getFlows(opposite) as BoardNode[][]);
+                }
             }
             currentNode = currentNode.getNeighbor(DirectionHandler.towardsWordEnd(this.direction)) as BoardNode;
         }

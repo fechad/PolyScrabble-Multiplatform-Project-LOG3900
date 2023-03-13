@@ -1,41 +1,39 @@
 import { Trie } from '@app/classes/Trie/trie';
-import { ScoreMapper } from '@app/classes/virtual-placement-logic/score-mapper';
 import { JsonReader } from '@app/services/json-reader.service';
 import { JsonObject } from 'swagger-ui-express';
 
 const DEFAULT_DICTIONARY = 'dictionnaire-par-defaut.json';
 export class DictionaryReader {
+    private static staticInstance: DictionaryReader;
     trie: Trie;
-    private words: Map<string, number>;
+    private words: string[];
     constructor(dictionaryName: string = DEFAULT_DICTIONARY) {
         const jsonReader = new JsonReader();
         const jsonData: JsonObject = jsonReader.getData(dictionaryName);
         if (jsonData === undefined) return;
-        this.words = new Map<string, number>();
-        this.formWordsMap(jsonData.words);
+        this.words = jsonData.words;
+        this.createWordsTrie();
     }
-    hasWord(word: string): boolean {
-        return this.words.has(word);
+
+    static get instance() {
+        return this.staticInstance || (this.staticInstance = new this());
     }
-    getWordScore(word: string): number | undefined {
-        if (!this.words.has(word)) return undefined;
-        return this.words.get(word);
-    }
-    getWords(): Map<string, number> {
+
+    getWords() {
         return this.words;
     }
-    getWordsTrie(): Trie {
-        if (this.trie) return this.trie;
+    isValidWords(words: string[]): boolean {
+        return words.every((word) => {
+            return this.trie.check(word);
+        });
+    }
+    private createWordsTrie() {
+        if (this.trie) return;
+
         const trie = new Trie();
-        [...this.words.keys()].forEach((word) => {
+        [...this.words].forEach((word) => {
             trie.insert(word);
         });
         this.trie = trie;
-        return trie;
-    }
-    private formWordsMap(words: string) {
-        for (const word of words) {
-            this.words.set(word, ScoreMapper.computeWordScore(word));
-        }
     }
 }

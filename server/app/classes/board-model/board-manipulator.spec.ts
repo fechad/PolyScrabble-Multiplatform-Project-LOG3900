@@ -5,7 +5,7 @@ import { BoardMessageContent } from '@app/enums/board-message-content';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { expect } from 'chai';
 import { describe } from 'mocha';
-import { BoardManipulator } from './board.manipulator';
+import { BoardManipulator } from './board-manipulator';
 import { SuccessMessageBuilder } from './handlers/success-message-builder';
 
 describe('BoardManipulator tests', () => {

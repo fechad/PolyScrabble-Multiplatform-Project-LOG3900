@@ -41,7 +41,7 @@ describe('Board tests', () => {
         });
         it('should place a word in the center of the board', () => {
             const expectedScore = 4;
-            expect(board.placeLetter('aa', 'h', CENTRAL_NODE_INDEX % DEFAULT_COLUMN_COUNT, PlacementDirections.Horizontal, false).content).to.equals(
+            expect(board.placeLetter('aa', 'h', CENTRAL_NODE_INDEX % DEFAULT_COLUMN_COUNT, PlacementDirections.Horizontal).content).to.equals(
                 SuccessMessageBuilder.elaborateSuccessMessage(
                     ['a', 'a'],
                     DEFAULT_CENTRAL_ROW,
@@ -53,9 +53,7 @@ describe('Board tests', () => {
         });
         it('On the first turn, the board does not allow the placement of a single letter somewhere else than the center', () => {
             board = new Board(letterValues);
-            expect(board.placeLetter('a', DEFAULT_FIRST_ROW, MIN_COLUMN_INDEX, undefined, true).content).to.equals(
-                BoardMessageContent.CenterCaseEmpty,
-            );
+            expect(board.placeLetter('a', DEFAULT_FIRST_ROW, MIN_COLUMN_INDEX, undefined).content).to.equals(BoardMessageContent.CenterCaseEmpty);
         });
         it('On the first turn, the board should allow a placement at the center', () => {
             board = new Board(letterValues);
@@ -68,9 +66,7 @@ describe('Board tests', () => {
     describe('placeLetter tests', () => {
         beforeEach(() => {
             const expectedScore = 8;
-            expect(
-                board.placeLetter('allo', 'h', CENTRAL_NODE_INDEX % DEFAULT_COLUMN_COUNT, PlacementDirections.Horizontal, false).content,
-            ).to.equals(
+            expect(board.placeLetter('allo', 'h', CENTRAL_NODE_INDEX % DEFAULT_COLUMN_COUNT, PlacementDirections.Horizontal).content).to.equals(
                 SuccessMessageBuilder.elaborateSuccessMessage(
                     ['a', 'l', 'l', 'o'],
                     DEFAULT_CENTRAL_ROW,

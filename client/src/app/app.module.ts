@@ -24,9 +24,7 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 import { BestScoresTableComponent } from './components/best-scores-table/best-scores-table.component';
 import { BotsTableComponent } from './components/bots-table/bots-table.component';
 import { ConfirmationPopupComponent } from './components/confirmation-popup/confirmation-popup.component';
-import { DictionariesTableComponent } from './components/dictionaries-table/dictionaries-table.component';
 import { EditBotPopupComponent } from './components/edit-bot-popup/edit-bot-popup.component';
-import { EditDictionaryPopupComponent } from './components/edit-dictionary-popup/edit-dictionary-popup.component';
 import { EmojisPickerComponent } from './components/emojis-picker/emojis-picker.component';
 import { EndGamePopupComponent } from './components/endgame-popup/endgame-popup.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
@@ -39,7 +37,6 @@ import { HeaderComponent } from './components/header/header.component';
 import { LeaderBoardDialogDataComponent } from './components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MessagesDisplayComponent } from './components/messages-display/messages-display.component';
-import { UploadDictionaryPopupComponent } from './components/upload-dictionary-popup/upload-dictionary-popup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserSummaryComponent } from './components/user-summary/user-summary.component';
 import { AdminBotPageComponent } from './pages/admin-bot-page/admin-bot-page.component';
@@ -79,8 +76,6 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         AdminPageComponent,
         AdminDictionariesPageComponent,
         EmojisPickerComponent,
-        DictionariesTableComponent,
-        EditDictionaryPopupComponent,
         GoalsContainerComponent,
         GoalComponent,
         GoalDialogDataComponent,
@@ -93,7 +88,6 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         GoalsContainerComponent,
         GoalComponent,
         GoalDialogDataComponent,
-        UploadDictionaryPopupComponent,
         ConfirmationPopupComponent,
         HeaderComponent,
         BestScoresTableComponent,

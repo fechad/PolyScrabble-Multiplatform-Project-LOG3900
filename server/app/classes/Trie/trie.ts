@@ -41,7 +41,6 @@ export class Trie {
         if (word === '') word = this.root.value;
         if (node.isEndOfWord) {
             // eslint-disable-next-line no-console
-            console.log(word);
         }
         for (const child of node.children) {
             this.printTrieWords(child, word + child.value);

@@ -66,6 +66,7 @@ export class Rack {
         for (const letter of lettersToFind) {
             indexLetter = this.findLetter(letter);
             if (indexLetter === ERROR) {
+                this.letters = lettersCopy;
                 return [];
             }
             indexLettersFound.push(indexLetter);

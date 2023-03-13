@@ -1,7 +1,9 @@
 import { Application } from '@app/app';
 import { Score } from '@app/interfaces/score';
+import { Authentificator } from '@app/services/auth.service';
 import { BotsService } from '@app/services/bot.service';
-import { DictionariesService } from '@app/services/dictionaries.service';
+import { DatabaseService } from '@app/services/database.service';
+import { EmailService } from '@app/services/email-service';
 import { GamesHistoryService } from '@app/services/games.history.service';
 import { ScoresService } from '@app/services/score.service';
 import { assert, expect } from 'chai';
@@ -11,7 +13,6 @@ import * as sinon from 'sinon';
 import request from 'supertest';
 import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
-import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
 import { ImageController } from './image.controllet';
 import { ScoresController } from './scores.controller';
@@ -20,8 +21,6 @@ import { UserInfoController } from './user-info.controller';
 describe('ScoresController', () => {
     let scoresController: ScoresController;
     let scoresService: ScoresService;
-    let dictionariesController: DictionariesController;
-    let dictionariesService: DictionariesService;
     let gamesHistoryController: GamesHistoryController;
     let gamesHistoryService: GamesHistoryService;
     let authController: AuthController;
@@ -37,10 +36,7 @@ describe('ScoresController', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         scoresService = new ScoresService({} as any);
         scoresController = new ScoresController(scoresService);
-        // as any is used to replace the real DB service by a mock
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dictionariesService = new DictionariesService({} as any);
-        dictionariesController = new DictionariesController(dictionariesService);
+        authController = new AuthController({} as Authentificator, {} as DatabaseService, {} as EmailService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         botsService = new BotsService({} as any);
@@ -55,15 +51,7 @@ describe('ScoresController', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         userInfoController = new UserInfoController({} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
-        application = new Application(
-            scoresController,
-            dictionariesController,
-            botsController,
-            gamesHistoryController,
-            authController,
-            userInfoController,
-            imageController,
-        );
+        application = new Application(scoresController, botsController, gamesHistoryController, authController, userInfoController, imageController);
         scores = [{ points: 20, author: 'David', gameType: 'log2990', dictionary: 'English', date: new Date().toISOString() }];
     });
 
