@@ -9,7 +9,6 @@ import {
     UNREACHABLE_SERVER_STATUS_CDOE,
 } from '@app/constants/http-constants';
 import { Bot } from '@app/interfaces/bot';
-import { Dictionary } from '@app/interfaces/dictionary';
 import { Game } from '@app/interfaces/game';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { Observable, of } from 'rxjs';
@@ -21,7 +20,6 @@ import { environment } from 'src/environments/environment';
 })
 export class HttpService {
     private readonly scoresBaseUrl: string;
-    private readonly dictionaryBaseUrl: string;
     private readonly botBaseUrl: string;
     private readonly gameBaseUrl: string;
     private readonly authUrl: string;
@@ -32,7 +30,6 @@ export class HttpService {
     private errorMessage: string;
     constructor(private http: HttpClient) {
         this.scoresBaseUrl = 'scores';
-        this.dictionaryBaseUrl = 'dictionaries';
         this.gameBaseUrl = 'games';
         this.botBaseUrl = 'bots';
         this.authUrl = 'auth';
@@ -128,56 +125,12 @@ export class HttpService {
         const gamesUrl = `${this.baseUrl}/${this.gameBaseUrl}`;
         return this.http.delete<void>(gamesUrl, { headers: this.createCacheHeaders() }).pipe(catchError(this.handleError<void>('deleteGames')));
     }
-    getAllDictionaries(): Observable<Dictionary[]> {
-        this.clearError();
-        const dictionariesUrl = `${this.baseUrl}/${this.dictionaryBaseUrl}`;
-        return this.http
-            .get<Dictionary[]>(dictionariesUrl, { headers: this.createCacheHeaders() })
-            .pipe(catchError(this.handleError<Dictionary[]>('getAllDictionaries')));
-    }
+
     getAllGames() {
         this.clearError();
         const httpHeaders = new HttpHeaders().set('Cache-Control', 'no-cache').set('Expires', '0');
         const gameUrl = `${this.baseUrl}/${this.gameBaseUrl}`;
         return this.http.get<Game[]>(gameUrl, { headers: httpHeaders }).pipe(catchError(this.handleError<Game[]>('getAllGames')));
-    }
-    getDictionary(title: string, includeWords: boolean): Observable<Dictionary> {
-        this.clearError();
-        const dictionariesUrl = `${this.baseUrl}/${this.dictionaryBaseUrl}/${encodeURIComponent(title)}?includeWords=${includeWords}`;
-        return this.http
-            .get<Dictionary>(dictionariesUrl, { headers: this.createCacheHeaders() })
-            .pipe(catchError(this.handleError<Dictionary>('getDictionary')));
-    }
-    deleteDictionary(title: string): Observable<Dictionary> {
-        this.clearError();
-        const dictionariesUrl = `${this.baseUrl}/${this.dictionaryBaseUrl}/${encodeURIComponent(title)}`;
-        return this.http
-            .delete<Dictionary>(dictionariesUrl, { headers: this.createCacheHeaders() })
-            .pipe(catchError(this.handleError<Dictionary>('deleteDictionary')));
-    }
-
-    deleteAllDictionariesExceptDefault(): Observable<Dictionary[]> {
-        this.clearError();
-        const dictionariesUrl = `${this.baseUrl}/${this.dictionaryBaseUrl}`;
-        return this.http
-            .delete<Dictionary[]>(dictionariesUrl, { headers: this.createCacheHeaders() })
-            .pipe(catchError(this.handleError<Dictionary[]>('deleteAllDictionariesExceptDefault')));
-    }
-
-    updateDictionary(title: string, updatedDictionary: Dictionary): Observable<Dictionary> {
-        this.clearError();
-        const dictionariesUrl = `${this.baseUrl}/${this.dictionaryBaseUrl}/${encodeURIComponent(title)}`;
-        return this.http
-            .patch<Dictionary>(dictionariesUrl, updatedDictionary, { headers: this.createCacheHeaders() })
-            .pipe(catchError(this.handleError<Dictionary>('updateDictionary')));
-    }
-
-    addDictionary(dictionary: Dictionary): Observable<HttpResponse<Dictionary>> {
-        this.clearError();
-        const dictionariesUrl = `${this.baseUrl}/${this.dictionaryBaseUrl}/${encodeURIComponent(dictionary.title)}`;
-        return this.http
-            .post<Dictionary>(dictionariesUrl, dictionary, { headers: this.createCacheHeaders(), observe: 'response' })
-            .pipe(catchError(this.handleError<HttpResponse<Dictionary>>('addDictionary')));
     }
 
     getAllBots(): Observable<Bot[]> {

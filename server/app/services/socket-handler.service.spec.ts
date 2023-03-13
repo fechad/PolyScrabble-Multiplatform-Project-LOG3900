@@ -41,8 +41,7 @@ describe('SocketHandler service tests', () => {
     const virtualPlayer = new VirtualPlayer(
         'Botnet',
         false,
-        { askNode: (row: string, column: number) => {} } as any,
-        {} as any,
+        { askNode: (row: string, column: number) => {}, askNodeByIndex: (index: number) => {} } as any,
         {} as any,
         'débutant',
     );

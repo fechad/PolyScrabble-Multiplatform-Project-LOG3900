@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { SpecialCasesReader } from './special-cases-reader';
 
-const WORD_MULTIPLIER_TABLE_INDEX = 1;
-const INVALID_INDEX = 0;
+const WORD_MULTIPLIER_TABLE_INDEX = 0;
+const INVALID_INDEX = -1;
 describe('SpecialCasesReader tests', () => {
     const reader = new SpecialCasesReader();
     it('should true when asked if a contained special case is special', () => {

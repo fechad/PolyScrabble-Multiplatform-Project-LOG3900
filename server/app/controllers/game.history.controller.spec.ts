@@ -1,7 +1,6 @@
 import { Application } from '@app/app';
 import { Game } from '@app/interfaces/firestoreDB/game';
 import { BotsService } from '@app/services/bot.service';
-import { DictionariesService } from '@app/services/dictionaries.service';
 import { GamesHistoryService } from '@app/services/games.history.service';
 import { ScoresService } from '@app/services/score.service';
 import { expect } from 'chai';
@@ -11,7 +10,6 @@ import * as sinon from 'sinon';
 import request from 'supertest';
 import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
-import { DictionariesController } from './dictionaries.controller';
 import { GamesHistoryController } from './game.history.controller';
 import { ImageController } from './image.controllet';
 import { ScoresController } from './scores.controller';
@@ -20,8 +18,6 @@ import { UserInfoController } from './user-info.controller';
 describe('GamesHistoryController', () => {
     let scoresController: ScoresController;
     let scoresService: ScoresService;
-    let dictionariesController: DictionariesController;
-    let dictionariesService: DictionariesService;
     let botsService: BotsService;
     let botsController: BotsController;
     let gamesHistoryService: GamesHistoryService;
@@ -39,10 +35,6 @@ describe('GamesHistoryController', () => {
         scoresController = new ScoresController(scoresService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dictionariesService = new DictionariesService({} as any);
-        dictionariesController = new DictionariesController(dictionariesService);
-        // as any is used to replace the real DB service by a mock
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         botsService = new BotsService({} as any);
         botsController = new BotsController(botsService);
         imageController = new ImageController();
@@ -55,15 +47,7 @@ describe('GamesHistoryController', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         userInfoController = new UserInfoController({} as any);
         gamesHistoryController = new GamesHistoryController(gamesHistoryService);
-        application = new Application(
-            scoresController,
-            dictionariesController,
-            botsController,
-            gamesHistoryController,
-            authController,
-            userInfoController,
-            imageController,
-        );
+        application = new Application(scoresController, botsController, gamesHistoryController, authController, userInfoController, imageController);
         games = [
             {
                 startDatetime: 'date1',

@@ -5,9 +5,10 @@ export const DEFAULT_DISTRIBUTION_ARRAY = [50, 100];
 export const DEFAULT_WEIGHTS = [50, 50];
 export const DEFAULT_DISTRIBUTION_SIZE = 10;
 export const MAXIMUM_PLACEMENT_LENGTH = 7;
+export const INVALID = -1;
 export const DEFAULT_DISTRIBUTION = Randomiser.getDistribution(DEFAULT_DISTRIBUTION_ARRAY, DEFAULT_WEIGHTS, DEFAULT_DISTRIBUTION_SIZE);
 export const SCORE_INTERVALS = {
-    any: { min: 2, max: 50 },
+    any: { min: 2, max: 150 },
     hint: { min: 2, max: 25 },
     level0: { min: 2, max: 6 },
     level1: { min: 7, max: 12 },

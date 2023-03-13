@@ -12,7 +12,7 @@ export class SocketRoomService extends SocketHandlerService {
         if (!data.room.roomInfo.isSolo) return;
 
         const availableRoom = this.roomService.createRoom(data.room);
-        const desiredLevel = data.desiredLevel === 'Expert' ? GameLevel.Expert : GameLevel.Beginner;
+        const desiredLevel = data.desiredLevel as GameLevel;
         availableRoom.createPlayerVirtual(data.botName, desiredLevel);
         this.roomService.setUnavailable(availableRoom.roomInfo.name);
 

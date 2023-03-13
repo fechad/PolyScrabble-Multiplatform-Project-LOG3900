@@ -18,6 +18,7 @@ export const WEIGHT_30 = 30;
 export const WEIGHT_40 = 40;
 export const MAX_RANDOM = 100;
 
+export const MAX_WORD_LENGTH_REWARD = 50;
 export const INITIAL_BANK_SIZE = 102;
 export const RACK_LETTERS_QUANTITY = 7;
 export const DEFAULT_SCORE_MAP_NAME = './assets/dictionnaire-par-defaut.json';

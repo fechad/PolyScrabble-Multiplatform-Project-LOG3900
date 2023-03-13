@@ -100,6 +100,20 @@ export class SocketGameService extends SocketHandlerService {
         }, THREE_SECONDS_IN_MS);
     }
 
+    handleBotMissedTurn(socket: io.Socket, room: Room, currentTurnPlayer: Player | undefined) {
+        if (currentTurnPlayer instanceof VirtualPlayer === false) return;
+        const virtualPlayer = currentTurnPlayer as VirtualPlayer;
+        if (!virtualPlayer.isItsTurn) return;
+
+        const message = '!passer';
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, {
+            text: message,
+            sender: virtualPlayer.pseudo,
+            color: MessageSenderColors.PLAYER2,
+        });
+        this.handleCommand(socket, room, message, virtualPlayer);
+    }
+
     handleCommand(socket: io.Socket, room: Room, message: string, commandSender: Player) {
         const isCommand = this.commandController.hasCommandSyntax(message);
         if (!isCommand) {
@@ -181,7 +195,7 @@ export class SocketGameService extends SocketHandlerService {
             }
 
             if (this.mustVerifyBotPlayedHisTurn(room)) {
-                this.handleNewPlayerTurn(socket, room, room.getCurrentPlayerTurn());
+                this.handleBotMissedTurn(socket, room, room.getCurrentPlayerTurn());
                 ++room.elapsedTime;
                 return;
             }

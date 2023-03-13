@@ -10,7 +10,6 @@ import { GameLevel } from '@app/enums/game-level';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
-import { DictionariesFileService } from '@app/services/dictionaries-files.service';
 import { GameManager } from './game-manager';
 
 export class Room {
@@ -52,7 +51,8 @@ export class Room {
                 password: '',
             };
         }
-        this.gameManager = new GameManager(new DictionariesFileService().convertTitleIntoFilename(this.roomInfo.dictionary));
+        this.gameManager = new GameManager();
+
         this.isFirstGame = true;
     }
 
@@ -110,7 +110,7 @@ export class Room {
     }
 
     createPlayerVirtual(name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
-        const bot = this.gameManager.getNewVirtualPlayer(name, this.gameManager.fetcher, desiredLevel);
+        const bot = this.gameManager.getNewVirtualPlayer(name, desiredLevel);
         this.bot = bot;
         this.addPlayer(this.bot, this.roomInfo.password);
         return bot;

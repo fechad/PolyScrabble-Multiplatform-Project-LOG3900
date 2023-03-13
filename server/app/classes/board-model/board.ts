@@ -1,6 +1,6 @@
-import { WordsValidator } from '@app/classes/board-model/validators/words-validator';
 import { SpecialCasesReader } from '@app/classes/readers/special-cases-reader';
 import { CENTRAL_NODE_INDEX, DEFAULT_COLUMN_COUNT, DEFAULT_ROWS, MAX_COLUMN_INDEX } from '@app/constants/board-constants';
+import { DICTIONARY_READER } from '@app/constants/reader-constant';
 import { BoardMessageContent } from '@app/enums/board-message-content';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { Directions } from '@app/enums/directions';
@@ -18,12 +18,10 @@ export class Board {
     private table: BoardNode[];
     private translator: IndexationTranslator;
     private placementScore: number;
-    private wordsValidator: WordsValidator;
     private letterValues: Map<string, number>;
 
     constructor(letterValues: Map<string, number>) {
         this.translator = new IndexationTranslator();
-        this.wordsValidator = new WordsValidator();
         this.table = new Array<BoardNode>(this.translator.caseCount);
         this.letterValues = letterValues;
         this.iterator = new BoardNodesIterator(this.table);
@@ -46,7 +44,7 @@ export class Board {
     isValidIndex(tableIndex: number | undefined): boolean {
         return tableIndex !== undefined && tableIndex < MAX_COLUMN_INDEX * DEFAULT_COLUMN_COUNT;
     }
-    placeLetter(letters: string, row: string, column: number, direction?: PlacementDirections, isShadowPlacement?: boolean): BoardMessage {
+    placeLetter(letters: string, row: string, column: number, direction?: PlacementDirections): BoardMessage {
         const tableIndex = this.translator.findTableIndex(row, column) as number;
         if (letters.length === 1) direction = this.setOneLetterDirection(tableIndex);
 
@@ -60,23 +58,19 @@ export class Board {
 
         const nodeStream = new NodeStream(this.table[tableIndex], direction, letters.length);
         let mainFlow: BoardNode[] | undefined = nodeStream.getFlows(direction)?.at(0);
+        const otherFlows: BoardNode[][] | undefined = nodeStream.getFlows(DirectionHandler.reversePlacementDirection(direction));
         if (!mainFlow) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NoLetters };
         mainFlow = mainFlow as BoardNode[];
 
-        if (this.isCenterNodeFull(mainFlow)) return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.CenterCaseEmpty };
+        if (!this.isValidCenterPlacement(mainFlow))
+            return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.CenterCaseEmpty };
 
-        if (mainFlow.length === letters.length && !nodeStream.getFlows(DirectionHandler.reversePlacementDirection(direction)))
+        if (this.table[CENTRAL_NODE_INDEX].content && mainFlow.every((node) => !node.content) && (!otherFlows || !otherFlows[0]))
             return { title: BoardMessageTitle.InvalidPlacement, content: BoardMessageContent.NotConnected };
 
-        let placeLettersCount = 0;
-        for (const node of mainFlow) {
-            if (node.content) continue;
-            node.setLetter(letters.at(placeLettersCount) as string);
-            placeLettersCount++;
-        }
-        if (placeLettersCount !== letters.length) throw new Error("Some letters couldn't be placed on the board");
+        this.placeOnBoard(mainFlow, letters);
 
-        if (!this.wordsValidator.isValidWords(nodeStream.getWords())) {
+        if (!DICTIONARY_READER.isValidWords(nodeStream.getWords())) {
             mainFlow.forEach((node) => {
                 if (node.isNewValue) node.undoPlacement();
             });
@@ -85,11 +79,21 @@ export class Board {
         this.placementScore = nodeStream.getScore();
 
         mainFlow.forEach((node) => {
-            if (node.isNewValue && isShadowPlacement) node.undoPlacement();
-            else node.confirmPlacement();
+            node.confirmPlacement();
         });
+
         const directionString: string | undefined = direction ? (direction === PlacementDirections.Horizontal ? 'H' : 'V') : undefined;
         return SuccessMessageBuilder.elaborateSuccessMessage([...letters], row, column, directionString, this.placementScore);
+    }
+
+    private placeOnBoard(mainFlow: BoardNode[], letters: string) {
+        let placeLettersCount = 0;
+        for (const node of mainFlow) {
+            if (node.content) continue;
+            node.setLetter(letters.at(placeLettersCount) as string);
+            placeLettersCount++;
+        }
+        if (placeLettersCount !== letters.length) throw new Error("Some letters couldn't be placed on the board");
     }
 
     private basicVerifications(letters: string, tableIndex: number, direction?: PlacementDirections): undefined | BoardMessage {
@@ -106,11 +110,11 @@ export class Board {
         return undefined;
     }
 
-    private isCenterNodeFull(mainFlow: BoardNode[]): boolean | undefined {
+    private isValidCenterPlacement(mainFlow: BoardNode[]): boolean | undefined {
         return (
-            this.table[CENTRAL_NODE_INDEX].content === null &&
-            mainFlow.every((node: BoardNode) => {
-                return node.index !== CENTRAL_NODE_INDEX;
+            this.table[CENTRAL_NODE_INDEX].content !== null ||
+            mainFlow.some((node: BoardNode) => {
+                return node.index === CENTRAL_NODE_INDEX;
             })
         );
     }

@@ -1,11 +1,10 @@
-import { BoardManipulator } from '@app/classes/board-model/board.manipulator';
+import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
 import { BoardNode } from '@app/classes/board-model/nodes/board-node';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
 import { Randomiser } from '@app/classes/randomiser';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
-import { WordFetcher } from '@app/classes/virtual-placement-logic/word-fetcher';
 import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { MAX_RANDOM, RACK_CAPACITY, WEIGHT_10, WEIGHT_30, WEIGHT_40 } from '@app/constants/constants';
 import { SCORE_INTERVALS } from '@app/constants/virtual-player-constants';
@@ -14,6 +13,7 @@ import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
 import { VirtualPlayerActions } from '@app/enums/virtual-player-actions';
 import { ScoreInterval } from '@app/interfaces/score-interval';
+// import { ScoreInterval } from '@app/interfaces/score-interval';
 import { UserPlacement } from '@app/interfaces/user-placement';
 import { VirtualBasis } from '@app/interfaces/virtual-basis';
 import { VirtualPlayerTools } from '@app/interfaces/virtual-player-tools';
@@ -30,13 +30,11 @@ export class VirtualPlayer extends Player {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        wordFetcher: WordFetcher,
         desiredLevel: string = GameLevel.Beginner,
     ) {
         super('', pseudo, isCreator);
         this.basis = { level: desiredLevel, actions: [], scoreIntervals: [] };
         const baseTools: VirtualTools = {
-            fetcher: wordFetcher,
             translator: new IndexationTranslator(),
             manipulator: boardManipulator,
             bank: letterBank,
@@ -48,9 +46,7 @@ export class VirtualPlayer extends Player {
         this.centerNode = centerNode;
         this.setGreeting();
     }
-    get wordFetcher(): WordFetcher {
-        return this.tools.fetcher;
-    }
+
     get level(): string {
         return this.basis.level;
     }
@@ -71,7 +67,7 @@ export class VirtualPlayer extends Player {
         return `${FullCommandVerbs.SWITCH} ${this.rack.getLetters().substring(0, size)}`;
     }
 
-    private placeLettersAction(): string {
+    /* private placeLettersAction(): string {
         let placement;
         const interval = this.getScoreInterval();
         this.possiblePlacements = this.tools.finder.getPlacement(interval, this.rack.getLetters());
@@ -86,10 +82,11 @@ export class VirtualPlayer extends Player {
             placement = this.possiblePlacements[Math.floor(Math.random() * this.possiblePlacements.length)];
         }
         return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
-    }
+    }*/
 
-    private placeLettersActionExpert(): string {
-        this.possiblePlacements = this.tools.finder.getPlacement(SCORE_INTERVALS.any, this.rack.getLetters());
+    private placeLettersActionExpert(interval?: ScoreInterval): string {
+        if (!interval) interval = SCORE_INTERVALS.any;
+        this.possiblePlacements = this.tools.finder.getPlacement(interval, this.rack.getLetters());
         if (this.possiblePlacements.length === 0) return this.switchLettersAction();
 
         this.possiblePlacements.sort((leftPlacement, rightPlacement) => (leftPlacement.points || 0) - (rightPlacement.points || 0));
@@ -99,19 +96,28 @@ export class VirtualPlayer extends Player {
     }
 
     private async chooseAction(): Promise<string> {
-        if (this.basis.level === GameLevel.Beginner) {
-            const action = this.getAction();
-            if (action === VirtualPlayerActions.PassTurn) {
-                return this.passTurnAction();
+        switch (this.basis.level) {
+            case GameLevel.Beginner: {
+                const action = this.getAction();
+                if (action === VirtualPlayerActions.PassTurn) {
+                    return this.passTurnAction();
+                }
+                if (action === VirtualPlayerActions.SwitchLetters) {
+                    return this.switchLettersAction();
+                }
+                if (action === VirtualPlayerActions.PlaceLetters) {
+                    return this.placeLettersActionExpert();
+                }
+
+                break;
             }
-            if (action === VirtualPlayerActions.SwitchLetters) {
-                return this.switchLettersAction();
+            case GameLevel.Expert: {
+                return this.placeLettersActionExpert();
             }
-            if (action === VirtualPlayerActions.PlaceLetters) {
-                return this.placeLettersAction();
+            case GameLevel.Adaptative: {
+                return this.placeLettersActionExpert(this.getScoreInterval());
             }
-        } else if (this.basis.level === GameLevel.Expert) {
-            return this.placeLettersActionExpert();
+            // No default
         }
         return this.passTurnAction();
     }
@@ -146,7 +152,6 @@ export class VirtualPlayer extends Player {
         const index = Math.floor(this.basis.scoreIntervals.length * Math.random());
         const interval: ScoreInterval = this.basis.scoreIntervals[index];
         this.basis.scoreIntervals.splice(index, 1);
-
         return interval;
     }
 }

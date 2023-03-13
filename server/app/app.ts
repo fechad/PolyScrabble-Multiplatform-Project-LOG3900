@@ -7,7 +7,6 @@ import logger from 'morgan';
 import { Service } from 'typedi';
 import { AuthController } from './controllers/auth.controller';
 import { BotsController } from './controllers/bots.controller';
-import { DictionariesController } from './controllers/dictionaries.controller';
 import { GamesHistoryController } from './controllers/game.history.controller';
 import { ImageController } from './controllers/image.controllet';
 import { ScoresController } from './controllers/scores.controller';
@@ -20,7 +19,6 @@ export class Application {
 
     constructor(
         private scoresController: ScoresController,
-        private dictionariesController: DictionariesController,
         private botsController: BotsController,
         private gamesHistoryController: GamesHistoryController,
         private authController: AuthController,
@@ -37,7 +35,6 @@ export class Application {
 
     bindRoutes() {
         this.app.use('/api/scores', this.scoresController.router);
-        this.app.use('/api/dictionaries', this.dictionariesController.router);
         this.app.use('/api/bots', this.botsController.router);
         this.app.use('/api/games', this.gamesHistoryController.router);
         this.app.use('/api/auth', this.authController.router);

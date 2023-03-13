@@ -1,4 +1,4 @@
-import { SpecialCasesReader } from '@app/classes/readers/special-cases-reader';
+import { MAX_WORD_LENGTH_REWARD } from '@app/constants/constants';
 import { Directions } from '@app/enums/directions';
 import { MultiplierType } from '@app/enums/multiplier-type';
 import { PlacementDirections } from '@app/enums/placement-directions';
@@ -18,25 +18,24 @@ describe('NodeStream tests', () => {
     let verticalNodes: BoardNode[];
     let horizontalStreamTest: NodeStream;
     let verticalStreamTest: NodeStream;
-    const reader = new SpecialCasesReader();
 
     beforeEach(() => {
         horizontalNodes = new Array<BoardNode>(NODES_COUNT);
         verticalNodes = new Array<BoardNode>(NODES_COUNT);
 
-        horizontalNodes[0] = new BoardNode(0, reader.getSpecialCaseInfo(0));
+        horizontalNodes[0] = new BoardNode(0);
         horizontalNodes[0].setLetter(TEST_LETTERS.at(0) as string);
 
-        verticalNodes[0] = new BoardNode(0, reader.getSpecialCaseInfo(0));
+        verticalNodes[0] = new BoardNode(0);
         verticalNodes[0].setLetter(TEST_LETTERS.at(0) as string);
 
         for (let i = 1; i < NODES_COUNT; i++) {
-            horizontalNodes[i] = new BoardNode(i, reader.getSpecialCaseInfo(0));
+            horizontalNodes[i] = new BoardNode(i);
             horizontalNodes[i].setLetter(TEST_LETTERS.at(i) as string);
             horizontalNodes[i].registerNeighbor(horizontalNodes[i - 1], Directions.Left);
             horizontalNodes[i - 1].registerNeighbor(horizontalNodes[i], Directions.Right);
 
-            verticalNodes[i] = new BoardNode(i, reader.getSpecialCaseInfo(0));
+            verticalNodes[i] = new BoardNode(i);
             verticalNodes[i].setLetter(TEST_LETTERS.at(i) as string);
             verticalNodes[i].registerNeighbor(verticalNodes[i - 1], Directions.Up);
             verticalNodes[i - 1].registerNeighbor(verticalNodes[i], Directions.Down);
@@ -57,10 +56,15 @@ describe('NodeStream tests', () => {
         expect(verticalStreamTest.getWords().at(0)).to.equals(TEST_WORD);
     });
     it('should horizontally add up score correctly', () => {
-        expect(horizontalStreamTest.getScore()).to.equals(BASE_VALUE);
+        expect(horizontalStreamTest.getScore()).to.equals(BASE_VALUE + MAX_WORD_LENGTH_REWARD);
+    });
+    it('should horizontally add up score correctly without length bonus', () => {
+        horizontalNodes[6].undoPlacement();
+        horizontalStreamTest = new NodeStream(horizontalNodes[0], PlacementDirections.Horizontal, NODES_COUNT);
+        expect(horizontalStreamTest.getScore()).to.equals(BASE_VALUE - 1);
     });
     it('should vertically add up score correctly', () => {
-        expect(verticalStreamTest.getScore()).to.equals(BASE_VALUE);
+        expect(verticalStreamTest.getScore()).to.equals(BASE_VALUE + MAX_WORD_LENGTH_REWARD);
     });
     describe('Score retracing tests with special cases', () => {
         beforeEach(() => {
@@ -72,10 +76,10 @@ describe('NodeStream tests', () => {
             verticalNodes[1].multiplier = letterMultiplierCaseInfo;
         });
         it('should horizontally add up score correctly when special cases are present', () => {
-            expect(horizontalStreamTest.getScore()).to.equals(SPECIAL_SCORE);
+            expect(horizontalStreamTest.getScore()).to.equals(SPECIAL_SCORE + MAX_WORD_LENGTH_REWARD);
         });
         it('should vertically add up score correctly when special cases are present', () => {
-            expect(verticalStreamTest.getScore()).to.equals(SPECIAL_SCORE);
+            expect(verticalStreamTest.getScore()).to.equals(SPECIAL_SCORE + MAX_WORD_LENGTH_REWARD);
         });
     });
 });
