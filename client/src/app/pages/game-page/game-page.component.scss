@@ -21,6 +21,22 @@
     transition: box-shadow 0.15s, transform 0.15s;
 }
 
+.red-dot {
+    position: relative;
+    top: 20%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    text-align: center;
+    background-color: red;
+    color: white;
+}
+
+.hint-icon{
+    width: 60px;
+}
+
 #left-panel {
     display: flex;
     flex-direction: column;
@@ -30,7 +46,7 @@
 #board-rack {
     height: 800px;
 }
-.test {
+.page {
     padding: 8px;
     display: flex;
     flex-direction: row;
@@ -45,9 +61,13 @@
     transform: translateY(2px);
     box-shadow: 0px -7px 0px #bb9573 inset;
 }
-.test {
-    display: flex;
-    flex-direction: row;
+
+.mat-drawer-container {
+    background-color: white;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: #7DAF6B;
 }
 
 #main-page-container {
@@ -78,6 +98,17 @@
   font-variation-settings:
   'FILL' 1,
   'wght' 400,
+  'GRAD' 0,
+  'opsz' 48;
+}
+
+.quit {
+    cursor: pointer;
+    font-size: 43px;
+    color: #ff0000;
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 900,
   'GRAD' 0,
   'opsz' 48;
 }

@@ -4,12 +4,16 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <div (click)="updateFocus($event)">
-            <div id="main-page-container" class="test">
+            <div id="main-page-container" class="page">
                     <div id="left-panel">
-                      
-                        <i class="material-symbols-outlined" (click)="confirmLeaving()" *ngIf="!isGameOver">emoji_objects</i>
+                        <div class = "hint-icon">
+                            <div class = "red-dot">{{nbHints}}</div>
+                            <i class="material-symbols-outlined" (click)="showHint()" *ngIf="!isGameOver">emoji_objects</i>
+                            <div>+ {{hintValue}}pts</div>
+                        </div>
                         <i class="fa fa-comment" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
                         <i class="fa fa-flag" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
+                        <i class="material-symbols-outlined quit" (click)="goBackToHome()" *ngIf="isGameOver">logout</i>
                     </div>
                     <!-- <app-chat style="width: 350px"></app-chat> -->
                     <!-- <div class="commands-container flex-row">
@@ -19,7 +23,7 @@
                     </div> -->
             
                 <div id="board-rack">
-                    <app-play-area></app-play-area>
+                    <app-play-area #playArea></app-play-area>
                 </div>
                 <div
                  class = "right-panel">

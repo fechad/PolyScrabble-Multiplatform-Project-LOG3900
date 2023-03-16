@@ -10,7 +10,7 @@ import {
     ONE_SECOND_IN_MS,
     SYSTEM_NAME,
     // eslint-disable-next-line prettier/prettier
-    THREE_SECONDS_IN_MS,
+    THREE_SECONDS_IN_MS
 } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -147,6 +147,7 @@ export class SocketGameService extends SocketHandlerService {
 
         const currentTurnPlayer = room.getCurrentPlayerTurn();
         if (!currentTurnPlayer) return;
+        if (message.startsWith('!indice')) return;
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
 
         this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
@@ -286,10 +287,8 @@ export class SocketGameService extends SocketHandlerService {
                 });
                 break;
             case CommandVerbs.HINT:
-                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
+                this.sendToEveryoneInRoom(sender.socketId, 'hint', {
                     text: report.messageToSender,
-                    sender: SYSTEM_NAME,
-                    color: MessageSenderColors.SYSTEM,
                 });
                 break;
             case CommandVerbs.HELP:

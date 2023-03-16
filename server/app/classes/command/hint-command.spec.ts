@@ -96,6 +96,6 @@ describe('HintCommand', () => {
         const command = new HintCommand(validText, testRoom, testPlayer, finderMock, chatMessageService);
         const result = command.execute();
         expect(chatMessageService.isError).to.eql(false);
-        expect(result.messageToSender).to.eql('Aucun indice trouvé');
+        expect(result.messageToSender).to.eql('0');
     });
 });

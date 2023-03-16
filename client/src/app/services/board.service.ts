@@ -13,7 +13,8 @@ import {
     DEFAULT_BOARD_BACKGROUND_COLOR,
     DEFAULT_BOARD_INDEXES_COLOR,
     DEFAULT_CASE_COUNT,
-    DEFAULT_STARTING_POSITION,
+    // eslint-disable-next-line prettier/prettier
+    DEFAULT_STARTING_POSITION
 } from '@app/constants/board-constants';
 import { A_ASCII } from '@app/constants/constants';
 import { DEFAULT_TILE_COLOR, POINTS } from '@app/constants/rack-constants';
@@ -93,7 +94,6 @@ export class BoardService {
             this.commandInvoker.selectedTile = undefined;
             return;
         }
-
         this.commandInvoker.selectedTile.tile.updateSelectionType(SelectionType.BOARD);
     }
 
