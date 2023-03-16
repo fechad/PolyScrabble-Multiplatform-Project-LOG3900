@@ -14,4 +14,12 @@ class GameCommandService {
   void constructHelpCommand(HelpCommand command) {
     command.execute();
   }
+
+  void constructReserveCommand(ReserveCommand command){
+    command.execute();
+  }
+
+  void constructSkipTurnCommand(SkipTurnCommand command){
+    command.execute();
+  }
 }

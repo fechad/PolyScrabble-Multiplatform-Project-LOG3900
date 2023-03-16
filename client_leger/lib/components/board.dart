@@ -94,6 +94,11 @@ class _BoardState extends State<Board> {
     constructBoard();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void constructBoard() {
     for (int j = 0; j < 15; j++) {
       for (int i = 0; i < 15; i++) {

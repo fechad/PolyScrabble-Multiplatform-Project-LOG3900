@@ -106,11 +106,11 @@ class _SoloPageState extends State<SoloPage> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
-                                      color: Colors.black,
-                                      fontFamily: 'Nunito',
-                                      fontSize: 24,
-                                      decoration: TextDecoration.underline,
-                                    ),
+                                  color: Colors.black,
+                                  fontFamily: 'Nunito',
+                                  fontSize: 24,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -118,24 +118,12 @@ class _SoloPageState extends State<SoloPage> {
                             ),
                             SizedBox(
                               width: 280,
-                              child: DropdownButton<String>(
-                                hint: Container(
-                                  width: 250,
-                                  child: Text(
-                                    "Nom du joueur virtuel",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
+                              child: DropdownButtonFormField<String>(
                                 value: virtualValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 style: const TextStyle(color: Colors.black),
-                                underline: Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                ),
+                                decoration: InputDecoration(labelText: "Nom du joueur virtuel"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -146,11 +134,11 @@ class _SoloPageState extends State<SoloPage> {
                                 items: virtualPlayers
                                     .map<DropdownMenuItem<String>>(
                                         (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                               ),
                             ),
                             SizedBox(
@@ -158,24 +146,12 @@ class _SoloPageState extends State<SoloPage> {
                             ),
                             SizedBox(
                               width: 280,
-                              child: DropdownButton<String>(
-                                hint: Container(
-                                  width: 250,
-                                  child: Text(
-                                    "Difficulté du joueur virtuel",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
+                              child: DropdownButtonFormField<String>(
                                 value: difficultyValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 style: const TextStyle(color: Colors.black),
-                                underline: Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                ),
+                                decoration: InputDecoration(labelText: "Difficulté du joueur virtuel"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -186,12 +162,12 @@ class _SoloPageState extends State<SoloPage> {
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                               ),
                             ),
                             SizedBox(
@@ -199,24 +175,12 @@ class _SoloPageState extends State<SoloPage> {
                             ),
                             SizedBox(
                               width: 280,
-                              child: DropdownButton<String>(
-                                hint: Container(
-                                  width: 250,
-                                  child: const Text(
-                                    "Temps par tour (en secondes)",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
+                              child: DropdownButtonFormField<String>(
                                 value: timeValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 style: const TextStyle(color: Colors.black),
-                                underline: Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                ),
+                                decoration: InputDecoration(labelText: "Temps par tour (en secondes)"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -226,41 +190,41 @@ class _SoloPageState extends State<SoloPage> {
                                   });
                                 },
                                 items: time.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                               ),
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 50.0),
+                              const EdgeInsets.symmetric(vertical: 30.0),
                               child: ElevatedButton(
                                 onPressed: () {
                                   checkFormValues();
                                 },
                                 style: ButtonStyle(
                                     shape: MaterialStatePropertyAll<
-                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(8))),
+                                            BorderRadius.circular(8))),
                                     minimumSize: MaterialStateProperty.all(
                                         const Size(300, 50)),
                                     backgroundColor:
-                                        const MaterialStatePropertyAll<Color>(
-                                            Palette.mainColor)),
+                                    const MaterialStatePropertyAll<Color>(
+                                        Palette.mainColor)),
                                 child: Text(
                                   'Créer la partie',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
-                                        color: Colors.white,
-                                        fontFamily: 'Nunito',
-                                        fontSize: 24,
-                                      ),
+                                    color: Colors.white,
+                                    fontFamily: 'Nunito',
+                                    fontSize: 24,
+                                  ),
                                 ),
                               ),
                             ),
@@ -288,3 +252,4 @@ class _SoloPageState extends State<SoloPage> {
     })));
   }
 }
+

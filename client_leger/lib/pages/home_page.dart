@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   static const bool isProduction = bool.fromEnvironment('dart.vm.product');
   int page = 0;
+  int currentSelected = 0;
   @override
   void initState() {
     super.initState();
@@ -117,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     setState(() {
                       page = 1;
-                      scaffoldKey.currentState?.openDrawer();
+                      scaffoldKey.currentState?.openEndDrawer();
                     });
                     // Navigator.push(context,
                     //     MaterialPageRoute(builder: ((context) {

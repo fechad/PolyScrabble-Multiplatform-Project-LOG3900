@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../main.dart';
+import '../pages/game_page.dart';
 
 final List<int> POINTS = [
   1,
@@ -60,22 +61,54 @@ class Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int value = getTileScore();
-
     return GestureDetector(
         onDoubleTap: () {
-          wantToExchange = !wantToExchange;
-          if (wantToExchange) {
-            TileNotification(index).dispatch(context);
-          } else {
-            TileNotification(index).dispatch(context);
+          if (true) {
+            wantToExchange = !wantToExchange;
+            //linkService.changeExchangeBool();
+            if (wantToExchange) {
+              TileNotification(index).dispatch(context);
+            } else {
+              TileNotification(index).dispatch(context);
+            }
           }
           return rebuildController?.rebuild();
         },
-        child: Draggable<Map>(
+        child:
+        wantToExchange ?
+        Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFFFEBCE),
+              border: Border.all(
+                color: wantToExchange
+                    ? Color.fromARGB(170, 22, 235, 82)
+                    : const Color(0xAA000000),
+                width: 1,
+              ),
+            ),
+            margin: const EdgeInsets.only(left: 2.5, right: 2.5),
+            width: 45,
+            height: 45,
+            child: Stack(
+              children: [
+                Center(
+                    child:
+                    Text(letter, style: const TextStyle(fontSize: 24))),
+                Positioned(
+                  child:
+                  Text('$value', style: const TextStyle(fontSize: 10)),
+                  bottom: 4.0,
+                  right: 4.0,
+                )
+              ],
+            ))
+        : Draggable<Map>(
             data: {'letter': letter, 'value': value.toString(), 'index': index},
             childWhenDragging: Container(
               color: Color(0x00000000),
             ),
+            //maxSimultaneousDrags: linkService.getWantToExchange() ? 0 : 1,
             feedback: Material(
                 color: Color(0x00000000),
                 child: Container(
@@ -131,6 +164,7 @@ class Tile extends StatelessWidget {
                       right: 4.0,
                     )
                   ],
-                ))));
+                ))
+        ));
   }
 }

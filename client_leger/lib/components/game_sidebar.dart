@@ -19,85 +19,87 @@ class _GameSidebar extends State<GameSidebar> {
   Widget build(BuildContext context) {
     return Material(
         child: Container(
-        width: 70,
-        color: Color.fromRGBO(249, 255, 246, 1),
-        child: OverflowBox(
-        maxWidth: 80,
-        child: Column(
-        children: <Widget>[
-          SizedBox(height: 25),
-          IconButton(
-          icon: const Icon(Icons.lightbulb_outline_rounded,
-              size: 50,
-          color: Color(0xFFF5C610)),
-          onPressed: () {
-            //TODO 5 hints to show
-              },
-            ),
-          SizedBox(height: 100),
-          IconButton(
-            icon: const Icon(Icons.chat,
-                size: 50,
-                color: Palette.mainColor),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-          SizedBox(height: 435),
-          IconButton(
-            icon: const Icon(Icons.flag_rounded,
-              size: 50,
-                color: Colors.red),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return
-                      Container(
-                        child:
-                        AlertDialog(
-                          title: Text("Voulez-vous vraiment abandonner la partie ?"),
-                          content: Text("Vous ne serez pas dans le tableau des meilleurs scores."),
-                          actions: [
-                            ElevatedButton(
-                                child: Text('Non',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                )),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  textStyle: const TextStyle(fontSize: 20),
-                                ),
-                                onPressed: () => {
-                                  Navigator.pop(context),
-                                }
-                            ),
-                            ElevatedButton(
-                              child: Text('Oui'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                textStyle: const TextStyle(fontSize: 20),
+          width: 70,
+          color: Color.fromRGBO(249, 255, 246, 1),
+          child: OverflowBox(
+            maxWidth: 80,
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 25),
+                IconButton(
+                  icon: const Icon(Icons.lightbulb_outline_rounded,
+                      size: 50,
+                      color: Color(0xFFF5C610)),
+                  //TODO cannot ask for hints if placing or trying to exchange
+                  onPressed: placementValidator.letters.isEmpty ? () {
+                    //TODO 5 hints to show
+                  }:null,
+                ),
+                SizedBox(height: 100),
+                IconButton(
+                  icon: const Icon(Icons.chat,
+                      size: 50,
+                      color: Palette.mainColor),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+                SizedBox(height: 435),
+                IconButton(
+                  icon: const Icon(Icons.flag_rounded,
+                      size: 50,
+                      color: Colors.red),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return
+                            Container(
+                              child:
+                              AlertDialog(
+                                title: Text("Voulez-vous vraiment abandonner la partie ?"),
+                                content: Text("Vous ne serez pas dans le tableau des meilleurs scores."),
+                                actions: [
+                                  ElevatedButton(
+                                      child: Text('Non',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                          )),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        textStyle: const TextStyle(fontSize: 20),
+                                      ),
+                                      onPressed: () => {
+                                        Navigator.pop(context),
+                                      }
+                                  ),
+                                  ElevatedButton(
+                                    child: Text('Oui'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      textStyle: const TextStyle(fontSize: 20),
+                                    ),
+                                    onPressed: () {
+                                      inGameService.confirmLeaving();
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyHomePage(title: "PolyScrabble")));
+                                    },
+                                  ),
+                                ],
                               ),
-                              onPressed: () {
-                                inGameService.confirmLeaving();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            MyHomePage(title: "PolyScrabble")));
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                  }
-              );
-            },
+                            );
+                        }
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-          ],
-          ),
-        ),
-      )
+        )
     );
   }
 }
+
