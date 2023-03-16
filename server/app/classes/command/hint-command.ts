@@ -45,7 +45,7 @@ export class HintCommand extends Command {
     private lookForHints(): string {
         const receivedStrings = this.finder.getPlacement(this.commandSender.rack.getLetters());
         if (receivedStrings.length === 0) {
-            return 'Aucun indice trouvé';
+            return '0';
         }
         const included: string[] = [];
         let messageToReturn = '';
@@ -53,24 +53,11 @@ export class HintCommand extends Command {
         receivedStrings.sort((rightPlacement, leftPlacement) => (leftPlacement.points || 0) - (rightPlacement.points || 0));
         for (const hint of receivedStrings) {
             if (included.includes(hint.newWord)) continue;
-            messageToReturn +=
-                'Vous pouvez former le mot ' +
-                hint.newWord +
-                ',\nen effectuant le placement: \n' +
-                '!placer ' +
-                hint.row +
-                hint.col +
-                hint.direction +
-                ' ' +
-                hint.letters +
-                '\n\n';
+            messageToReturn += hint.row + hint.col + hint.direction + '-' + hint.letters + '_' + hint.points + ' ';
             count++;
             included.push(hint.newWord);
             if (count >= HINTS_NUMBERS) break;
         }
-        if (receivedStrings.length < HINTS_NUMBERS) {
-            messageToReturn += 'Seulement ' + count + ' indices trouvés';
-        }
-        return messageToReturn;
+        return messageToReturn + ' ' + count;
     }
 }

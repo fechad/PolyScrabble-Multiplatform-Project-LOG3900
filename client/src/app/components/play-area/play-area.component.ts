@@ -1,4 +1,4 @@
-import { Component, HostListener, OnChanges, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnChanges, OnInit, Output } from '@angular/core';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Dimension } from '@app/classes/dimension';
@@ -39,8 +39,12 @@ import { SocketClientService } from '@app/services/socket-client.service';
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent extends ComponentCommunicationManager implements OnInit, OnChanges {
+    @Output() hintValueEvent = new EventEmitter<number>();
+
     letterRatio: number;
     isBoardReady: boolean;
+    currentHint: number;
+    hints: string[];
     protected board: Tile[][];
     private ratioSize: number;
     private canvasSize: Position;
@@ -54,6 +58,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         private playerService: PlayerService,
     ) {
         super(socketService);
+        this.currentHint = 0;
         this.isBoardReady = false;
         this.ratioSize = 1;
         this.letterRatio = BOARD_SCALING_RATIO;
@@ -106,6 +111,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         switch (event.key) {
             case KeyboardKeys.Enter:
                 this.confirmPlacement();
+                this.boardService.removeAllViewLetters();
                 break;
             case KeyboardKeys.Backspace:
                 this.commandInvoker.cancel();
@@ -153,13 +159,11 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
     ngOnInit() {
         this.connectSocket();
-
-        this.focusHandlerService.currentFocus.subscribe(() => {
-            if (!this.focusHandlerService.isCurrentFocus(CurrentFocus.BOARD)) {
-                this.boardService.removeAllViewLetters();
-            }
-        });
-
+        // this.focusHandlerService.currentFocus.subscribe(() => {
+        //     if (!this.focusHandlerService.isCurrentFocus(CurrentFocus.BOARD)) {
+        //         this.boardService.removeAllViewLetters();
+        //     }
+        // });
         this.drawBoard();
     }
 
@@ -177,7 +181,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         this.socketService.send(SocketEvent.Message, this.commandInvoker.commandMessage);
 
         this.handleGoodPlacement();
-
         this.handleBadPlacement();
     }
 
@@ -192,10 +195,40 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         return this.playerService.player.isItsTurn;
     }
 
+    showHint() {
+        if (this.hints[0] === '0') {
+            return;
+        }
+        const delay = 200;
+        this.boardService.removeAllViewLetters();
+        setTimeout(() => {
+            const shiftToNumber = 96;
+            const args = this.hints[this.currentHint % (this.hints.length - 1)];
+            const test = args.split('_');
+            test.pop();
+            const hint = test[0].split('-');
+
+            const orientation = hint[0][hint[0].length - 1];
+            const row = hint[0][0].charCodeAt(0) - shiftToNumber;
+            const col = parseInt(hint[0].slice(1, hint[0].length - 1), 10);
+            this.boardService.mouseHitDetect({ x: col, y: row } as Position);
+            if (orientation === 'h') for (const letter of hint[1].split('')) this.boardService.placeLetterInBoard(letter, false, RIGHT_ARROW);
+            else {
+                this.boardService.mouseHitDetect({ x: col, y: row } as Position);
+                for (const letter of hint[1].split('')) this.boardService.placeLetterInBoard(letter, false, DOWN_ARROW);
+            }
+            this.currentHint++;
+        }, delay);
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
             const rowNumber = this.matchRowNumber(placementData.row) as number;
             this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
+        });
+        this.socketService.on('hint', (data: { text: string }) => {
+            this.hints = data.text.split(' ');
+            this.hints.pop();
         });
     }
 
