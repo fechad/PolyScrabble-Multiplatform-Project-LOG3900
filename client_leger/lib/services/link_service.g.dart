@@ -24,6 +24,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get wantToExchange {
+    _$valueAtom.reportRead();
+    return super.wantToExchange;
+  }
+
+  @override
   Observable<bool> get myTurn {
     _$valueAtom.reportRead();
     return super.myTurn;
@@ -39,6 +45,12 @@ mixin _$LinkService on _LinkService, Store {
   Observable<bool> get newMessage {
     _$valueAtom.reportRead();
     return super.newMessage;
+  }
+
+  @override
+  Observable<int> get currentSelectedIndex {
+    _$valueAtom.reportRead();
+    return super.currentSelectedIndex;
   }
 
   @override
@@ -61,7 +73,18 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   late final _$_LinkServiceActionController =
-      ActionController(name: '_LinkService');
+  ActionController(name: '_LinkService');
+
+  @override
+  void changExchangeBool() {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.changeExchangeBool');
+    try {
+      return super.changeExchangeBool();
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void changeTurn() {
@@ -113,6 +136,17 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setTurn' );
     try {
       return super.setTurn(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCurrentSelectedIndex(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setTurn' );
+    try {
+      return super.setCurrentSelectedIndex(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }
@@ -222,3 +256,4 @@ mixin _$LinkService on _LinkService, Store {
     return ''' rack: ${tempRack} ''';
   }
 }
+

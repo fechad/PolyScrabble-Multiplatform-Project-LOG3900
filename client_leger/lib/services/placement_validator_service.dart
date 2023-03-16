@@ -67,4 +67,16 @@ class PlacementValidatorService {
       firstLetterPosition.clear();
     }
   }
+
+  getRowLetter(int row) {
+    //row + 97 is ASCII code
+    //return the actual string corresponding to ASCII code
+    return String.fromCharCode(row+97);
+  }
+
+  convertPlacement(String position) {
+    final row = (position[0].codeUnitAt(0)-97);
+    final column = int.parse(position[1])-1;
+    return "$row$column";
+  }
 }

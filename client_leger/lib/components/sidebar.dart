@@ -15,7 +15,6 @@ import '../pages/leaderboard_page.dart';
 import '../pages/observer_page.dart';
 import '../services/chat_service.dart';
 import '../services/init_service.dart';
-import '../services/link_service.dart';
 
 final ChatService chat = chatService;
 
@@ -33,7 +32,6 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
   bool isCollapsed = false;
   late AnimationController _animationController;
   late Animation<double> widthAnimation;
-  int currentSelectedIndex = 0;
   late bool notify;
   String chatName = '';
 
@@ -158,12 +156,12 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
               CollapsingListTile(
                 title: 'Home', icon: Icons.home,
                 animationController: _animationController,
-                // TODO onTap: .... send to user profile
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: ((context) {
                     return MyHomePage(title: 'PolyScrabble');
                   })));
+
                 },
                 notifiable: false,
               ),
@@ -180,14 +178,14 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             child: CollapsingListTile(
                               onTap: () {
                                 setState(() {
-                                  currentSelectedIndex = counter;
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: ((context) {
-                                    return ObserverPage();
-                                  })));
+                                  linkService.setCurrentSelectedIndex(counter);
                                 });
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: ((context) {
+                                      return ObserverPage();
+                                    })));
                               },
-                              isSelected: currentSelectedIndex == counter,
+                              isSelected: linkService.getCurrentSelectedIndex() == counter,
                               title: navigationItems[counter].title,
                               icon: navigationItems[counter].icon,
                               notifiable: navigationItems[counter].notifiable,
@@ -199,8 +197,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                   CollapsingListTile(
                                     onTap: () {
                                       setState(() {
-                                        currentSelectedIndex = counter;
-
+                                        linkService.setCurrentSelectedIndex(counter);
                                         if (counter == 0) {
                                           Scaffold.of(context).openDrawer();
                                           if (linkService
@@ -213,7 +210,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                         }
                                       });
                                     },
-                                    isSelected: currentSelectedIndex == counter,
+                                    isSelected: linkService.getCurrentSelectedIndex() == counter,
                                     title: navigationItems[counter].title,
                                     icon: navigationItems[counter].icon,
                                     notifiable:
@@ -232,33 +229,32 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             : CollapsingListTile(
                                 onTap: () {
                                   setState(() {
-                                    currentSelectedIndex = counter;
-
-                                    if (counter == 0) {
-                                      Scaffold.of(context).openDrawer();
-                                      if (linkService.getNewMessageBoolean())
-                                        linkService.newMessageChange();
-                                    }
-                                    // TODO : put function here depending on what we click on
-                                    else if (counter == 1) {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: ((context) {
-                                        return LeaderBoardPage();
-                                      })));
-                                    } else if (counter == 3) {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: ((context) {
-                                        return SettingsPage();
-                                      })));
-                                    } else if (counter == 4) {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: ((context) {
-                                        return ConnexionPageWidget();
-                                      })));
-                                    }
+                                    linkService.setCurrentSelectedIndex(counter);
                                   });
+                                  if (counter == 0) {
+                                    Scaffold.of(context).openDrawer();
+                                    if (linkService.getNewMessageBoolean())
+                                      linkService.newMessageChange();
+                                  }
+                                  // TODO : put function here depending on what we click on
+                                  else if (counter == 1) {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: ((context) {
+                                          return LeaderBoardPage();
+                                        })));
+                                  } else if (counter == 3) {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: ((context) {
+                                          return SettingsPage();
+                                        })));
+                                  } else if (counter == 4) {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: ((context) {
+                                          return ConnexionPageWidget();
+                                        })));
+                                  }
                                 },
-                                isSelected: currentSelectedIndex == counter,
+                                isSelected: linkService.getCurrentSelectedIndex() == counter,
                                 title: navigationItems[counter].title,
                                 icon: navigationItems[counter].icon,
                                 notifiable: navigationItems[counter].notifiable,

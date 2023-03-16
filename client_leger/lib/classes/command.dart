@@ -11,8 +11,7 @@ class PlacementCommand {
       {required this.position, required this.direction, required this.letter});
 
   execute() {
-    String command = '!placer $position $direction $letter';
-
+    String command = '!placer $position$direction $letter';
     socketService.send('message', command);
   }
 }
@@ -45,12 +44,21 @@ class HelpCommand {
 }
 
 class ReserveCommand {
-    String letter = '!réserve';
-    ReserveCommand();
-    execute(){
-      socketService.send('message', letter);
-    }
+  String letter = '!réserve';
+  ReserveCommand();
+  execute(){
+    socketService.send('message', letter);
+  }
 }
+
+class SkipTurnCommand {
+  String letter = '!passer';
+  SkipTurnCommand();
+  execute() {
+    socketService.send('message', letter);
+  }
+}
+
 
 
 

@@ -111,25 +111,13 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                             ),
                             SizedBox(
                               width: 280,
-                              child: DropdownButton<String>(
-                                hint: Container(
-                                  width: 250,
-                                  child: Text(
-                                    "Difficulté du joueur virtuel",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
+                              child: DropdownButtonFormField<String>(
                                 value: difficultyValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 style:
                                 const TextStyle(color: Colors.black),
-                                underline: Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                ),
+                                decoration: InputDecoration(labelText: "Difficulté du joueur virtuel"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -148,29 +136,17 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                               ),
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 10,
                             ),
                             SizedBox(
                               width: 280,
-                              child: DropdownButton<String>(
-                                hint: Container(
-                                  width: 250,
-                                  child: const Text(
-                                    "Temps par tour (en secondes)",
-                                    style: TextStyle(
-                                        color: Palette.mainColor, fontSize: 16),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
+                              child: DropdownButtonFormField<String>(
                                 value: timeValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 style:
                                 const TextStyle(color: Colors.black),
-                                underline: Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                ),
+                                decoration: InputDecoration(labelText: "Temps par tour (en secondes)"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -312,3 +288,4 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
 
 }
+

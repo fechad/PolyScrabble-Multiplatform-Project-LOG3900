@@ -48,6 +48,12 @@ abstract class _LinkService with Store {
   ]);
 
   @observable
+  Observable<int> currentSelectedIndex = Observable(-1);
+
+  @observable
+  Observable<bool> wantToExchange = Observable(false);
+
+  @observable
   Observable<bool> myTurn = Observable(false);
 
   @observable
@@ -70,6 +76,9 @@ abstract class _LinkService with Store {
 
   List<Placement> placementStack = [];
 
+  int getCurrentSelectedIndex() {
+    return currentSelectedIndex.value;
+  }
 
   ObservableList<Tile> getRack() {
     return tempRack;
@@ -85,6 +94,10 @@ abstract class _LinkService with Store {
 
   List<Widget> getRows() {
     return rows;
+  }
+
+  bool getWantToExchange() {
+    return wantToExchange.value;
   }
 
   bool getMyTurn() {
@@ -104,6 +117,11 @@ abstract class _LinkService with Store {
   }
 
   @action
+  changeExchangeBool() {
+    wantToExchange.value = !wantToExchange.value;
+  }
+
+  @action
   changeTurn() {
     myTurn.value = !myTurn.value;
   }
@@ -116,6 +134,11 @@ abstract class _LinkService with Store {
   @action
   newMessageChange() {
     newMessage.value = !newMessage.value;
+  }
+
+  @action
+  setCurrentSelectedIndex(int index) {
+    currentSelectedIndex.value = index;
   }
 
   @action
@@ -135,7 +158,7 @@ abstract class _LinkService with Store {
         y: y,
         currentSquare: square,
         previousSquare:
-            (rows[y] as Row).children[x] as DragTarget<Map<dynamic, dynamic>>);
+        (rows[y] as Row).children[x] as DragTarget<Map<dynamic, dynamic>>);
     placementStack.add(placement);
     (rows[y] as Row).children[x] = placement.currentSquare;
   }
@@ -200,10 +223,11 @@ abstract class _LinkService with Store {
   updateRack(String data) {
     int index = 0;
     rack.clear();
-    for (String letter in data.split("")) {
-      Tile newTile = Tile(letter: letter, index: index);
+    for (String letter in data.toUpperCase().split("")) {
+      Tile newTile = Tile(letter: letter, index: index++, rebuildController: controller);
       rack.add(newTile);
     }
     resetRack();
   }
 }
+
