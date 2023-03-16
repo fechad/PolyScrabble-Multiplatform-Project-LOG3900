@@ -5,7 +5,7 @@ import { WordStructureTrie } from '@app/classes/Trie/structure-trie';
 import { StringManipulator } from '@app/classes/virtual-placement-logic/string-manipulation-virtual-player';
 import { WordsFinder } from '@app/classes/virtual-player/words-finder';
 import { CENTRAL_NODE_INDEX, DEFAULT_COLUMN_COUNT, MAX_COLUMN_INDEX } from '@app/constants/board-constants';
-import { INVALID, MAXIMUM_PLACEMENT_LENGTH } from '@app/constants/virtual-player-constants';
+import { INVALID, MAXIMUM_PLACEMENT_LENGTH, SCORE_INTERVALS } from '@app/constants/virtual-player-constants';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { ScoreInterval } from '@app/interfaces/score-interval';
 import { UserPlacement } from '@app/interfaces/user-placement';
@@ -21,15 +21,20 @@ export class PlacementFinder {
         this.possiblePlacements = [];
         this.centerNode = this.tools.manipulator.askNodeByIndex(CENTRAL_NODE_INDEX) as BoardNode;
     }
-    getPlacement(targetScore: ScoreInterval, availableLetters: string): UserPlacement[] {
+
+    getPlacement(availableLetters: string): UserPlacement[] {
         this.possiblePlacements = [];
-        // if (this.centerNode.content === null) this.findFirstPlacement(targetScore, availableLetters);
-        this.findPlacements(targetScore, availableLetters);
+        this.findPlacements(availableLetters);
         return this.possiblePlacements;
     }
 
-    private findPlacements(targetScore: ScoreInterval, availableLetters: string) {
-        if (!this.centerNode.content) return;
+    private findPlacements(availableLetters: string) {
+        const scoreInterval = SCORE_INTERVALS.any;
+        if (!this.centerNode.content) {
+            const stream = new NodeStream(this.centerNode, PlacementDirections.Horizontal, MAXIMUM_PLACEMENT_LENGTH);
+            this.findDirectionalPlacement(stream, scoreInterval, PlacementDirections.Horizontal, availableLetters);
+            return;
+        }
         for (let i = 0; i < MAX_COLUMN_INDEX * DEFAULT_COLUMN_COUNT; i++) {
             let node = this.tools.manipulator.askNodeByIndex(i);
             if (node === undefined) return;
@@ -37,9 +42,9 @@ export class PlacementFinder {
             const streamH = new NodeStream(node, PlacementDirections.Horizontal, MAXIMUM_PLACEMENT_LENGTH);
             const streamV = new NodeStream(node, PlacementDirections.Vertical, MAXIMUM_PLACEMENT_LENGTH);
             if (!node.content && this.isStreamConnected(streamH, PlacementDirections.Horizontal))
-                this.findDirectionalPlacement(streamH, targetScore, PlacementDirections.Horizontal, availableLetters);
+                this.findDirectionalPlacement(streamH, scoreInterval, PlacementDirections.Horizontal, availableLetters);
             if (!node.content && this.isStreamConnected(streamV, PlacementDirections.Vertical))
-                this.findDirectionalPlacement(streamV, targetScore, PlacementDirections.Vertical, availableLetters);
+                this.findDirectionalPlacement(streamV, scoreInterval, PlacementDirections.Vertical, availableLetters);
         }
     }
 
@@ -121,10 +126,12 @@ export class PlacementFinder {
 
     private getLettersToPlace(mainFlow: BoardNode[], word: string): string {
         const wordArray = [...word];
-        const offset = 0;
+        let offset = -1;
         for (const node of mainFlow) {
+            offset++;
             if (!node.content) continue;
             wordArray.splice(wordArray.slice(offset).findIndex((letter) => letter === node.content) + offset, 1);
+            offset--;
         }
         return wordArray.join('');
     }

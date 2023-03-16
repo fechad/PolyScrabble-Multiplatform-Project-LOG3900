@@ -7,5 +7,5 @@ export interface UserPlacement {
     oldWord: string;
     newWord: string;
     letters: string;
-    points?: number;
+    points: number;
 }

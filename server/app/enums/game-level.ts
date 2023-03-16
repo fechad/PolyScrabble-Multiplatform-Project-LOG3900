@@ -1,5 +1,5 @@
 export enum GameLevel {
-    Beginner = 'débutant',
+    Beginner = 'beginner',
     Expert = 'expert',
     Adaptative = 'adaptatif',
 }

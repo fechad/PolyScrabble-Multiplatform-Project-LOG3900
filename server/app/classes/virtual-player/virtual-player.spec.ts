@@ -3,12 +3,9 @@
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Rack } from '@app/classes/rack';
-import { Timer } from '@app/classes/timer';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
 import { PlacementDirections } from '@app/enums/placement-directions';
-import { VirtualPlayerActions } from '@app/enums/virtual-player-actions';
-import { ScoreInterval } from '@app/interfaces/score-interval';
 import { UserPlacement } from '@app/interfaces/user-placement';
 import { assert, expect } from 'chai';
 import { describe } from 'mocha';
@@ -31,13 +28,6 @@ describe('VirtualPlayer tests', () => {
         virtualPlayer.rack = rack;
         virtualPlayerPrivateAccess = virtualPlayer as any;
         virtualPlayerPrivateAccess.possiblePlacements = possiblePlacements;
-    });
-
-    it('should return a random interval of scores', () => {
-        const score = virtualPlayerPrivateAccess.getScoreInterval();
-        const scoreInterval: ScoreInterval = { min: 0, max: 18 };
-        expect(score.min).greaterThanOrEqual(scoreInterval.min);
-        expect(score.max).lessThanOrEqual(scoreInterval.max);
     });
     it('should return the correct level', () => {
         expect(virtualPlayer.level).to.equals('débutant');
@@ -66,6 +56,7 @@ describe('VirtualPlayer tests', () => {
             oldWord: '',
             newWord: '',
             letters: '',
+            points: 0,
         };
 
         beforeEach(() => {
@@ -74,13 +65,13 @@ describe('VirtualPlayer tests', () => {
             });
         });
         it('should call getPlacement on PlaceLettersAction', () => {
-            virtualPlayerPrivateAccess.placeLettersActionExpert();
+            virtualPlayerPrivateAccess.placeLettersAction();
             assert(getPlacementStub.called, 'did not call getPlacement on placeLettersAction');
         });
         it('should call switchLetterAction inside placeLetterAction method when possiblePlacement is empty', () => {
             virtualPlayer['possiblePlacements'] = [];
             const switchLetterSpy = sinon.spy(virtualPlayerPrivateAccess, 'switchLettersAction');
-            virtualPlayerPrivateAccess.placeLettersActionExpert();
+            virtualPlayerPrivateAccess.placeLettersAction();
             assert(switchLetterSpy.called, 'did not call  on switchLetterAction on placeLettersAction');
         });
         it('should take the first sorted placement if it finds new placements after initially being at 0', () => {
@@ -88,7 +79,7 @@ describe('VirtualPlayer tests', () => {
             getPlacementStub.callsFake(() => {
                 return [placement];
             });
-            expect(virtualPlayerPrivateAccess.placeLettersActionExpert()).to.equal(
+            expect(virtualPlayerPrivateAccess.placeLettersAction()).to.equal(
                 `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`,
             );
         });
@@ -96,63 +87,18 @@ describe('VirtualPlayer tests', () => {
             getPlacementStub.callsFake(() => {
                 return [placement];
             });
-            expect(virtualPlayerPrivateAccess.placeLettersActionExpert()).to.equal(
+            expect(virtualPlayerPrivateAccess.placeLettersAction()).to.equal(
                 `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`,
             );
-        });
-    });
-    describe('chooseAction test', () => {
-        let getActionStub: sinon.SinonStub;
-        beforeEach(() => {
-            sinon.restore();
-            getActionStub = sinon.stub(virtualPlayerPrivateAccess, 'getAction');
-            sinon.stub(Timer, 'wait').resolves();
-        });
-
-        it('should return passTurnActions if action === PassTurn', async () => {
-            getActionStub.callsFake(() => {
-                return VirtualPlayerActions.PassTurn;
-            });
-            const passTurnActionSpy = sinon.spy(virtualPlayerPrivateAccess, 'passTurnAction');
-            await virtualPlayerPrivateAccess.chooseAction();
-            assert(passTurnActionSpy.called, 'did not call passTurnAction on chooseAction when action === placeLetters');
-        });
-
-        it('should return switchLettersActions if action === SwitchLetters', async () => {
-            getActionStub.callsFake(() => {
-                return VirtualPlayerActions.SwitchLetters;
-            });
-            const switchLettersActionSpy = sinon.spy(virtualPlayerPrivateAccess, 'switchLettersAction');
-            virtualPlayerPrivateAccess.chooseAction();
-            assert(switchLettersActionSpy.called, 'did not call switchLetterAction on chooseAction when action === switchLetters');
-        });
-
-        it('should return placeLettersActions if action === PlaceLetters', async () => {
-            getActionStub.callsFake(() => {
-                return VirtualPlayerActions.PlaceLetters;
-            });
-            const placeLettersActionSpy = sinon.spy(virtualPlayerPrivateAccess, 'placeLettersActionExpert');
-            virtualPlayerPrivateAccess.chooseAction();
-            assert(placeLettersActionSpy.called, 'did not call placeLetterAction on chooseAction when action === placeLetters');
-        });
-
-        it('should pass turn if there are no other available action', async () => {
-            virtualPlayerPrivateAccess.basis.level = 'Expert';
-            getActionStub.callsFake(() => {
-                return VirtualPlayerActions.PassTurn;
-            });
-            const passTurnActionSpy = sinon.spy(virtualPlayerPrivateAccess, 'passTurnAction');
-            virtualPlayerPrivateAccess.chooseAction();
-            assert(passTurnActionSpy.called, 'did not call passTurnAction if there is no action chosen');
         });
     });
 
     describe('Expert tests', () => {
         it('should call placeLetterActionExpert if the basisLevel is expert', () => {
             virtualPlayerPrivateAccess.basis.level = GameLevel.Expert;
-            const placeLettersActionExpertSpy = sinon.spy(virtualPlayerPrivateAccess, 'placeLettersActionExpert');
+            const placeLettersActionExpertSpy = sinon.spy(virtualPlayerPrivateAccess, 'placeLettersAction');
             virtualPlayerPrivateAccess.chooseAction();
-            assert(placeLettersActionExpertSpy.called, 'did not call placeLettersActionExpert on chooseAction when gameLevel was expert');
+            assert(placeLettersActionExpertSpy.called, 'did not call placeLettersAction on chooseAction when gameLevel was expert');
         });
     });
 });
