@@ -66,7 +66,6 @@ export class AuthController {
                     email: req.body.email,
                     username: req.body?.username,
                     userSettings: DEFAULT_USER_SETTINGS,
-                    avatarUrl: '',
                     badges: [],
                     bestGames: [],
                     gamesPlayed: [],

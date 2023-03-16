@@ -5,7 +5,6 @@ import { Badge } from './serveur info exchange/badge';
 export interface Account {
     username: string;
     email: string;
-    avatarUrl: string;
     level: Level;
     badges: Badge[];
     highScore: number;

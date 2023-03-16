@@ -8,7 +8,6 @@ export interface Account {
     userSettings: UserSettings;
     totalXP: number;
     badges: Badge[];
-    avatarUrl: string;
     bestGames: GameHeader[];
     gamesPlayed: GameHeader[];
     gamesWon: number;

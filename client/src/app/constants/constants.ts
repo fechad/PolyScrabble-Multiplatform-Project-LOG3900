@@ -39,7 +39,6 @@ export const DEFAULT_ROOM_INFO = {
 export const DEFAULT_ACCOUNT: ClientAccountInfo = {
     username: 'Default Account',
     email: 'kurama@polyscrabble.ca',
-    avatarUrl: '',
     userSettings: DEFAULT_USER_SETTINGS,
     highscores: {},
     progressInfo: { totalXP: 0, currentLevel: 0, xpForNextLevel: 200, currentLevelXp: 0, victoriesCount: 0 },

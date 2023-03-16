@@ -10,7 +10,6 @@ export interface ClientAccountInfo {
     highscores: Record<string, number>;
     progressInfo: ProgressInfo;
     badges: Badge[];
-    avatarUrl: string;
     bestGames: GameHeader[];
     gamesPlayed: GameHeader[];
     gamesWon: number;
