@@ -75,13 +75,17 @@ describe('WordsFinder', () => {
         // Here bons is lacking the o that is present in all structures provided.
         expect(formableWords).to.include('boire');
     });
-
-    it('should correctly recognize if a specific letter is available', () => {
-        const usedLetters = new Set();
-        const rackLetters = ['a', 'b', 'a'];
-        usedLetters.add(0);
-        expect((finder as any).findAvailableLetter('a', usedLetters, rackLetters)).to.equal(2);
-        usedLetters.add(2);
-        expect((finder as any).findAvailableLetter('a', usedLetters, rackLetters)).to.equal(-1);
+    it('should use the letters only the ammount of time it has them', () => {
+        wordStructureTrie = new WordStructureTrie('');
+        wordStructureTrie.insert('___e___');
+        const formableWords = finder.findFormableChildren('', wordStructureTrie.rootNode, ['e', 'm', 'l', 'e', 'e']);
+        expect(formableWords).to.not.include('emmelee');
+    });
+    it('should find the complete word needed', () => {
+        wordStructureTrie = new WordStructureTrie('');
+        wordStructureTrie.insert('_IL__');
+        const formableWords = finder.findFormableChildren('', wordStructureTrie.rootNode, 'o*odgme'.split(''));
+        expect(formableWords).to.include('gilde');
+        expect(formableWords).to.not.include('gild');
     });
 });

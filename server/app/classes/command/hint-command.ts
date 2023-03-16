@@ -1,13 +1,12 @@
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
-import { SCORE_INTERVALS } from '@app/constants/virtual-player-constants';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ChatMessageService } from '@app/services/chat.message';
 import { Command } from './command';
 import { CommandVerbs } from './command-verbs';
 import { HINT_COMMAND_LENGTH, SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from './constants';
-const HINTS_NUMBERS = 3;
+const HINTS_NUMBERS = 5;
 export class HintCommand extends Command {
     private readonly commandParameters: string[];
     private finder: PlacementFinder;
@@ -44,14 +43,15 @@ export class HintCommand extends Command {
     }
 
     private lookForHints(): string {
-        const receivedStrings = this.finder.getPlacement(SCORE_INTERVALS.hint, this.commandSender.rack.getLetters());
+        const receivedStrings = this.finder.getPlacement(this.commandSender.rack.getLetters());
         if (receivedStrings.length === 0) {
             return 'Aucun indice trouvé';
         }
         const included: string[] = [];
         let messageToReturn = '';
         let count = 0;
-        for (const hint of receivedStrings.reverse()) {
+        receivedStrings.sort((rightPlacement, leftPlacement) => (leftPlacement.points || 0) - (rightPlacement.points || 0));
+        for (const hint of receivedStrings) {
             if (included.includes(hint.newWord)) continue;
             messageToReturn +=
                 'Vous pouvez former le mot ' +
