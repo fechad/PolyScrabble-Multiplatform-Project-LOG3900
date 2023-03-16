@@ -14,32 +14,29 @@
                     <div class="theme-section">
                         <p class="section-title">Thème de couleur</p>
                         <div class="radio-button-option">
-                            <input type="radio" id="dark" name="theme" value="Dark" formControlName="theme" />
+                            <input type="radio" id="dark" name="defaultTheme" value="dark" formControlName="defaultTheme" />
                             <label for="dark">Sombre</label><br />
                         </div>
                         <div>
-                            <input type="radio" id="light" name="theme" value="Light" formControlName="theme" />
+                            <input type="radio" id="light" name="defaultTheme" value="light" formControlName="defaultTheme" />
                             <label for="light">Clair</label><br />
                         </div>
                     </div>
                     <div class="language-section">
                         <p class="section-title">Language</p>
                         <div class="radio-button-option">
-                            <input type="radio" id="french" name="language" value="Français" formControlName="language" />
+                            <input type="radio" id="french" name="defaultLanguage" value="french" formControlName="defaultLanguage" />
                             <label for="french">Français</label><br />
                         </div>
                         <div>
-                            <input type="radio" id="english" name="language" value="English" formControlName="language" />
+                            <input type="radio" id="english" name="defaultLanguage" value="english" formControlName="defaultLanguage" />
                             <label for="english">English</label><br />
                         </div>
                     </div>
                     <div class="victory-music-section">
                         <label for="music" class="section-title">Musique de victoire: </label>
-                        <select name="Music" id="music">
-                            <option value="volvo">Default</option>
-                            <option value="saab">Choix 1</option>
-                            <option value="opel">Choix 2</option>
-                            <option value="audi">Choix 3</option>
+                        <select name="Music" id="music" (change)="onMusicSelectionChange($event)">
+                            <option *ngFor="let music of musicOptions" [value]="music.key">{{ music.value }}</option>
                         </select>
                         <br /><br />
                     </div>

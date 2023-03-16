@@ -3,6 +3,8 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { DEFAULT_ACCOUNT } from '@app/constants/constants';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
+import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
+import { lastValueFrom } from 'rxjs';
 import { HttpService } from './http.service';
 
 @Injectable({
@@ -23,5 +25,9 @@ export class PlayerService {
     getPlayerInfo() {
         if (!this.httpService) return;
         this.httpService.getUserInfo(this.player.email).subscribe((userInfo) => (this.account = userInfo));
+    }
+    async updateUserSettings(newSettings: UserSettings) {
+        if (!this.httpService) return;
+        this.account = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, newSettings));
     }
 }

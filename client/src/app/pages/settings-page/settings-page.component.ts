@@ -3,12 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { PredefinedAvatarsPopupComponent } from '@app/components/predefined-avatars-popup/predefined-avatars-popup.component';
+import { VICTORY_MUSIC } from '@app/constants/victory-musics';
+import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { lastValueFrom } from 'rxjs';
 
-const DEFAULT_IMG_URL = 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png';
+export const DEFAULT_IMG_URL = 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png';
 
 @Component({
     selector: 'app-settings-page',
@@ -19,13 +21,17 @@ export class SettingsPageComponent implements OnInit {
     currentAvatar: File | null;
     fileReader: FileReader;
     isPredefinedAvatar: boolean;
+    userSettings: UserSettings;
+    musicOptions: { key: string; value: string }[];
     protected settingsForm: FormGroup;
     constructor(private formBuilder: FormBuilder, private dialog: MatDialog, private httpService: HttpService, private playerService: PlayerService) {
+        this.userSettings = this.playerService.account.userSettings;
+        this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
         this.settingsForm = this.formBuilder.group({
-            avatarURL: [this.playerService.account.avatarUrl || DEFAULT_IMG_URL, [Validators.required]],
-            theme: ['', [Validators.required]],
-            language: ['', [Validators.required]],
-            music: ['', [Validators.required]],
+            avatarUrl: [this.userSettings.avatarUrl || DEFAULT_IMG_URL, [Validators.required]],
+            defaultTheme: [this.userSettings.defaultTheme, [Validators.required]],
+            defaultLanguage: [this.userSettings.defaultLanguage, [Validators.required]],
+            victoryMusic: [this.userSettings.victoryMusic, [Validators.required]],
         });
 
         this.fileReader = new FileReader();
@@ -33,7 +39,7 @@ export class SettingsPageComponent implements OnInit {
     }
 
     get avatarURL(): string {
-        return this.settingsForm.controls.avatarURL.value;
+        return this.settingsForm.controls.avatarUrl.value;
     }
 
     // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method, @typescript-eslint/no-empty-function
@@ -42,9 +48,17 @@ export class SettingsPageComponent implements OnInit {
     async sendData() {
         if (this.currentAvatar) {
             await this.uploadFile();
+            await this.updateUserInfo();
             return;
         }
         this.chosePredefinedAvatar();
+        await this.updateUserInfo();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onMusicSelectionChange(event: any) {
+        this.settingsForm.patchValue({
+            victoryMusic: event.target.value,
+        });
     }
 
     openAvatarUrlsChoices() {
@@ -56,7 +70,7 @@ export class SettingsPageComponent implements OnInit {
         dialog.afterClosed().subscribe(async (avatarFile) => {
             if (!avatarFile) return;
             if (typeof avatarFile === 'string' || avatarFile instanceof String) {
-                this.settingsForm.controls.avatarURL.setValue(avatarFile);
+                this.settingsForm.controls.avatarUrl.setValue(avatarFile);
                 this.currentAvatar = null;
                 return;
             }
@@ -68,7 +82,7 @@ export class SettingsPageComponent implements OnInit {
         this.currentAvatar = avatarFile;
 
         this.fileReader.onload = () => {
-            this.settingsForm.controls.avatarURL.setValue(this.fileReader.result);
+            this.settingsForm.controls.avatarUrl.setValue(this.fileReader.result);
         };
 
         this.fileReader.readAsDataURL(this.currentAvatar);
@@ -76,8 +90,7 @@ export class SettingsPageComponent implements OnInit {
 
     private chosePredefinedAvatar() {
         if (!this.avatarURL) return;
-        this.playerService.account.avatarUrl = this.avatarURL;
-        this.updateUserInfo();
+        this.playerService.account.userSettings.avatarUrl = this.avatarURL;
     }
 
     private async uploadFile() {
@@ -102,13 +115,12 @@ export class SettingsPageComponent implements OnInit {
         }
         if (!response) return;
 
-        this.playerService.account.avatarUrl = response.url;
-        this.updateUserInfo();
+        this.playerService.account.userSettings.avatarUrl = response.url;
     }
 
-    private updateUserInfo() {
-        // TODO: modify user db info
-        return;
+    private async updateUserInfo() {
+        const formValues: UserSettings = this.settingsForm.value;
+        this.playerService.updateUserSettings(formValues);
     }
 
     private openErrorDialog() {
