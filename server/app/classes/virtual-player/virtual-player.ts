@@ -54,6 +54,7 @@ export class VirtualPlayer extends Player {
     get level(): string {
         return this.basis.level;
     }
+
     async playTurn(): Promise<string> {
         return (await this.chooseAction()) as string;
     }
