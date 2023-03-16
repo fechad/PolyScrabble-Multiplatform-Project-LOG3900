@@ -6,7 +6,6 @@ import { Score } from '@app/classes/score';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { GeneralChatComponent } from '@app/components/general-chat/general-chat.component';
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
-import { AudioService } from '@app/services/audio.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -28,7 +27,6 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
         private dialog: MatDialog,
         private httpService: HttpService,
         protected socketService: SocketClientService,
-        private audioService: AudioService,
     ) {
         super(socketService);
         this.title = 'LOG2990';
@@ -41,7 +39,6 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
 
     ngOnInit() {
         this.connectSocket();
-        this.audioService.playMainTheme();
     }
 
     setGameType(type: string) {
