@@ -14,7 +14,9 @@ export class PlayerService {
     player: Player;
     room: Room;
     account: ClientAccountInfo = DEFAULT_ACCOUNT;
+    isNewChatWindowOpen: boolean;
     constructor(private httpService?: HttpService) {
+        this.isNewChatWindowOpen = false;
         this.room = new Room();
         this.player = new Player();
         // TODO: remove this bypass for disabled logging

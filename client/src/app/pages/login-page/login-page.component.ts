@@ -33,7 +33,13 @@ export class LoginPageComponent implements AfterViewInit {
             this.playerService.player.email = 'kurama@polyscrabble.ca';
             this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
             router.navigateByUrl('/main');
+        } else {
+            // TODO remove the else statement to test prod mod
+            this.playerService.player.email = 'kurama@polyscrabble.ca';
+            this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
+            router.navigateByUrl('/main');
         }
+
         // email validator: https://mailtrap.io/blog/angular-email-validation/
         this.loginForm = this.formBuilder.group({
             username: ['', [Validators.required, Validators.minLength(MIN_LENGTH_PSEUDO), Validators.maxLength(MAX_LENGTH_PSEUDO)]],

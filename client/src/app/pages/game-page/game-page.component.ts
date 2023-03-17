@@ -12,6 +12,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { HintService } from '@app/services/hint.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -24,21 +25,16 @@ import { SocketClientService } from '@app/services/socket-client.service';
 export class GamePageComponent extends PageCommunicationManager implements OnInit {
     @ViewChild('playArea') child: PlayAreaComponent;
     chatForm: FormGroup;
-    nbHints: number;
-    hintValue: number;
-    currentHint: number;
-    hints: string[];
     constructor(
         protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
         private router: Router,
         private dialog: MatDialog,
+        private hintService: HintService,
         public playerService: PlayerService,
     ) {
         super(socketService);
-        this.hintValue = 0;
-        this.currentHint = 0;
     }
 
     get room(): Room {
@@ -113,16 +109,6 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         this.router.navigate(['/main']);
     }
 
-    showHint() {
-        if (!this.hints) return;
-        const args = this.hints[this.currentHint % (this.hints.length - 2)];
-        const test = args.split('_');
-        const value = test.pop();
-        if (value) this.hintValue = parseInt(value, 10);
-        this.child.showHint();
-        this.currentHint++;
-    }
-
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.Reconnected, (data: { room: Room; player: Player }) => {
             this.room.setRoom(data.room);
@@ -130,15 +116,11 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
             this.sessionStorageService.setItem('data', JSON.stringify({ socketId: data.player.socketId, roomName: data.room.roomInfo.name }));
         });
         this.socketService.on('hint', (data: { text: string }) => {
-            if (data.text === '0') {
-                this.nbHints = 0;
-                return;
-            }
-            this.hints = data.text.split(' ');
-            this.nbHints = parseInt(this.hints[this.hints.length - 1], 10);
+            this.hintService.handleGamePageHintEvent(data);
         });
-        this.socketService.on(SocketEvent.PlayerTurnChanged, () => {
-            this.hintValue = 0;
+        this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
+            this.hintService.hintValue = 0;
+            if (this.playerService.player.pseudo !== currentPlayerTurnPseudo) return;
             this.hintCommand();
         });
     }

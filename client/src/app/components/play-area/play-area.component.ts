@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Component, EventEmitter, HostListener, OnChanges, OnInit, Output } from '@angular/core';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
@@ -19,10 +20,10 @@ import {
     DEFAULT_ROWS,
     DEFAULT_STARTING_POSITION,
     DEFAULT_WIDTH,
-    // eslint-disable-next-line prettier/prettier
-    specialCases
+    specialCases,
 } from '@app/constants/board-constants';
 import { ONE_SECOND_IN_MS } from '@app/constants/constants';
+import { ERROR } from '@app/constants/rack-constants';
 import { SelectionType } from '@app/enums/selection-type';
 import { SocketEvent } from '@app/enums/socket-event';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
@@ -40,7 +41,6 @@ import { SocketClientService } from '@app/services/socket-client.service';
 })
 export class PlayAreaComponent extends ComponentCommunicationManager implements OnInit, OnChanges {
     @Output() hintValueEvent = new EventEmitter<number>();
-
     letterRatio: number;
     isBoardReady: boolean;
     currentHint: number;
@@ -58,6 +58,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         private playerService: PlayerService,
     ) {
         super(socketService);
+        this.hints = [];
         this.currentHint = 0;
         this.isBoardReady = false;
         this.ratioSize = 1;
@@ -164,6 +165,10 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         //         this.boardService.removeAllViewLetters();
         //     }
         // });
+        this.focusHandlerService.showHint.subscribe((hintIndex: number) => {
+            if (hintIndex === ERROR) return;
+            this.showHint();
+        });
         this.drawBoard();
     }
 
@@ -179,7 +184,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         if (this.commandInvoker.commandMessage.length === 0) return;
         this.focusHandlerService.clientChatMessage.next(this.commandInvoker.commandMessage);
         this.socketService.send(SocketEvent.Message, this.commandInvoker.commandMessage);
-
         this.handleGoodPlacement();
         this.handleBadPlacement();
     }
@@ -199,7 +203,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         if (this.hints[0] === '0') {
             return;
         }
-        const delay = 200;
+        const delay = 50;
         this.boardService.removeAllViewLetters();
         setTimeout(() => {
             const shiftToNumber = 96;
@@ -275,7 +279,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             if (!this.playerService.player.isItsTurn) return;
             this.socketService.send(SocketEvent.ChangeTurn, this.room.roomInfo.name);
-        }, ONE_SECOND_IN_MS * 3);
+        }, ONE_SECOND_IN_MS);
     }
 
     private drawSpecialTiles() {

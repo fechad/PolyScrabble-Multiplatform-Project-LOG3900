@@ -9,7 +9,6 @@ import {
     END_TIMER_VALUE,
     ONE_SECOND_IN_MS,
     SYSTEM_NAME,
-    // eslint-disable-next-line prettier/prettier
     THREE_SECONDS_IN_MS,
 } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
@@ -18,9 +17,29 @@ import { ChatMessage } from '@app/interfaces/chat-message';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import * as io from 'socket.io';
+import { ChatMessageService } from './chat.message';
+import { DateService } from './date.service';
+import { DiscussionChannelService } from './discussion-channel.service';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
+import { GamesHistoryService } from './games.history.service';
+import { RoomService } from './room.service';
+import { ScoresService } from './score.service';
 import { SocketHandlerService } from './socket-handler.service';
 
 export class SocketGameService extends SocketHandlerService {
+    constructor(
+        public discussionChannelService: DiscussionChannelService,
+        public sio: io.Server,
+        scoreService: ScoresService,
+        playerGameHistoryService: PlayerGameHistoryService,
+        gamesHistoryService: GamesHistoryService,
+        public chatMessageService: ChatMessageService,
+        public roomService: RoomService,
+        public dateService: DateService,
+    ) {
+        super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
+    }
+
     handleGetPlayerInfo(socket: io.Socket, roomName: string) {
         this.updatePlayerView(socket, roomName);
     }
@@ -99,6 +118,7 @@ export class SocketGameService extends SocketHandlerService {
                 sender: virtualPlayer.pseudo,
                 color: MessageSenderColors.PLAYER2,
             });
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo);
             this.handleCommand(socket, room, message, virtualPlayer);
         }, THREE_SECONDS_IN_MS);
     }
@@ -114,6 +134,7 @@ export class SocketGameService extends SocketHandlerService {
             sender: virtualPlayer.pseudo,
             color: MessageSenderColors.PLAYER2,
         });
+        this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo);
         this.handleCommand(socket, room, message, virtualPlayer);
     }
 
@@ -123,9 +144,12 @@ export class SocketGameService extends SocketHandlerService {
             const chatMessage = this.convertToChatMessage(room, socket.id, message);
             if (commandSender instanceof VirtualPlayer === false) {
                 this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.Message, chatMessage);
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, room.getPlayerName(socket.id) as string);
                 return;
             }
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, chatMessage);
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, room.getPlayerName(socket.id) as string);
+
             return;
         }
 
@@ -133,8 +157,10 @@ export class SocketGameService extends SocketHandlerService {
         if (this.chatMessageService.isError) {
             this.chatMessageService.message.sender = SYSTEM_NAME;
             this.chatMessageService.message.color = MessageSenderColors.SYSTEM;
-            if (commandSender instanceof VirtualPlayer === false)
+            if (commandSender instanceof VirtualPlayer === false) {
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, this.chatMessageService.message);
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, this.chatMessageService.message.text);
+            }
             this.chatMessageService.restore();
             return;
         }
@@ -227,6 +253,20 @@ export class SocketGameService extends SocketHandlerService {
         return;
     }
 
+    private sendChannelMessageToEveryoneInRoom(channelName: string, message: string, sender?: string) {
+        const discussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);
+        if (!discussionChannel) return;
+        const channelMessage = {
+            channelName,
+            system: sender ? false : true,
+            sender,
+            message,
+            time: new Date().toLocaleTimeString([], { hour12: false }),
+        };
+        discussionChannel.addMessage(channelMessage);
+        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, discussionChannel.messages);
+    }
+
     private mustVerifyBotPlayedHisTurn(room: Room): boolean {
         return (
             ((room.elapsedTime - 1) % BOT_COMMAND_TIMEOUT_SEC) + 1 === BOT_COMMAND_TIMEOUT_SEC &&
@@ -237,6 +277,7 @@ export class SocketGameService extends SocketHandlerService {
     private handleBotGreeting(name: string, greeting: string, roomName: string) {
         const chatMessage: ChatMessage = { sender: name, text: greeting, color: MessageSenderColors.PLAYER2 };
         this.sendToEveryoneInRoom(roomName, SocketEvent.Message, chatMessage);
+        this.sendChannelMessageToEveryoneInRoom(roomName, greeting, name);
     }
 
     private isRoomAndPlayerValid(socket: io.Socket, roomName: string): boolean {
@@ -273,6 +314,7 @@ export class SocketGameService extends SocketHandlerService {
                 socket
                     .to(room.roomInfo.name)
                     .emit(SocketEvent.Message, { text: report.messageToOthers, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM });
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, report.messageToOthers as string);
                 sender.addCommand(report);
                 break;
             case CommandVerbs.SKIP:
@@ -302,6 +344,7 @@ export class SocketGameService extends SocketHandlerService {
         if (report.message) {
             const systemMessage: ChatMessage = { text: report.message, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemMessage);
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, systemMessage.text);
         }
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
         this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
@@ -316,6 +359,7 @@ export class SocketGameService extends SocketHandlerService {
                 color: MessageSenderColors.GOALS,
             };
             this.sendToEveryoneInRoom(roomName, SocketEvent.Message, goalMessage);
+            this.sendChannelMessageToEveryoneInRoom(roomName, goalMessage.text);
             goal.communicated = true;
         });
     }

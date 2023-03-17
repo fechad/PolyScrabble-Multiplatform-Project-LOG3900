@@ -1,3 +1,16 @@
+app-goals-container {
+    display: flex;
+    width: 100%;
+}
+
+app-rack {
+    width: 100%;
+}
+
+.body-main-container {
+    width: 100%;
+}
+
 .command {
     display: flex;
     flex-direction: column;
@@ -21,32 +34,18 @@
     transition: box-shadow 0.15s, transform 0.15s;
 }
 
-.red-dot {
-    position: relative;
-    top: 20%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    text-align: center;
-    background-color: red;
-    color: white;
-}
-
-.hint-icon{
-    width: 60px;
-}
-
 #left-panel {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    min-width: 50px;
 }
 
 #board-rack {
     height: 800px;
 }
-.page {
+
+.test {
     padding: 8px;
     display: flex;
     flex-direction: row;
@@ -66,8 +65,9 @@
     background-color: white;
 }
 
-::ng-deep .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-    background-color: #7DAF6B;
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+    background-color: #7daf6b;
 }
 
 #main-page-container {
@@ -79,14 +79,14 @@
     max-height: 50px;
 }
 
-.fa-flag{
+.fa-flag {
     color: red;
     font-size: 43px;
     cursor: pointer;
 }
 
 .fa-comment {
-    color: #7DAF6B;
+    color: #7daf6b;
     font-size: 43px;
     cursor: pointer;
 }
@@ -94,29 +94,28 @@
 .material-symbols-outlined {
     cursor: pointer;
     font-size: 43px;
-    color: #F3CA38;
-  font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 48;
+    color: #f3ca38;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 }
 
 .quit {
     cursor: pointer;
     font-size: 43px;
     color: #ff0000;
-  font-variation-settings:
-  'FILL' 1,
-  'wght' 900,
-  'GRAD' 0,
-  'opsz' 48;
+    font-variation-settings: 'FILL' 1, 'wght' 900, 'GRAD' 0, 'opsz' 48;
 }
 
-
 .right-panel {
-    width: 500px;
-    height: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    margin-right: 20px;
+}
+
+.top-content {
+    width: 100%;
 }
 
 .side-container {
@@ -146,4 +145,8 @@
 .button.quit-button:enabled:active {
     box-shadow: #ff8989 0 3px 7px inset;
     transform: translateY(2px);
+}
+
+.page-body {
+    margin-left: 0px;
 }

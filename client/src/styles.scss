@@ -303,12 +303,6 @@ select {
     color: #29e0a3;
 }
 
-.icon {
-    color: white;
-    cursor: pointer;
-    background-color: transparent;
-}
-
 .title {
     color: #000000;
     font-size: 3rem;
@@ -403,14 +397,6 @@ select {
     transform: translateY(-4px);
 }
 
-.flex-column {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 20px;
-}
-
 .flex-row {
     display: flex;
     align-items: center;
@@ -420,7 +406,6 @@ select {
 }
 
 .icon {
-    color: white;
     cursor: pointer;
     background-color: transparent;
 }

@@ -122,6 +122,7 @@ export class PlaceLetter extends Command {
         if (!nextTile) return;
         while (nextTile.content !== '') {
             position.x += 1;
+            if (!this.lettersInBoard[position.x]) return;
             nextTile = this.lettersInBoard[position.x][position.y];
             if (!nextTile) return;
         }

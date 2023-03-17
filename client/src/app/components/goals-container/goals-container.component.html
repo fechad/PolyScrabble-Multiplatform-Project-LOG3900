@@ -1,18 +1,18 @@
-
-<mat-tab-group mat-stretch-tabs>
-    <mat-tab label = "Objectifs">
-        <div class="side-container" class="flex-column">
+<div class="side-container">
+    <div class="show-choice">
+        <button class="choice-button">Objectifs</button>
+        <button class="choice-button">Chevalets</button>
+    </div>
     <div id="main-container">
         <app-goal
-                    *ngFor="let goal of publicGoals"
-                    class="public-goal"
-                    [title]="goal.title"
-                    [description]="goal.description"
-                    [reward]="goal.reward"
-                    [reached]="goal.reached"
-                    [isPublic]="goal.isPublic"
-                    style="width: 96%;"
-                ></app-goal>
+            *ngFor="let goal of publicGoals"
+            class="public-goal"
+            [title]="goal.title"
+            [description]="goal.description"
+            [reward]="goal.reward"
+            [reached]="goal.reached"
+            [isPublic]="goal.isPublic"
+        ></app-goal>
         <!-- <div id="goals-container">
             <app-goal
                 class="private-goal"
@@ -47,9 +47,3 @@
         ></app-goal> -->
     </div>
 </div>
-
-    </mat-tab>
-    <mat-tab label = "Chevalets">
-        <div id="main-container"></div>
-    </mat-tab>
-</mat-tab-group>

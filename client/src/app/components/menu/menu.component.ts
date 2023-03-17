@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -10,6 +12,7 @@ import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { HintService } from '@app/services/hint.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -23,6 +26,8 @@ import { environment } from 'src/environments/environment';
 })
 export class MenuComponent extends ComponentCommunicationManager implements OnInit {
     @Input() isWaitMultiPage: boolean;
+    @Input() isGamePage: boolean;
+
     @ViewChild('chatMenu', { static: false }) private chatMenu!: ElementRef<HTMLDivElement>;
     @ViewChild('chatContainer', { static: false }) private chatContainer!: ElementRef<HTMLDivElement>;
     @ViewChild('menuContainer', { static: false }) private menuContainer!: ElementRef<HTMLDivElement>;
@@ -30,18 +35,27 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     selectedDiscussionChannel: DiscussionChannel;
     availableDiscussionChannels: DiscussionChannel[];
     roomChannel: DiscussionChannel;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ipcRenderer: any;
     constructor(
         private playerService: PlayerService,
         private httpService: HttpService,
         private router: Router,
         protected socketService: SocketClientService,
         private dialog: MatDialog,
+        protected hintService: HintService,
     ) {
         super(socketService);
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
         this.availableDiscussionChannels = [];
         this.roomChannel = new DiscussionChannel('');
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            this.ipcRenderer = (window as any).require('electron').ipcRenderer;
+        } catch (error) {
+            return;
+        }
     }
 
     get room(): Room {
@@ -50,6 +64,14 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     get isGameCreator(): boolean {
         return this.room.roomInfo.creatorName === this.playerService.player.pseudo;
+    }
+
+    get isGameOver(): boolean {
+        return this.room.roomInfo.isGameOver as boolean;
+    }
+
+    get isNewChatWindowOpen(): boolean {
+        return this.playerService.isNewChatWindowOpen;
     }
 
     ngOnInit() {
@@ -169,6 +191,53 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.router.navigate(['/home']);
     }
 
+    confirmLeaving() {
+        const description: InformationalPopupData = {
+            header: 'Voulez-vous vraiment abandonner ?',
+            body: 'Vous ne serez pas dans le tableau des meilleurs scores.',
+        };
+        const dialog = this.dialog.open(ConfirmationPopupComponent, {
+            width: DIALOG_WIDTH,
+            autoFocus: true,
+            data: description,
+        });
+
+        dialog.afterClosed().subscribe((result) => {
+            if (!result) return;
+            this.leaveGame();
+        });
+    }
+
+    leaveGame() {
+        this.socketService.disconnect();
+        this.router.navigate(['/main']);
+    }
+
+    openChatOnNewWindow() {
+        try {
+            this.ipcRenderer.send('open-chat', {
+                room: this.room,
+                player: this.playerService.player,
+                account: this.playerService.account,
+            });
+            this.closeChat();
+            this.playerService.isNewChatWindowOpen = true;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.info(error);
+        }
+    }
+
+    closeChatNewWindow() {
+        try {
+            this.ipcRenderer.send('close-chat');
+            this.playerService.isNewChatWindowOpen = false;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.info(error);
+        }
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
             const discussionChannel = this.getDiscussionChannelByName(channelMessages[0]?.channelName);
@@ -210,6 +279,13 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         });
 
         this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
+        if (this.isGamePage) {
+            this.socketService.send(SocketEvent.JoinChatChannel, {
+                name: this.room.roomInfo.name,
+                user: this.playerService.player.pseudo,
+                isRoomChannel: true,
+            });
+        }
         this.updateAvailableChannels();
     }
 
