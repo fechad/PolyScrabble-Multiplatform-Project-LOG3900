@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CurrentFocus } from '@app/classes/current-focus';
+import { ERROR } from '@app/constants/rack-constants';
 import { BehaviorSubject } from 'rxjs';
 
 const DEFAULT_FOCUS = CurrentFocus.CHAT;
@@ -9,10 +10,12 @@ const DEFAULT_FOCUS = CurrentFocus.CHAT;
 export class FocusHandlerService {
     currentFocus: BehaviorSubject<string>;
     clientChatMessage: BehaviorSubject<string>;
+    showHint: BehaviorSubject<number>;
 
     constructor() {
         this.currentFocus = new BehaviorSubject('');
         this.clientChatMessage = new BehaviorSubject('');
+        this.showHint = new BehaviorSubject(ERROR);
         this.currentFocus.next(DEFAULT_FOCUS);
     }
 

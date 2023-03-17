@@ -46,6 +46,7 @@ import { AdminDictionariesPageComponent } from './pages/admin-dictionaries-page/
 import { AdminGamesPageComponent } from './pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { BestScoresPageComponent } from './pages/best-scores-page/best-scores-page.component';
+import { ChatWindowPageComponent } from './pages/chat-window-page/chat-window-page.component';
 import { ForgotPasswordPageComponent } from './pages/forgot-password-page/forgot-password-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
@@ -102,6 +103,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         SettingsPageComponent,
         ForgotPasswordPageComponent,
         PredefinedAvatarsPopupComponent,
+        ChatWindowPageComponent,
     ],
     imports: [
         AppMaterialModule,

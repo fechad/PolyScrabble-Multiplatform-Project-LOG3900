@@ -1,14 +1,26 @@
 <div #menuContainer class="menu-container">
-    <div class="menu">
-        <div class="icons-container">
+    <div class="menu" [class.game-page]="isGamePage">
+        <div *ngIf="!isGamePage" class="icons-container">
             <button class="icon">[-_-]</button>
-            <button (click)="showChatMenu()" class="icon">Chat</button>
+            <button *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon">Chat</button>
+            <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon">Close chat</button>
             <button class="icon">Trophy</button>
             <button class="icon">Eyes</button>
         </div>
-        <div class="icons-container">
+        <div *ngIf="!isGamePage" class="icons-container">
             <button class="icon" (click)="navigateSettings()">[||]</button>
             <button (click)="logOut()" class="icon">logout</button>
+        </div>
+
+        <div *ngIf="isGamePage" class="icons-container game-page">
+            <div (click)="hintService.showHint()" class="hint-icon">
+                <div class="red-dot">{{ hintService.nbHints }}</div>
+                <i class="material-symbols-outlined" *ngIf="!isGameOver">emoji_objects</i>
+                <div>+ {{ hintService.hintValue }}pts</div>
+            </div>
+            <button *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon game-page">Chat</button>
+            <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon game-page">Close chat</button>
+            <i class="fa fa-flag" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
         </div>
 
         <!-- CHAT MENU -->
@@ -32,9 +44,13 @@
             <button (click)="createChatChannel('custom channel')" class="button new-channel">New Chat</button>
         </div>
     </div>
-    <div #chatContainer class="chat-container">
+    <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
         <div *ngIf="!isWaitMultiPage" class="chat-header">
-            <button class="close-chat-button" (click)="closeChat()">X</button>
+            <div></div>
+            <div>
+                <button (click)="openChatOnNewWindow()">new window</button>
+                <button class="close-chat-button" (click)="closeChat()">X</button>
+            </div>
         </div>
         <div *ngIf="isWaitMultiPage && selectedDiscussionChannel.name === room.roomInfo.name" class="waiting-room-header">
             <div class="game-info-container">

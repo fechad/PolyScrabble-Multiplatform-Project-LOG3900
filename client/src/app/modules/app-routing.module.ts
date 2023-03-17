@@ -6,6 +6,7 @@ import { AdminDictionariesPageComponent } from '@app/pages/admin-dictionaries-pa
 import { AdminGamesPageComponent } from '@app/pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
 import { BestScoresPageComponent } from '@app/pages/best-scores-page/best-scores-page.component';
+import { ChatWindowPageComponent } from '@app/pages/chat-window-page/chat-window-page.component';
 import { ForgotPasswordPageComponent } from '@app/pages/forgot-password-page/forgot-password-page.component';
 import { GameCreateMultiplayerPageComponent } from '@app/pages/game-create-multiplayer-page/game-create-multiplayer-page.component';
 import { GameJoinMultiplayerPageComponent } from '@app/pages/game-join-multiplayer-page/game-join-multiplayer-page.component';
@@ -34,6 +35,7 @@ export const routes: Routes = [
     { path: 'user', component: UserProfileComponent },
     { path: 'settings', component: SettingsPageComponent },
     { path: 'reset-password', component: ForgotPasswordPageComponent },
+    { path: 'chat', component: ChatWindowPageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

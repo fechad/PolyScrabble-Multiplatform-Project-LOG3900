@@ -73,25 +73,6 @@ app-general-chat {
     }
 }
 
-.red-dot {
-    position: relative;
-    top: 20%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    text-align: center;
-    background-color: red;
-    color: white;
-}
-
-.hint-icon {
-    width: 60px;
-    &:hover {
-        cursor: pointer;
-    }
-}
-
 .icon {
     width: $iconDimension;
     height: $iconDimension;

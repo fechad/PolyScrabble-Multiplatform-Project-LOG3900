@@ -10,6 +10,8 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 export const LEADERBOARD_SIZE = 5;
 export const DIALOG_WIDTH = '600px';

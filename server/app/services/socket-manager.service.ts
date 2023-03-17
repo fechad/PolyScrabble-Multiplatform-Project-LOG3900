@@ -58,6 +58,7 @@ export class SocketManager {
             singleDateService,
         );
         this.socketGameService = new SocketGameService(
+            this.discussionChannelService,
             this.sio,
             this.scoresService,
             this.playerGameHistoryService,
