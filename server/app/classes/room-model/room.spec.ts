@@ -1,7 +1,9 @@
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */ // we want to set private attribute to tests the class
+import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
+import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
 import { BotGreeting } from '@app/enums/bot-greetings';
@@ -341,6 +343,39 @@ describe('room tests', () => {
         it('should return the greeting of the bot if the bot exist', () => {
             room.bot = { greeting: BotGreeting.Generic } as VirtualPlayer;
             expect(room.getBotGreeting()).to.equal(BotGreeting.Generic);
+        });
+    });
+    describe('AveragePointsService', () => {
+        let vp1: VirtualPlayer;
+        let vp2: TrumpVirtualPlayer;
+        let human1: Player;
+        let human2: Player;
+        let players: Player[];
+        const letterBank: LetterBank = new LetterBank();
+        const manipulator: BoardManipulator = new BoardManipulator(letterBank.produceValueMap());
+        beforeEach(() => {
+            vp1 = new VirtualPlayer('', false, manipulator, letterBank);
+            vp2 = new TrumpVirtualPlayer('', false, manipulator, letterBank);
+            human1 = new Player('', '', false);
+            human2 = new Player('', '', true);
+            players = [vp1, vp2, human1, human2];
+        });
+        it('should correctly compute average human points when only one human and one bot are in players array', () => {
+            players = [vp2, human2];
+            vp2.points = 20;
+            human2.points = 100;
+            room.players = players;
+            const avgPoints = room.computeAverageHumanPoints();
+            expect(avgPoints).to.be.equal(human2.points);
+        });
+        it('should correctly compute average human points when two humans and two bots are in players array', () => {
+            vp1.points = 1000;
+            vp2.points = 20;
+            human1.points = 400;
+            human2.points = 100;
+            room.players = players;
+            const avgPoints = room.computeAverageHumanPoints();
+            expect(avgPoints).to.be.equal((human1.points + human2.points) / 2);
         });
     });
 });

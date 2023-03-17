@@ -10,7 +10,7 @@ import {
     ONE_SECOND_IN_MS,
     SYSTEM_NAME,
     // eslint-disable-next-line prettier/prettier
-    THREE_SECONDS_IN_MS
+    THREE_SECONDS_IN_MS,
 } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -90,10 +90,9 @@ export class SocketGameService extends SocketHandlerService {
 
         setTimeout(async () => {
             if (!virtualPlayer.isItsTurn) return;
-            // TODO: Do gap with avg score of players that are not bot
-            const pointGap = room.players[0].points - room.players[1].points;
-            const isPlayer0Bot = room.players[0] instanceof VirtualPlayer;
-            virtualPlayer.setScoreInterval(isPlayer0Bot ? -pointGap : pointGap);
+
+            const pointGap = room.computeAverageHumanPoints() - virtualPlayer.points;
+            virtualPlayer.setScoreInterval(pointGap);
             const message = await virtualPlayer.playTurn();
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, {
                 text: message,

@@ -207,7 +207,14 @@ export class Room {
     hasARealPlayerLeft(): boolean {
         return this.players.find((player: Player) => player instanceof VirtualPlayer === false) ? true : false;
     }
-
+    computeAverageHumanPoints(): number {
+        const humansCount = this.players.filter((player) => !(player instanceof VirtualPlayer)).length;
+        return (
+            this.players.reduce((total, player) => {
+                return player instanceof VirtualPlayer ? total : total + player.points;
+            }, 0) / humansCount
+        );
+    }
     private isSamePassword(password?: string): boolean {
         if (!password && this.roomInfo.password === '') return true;
         return this.roomInfo.password === password;
