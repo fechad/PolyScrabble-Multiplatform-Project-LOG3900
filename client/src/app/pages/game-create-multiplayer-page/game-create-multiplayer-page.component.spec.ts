@@ -144,18 +144,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
 
             expect(createChatChannelEventSpy).toHaveBeenCalledWith(SocketEvent.CreateChatChannel, {
                 channel: roomValidName.roomInfo.name,
-                username: {
-                    username: playerService.player.pseudo,
-                    email: '',
-                    avatarURL: '',
-                    level: 0,
-                    badges: [],
-                    highScore: 0,
-                    gamesWon: 0,
-                    totalXp: 0,
-                    gamesPlayed: [],
-                    bestGames: [],
-                },
+                username: playerService.reducePLayerInfo(),
                 isRoomChannel: true,
             });
         });

@@ -1,15 +1,14 @@
-import { GamePlayed } from './games-played';
-import { Level } from './level';
 import { Badge } from './serveur info exchange/badge';
+import { GameHeader } from './serveur info exchange/game-header';
+import { UserSettings } from './serveur info exchange/user-settings';
 
 export interface Account {
     username: string;
     email: string;
-    level: Level;
+    userSettings: UserSettings;
+    totalXP: number;
     badges: Badge[];
-    highScore: number;
+    bestGames: GameHeader[];
+    gamesPlayed: GameHeader[];
     gamesWon: number;
-    totalXp: number;
-    gamesPlayed: GamePlayed[];
-    bestGames: GamePlayed[];
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { DEFAULT_ACCOUNT } from '@app/constants/constants';
+import { Account } from '@app/interfaces/account';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
 import { lastValueFrom } from 'rxjs';
@@ -28,8 +29,21 @@ export class PlayerService {
         if (!this.httpService) return;
         this.httpService.getUserInfo(this.player.email).subscribe((userInfo) => (this.account = userInfo));
     }
+    reducePLayerInfo(): Account {
+        return {
+            username: this.account.username,
+            email: this.account.email,
+            badges: this.account.badges,
+            gamesWon: this.account.gamesWon,
+            userSettings: this.account.userSettings,
+            totalXP: this.account.progressInfo.totalXP,
+            gamesPlayed: this.account.gamesPlayed,
+            bestGames: this.account.bestGames,
+        };
+    }
     async updateUserSettings(newSettings: UserSettings) {
         if (!this.httpService) return;
-        this.account = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, newSettings));
+        this.account.userSettings = newSettings;
+        this.account = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, this.account));
     }
 }

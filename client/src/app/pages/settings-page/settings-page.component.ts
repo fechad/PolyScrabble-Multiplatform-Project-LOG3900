@@ -23,9 +23,11 @@ export class SettingsPageComponent implements OnInit {
     isPredefinedAvatar: boolean;
     userSettings: UserSettings;
     musicOptions: { key: string; value: string }[];
+    avatarChanged: boolean;
     protected settingsForm: FormGroup;
     constructor(private formBuilder: FormBuilder, private dialog: MatDialog, private httpService: HttpService, private playerService: PlayerService) {
         this.userSettings = this.playerService.account.userSettings;
+        this.avatarChanged = false;
         this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
         this.settingsForm = this.formBuilder.group({
             avatarUrl: [this.userSettings.avatarUrl || DEFAULT_IMG_URL, [Validators.required]],
@@ -41,7 +43,9 @@ export class SettingsPageComponent implements OnInit {
     get avatarURL(): string {
         return this.settingsForm.controls.avatarUrl.value;
     }
-
+    get changed(): boolean {
+        return this.settingsForm.dirty || this.avatarChanged;
+    }
     // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method, @typescript-eslint/no-empty-function
     ngOnInit(): void {}
 
@@ -49,9 +53,13 @@ export class SettingsPageComponent implements OnInit {
         if (this.currentAvatar) {
             await this.uploadFile();
             await this.updateUserInfo();
+            this.settingsForm.markAsPristine();
+            this.avatarChanged = false;
             return;
         }
         this.chosePredefinedAvatar();
+        this.settingsForm.markAsPristine();
+        this.avatarChanged = false;
         await this.updateUserInfo();
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -59,6 +67,7 @@ export class SettingsPageComponent implements OnInit {
         this.settingsForm.patchValue({
             victoryMusic: event.target.value,
         });
+        this.settingsForm.markAsDirty();
     }
 
     openAvatarUrlsChoices() {
@@ -69,6 +78,7 @@ export class SettingsPageComponent implements OnInit {
 
         dialog.afterClosed().subscribe(async (avatarFile) => {
             if (!avatarFile) return;
+            this.avatarChanged = true;
             if (typeof avatarFile === 'string' || avatarFile instanceof String) {
                 this.settingsForm.controls.avatarUrl.setValue(avatarFile);
                 this.currentAvatar = null;
