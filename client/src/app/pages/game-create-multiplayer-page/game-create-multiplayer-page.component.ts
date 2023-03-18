@@ -115,6 +115,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
             });
             return;
         }
+        this.room.botsLevel = this.gameForm.controls.level.value;
         this.socketService.send(SocketEvent.CreateRoom, this.room);
     }
 

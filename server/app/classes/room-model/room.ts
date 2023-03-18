@@ -6,6 +6,7 @@ import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
+import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { BotGreeting } from '@app/enums/bot-greetings';
 import { GameLevel } from '@app/enums/game-level';
 import { PlacementData } from '@app/interfaces/placement-data';
@@ -13,46 +14,51 @@ import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
 import { GameManager } from './game-manager';
 
+const MULTIPLAYER_MIN_PLAYERS = 4;
+
+const DEFAULT_ROOM = {
+    name: '',
+    creatorName: '',
+    timerPerTurn: '',
+    dictionary: DEFAULT_DICTIONARY_TITLE,
+    gameType: '',
+    maxPlayers: 4,
+    surrender: '',
+    isPublic: true,
+    password: '',
+};
 export class Room {
     elapsedTime: number;
     players: Player[];
     roomInfo: RoomInfo;
-    bot: VirtualPlayer;
+    bots: VirtualPlayer[];
     startDate: Date;
     botCommunicationManager: BotCommunicationManager;
+    fillerNamesUsed: string[];
+    botsLevel: GameLevel;
     private isFirstGame: boolean;
     private gameManager: GameManager;
-
     constructor(clientRoom?: Room) {
         this.players = [];
         this.elapsedTime = 0;
         this.startDate = new Date();
+        this.fillerNamesUsed = [];
 
-        if (clientRoom) {
-            this.roomInfo = {
-                name: '',
-                creatorName: clientRoom.roomInfo.creatorName,
-                timerPerTurn: clientRoom.roomInfo.timerPerTurn,
-                dictionary: clientRoom.roomInfo.dictionary,
-                gameType: clientRoom.roomInfo.gameType,
-                maxPlayers: 4,
-                surrender: '',
-                isPublic: clientRoom.roomInfo.isPublic,
-                password: clientRoom.roomInfo.password,
-            };
-        } else {
-            this.roomInfo = {
-                name: '',
-                creatorName: '',
-                timerPerTurn: '',
-                dictionary: DEFAULT_DICTIONARY_TITLE,
-                gameType: '',
-                maxPlayers: 4,
-                surrender: '',
-                isPublic: true,
-                password: '',
-            };
-        }
+        this.botsLevel = clientRoom ? clientRoom.botsLevel : GameLevel.Adaptive;
+        this.bots = [];
+        this.roomInfo = !clientRoom
+            ? DEFAULT_ROOM
+            : {
+                  name: clientRoom.roomInfo.creatorName + ' fiesta',
+                  creatorName: clientRoom.roomInfo.creatorName,
+                  timerPerTurn: clientRoom.roomInfo.timerPerTurn,
+                  dictionary: clientRoom.roomInfo.dictionary,
+                  gameType: clientRoom.roomInfo.gameType,
+                  maxPlayers: 4,
+                  surrender: '',
+                  isPublic: clientRoom.roomInfo.isPublic,
+                  password: clientRoom.roomInfo.password,
+              };
         this.gameManager = new GameManager();
         this.botCommunicationManager = new BotCommunicationManager();
 
@@ -112,13 +118,10 @@ export class Room {
         }
     }
 
-    createPlayerVirtual(name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
-        const bot = this.gameManager.getNewVirtualPlayer(name, desiredLevel);
+    createVirtualPlayer(name: string): VirtualPlayer {
+        const bot = this.gameManager.getNewVirtualPlayer(name, this.botsLevel);
         bot.registerObserver(this.botCommunicationManager);
-
-        this.bot = bot;
-        this.addPlayer(this.bot, this.roomInfo.password);
-
+        this.addPlayer(bot, this.roomInfo.password);
         bot.sendGreeting();
         return bot;
     }
@@ -141,6 +144,15 @@ export class Room {
 
     fillPlayerRack(player: Player) {
         this.gameManager.fillPlayerRack(player);
+    }
+    fillWithVirtualPlayers() {
+        let currentCount = this.players.length;
+        while (currentCount < MULTIPLAYER_MIN_PLAYERS) {
+            const fillerName = FILLER_BOT_NAMES[this.fillerNamesUsed.length];
+            this.fillerNamesUsed.push(fillerName);
+            this.createVirtualPlayer(fillerName);
+            currentCount++;
+        }
     }
 
     removePlayer(player: Player) {
@@ -207,8 +219,9 @@ export class Room {
     }
 
     getBotGreeting(): BotGreeting | undefined {
-        if (!this.bot) return undefined;
-        return this.bot.greeting;
+        if (!this.bots) return;
+        // TODO: Find a way to use all bot greetings
+        return this.bots[0].greeting;
     }
 
     hasARealPlayerLeft(): boolean {

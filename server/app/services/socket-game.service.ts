@@ -90,6 +90,8 @@ export class SocketGameService extends SocketHandlerService {
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
 
         if (room.hasTimer()) return;
+        room.fillWithVirtualPlayers();
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotJoinedRoom, room.players);
         this.setTimer(socket, room);
         room.fillPlayersRack();
         this.roomService.setUnavailable(room.roomInfo.name);

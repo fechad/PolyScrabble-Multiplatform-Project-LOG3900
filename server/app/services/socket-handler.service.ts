@@ -1,8 +1,9 @@
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { DEFAULT_ROOM_NAME, DISCONNECT_DELAY, SYSTEM_NAME } from '@app/constants/constants';
+import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { CommandController } from '@app/controllers/command.controller';
-import { GameLevel } from '@app/enums/game-level';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
@@ -91,8 +92,7 @@ export class SocketHandlerService {
     }
 
     swapPlayerForBot(room: Room, player: Player) {
-        const desiredLevel = GameLevel.Expert;
-        const bot = room.createPlayerVirtual('Trump', desiredLevel);
+        const bot = room.createVirtualPlayer(FILLER_BOT_NAMES[room.fillerNamesUsed.length]);
         bot.points = player.points;
         bot.replaceRack(player.rack);
 
@@ -150,7 +150,7 @@ export class SocketHandlerService {
     updateLeaderboard(room: Room) {
         const isoDate = this.dateService.getCurrentDate();
         for (const player of room.players) {
-            if (!player || room.bot === player) continue;
+            if (!player || player instanceof VirtualPlayer) continue;
             const score: Score = {
                 author: player.pseudo,
                 points: player.points,
@@ -166,7 +166,7 @@ export class SocketHandlerService {
         const playerResults: { playerID: string; score: number }[] = [];
         room.players.forEach((player) => {
             let playerId = 'notAnswered';
-            if (player.pseudo && player.pseudo !== room.bot?.pseudo) {
+            if (player.pseudo && !(player instanceof VirtualPlayer)) {
                 playerId = player.pseudo;
             }
             const result = { playerID: playerId, score: player.points };
@@ -180,9 +180,7 @@ export class SocketHandlerService {
             surrender: room.roomInfo.surrender,
             botIDS: [],
         };
-        if (room.bot?.pseudo) {
-            game.botIDS.push(room.bot?.pseudo);
-        }
+        room.bots.forEach((bot) => game.botIDS.push(bot.pseudo));
 
         await this.gamesHistoryService.updateGame(game.startDatetime, game);
         await this.playerGameHistoryService.updatePlayersGameHistories(game);

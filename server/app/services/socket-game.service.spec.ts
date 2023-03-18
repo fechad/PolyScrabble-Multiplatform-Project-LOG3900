@@ -52,7 +52,7 @@ describe('socketGameService service tests', () => {
     const firstPlayer = new Player('socketId1', 'pseudo1', true);
     const roomMock = new Room();
     roomMock.roomInfo.name = 'Room0';
-    roomMock.bot = {
+    roomMock.bots[0] = {
         playTurn: () => {
             return '' as any;
         },

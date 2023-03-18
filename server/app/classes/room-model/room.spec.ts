@@ -6,7 +6,6 @@ import { Player } from '@app/classes/player';
 import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
-import { BotGreeting } from '@app/enums/bot-greetings';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 import { Room } from './room';
@@ -335,16 +334,6 @@ describe('room tests', () => {
         });
     });
 
-    describe('greetings tests', () => {
-        it('should return undefine if the bot does not exist', () => {
-            expect(room.getBotGreeting()).to.equal(undefined);
-        });
-
-        it('should return the greeting of the bot if the bot exist', () => {
-            room.bot = { greeting: BotGreeting.Generic } as VirtualPlayer;
-            expect(room.getBotGreeting()).to.equal(BotGreeting.Generic);
-        });
-    });
     describe('AveragePointsService', () => {
         let vp1: VirtualPlayer;
         let vp2: TrumpVirtualPlayer;
