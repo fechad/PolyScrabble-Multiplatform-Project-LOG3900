@@ -145,7 +145,7 @@ describe('SocketHandler service tests', () => {
 
         it('should swap the player for a bot when real player left on multi room', (done) => {
             expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(firstPlayer);
-            const virtualPlayerSpy = sinon.spy(roomMock, 'createPlayerVirtual');
+            const virtualPlayerSpy = sinon.spy(roomMock, 'createVirtualPlayer');
 
             const previousRoomMockPlayersLength = roomMock.players.length;
 
@@ -162,7 +162,7 @@ describe('SocketHandler service tests', () => {
         it('should set the bot correctly when a real player left on multi room', (done) => {
             const playerPoints = 10;
             firstPlayer.points = playerPoints;
-            const createVirtualPlayerStub = sinon.stub(roomMock, 'createPlayerVirtual').returns(virtualPlayer);
+            const createVirtualPlayerStub = sinon.stub(roomMock, 'createVirtualPlayer').returns(virtualPlayer);
             const botReplaceRackSpy = sinon.spy(virtualPlayer, 'replaceRack');
 
             const clock = sinon.useFakeTimers();
@@ -176,7 +176,7 @@ describe('SocketHandler service tests', () => {
         });
 
         it('should call the correct methods when a real player leave on multi room', (done) => {
-            sinon.stub(roomMock, 'createPlayerVirtual').returns(virtualPlayer);
+            sinon.stub(roomMock, 'createVirtualPlayer').returns(virtualPlayer);
             const sendToEveryoneSpy = sinon.spy(socketHandlerService, 'sendToEveryoneInRoom');
             const socketEmitRoomSpy = sinon.spy(socketHandlerService, 'socketEmitRoom');
 

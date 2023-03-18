@@ -38,11 +38,13 @@ describe('socketRoomService service tests', () => {
     const secondPlayer = new Player('socketId2', 'pseudo2', false);
     const roomMock = new Room();
     roomMock.roomInfo.name = 'Room0';
-    roomMock.bot = {
-        playTurn: () => {
-            return '' as any;
-        },
-    } as VirtualPlayer;
+    roomMock.bots = [
+        {
+            playTurn: () => {
+                return '' as any;
+            },
+        } as VirtualPlayer,
+    ];
     const socketMock = new SocketMock() as any;
 
     beforeEach(() => {
@@ -154,6 +156,8 @@ describe('socketRoomService service tests', () => {
         it('Should not add the socket a room on handleJoinRequest if the room is undefined', (done) => {
             const spy = sinon.spy(socketRoomService.roomService, 'setUnavailable');
             joinRoomForm.roomName = '';
+            getRoomStub.restore();
+            getRoomStub = sinon.stub(socketRoomService.roomService, 'getRoom').returns(undefined);
             socketRoomService.handleJoinRequest(socketMock, joinRoomForm);
             const newRoomSize = socketRoomService.sio.sockets.adapter.rooms.get(roomMock.roomInfo.name)?.size;
             expect(newRoomSize).to.equal(undefined);
@@ -170,12 +174,16 @@ describe('socketRoomService service tests', () => {
         });
 
         it('should increase the number of unavailableRoom and decrease the number of AvailableRooms on handleJoinRequest', (done) => {
+            socketRoomService.roomService.roomsUnavailable = [];
             socketRoomService.roomService.roomsAvailable = [roomMock];
             const numberOfUnavailableRooms = socketRoomService.roomService.getRoomsUnavailable().length;
             const numberOfAvailableRooms = socketRoomService.roomService.getRoomsAvailable().length;
             roomMock.players = [firstPlayer, firstPlayer, firstPlayer];
+            const canAddPlayerStub = sinon.stub(roomMock, 'canAddPlayer').returns(true);
 
             socketRoomService.handleJoinRequest(socketMock, joinRoomForm);
+
+            assert(canAddPlayerStub.called, 'did not call room.canAddPlayerStub on handleJoinRequest');
             expect(socketRoomService.roomService.getRoomsUnavailable().length).to.equal(numberOfUnavailableRooms + 1);
             expect(socketRoomService.roomService.getRoomsAvailable().length).to.equal(numberOfAvailableRooms - 1);
             done();

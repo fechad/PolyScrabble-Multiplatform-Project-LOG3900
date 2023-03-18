@@ -59,3 +59,4 @@ export const LOWER_GAP_INTERVAL = 10;
 export const UPPER_GAP_INTERVAL = 5;
 export const DEFAULT_MAX_GAP = 6;
 export const DEFAULT_BOTS_NAME = ['Trump', 'Zemmour', 'Legault', 'Ulrich', 'Augustin', 'Sami'];
+export const FILLER_BOT_NAMES = ['Jack', 'Niko', 'Zeoui', 'OuiOui', 'Filoulou'];

@@ -54,7 +54,7 @@ export class GameManager {
         switch (desiredLevel) {
             case GameLevel.Beginner:
                 return new VirtualPlayerBeginner(name, false, this.boardManipulator, this.letterBank, desiredLevel);
-            case GameLevel.Adaptative:
+            case GameLevel.Adaptive:
                 return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel);
             case GameLevel.Expert:
                 return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank, desiredLevel);

@@ -7,11 +7,13 @@ export class Room {
     players: Player[];
     roomInfo: RoomInfo;
     isBankUsable: boolean;
+    botsLevel: string;
 
     constructor() {
         this.roomInfo = { name: '', creatorName: '', timerPerTurn: '', dictionary: '', gameType: '', maxPlayers: 4, isPublic: true, password: '' };
         this.players = [];
         this.isBankUsable = true;
+        this.botsLevel = 'adaptive';
     }
 
     reinitialize(gameType: string) {

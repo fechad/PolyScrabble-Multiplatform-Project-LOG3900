@@ -13,10 +13,9 @@ export class SocketRoomService extends SocketHandlerService {
 
         const availableRoom = this.roomService.createRoom(data.room);
         const desiredLevel = data.desiredLevel as GameLevel;
-        const bot = availableRoom.createPlayerVirtual(data.botName, desiredLevel);
+        availableRoom.botsLevel = desiredLevel;
+        availableRoom.createVirtualPlayer(data.botName);
         this.roomService.setUnavailable(availableRoom.roomInfo.name);
-
-        bot.notifyObservers('test');
 
         this.socketJoin(socket, availableRoom.roomInfo.name);
         this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
@@ -61,11 +60,10 @@ export class SocketRoomService extends SocketHandlerService {
         const roomName = joinRoomForm.roomName;
         const serverRoom = this.roomService.getRoom(roomName);
         if (!serverRoom || !serverRoom.canAddPlayer(joinRoomForm.password)) return;
-
         const playerToAdd = joinRoomForm.player;
         serverRoom.addPlayer(new Player(playerToAdd.socketId, playerToAdd.pseudo, playerToAdd.isCreator), joinRoomForm.password);
 
-        if (serverRoom.players.length === serverRoom.maxPlayers) this.roomService.setUnavailable(roomName);
+        if (serverRoom.players.length >= serverRoom.maxPlayers) this.roomService.setUnavailable(roomName);
         this.socketJoin(socket, roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
 

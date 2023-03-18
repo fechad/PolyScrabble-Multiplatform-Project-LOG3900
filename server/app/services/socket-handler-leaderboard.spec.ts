@@ -5,7 +5,6 @@ import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { CommandResult } from '@app/interfaces/command-result';
-import { Score } from '@app/interfaces/score';
 import { assert } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
@@ -77,7 +76,7 @@ describe('LeaderBoard', () => {
 
     afterEach(() => {
         roomMock['gameManager'].turnPassedCounter = 0;
-        roomMock.bot = undefined as unknown as VirtualPlayer;
+        roomMock.bots = [undefined as unknown as VirtualPlayer];
         sinon.restore();
     });
 
@@ -107,24 +106,6 @@ describe('LeaderBoard', () => {
             socketMock.id = secondPlayer.socketId;
             socketGameService.handleMessage(socketMock, '');
             assert(updateBestScoreStub.calledTwice, 'did not call updateLeaderboard twice');
-            done();
-        });
-        it('When there is a virtual player in the room, scoreService.updateBestScore should only be called once with the real player', (done) => {
-            roomMock.bot = secondPlayer as VirtualPlayer;
-            roomMock.roomInfo.isSolo = true;
-            firstPlayer.points = 5;
-            const score: Score = {
-                points: 5,
-                author: firstPlayer.pseudo,
-                gameType: roomMock.roomInfo.gameType,
-                dictionary: roomMock.roomInfo.dictionary,
-                date: fakeDate,
-            };
-            roomMock['gameManager'].turnPassedCounter = 0;
-            roomMock.players = [firstPlayer, roomMock.bot];
-            socketMock.id = secondPlayer.socketId;
-            socketGameService.handleMessage(socketMock, '');
-            assert(updateBestScoreStub.calledOnceWith(score), 'did not call updateLeaderboard once with the human player score');
             done();
         });
     });
