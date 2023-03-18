@@ -13,8 +13,10 @@ export class SocketRoomService extends SocketHandlerService {
 
         const availableRoom = this.roomService.createRoom(data.room);
         const desiredLevel = data.desiredLevel as GameLevel;
-        availableRoom.createPlayerVirtual(data.botName, desiredLevel);
+        const bot = availableRoom.createPlayerVirtual(data.botName, desiredLevel);
         this.roomService.setUnavailable(availableRoom.roomInfo.name);
+
+        bot.notifyObservers('test');
 
         this.socketJoin(socket, availableRoom.roomInfo.name);
         this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);

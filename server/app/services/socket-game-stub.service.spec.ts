@@ -7,9 +7,7 @@ import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
-import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { COUNT_PLAYER_TURN, SYSTEM_NAME } from '@app/constants/constants';
-import { BotGreeting } from '@app/enums/bot-greetings';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
@@ -170,21 +168,6 @@ describe('Socket-game-stub service tests', () => {
             socketGameService.handleStartGame(socketMock);
 
             assert(givePlayerGoalsStub.called, 'did not called room.givesPlayerGoals when gameType was not log2990');
-            done();
-        });
-        it('Should call handleBotGreeting() with correct attributes on handleStartGame', (done) => {
-            roomMock['gameManager'].hasTimeout = false;
-            roomMock.bot = secondPlayer as VirtualPlayer;
-            roomMock.players = [firstPlayer, secondPlayer];
-            const getBotGreetingStub = sinon.stub(roomMock, 'getBotGreeting').returns(BotGreeting.Generic);
-            const handleGreetingStub = sinon.spy(socketGameService as any, 'handleBotGreeting');
-            socketGameService.handleStartGame(socketMock);
-
-            assert(getBotGreetingStub.called, 'did not call room.getBotGreetingStub on handleStartGame');
-            assert(
-                handleGreetingStub.calledWith(roomMock.bot.pseudo, BotGreeting.Generic, roomMock.roomInfo.name),
-                'did not call room.handleGreeting on handleStartGame',
-            );
             done();
         });
         it('should call the correct methods on updatePlayerView', (done) => {

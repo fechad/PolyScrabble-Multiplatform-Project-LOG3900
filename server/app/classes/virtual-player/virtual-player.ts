@@ -2,6 +2,8 @@ import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
 import { BoardNode } from '@app/classes/board-model/nodes/board-node';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
+import { Observable } from '@app/classes/observer-pattern/observable';
+import { Observer } from '@app/classes/observer-pattern/observer';
 import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
@@ -17,9 +19,11 @@ import { VirtualPlayerTools } from '@app/interfaces/virtual-player-tools';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
 import { IntervalComputer } from './interval-computer';
 
-export class VirtualPlayer extends Player {
+export class VirtualPlayer extends Player implements Observable {
+    observers: Observer[];
     centerNode: BoardNode;
     greeting: BotGreeting;
+
     protected maxGap: number;
     protected possiblePlacements: UserPlacement[];
     protected basis: VirtualBasis;
@@ -35,6 +39,8 @@ export class VirtualPlayer extends Player {
         scale: AdaptiveScale = SCALES.default,
     ) {
         super('', pseudo, isCreator);
+        this.observers = [];
+
         this.basis = { level: desiredLevel, actions: [], scoreIntervals: [] };
         const baseTools: VirtualTools = {
             translator: new IndexationTranslator(),
@@ -63,6 +69,30 @@ export class VirtualPlayer extends Player {
         this.intervalComputer.setScoreInterval(gap);
     }
 
+    sendGreeting() {
+        this.sendMessage(this.greeting);
+    }
+
+    sendMessage(message: string) {
+        this.notifyObservers({ message, sender: this.pseudo });
+    }
+
+    registerObserver(observer: Observer) {
+        this.observers.push(observer);
+    }
+
+    removeObserver(observer: Observer) {
+        const observerIndex = this.observers.indexOf(observer);
+        if (observerIndex < 0) return;
+        this.observers.splice(observerIndex, 1);
+    }
+
+    notifyObservers(data: unknown) {
+        for (const observer of this.observers) {
+            observer.handleObservableNotification(data);
+        }
+    }
+
     protected passTurnAction(): string {
         return `${FullCommandVerbs.SKIP}`;
     }
@@ -87,6 +117,17 @@ export class VirtualPlayer extends Player {
             offset++;
         } while (filtered.length === 0);
         const chosenPlacement = filtered[Math.floor(Math.random() * filtered.length)];
+
+        // You can remove the "if" below. These are just an example of situational messages
+        const highPoints = 10;
+        const lowPoints = 5;
+        if (chosenPlacement.points > highPoints) {
+            this.sendMessage('Je suis en feu!');
+        }
+        if (chosenPlacement.points <= lowPoints) {
+            this.sendMessage("Ouf, j'aurais pu faire mieux");
+        }
+
         return `${FullCommandVerbs.PLACE} ${chosenPlacement.row}${chosenPlacement.col}${chosenPlacement.direction} ${chosenPlacement.letters}`;
     }
 
