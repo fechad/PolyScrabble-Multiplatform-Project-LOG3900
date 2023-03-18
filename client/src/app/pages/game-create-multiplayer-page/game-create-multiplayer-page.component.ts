@@ -149,18 +149,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
             this.room.roomInfo.name = serverRoom.roomInfo.name;
             this.socketService.send(SocketEvent.CreateChatChannel, {
                 channel: serverRoom.roomInfo.name,
-                username: {
-                    username: this.playerService.player.pseudo,
-                    email: '',
-                    avatarURL: '',
-                    level: 0,
-                    badges: [],
-                    highScore: 0,
-                    gamesWon: 0,
-                    totalXp: 0,
-                    gamesPlayed: [],
-                    bestGames: [],
-                },
+                username: this.playerService.reducePLayerInfo(),
                 isRoomChannel: true,
             });
             if (this.isSolo) {

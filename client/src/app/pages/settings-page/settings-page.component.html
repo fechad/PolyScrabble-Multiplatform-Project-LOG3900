@@ -36,13 +36,19 @@
                     <div class="victory-music-section">
                         <label for="music" class="section-title">Musique de victoire: </label>
                         <select name="Music" id="music" (change)="onMusicSelectionChange($event)">
-                            <option *ngFor="let music of musicOptions" [value]="music.key">{{ music.value }}</option>
+                            <option
+                                *ngFor="let music of musicOptions"
+                                [selected]="settingsForm.controls.victoryMusic.value === music.key"
+                                [value]="music.key"
+                            >
+                                {{ music.value }}
+                            </option>
                         </select>
                         <br /><br />
                     </div>
                     <button class="password-section">Changer le mot de passe</button>
 
-                    <input class="save-button" type="submit" value="Sauvegarder" (click)="sendData()" />
+                    <input class="save-button" type="submit" value="Sauvegarder" (click)="sendData()" [disabled]="!changed" />
                 </div>
             </form>
         </div>

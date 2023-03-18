@@ -11,7 +11,6 @@ import {
 import { Bot } from '@app/interfaces/bot';
 import { Game } from '@app/interfaces/game';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
-import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -53,9 +52,9 @@ export class HttpService {
     uploadFile(data: FormData): Observable<any> {
         return this.http.post(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, data);
     }
-    updateUserSettings(userEmail: string, newSettings: UserSettings): Observable<ClientAccountInfo> {
+    updateUserSettings(userEmail: string, newClientAccountInfo: ClientAccountInfo): Observable<ClientAccountInfo> {
         this.clearError();
-        return this.http.patch<ClientAccountInfo>(`${this.baseUrl}/${this.userInfoUrl}/${userEmail}`, newSettings);
+        return this.http.patch<ClientAccountInfo>(`${this.baseUrl}/${this.userInfoUrl}/${userEmail}`, newClientAccountInfo);
     }
     getUsernames() {
         this.clearError();

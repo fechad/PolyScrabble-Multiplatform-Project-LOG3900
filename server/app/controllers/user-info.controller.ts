@@ -14,7 +14,6 @@ export class UserInfoController {
     constructor(private databaseService: DatabaseService) {
         this.configureRouter();
     }
-
     private buildClientAccountInfo(data: Account): ClientAccountInfo {
         const level = LevelService.getLevel(data.totalXP);
         const progressInfo: ProgressInfo = {
@@ -27,6 +26,18 @@ export class UserInfoController {
         // TODO: Add a service to fetch the real highscores
         const clientAccountInfo: ClientAccountInfo = { ...data, progressInfo, highscores: {} };
         return clientAccountInfo;
+    }
+    private reduceClientAccountInfo(clientAccount: ClientAccountInfo): Account {
+        return {
+            username: clientAccount.username,
+            email: clientAccount.email,
+            badges: clientAccount.badges,
+            gamesWon: clientAccount.gamesWon,
+            userSettings: clientAccount.userSettings,
+            totalXP: clientAccount.progressInfo.totalXP,
+            gamesPlayed: clientAccount.gamesPlayed,
+            bestGames: clientAccount.bestGames,
+        };
     }
     private configureRouter() {
         this.router = Router();
@@ -41,13 +52,10 @@ export class UserInfoController {
         });
         this.router.patch('/:email', async (req: Request, res: Response) => {
             try {
-                await this.databaseService.getDocumentByID('accounts', req.params.email).then(async (data: Account) => {
-                    data.userSettings = req.body;
-                    await this.databaseService.updateDocumentByID('accounts', req.params.email, data);
-                    await this.databaseService
-                        .getDocumentByID('accounts', req.params.email)
-                        .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)));
-                });
+                await this.databaseService.updateDocumentByID('accounts', req.params.email, this.reduceClientAccountInfo(req.body));
+                await this.databaseService
+                    .getDocumentByID('accounts', req.params.email)
+                    .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)));
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
             }
