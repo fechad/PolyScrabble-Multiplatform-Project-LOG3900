@@ -1,4 +1,5 @@
 import { BoardMessage } from '@app/classes/board-model/board-message';
+import { BotCommunicationManager } from '@app/classes/bot-communication-manager';
 import { Goal } from '@app/classes/goals/goal';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
@@ -18,6 +19,7 @@ export class Room {
     roomInfo: RoomInfo;
     bot: VirtualPlayer;
     startDate: Date;
+    botCommunicationManager: BotCommunicationManager;
     private isFirstGame: boolean;
     private gameManager: GameManager;
 
@@ -52,6 +54,7 @@ export class Room {
             };
         }
         this.gameManager = new GameManager();
+        this.botCommunicationManager = new BotCommunicationManager();
 
         this.isFirstGame = true;
     }
@@ -111,8 +114,12 @@ export class Room {
 
     createPlayerVirtual(name: string, desiredLevel = GameLevel.Beginner): VirtualPlayer {
         const bot = this.gameManager.getNewVirtualPlayer(name, desiredLevel);
+        bot.registerObserver(this.botCommunicationManager);
+
         this.bot = bot;
         this.addPlayer(this.bot, this.roomInfo.password);
+
+        bot.sendGreeting();
         return bot;
     }
 

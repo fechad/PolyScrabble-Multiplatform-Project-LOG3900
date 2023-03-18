@@ -1,8 +1,8 @@
+import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
+import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
-import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
-import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from './virtual-player';
 
 export class VirtualPlayerExpert extends VirtualPlayer {
@@ -26,6 +26,16 @@ export class VirtualPlayerExpert extends VirtualPlayer {
 
         this.possiblePlacements.sort((leftPlacement, rightPlacement) => (leftPlacement.points || 0) - (rightPlacement.points || 0));
         const placement = this.possiblePlacements[this.possiblePlacements.length - 1];
+
+        // You can remove the "if" below. These are just an example of situational messages
+        const highPoints = 35;
+        const lowPoints = 20;
+        if (placement.points > highPoints) {
+            this.sendMessage('Je suis en feu!');
+        }
+        if (placement.points <= lowPoints) {
+            this.sendMessage("Ouf, j'aurais pu faire mieux");
+        }
 
         return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
     }

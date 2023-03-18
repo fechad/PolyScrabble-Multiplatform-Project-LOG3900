@@ -95,8 +95,6 @@ export class SocketGameService extends SocketHandlerService {
         this.roomService.setUnavailable(room.roomInfo.name);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
-        const botGreeting = room.getBotGreeting();
-        if (botGreeting) this.handleBotGreeting(room.bot.pseudo, botGreeting, roomName);
 
         this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
 
@@ -181,7 +179,7 @@ export class SocketGameService extends SocketHandlerService {
         this.handleGamePlaceFinish(room, socket.id);
     }
 
-    handleStartGameRequest(socket: io.Socket, roomName: string) {
+    handleStartGameRequest(_socket: io.Socket, roomName: string) {
         const room = this.roomService.getRoom(roomName) as Room;
         if (!room) return;
 
@@ -229,7 +227,7 @@ export class SocketGameService extends SocketHandlerService {
                 ++room.elapsedTime;
                 return;
             }
-
+            this.updateWantedMessages(room);
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.TimeUpdated, room);
             ++room.elapsedTime;
         }, ONE_SECOND_IN_MS);
@@ -253,6 +251,15 @@ export class SocketGameService extends SocketHandlerService {
         return;
     }
 
+    private updateWantedMessages(room: Room) {
+        // eslint-disable-next-line no-unused-vars, no-underscore-dangle
+        for (const _wantedMessage of room.botCommunicationManager.wantedMessages) {
+            const messageInfo = room.botCommunicationManager.popFirstWantedMessage();
+            if (!messageInfo || !messageInfo.message) return;
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender);
+        }
+    }
+
     private sendChannelMessageToEveryoneInRoom(channelName: string, message: string, sender?: string) {
         const discussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);
         if (!discussionChannel) return;
@@ -272,12 +279,6 @@ export class SocketGameService extends SocketHandlerService {
             ((room.elapsedTime - 1) % BOT_COMMAND_TIMEOUT_SEC) + 1 === BOT_COMMAND_TIMEOUT_SEC &&
             room.getCurrentPlayerTurn() instanceof VirtualPlayer === true
         );
-    }
-
-    private handleBotGreeting(name: string, greeting: string, roomName: string) {
-        const chatMessage: ChatMessage = { sender: name, text: greeting, color: MessageSenderColors.PLAYER2 };
-        this.sendToEveryoneInRoom(roomName, SocketEvent.Message, chatMessage);
-        this.sendChannelMessageToEveryoneInRoom(roomName, greeting, name);
     }
 
     private isRoomAndPlayerValid(socket: io.Socket, roomName: string): boolean {

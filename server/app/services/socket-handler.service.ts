@@ -105,6 +105,7 @@ export class SocketHandlerService {
         };
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemAlert);
         const botGreeting: ChatMessage = { sender: bot.pseudo, color: MessageSenderColors.PLAYER2, text: bot.greeting };
+        bot.notifyObservers({ roomName: room.roomInfo.name, chatMessage: botGreeting });
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, botGreeting);
     }
 
