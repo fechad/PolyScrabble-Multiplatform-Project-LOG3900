@@ -38,6 +38,7 @@ class _SoloPageState extends State<SoloPage> {
     super.initState();
     soloGameService.configureBaseSocketFeatures();
     gameService.gameData.timerPerTurn = timeValue;
+    gameService.room.roomInfo.timerPerTurn = timeValue;
     gameService.gameData.isExpertLevel = false;
   }
 
@@ -186,6 +187,8 @@ class _SoloPageState extends State<SoloPage> {
                                   setState(() {
                                     timeValue = value!;
                                     gameService.gameData.timerPerTurn =
+                                        value;
+                                    gameService.room.roomInfo.timerPerTurn =
                                         value;
                                   });
                                 },

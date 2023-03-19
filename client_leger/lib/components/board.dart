@@ -1,6 +1,9 @@
+import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/components/tile.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:flutter/material.dart';
+
+import '../services/link_service.dart';
 
 typedef StringCallback = void Function(String);
 
@@ -87,16 +90,28 @@ class _BoardState extends State<Board> {
     "11-14"
   ];
 
+  late PlacementData placementData;
+
   _BoardState({required this.alertGamePage});
   @override
   void initState() {
     super.initState();
     constructBoard();
+    _configureSocket();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  _configureSocket() {
+    socketService.on(
+        "drawBoard",
+        (data) => {
+              placementData = PlacementData.fromJson(data),
+              serverPlacement(placementData)
+            });
   }
 
   void constructBoard() {
@@ -113,9 +128,93 @@ class _BoardState extends State<Board> {
     }
   }
 
+  int getTileScore(String letter) {
+    if (letter == '' || letter == null || letter == '*') return 0;
+    final normalLetter = letter.toLowerCase();
+    if (normalLetter.toLowerCase() != normalLetter) return 0;
+    return POINTS[letter.toLowerCase().codeUnits[0] - A_ASCII];
+  }
+
+  void addPlacement(int x, int y, String value, String letter, color) {
+    Container newSquare = Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFFFEBCE),
+          border: Border.all(
+            color: const Color(0xFFFFFFFF),
+            width: 1,
+          ),
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFFFEBCE),
+              border: Border.all(
+                color: const Color(0xAA000000),
+                width: 1,
+              ),
+            ),
+            width: 43,
+            height: 43,
+            child: Stack(
+              children: [
+                Center(
+                    child: Text(letter, style: const TextStyle(fontSize: 24))),
+                Positioned(
+                  child: Text(value, style: const TextStyle(fontSize: 10)),
+                  bottom: 4.0,
+                  right: 4.0,
+                )
+              ],
+            )));
+    setState(() {
+      (linkService.getRows()[y] as Row).children[x] = newSquare;
+    });
+  }
+
+  void serverPlacement(PlacementData placement) {
+    int y = (placement.row.codeUnitAt(0) - 97);
+    int x = placement.column - 1;
+    List<String> letters = placement.word.split('');
+
+    addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
+        Color(0xFFFFEBCE));
+    letters.removeAt(0);
+
+    if (letters.isEmpty) return;
+
+    if (placement.direction == 'h') {
+      x = x + 1;
+      for (int i = x; i < 15; i++) {
+        final square = (linkService.getRows()[y] as Row).children[x];
+
+        if (square.runtimeType.toString().contains('DragTarget')) {
+          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
+              Color(0xFFFFEBCE));
+          x = x + 1;
+          letters.removeAt(0);
+        }
+        if (letters.isEmpty) break;
+      }
+    } else if (placement.direction == 'v') {
+      y = y + 1;
+      for (int i = y; i < 15; i++) {
+        final square = (linkService.getRows()[y] as Row).children[x];
+
+        if (square.runtimeType.toString().contains('DragTarget')) {
+          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
+              Color(0xFFFFEBCE));
+          y = y + 1;
+          letters.removeAt(0);
+        }
+        if (letters.isEmpty) break;
+      }
+    }
+  }
+
   void placeTile(
       int x, int y, String? value, String? letter, int? index, color) {
     placementValidator.addLetter(letter!, x, y);
+
     if (!placementValidator.validPlacement) return;
     Container square = Container(
         decoration: BoxDecoration(

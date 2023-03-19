@@ -116,8 +116,6 @@ class MultiplayerGameService extends SoloGameService {
     socketService.on(
       "drawRack",
       (rack) => {
-        print('receiving rack letters'),
-        print(rack),
         linkService.updateRack(rack as String)
       },
     );

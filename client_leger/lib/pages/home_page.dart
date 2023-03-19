@@ -120,10 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       page = 1;
                       scaffoldKey.currentState?.openEndDrawer();
                     });
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(builder: ((context) {
-                    //       return GeneralChatWidget();
-                    //     })));
                   },
                 ),
                 SizedBox(height: 200),

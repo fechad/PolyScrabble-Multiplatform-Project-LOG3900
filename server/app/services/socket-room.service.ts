@@ -39,7 +39,6 @@ export class SocketRoomService extends SocketHandlerService {
     handleLeaveRoomOther(socket: io.Socket, roomName: string): Player | undefined {
         if (!this.roomService.isRoomNameValid(roomName)) return;
         this.socketLeaveRoom(socket, roomName);
-
         const serverRoom = this.roomService.getRoom(roomName);
         if (!serverRoom) return;
         const player = serverRoom.getPlayer(socket.id);

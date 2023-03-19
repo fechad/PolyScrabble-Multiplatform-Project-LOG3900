@@ -48,6 +48,9 @@ abstract class _LinkService with Store {
   ]);
 
   @observable
+  Observable<bool> isInAGame = Observable(false);
+
+  @observable
   Observable<int> currentSelectedIndex = Observable(-1);
 
   @observable
@@ -75,6 +78,11 @@ abstract class _LinkService with Store {
   ObservableList<Widget> rows = ObservableList<Widget>.of([]);
 
   List<Placement> placementStack = [];
+
+  bool getIsInAGame() {
+    return isInAGame.value;
+  }
+
 
   int getCurrentSelectedIndex() {
     return currentSelectedIndex.value;
@@ -117,11 +125,6 @@ abstract class _LinkService with Store {
   }
 
   @action
-  changeExchangeBool() {
-    wantToExchange.value = !wantToExchange.value;
-  }
-
-  @action
   changeTurn() {
     myTurn.value = !myTurn.value;
   }
@@ -137,9 +140,20 @@ abstract class _LinkService with Store {
   }
 
   @action
+  setIsInAGame(bool value) {
+    isInAGame.value = value;
+  }
+
+  @action
   setCurrentSelectedIndex(int index) {
     currentSelectedIndex.value = index;
   }
+
+  @action
+  setWantToExchange(bool value) {
+    wantToExchange.value = value;
+  }
+
 
   @action
   setTurn(bool value) {

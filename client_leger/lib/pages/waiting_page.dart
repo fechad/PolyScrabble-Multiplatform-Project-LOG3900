@@ -234,6 +234,19 @@ class _WaitingPageState extends State<WaitingPage> {
                         Avatar(),
                         Avatar(),
                       ])),
+                  linkService.getIsInAGame() ? Padding(
+                      padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
+                      child: InkWell(
+                    onTap: () {
+                      linkService.setCurrentOpenedChat('');
+                      Navigator.pop(context);
+                    },
+                    child: Icon(
+                      Icons.close_rounded,
+                      color: Colors.black,
+                      size: 60,
+                    ),
+                  )) :
                   Padding(
                       padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
                       child: Row(children: [

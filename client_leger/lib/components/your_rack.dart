@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../pages/home_page.dart';
+
 typedef IntCallback = void Function(int i);
 
 class YourRack extends StatefulWidget {
@@ -27,9 +29,14 @@ class _YourRackState extends State<YourRack> {
   }
 
   final IntCallback tileChange;
-  //final RebuildController rackRebuildController;
 
   _YourRackState({required this.tileChange});
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -132,10 +132,18 @@ class Account {
   List<GameHeader> gamesPlayed;
   int gamesWon;
 
-  Account({required this.username, required this.email, required this.defaultLanguage,
-  required this.defaultTheme, required this.highscore, required this.totalXP,
-  required this.badges, required this.avatarUrl, required this.bestGames,
-  required this.gamesPlayed, required this.gamesWon});
+  Account(
+      {required this.username,
+      required this.email,
+      required this.defaultLanguage,
+      required this.defaultTheme,
+      required this.highscore,
+      required this.totalXP,
+      required this.badges,
+      required this.avatarUrl,
+      required this.bestGames,
+      required this.gamesPlayed,
+      required this.gamesWon});
 
   Account.fromJson(dynamic json, jsonGameHeader)
       : username = json['username'],
@@ -151,18 +159,18 @@ class Account {
         gamesWon = json['gamesWon'];
 
   Map<String, dynamic> toJson() => {
-    'username': username,
-    'email': email,
-    'defaultLanguage': defaultLanguage,
-    'defaultTheme': defaultTheme,
-    'highscore': highscore,
-    'totalXP': totalXP,
-    'badges': badges,
-    'avatarUrl': avatarUrl,
-    'bestGames': bestGames,
-    'gamesPlayed': gamesPlayed,
-    'gamesWon': gamesWon,
-  };
+        'username': username,
+        'email': email,
+        'defaultLanguage': defaultLanguage,
+        'defaultTheme': defaultTheme,
+        'highscore': highscore,
+        'totalXP': totalXP,
+        'badges': badges,
+        'avatarUrl': avatarUrl,
+        'bestGames': bestGames,
+        'gamesPlayed': gamesPlayed,
+        'gamesWon': gamesWon,
+      };
 }
 
 class GameHeader {
@@ -178,11 +186,36 @@ class GameHeader {
         gameID = json['gameID'];
 
   Map<String, dynamic> toJson() => {
-    'type': type,
-    'score': score,
-    'gameID': gameID,
-  };
+        'type': type,
+        'score': score,
+        'gameID': gameID,
+      };
+}
 
+class PlacementData {
+  String word;
+  String row;
+  int column;
+  String direction;
+
+  PlacementData(
+      {required this.word,
+      required this.row,
+      required this.column,
+      required this.direction});
+
+  PlacementData.fromJson(dynamic json)
+      : word = json['word'],
+        row = json['row'],
+        column = json['column'],
+        direction = json['direction'];
+
+  Map<String, dynamic> toJson() => {
+        'row': row,
+        'word': word,
+        'column': column,
+        'direction': direction,
+      };
 }
 
 class DiscussionChannel {
@@ -191,8 +224,11 @@ class DiscussionChannel {
   List<String> activeUsers;
   List<ChatMessage> messages;
 
-  DiscussionChannel({required this.name, this.owner, required this.activeUsers,
-  required this.messages});
+  DiscussionChannel(
+      {required this.name,
+      this.owner,
+      required this.activeUsers,
+      required this.messages});
 
   DiscussionChannel.fromJson(dynamic json, jsonAccount, jsonMessages)
       : name = json['name'],
@@ -201,10 +237,26 @@ class DiscussionChannel {
         messages = jsonMessages;
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'owner': owner,
-    'activeUsers': activeUsers,
-    'messages': messages,
-  };
+        'name': name,
+        'owner': owner,
+        'activeUsers': activeUsers,
+        'messages': messages,
+      };
+}
 
+
+class Message {
+  String text;
+  String? sender;
+
+  Message({required this.text, this.sender});
+
+  Message.fromJson(dynamic json)
+      : text = json['text'],
+        sender = json['sender'];
+
+  Map<String, dynamic> toJson() => {
+    'text': text,
+    'sender': sender,
+  };
 }
