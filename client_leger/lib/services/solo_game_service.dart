@@ -1,9 +1,7 @@
 import 'package:client_leger/main.dart';
-import 'package:client_leger/services/socket_service.dart';
 
 import '../classes/game.dart';
 import 'link_service.dart';
-
 
 class SoloGameService {
   GameData gameData;
@@ -35,17 +33,6 @@ class SoloGameService {
 
   configureBaseSocketFeatures() {
     socketService.on(
-        "joinRoomSoloStatus",
-        (serverRoomName) => {
-              onProcess = false,
-              room.roomInfo.name = serverRoomName,
-              socketServiceBot.send("joinRoomSoloBot", {
-                "roomName": serverRoomName,
-                "botName": gameData.botName,
-                "isExpertLevel": gameData.isExpertLevel,
-              })
-            });
-    socketService.on(
         "botInfos",
         (bot) => {
               room.players[1] = bot,
@@ -54,8 +41,8 @@ class SoloGameService {
   }
 
   setRoomInfo(String pseudo) {
-    room.roomInfo.timerPerTurn = gameData.timerPerTurn;
-    room.roomInfo.dictionary = gameData.dictionary;
+    room.roomInfo.timerPerTurn = gameService.gameData.timerPerTurn;
+    room.roomInfo.dictionary = gameService.gameData.dictionary;
     room.roomInfo.isSolo = true;
     room.roomInfo.isGameOver = false;
   }
@@ -68,11 +55,12 @@ class SoloGameService {
   }
 
   joinRoom(String botName, String desiredLevel) {
-    String pseudo = gameData.pseudo;
+    String pseudo = gameService.gameData.pseudo;
     setRoomInfo(pseudo);
     setPlayerInfo(pseudo);
     onProcess = true;
-    socketService.send("createSoloRoom", {'room': room, 'botName': botName, 'desiredLevel': desiredLevel});
+    socketService.send("createSoloRoom",
+        {'room': room, 'botName': botName, 'desiredLevel': desiredLevel});
   }
 
   Room decodeModel(dynamic data) {

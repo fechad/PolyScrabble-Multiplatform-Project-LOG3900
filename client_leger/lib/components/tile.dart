@@ -47,9 +47,9 @@ class Tile extends StatelessWidget {
 
   Tile(
       {super.key,
-      required this.letter,
-      required this.index,
-      this.rebuildController});
+        required this.letter,
+        required this.index,
+        this.rebuildController});
 
   int getTileScore() {
     if (letter == '' || letter == null || letter == '*') return 0;
@@ -63,9 +63,9 @@ class Tile extends StatelessWidget {
     final int value = getTileScore();
     return GestureDetector(
         onDoubleTap: () {
-          if (true) {
+          if (linkService.getMyTurn()) {
             wantToExchange = !wantToExchange;
-            //linkService.changeExchangeBool();
+            linkService.setWantToExchange(true);
             if (wantToExchange) {
               TileNotification(index).dispatch(context);
             } else {
@@ -75,7 +75,7 @@ class Tile extends StatelessWidget {
           return rebuildController?.rebuild();
         },
         child:
-        wantToExchange ?
+        linkService.getWantToExchange() ?
         Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -103,7 +103,7 @@ class Tile extends StatelessWidget {
                 )
               ],
             ))
-        : Draggable<Map>(
+            : Draggable<Map>(
             data: {'letter': letter, 'value': value.toString(), 'index': index},
             childWhenDragging: Container(
               color: Color(0x00000000),
@@ -156,10 +156,10 @@ class Tile extends StatelessWidget {
                   children: [
                     Center(
                         child:
-                            Text(letter, style: const TextStyle(fontSize: 24))),
+                        Text(letter, style: const TextStyle(fontSize: 24))),
                     Positioned(
                       child:
-                          Text('$value', style: const TextStyle(fontSize: 10)),
+                      Text('$value', style: const TextStyle(fontSize: 10)),
                       bottom: 4.0,
                       right: 4.0,
                     )
@@ -168,3 +168,4 @@ class Tile extends StatelessWidget {
         ));
   }
 }
+

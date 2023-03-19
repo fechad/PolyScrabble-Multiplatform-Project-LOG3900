@@ -31,9 +31,10 @@ class _GameSidebar extends State<GameSidebar> {
                       size: 50,
                       color: Color(0xFFF5C610)),
                   //TODO cannot ask for hints if placing or trying to exchange
-                  onPressed: placementValidator.letters.isEmpty ? () {
-                    //TODO 5 hints to show
-                  }:null,
+                  onPressed: linkService.getMyTurn() ? () {
+                    print('hint');
+                    inGameService.helpCommand();
+                  } : null,
                 ),
                 SizedBox(height: 100),
                 IconButton(
@@ -81,6 +82,7 @@ class _GameSidebar extends State<GameSidebar> {
                                     ),
                                     onPressed: () {
                                       inGameService.confirmLeaving();
+                                      linkService.setIsInAGame(false);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
