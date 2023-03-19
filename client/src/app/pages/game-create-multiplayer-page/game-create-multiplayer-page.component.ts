@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
@@ -29,7 +29,6 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
     onProcess: boolean;
     constructor(
         private fb: FormBuilder,
-        private route: ActivatedRoute,
         private router: Router,
         private playerService: PlayerService,
         protected socketService: SocketClientService,
@@ -79,9 +78,6 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
 
     ngOnInit() {
         this.connectSocket();
-
-        const gameMode = this.route.snapshot.params.mode as GameMode;
-        this.room.roomInfo.isSolo = gameMode === GameMode.Solo;
     }
 
     setPlaceholderAsLabel(labelElement: HTMLLabelElement) {

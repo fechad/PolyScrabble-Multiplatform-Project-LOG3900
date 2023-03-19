@@ -8,8 +8,10 @@
             </div>
             <section id="game_creation">
                 <div class="justified gray-box">
-                    <button class="button" routerLink="/game/multiplayer/create/solo">Jouer une partie en solo</button>
-                    <button class="button" routerLink="/game/multiplayer/create/multi">créer une partie multijoueur</button>
+                    <button class="button" (click)="setSoloMode(true)" routerLink="/game/multiplayer/create/solo">Jouer une partie en solo</button>
+                    <button class="button" (click)="setSoloMode(false)" routerLink="/game/multiplayer/create/multi">
+                        créer une partie multijoueur
+                    </button>
                     <button class="button" routerLink="/game/multiplayer/join">Joindre une partie multijoueur</button>
                     <button class="button important-button" routerLink="/main">Retour</button>
                 </div>

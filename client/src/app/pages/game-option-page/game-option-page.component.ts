@@ -22,6 +22,10 @@ export class GameOptionPageComponent extends PageCommunicationManager implements
         this.connectSocket();
     }
 
+    setSoloMode(value: boolean) {
+        this.playerService.room.roomInfo.isSolo = value;
+    }
+
     protected configureBaseSocketFeatures(): void {
         return;
     }

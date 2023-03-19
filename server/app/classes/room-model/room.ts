@@ -26,6 +26,7 @@ const DEFAULT_ROOM = {
     surrender: '',
     isPublic: true,
     password: '',
+    isSolo: false,
 };
 export class Room {
     elapsedTime: number;
@@ -43,7 +44,6 @@ export class Room {
         this.elapsedTime = 0;
         this.startDate = new Date();
         this.fillerNamesUsed = [];
-
         this.botsLevel = clientRoom ? clientRoom.botsLevel : GameLevel.Adaptive;
         this.bots = [];
         this.roomInfo = !clientRoom
@@ -58,6 +58,7 @@ export class Room {
                   surrender: '',
                   isPublic: clientRoom.roomInfo.isPublic,
                   password: clientRoom.roomInfo.password,
+                  isSolo: clientRoom.roomInfo.isSolo,
               };
         this.gameManager = new GameManager();
         this.botCommunicationManager = new BotCommunicationManager();
@@ -145,7 +146,9 @@ export class Room {
     fillPlayerRack(player: Player) {
         this.gameManager.fillPlayerRack(player);
     }
+
     fillWithVirtualPlayers() {
+        if (this.isSolo) return;
         let currentCount = this.players.length;
         while (currentCount < MULTIPLAYER_MIN_PLAYERS) {
             const fillerName = FILLER_BOT_NAMES[this.fillerNamesUsed.length];
@@ -227,6 +230,7 @@ export class Room {
     hasARealPlayerLeft(): boolean {
         return this.players.find((player: Player) => player instanceof VirtualPlayer === false) ? true : false;
     }
+
     computeAverageHumanPoints(): number {
         const humansCount = this.players.filter((player) => !(player instanceof VirtualPlayer)).length;
         return (
@@ -235,6 +239,7 @@ export class Room {
             }, 0) / humansCount
         );
     }
+
     private isSamePassword(password?: string): boolean {
         if (!password && this.roomInfo.password === '') return true;
         return this.roomInfo.password === password;
