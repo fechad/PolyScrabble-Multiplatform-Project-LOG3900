@@ -10,10 +10,13 @@ import { BASE_TEN, MINUTE_IN_SECOND } from '@app/constants/constants';
 import { RACK_CAPACITY } from '@app/constants/rack-constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
+import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { lastValueFrom } from 'rxjs';
 const END_GAME_WIDTH = '400px';
 @Component({
     selector: 'app-players-infos',
@@ -27,15 +30,20 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     currentPlayerTurnPseudo: string;
     winnerPseudo: string;
     numberOfWinner: number;
+    opponentsInfo: ClientAccountInfo[];
+
     constructor(
         protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
         public playerService: PlayerService,
         private dialog: MatDialog,
+        private httpService: HttpService,
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
+        this.opponentsInfo = [];
+        this.getOpponentsInfo();
     }
 
     get isActivePlayer(): boolean {
@@ -71,6 +79,16 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     getPlayer(pseudo: string): Player | undefined {
         const player = this.room.players.find((element) => element.pseudo === pseudo);
         return player;
+    }
+
+    async getOpponentsInfo() {
+        if (this.opponentsInfo.length !== 0) return;
+
+        this.room.players.map(async (p: Player) => {
+            const res = await lastValueFrom(this.httpService.getOpponentInfo(p.pseudo));
+
+            this.opponentsInfo.push(res);
+        });
     }
 
     getPlayerInfo(isClient: boolean, info: string): string | number {

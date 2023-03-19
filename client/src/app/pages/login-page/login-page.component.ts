@@ -30,8 +30,8 @@ export class LoginPageComponent implements AfterViewInit {
         private authService: Authenticator,
     ) {
         if (!environment.production) {
-            this.playerService.player.email = 'kurama@polyscrabble.ca';
-            this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
+            this.playerService.player.email = 'anna@polyscrabble.ca';
+            this.playerService.player.pseudo = 'anna';
             router.navigateByUrl('/main');
         } else {
             // TODO remove the else statement to test prod mod

@@ -1,31 +1,33 @@
 <div class="player-info-container">
     <div class="players-names">
-        <div class = head-info>
-            <h2 class = "reserve">{{lettersBankCount}}</h2>
-            <i class = "fa fa-clone"></i>
+        <div class="head-info">
+            <h2 class="reserve">{{ lettersBankCount }}</h2>
+            <i class="fa fa-clone"></i>
         </div>
-        
 
         <div class="timer">{{ ('0' + min).slice(-2) }}:{{ ('0' + sec).slice(-2) }}</div>
 
-        
-        <div class = head-info>
-            <h2 class = "reserve">12</h2>
-            <i class = "fa fa-eye"></i>
+        <div class="head-info">
+            <h2 class="reserve">12</h2>
+            <i class="fa fa-eye"></i>
         </div>
     </div>
-    <div class = "gamers-displayer">
-        <div class = "gamers">
-            <div class="player-panel"    *ngFor = "let player of room.players"      
-            [class.player-winner]="winnerPseudo === getPlayerInfo(true, 'pseudo') || numberOfWinner > 1">
-                <div class = avatar  [class.player-active]="player.pseudo === currentPlayerTurnPseudo" (click) = "inputSideNav.toggle()"></div>
-                <div>{{ player.points }}</div>
+    <div class="gamers-displayer">
+        <div class="gamers">
+            <div
+                class="player-panel"
+                *ngFor="let player of opponentsInfo"
+                [class.player-winner]="winnerPseudo === getPlayerInfo(true, 'pseudo') || numberOfWinner > 1"
+            >
+                <div class="avatar" [class.player-active]="player.username === currentPlayerTurnPseudo" (click)="inputSideNav.toggle()">
+                    <img class="avatar" [src]="player.userSettings.avatarUrl" />
+                </div>
+                <div>{{ room.players[opponentsInfo.indexOf(player)].points }}</div>
             </div>
-            
         </div>
         <div class="side-button-container">
             <!-- [disabled]="!isActivePlayer || isGameOver" -->
-            <i class = "fa fa-forward" (click)="changePlayerTurn()" [class.disabled]="!isActivePlayer || isGameOver"></i>
+            <i class="fa fa-forward" (click)="changePlayerTurn()" [class.disabled]="!isActivePlayer || isGameOver"></i>
         </div>
     </div>
     <div *ngIf="isGameOver && numberOfWinner === 1" class="flex-center">Félicitation à: {{ winnerPseudo }}!</div>

@@ -1,6 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:client_leger/classes/constants.dart';
+import 'package:client_leger/classes/game.dart';
+import 'package:client_leger/main.dart';
+import 'package:client_leger/pages/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../components/drawer.dart';
 import '../components/sidebar.dart';
@@ -16,22 +24,59 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  TheColor? theme = TheColor.light;
-  Language? language = Language.french;
-  String? victoryMusic;
+  TheColor? theme;
+  Language? language;
+  String victoryMusic = authenticator.currentUser.userSettings.victoryMusic;
+  bool valuesChanged = false;
+  String selectedUrl = authenticator.currentUser.userSettings.avatarUrl;
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController =
       TextEditingController();
+
+  late CameraDescription firstCamera;
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
+  late AsyncSnapshot<void> snap;
+  final ImagePicker _picker = ImagePicker();
+
+  bool takingPicture = false;
+  bool tookPicture = false;
+
   @override
   void initState() {
     super.initState();
-    //TODO: call database / get user data
+    theme =
+        authenticator.currentUser.userSettings.defaultTheme.contains('light')
+            ? TheColor.light
+            : TheColor.dark;
+    language = authenticator.currentUser.userSettings.defaultLanguage
+            .contains('french')
+        ? Language.french
+        : Language.english;
+    getCameras();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _controller.dispose();
+  }
+
+  getCameras() async {
+    // Obtain a list of the available cameras on the device.
+
+    // Get a specific camera from the list of available cameras.
+    if (cameras.isEmpty) return;
+    firstCamera = cameras.first;
+    _controller = CameraController(
+      // Get a specific camera from the list of available cameras.
+      firstCamera,
+      // Define the resolution to use.
+      ResolutionPreset.medium,
+    );
+
+    _initializeControllerFuture = _controller.initialize();
   }
 
   @override
@@ -54,19 +99,214 @@ class _SettingsPageState extends State<SettingsPage> {
                     )),
                 Stack(
                   children: [
-                    const CircleAvatar(
-                      // TODO: Insérer l'url de l'avatar du joueur
-                      backgroundImage: NetworkImage(
-                          'https://www.woolha.com/media/2020/03/eevee.png'),
-                      radius: 50,
-                    ),
+                    authenticator.currentUser.userSettings.avatarUrl
+                            .contains('/data/')
+                        ? Container(
+                            width: 78,
+                            height: 78,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: FileImage(File(selectedUrl))
+                                      as ImageProvider,
+                                  fit: BoxFit.fill,
+                                ),
+                                shape: BoxShape.circle),
+                          )
+                        : CircleAvatar(
+                            // TODO: Insérer l'url de l'avatar du joueur
+                            backgroundImage: NetworkImage(
+                                '${authenticator.currentUser.userSettings.avatarUrl.isNotEmpty ? authenticator.currentUser.userSettings.avatarUrl : 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large'}'),
+                            radius: 50,
+                          ),
                     Positioned(
                         // draw a red marble
                         top: 0.0,
                         left: 40.0,
                         child: MaterialButton(
-                          onPressed: () {
-                            print('Avatar button pressed ');
+                          onPressed: () => {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return StatefulBuilder(
+                                      builder: ((context, setDialogState) {
+                                    return AlertDialog(
+                                      title: const Text(
+                                        'Choisissez votre avatar',
+                                        style: TextStyle(fontSize: 24),
+                                      ),
+                                      content: Container(
+                                          height: 800,
+                                          width: 600,
+                                          child: Column(
+                                            children: [
+                                              tookPicture
+                                                  ? Container(
+                                                      width: 150,
+                                                      height: 150,
+                                                      decoration: BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image: FileImage(File(
+                                                                    selectedUrl))
+                                                                as ImageProvider,
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                          shape:
+                                                              BoxShape.circle),
+                                                    )
+                                                  : CircleAvatar(
+                                                      // TODO: Insérer l'url de l'avatar du joueur
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                              selectedUrl),
+                                                      radius: 78,
+                                                    ),
+                                              GridView.builder(
+                                                  shrinkWrap: true,
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 5,
+                                                          mainAxisSpacing: 10,
+                                                          crossAxisSpacing: 30,
+                                                          mainAxisExtent: 130),
+                                                  itemCount:
+                                                      predefinedAvatarsUrl
+                                                          .length,
+                                                  itemBuilder: (_, index) {
+                                                    return predefinedAvatarsUrl[
+                                                                index] ==
+                                                            'custom'
+                                                        ? GestureDetector(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                              child: IconButton(
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .download,
+                                                                  color: Colors
+                                                                      .black,
+                                                                ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  // Take the Picture in a try / catch block. If anything goes wrong,
+                                                                  // catch the error.
+                                                                  try {
+                                                                    // Ensure that the camera is initialized.
+                                                                    await _initializeControllerFuture;
+
+                                                                    // Attempt to take a picture and then get the location
+                                                                    // where the image file is saved.
+                                                                    print(
+                                                                        'before taking pic');
+
+                                                                    final image =
+                                                                        await _picker.pickImage(
+                                                                            source:
+                                                                                ImageSource.camera);
+                                                                    setState(
+                                                                        () {
+                                                                      setDialogState(
+                                                                          () {
+                                                                        selectedUrl =
+                                                                            image!.path;
+                                                                        tookPicture =
+                                                                            true;
+                                                                        print(
+                                                                            'pic path');
+                                                                        print(
+                                                                            selectedUrl);
+                                                                        print(
+                                                                            'done taking pic');
+                                                                      });
+                                                                    });
+                                                                  } catch (e) {
+                                                                    // If an error occurs, log the error to the console.
+                                                                    print(
+                                                                        'Eror with cam');
+                                                                    print(e);
+                                                                  }
+                                                                },
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : GestureDetector(
+                                                            onTap: () {
+                                                              setDialogState(
+                                                                  () {
+                                                                selectedUrl =
+                                                                    predefinedAvatarsUrl[
+                                                                        index];
+                                                                print(
+                                                                    selectedUrl);
+                                                              });
+                                                            },
+                                                            child: CircleAvatar(
+                                                              // TODO: Insérer l'url de l'avatar du joueur
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                      predefinedAvatarsUrl[
+                                                                          index]),
+                                                              radius: 5,
+                                                            ));
+                                                  }),
+                                            ],
+                                          )),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => {
+                                            setState(() {
+                                              selectedUrl = authenticator
+                                                  .currentUser
+                                                  .userSettings
+                                                  .avatarUrl;
+                                              takingPicture = false;
+                                              tookPicture = false;
+                                              Navigator.pop(context);
+                                            })
+                                          },
+                                          style: TextButton.styleFrom(
+                                              foregroundColor: Colors.red),
+                                          child: const Text('Annuler',
+                                              style: TextStyle(fontSize: 20)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => {
+                                            setState(() {
+                                              print(authenticator.currentUser
+                                                  .userSettings.avatarUrl);
+                                              authenticator
+                                                  .currentUser
+                                                  .userSettings
+                                                  .avatarUrl = selectedUrl;
+                                              print(authenticator.currentUser
+                                                  .userSettings.avatarUrl);
+                                              valuesChanged = true;
+                                              Navigator.pop(context);
+                                              tookPicture = false;
+                                            })
+                                          },
+                                          style: TextButton.styleFrom(
+                                              foregroundColor:
+                                                  Palette.mainColor),
+                                          child: const Text(
+                                            'Sauvegarder',
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }));
+                                })
                           },
                           color: Colors.grey,
                           textColor: Colors.white,
@@ -89,7 +329,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       groupValue: theme,
                       onChanged: (TheColor? value) {
                         setState(() {
-                          theme = value;
+                          theme = value!;
+                          valuesChanged = true;
                         });
                       },
                     ),
@@ -99,7 +340,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       groupValue: theme,
                       onChanged: (TheColor? value) {
                         setState(() {
-                          theme = value;
+                          theme = value!;
+                          valuesChanged = true;
                         });
                       },
                     ),
@@ -117,7 +359,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       groupValue: language,
                       onChanged: (Language? value) {
                         setState(() {
-                          language = value;
+                          language = value!;
+                          valuesChanged = true;
                         });
                       },
                     ),
@@ -127,7 +370,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       groupValue: language,
                       onChanged: (Language? value) {
                         setState(() {
-                          language = value;
+                          language = value!;
+                          valuesChanged = true;
                         });
                       },
                     ),
@@ -162,9 +406,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         onChanged: (String? value) {
                           // This is called when the user selects an item.
                           setState(() {
-                            victoryMusic = value!;
                             // TODO: Set victory music to selected choice
-                            //gameService.gameData.timerPerTurn = value;
+                            victoryMusic = value!;
+                            valuesChanged = true;
                           });
                         },
                         items:
@@ -215,7 +459,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             'Confirmez votre nouveau mot de passe',
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     Row(
@@ -226,24 +470,25 @@ class _SettingsPageState extends State<SettingsPage> {
                                             setState(() {
                                               //letterIndexesToExchange.clear();
                                               //linkService.resetRack();
+                                              Navigator.pop(context);
                                             })
                                           },
                                           style: TextButton.styleFrom(
                                               foregroundColor: Colors.red),
-                                          child: Text('Annuler',
+                                          child: const Text('Annuler',
                                               style: TextStyle(fontSize: 20)),
                                         ),
                                         TextButton(
                                           onPressed: () => {
                                             setState(() {
-                                              //letterIndexesToExchange.clear();
-                                              //linkService.resetRack();
+                                              //TODO: change password
+                                              Navigator.pop(context);
                                             })
                                           },
                                           style: TextButton.styleFrom(
                                               foregroundColor:
                                                   Palette.mainColor),
-                                          child: Text(
+                                          child: const Text(
                                             'Sauvegarder',
                                             style: TextStyle(fontSize: 20),
                                           ),
@@ -268,15 +513,40 @@ class _SettingsPageState extends State<SettingsPage> {
                       width: 600,
                     ),
                     ElevatedButton(
-                      onPressed: () => {
-                        setState(() {
-                          //letterIndexesToExchange.clear();
-                          //linkService.resetRack();
-                        })
-                      },
-                      style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              Palette.mainColor)),
+                      onPressed: !valuesChanged
+                          ? null
+                          : () => {
+                                setState(() {
+                                  final newSettings = UserSettings(
+                                      avatarUrl: selectedUrl,
+                                      defaultLanguage:
+                                          language.toString().split('.')[1],
+                                      defaultTheme:
+                                          theme.toString().split('.')[1],
+                                      victoryMusic: victoryMusic);
+                                  httpService
+                                      .updateUserSettings(
+                                          authenticator.currentUser.email,
+                                          newSettings)
+                                      .then((response) {
+                                    if (response.statusCode == 500) return;
+                                    final account = Account.fromJson(
+                                        jsonDecode(response.body));
+                                    authenticator.currentUser = account;
+                                    setState(() {
+                                      valuesChanged = false;
+                                    });
+                                  }).catchError((error) => {print(error)});
+                                })
+                              },
+                      style: ButtonStyle(backgroundColor:
+                          MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                        if (valuesChanged)
+                          return Palette.mainColor;
+                        else
+                          return Colors.grey;
+                      })),
                       child: const Text('Sauvegarder'),
                     ),
                   ],

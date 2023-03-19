@@ -108,10 +108,10 @@ class _BoardState extends State<Board> {
   _configureSocket() {
     socketService.on(
         "drawBoard",
-            (data) => {
-          placementData = PlacementData.fromJson(data),
-          serverPlacement(placementData)
-        });
+        (data) => {
+              placementData = PlacementData.fromJson(data),
+              serverPlacement(placementData)
+            });
   }
 
   void constructBoard() {
@@ -272,9 +272,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Mot x3',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Mot x3',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
@@ -301,9 +301,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Mot x2',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Mot x2',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
@@ -330,9 +330,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Lettre x3',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Lettre x3',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
@@ -359,9 +359,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Lettre x2',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Lettre x2',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
@@ -379,7 +379,7 @@ class _BoardState extends State<Board> {
             width: 45,
             decoration: BoxDecoration(
               color:
-              candidateData.isEmpty ? Color(0xFFFFEBCE) : Color(0xCCCCB89B),
+                  candidateData.isEmpty ? Color(0xFFFFEBCE) : Color(0xCCCCB89B),
               border: Border.all(
                 color: Color(0xFFFFFFFF),
                 width: 0.5,

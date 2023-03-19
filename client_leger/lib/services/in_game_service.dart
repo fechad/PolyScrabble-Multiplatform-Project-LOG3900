@@ -15,39 +15,47 @@ class InGameService extends MultiplayerGameService {
   InGameService({required super.gameData});
 
   configure() {
-
     startGame();
     socketService.on(
         "drawRack",
-            (letters) => {
-          print('receiving rack'),
-          print(letters),
-          linkService.updateRack(letters),
-        });
+        (letters) => {
+              linkService.updateRack(letters),
+            });
+
+    socketService.on(
+        "updatePlayerScore",
+        (sender) => {
+              scorePlayer = Player.fromJson(sender),
+              for (Player p in gameService.room.players)
+                {
+                  if (p.pseudo == scorePlayer.pseudo)
+                    {p.points = scorePlayer.points}
+                }
+            });
 
     socketService.on(
         "lettersBankCountUpdated",
-            (count) => {
-          bankCount = count,
-          if (bankCount < 7) gameService.room.isBankUsable = false
-        });
-    
+        (count) => {
+              //TODO update bank count
+              bankCount = count,
+              if (bankCount < 7) gameService.room.isBankUsable = false
+            });
+
     socketService.on(
         "gameIsOver",
-            (players) => {
-          gameService.room.roomInfo.isGameOver = true,
-          linkService.setTurn(false),
-          //TODO find winner ? see players-infos.components.ts in heavy client
-        });
+        (players) => {
+              gameService.room.roomInfo.isGameOver = true,
+              linkService.setTurn(false),
+              //TODO find winner ? see players-infos.components.ts in heavy client
+            });
 
     socketService.on(
         "botJoinedRoom",
-            (players) => {
-          players = decodePlayers(players),
-          gameService.room.players = players,
-        });
+        (players) => {
+              players = decodePlayers(players),
+              gameService.room.players = players,
+            });
   }
-
 
   startGame() {
     socketService.send('startGame');

@@ -1,17 +1,18 @@
 import 'dart:convert';
 
-import 'package:client_leger/components/user_model.dart';
+import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import '../config/flutter_flow/flutter_flow_util.dart';
+import '../classes/constants.dart';
 import '../firebase_options.dart';
 
 class AuthService {
   late FirebaseApp app;
   late FirebaseAuth firebase;
-  late UserModel currentUser;
+  bool accountSet = false;
+  late Account currentUser;
   late String loggedInEmail;
   final bool isProduction = bool.fromEnvironment('dart.vm.product');
 
@@ -110,15 +111,16 @@ class AuthService {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
     if (!isProduction) return setDefaultUser();
     await httpService.getUserInfo(email).then((value) => {
-          currentUser = UserModel(
+          currentUser = Account(
             username: '${jsonDecode(value.body)['username']}',
             email: '${jsonDecode(value.body)['email']}',
-            avatarURL: '${jsonDecode(value.body)['avatarURL']}',
-            level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
+            userSettings:
+                UserSettings.fromJson(jsonDecode(value.body)['userSettings']),
+            progressInfo:
+                ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
+            highScores: jsonDecode(value.body)['highScores'],
             badges: [],
-            highScore: 0,
             gamesWon: 0,
-            totalXp: 0,
             gamesPlayed: [],
             bestGames: [],
           ),
@@ -126,21 +128,27 @@ class AuthService {
   }
 
   void setDefaultUser() {
-    currentUser = UserModel(
-      username: 'User ${DateFormat('HH:mm:ss').format(DateTime.now())}',
+    if (accountSet) return;
+    currentUser = Account(
+      username: 'kurama',
       email: 'kurama@polyscrabble.ca',
-      avatarURL: '',
-      level: Level(rank: "Stone", currentXP: 0, totalXP: 100),
+      userSettings: DEFAULT_USER_SETTINGS,
+      progressInfo: ProgressInfo(
+          currentLevel: 0,
+          totalXP: 0,
+          currentLevelXp: 100,
+          victoriesCount: 0,
+          xpForNextLevel: 100),
+      highScores: {},
       badges: [],
-      highScore: 0,
       gamesWon: 0,
-      totalXp: 0,
       gamesPlayed: [],
       bestGames: [],
     );
+    accountSet = true;
   }
 
-  UserModel getCurrentUser() {
+  Account getCurrentUser() {
     return currentUser;
   }
 }

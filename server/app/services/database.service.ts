@@ -64,7 +64,7 @@ export class DatabaseService {
         );
     }
     async addDummyAccounts(): Promise<WriteResult[]> {
-        const usernames: string[] = ['hilomer', 'manou', 'frank', 'fred', 'tonio', 'anna', 'kurama'];
+        const usernames: string[] = ['hilomer', 'manou', 'frank', 'fred', 'tonio', 'anna', 'kurama', 'Simon', 'Lucie', 'Jojo'];
         const accounts: Account[] = [];
         for (const name of usernames) {
             const account: Account = {
@@ -78,6 +78,10 @@ export class DatabaseService {
                 gamesPlayed: [],
                 gamesWon: 0,
             };
+            if (name === 'anna') {
+                account.userSettings.avatarUrl =
+                    'https://static1.cbrimages.com/wordpress/wp-content/uploads/2022/10/spy-x-family-twilight-anxious.jpg';
+            }
             accounts.push(account);
         }
 
@@ -159,6 +163,16 @@ export class DatabaseService {
             });
 
         return deleted;
+    }
+
+    async getDocumentByField(collection: string, field: string, value: unknown): Promise<Account> {
+        const collectionRef = this.db.collection(collection);
+
+        const querySnapshot = await collectionRef.where(field, '==', value).get();
+
+        const firstDoc = querySnapshot.docs[0];
+
+        return firstDoc.data() as Account;
     }
 
     // All the code underneath is from: https://firebase.google.com/docs/firestore/manage-data/delete-data

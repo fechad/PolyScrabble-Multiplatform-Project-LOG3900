@@ -1,15 +1,19 @@
+import 'dart:convert';
+
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/solo_game_service.dart';
 
 import '../classes/game.dart';
 import '../components/chat_model.dart';
 import '../main.dart';
+import '../pages/connexion_page.dart';
 import '../pages/home_page.dart';
 import 'link_service.dart';
 
 class MultiplayerGameService extends SoloGameService {
   List<Room> availableRooms = [];
   List<ChatModel> availableChannels = [];
+  List<Account> opponentsInfo = [];
 
   MultiplayerGameService({required super.gameData}) {
     room = Room(
@@ -32,6 +36,18 @@ class MultiplayerGameService extends SoloGameService {
         isCreator: true,
         isItsTurn: false);
   }
+  Future<List<Account>> getOpponentsInfo() async {
+    if (opponentsInfo.isNotEmpty) return opponentsInfo;
+    await Future.delayed(Duration(seconds: 1));
+
+    for (Player p in gameService.room.players) {
+      final res = await httpService.getOpponentInfo(p.pseudo);
+      print('entered in loop');
+      opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
+    }
+    print(opponentsInfo.length);
+    return opponentsInfo;
+  }
 
   configureSocketFeatures() {
     socketService.send("availableRooms");
@@ -50,23 +66,12 @@ class MultiplayerGameService extends SoloGameService {
 
     socketService.on(
         "roomCreated",
-        (serverRoom) => {
+        (serverRoom) async => {
               room = decodeModel(serverRoom),
+              await getOpponentsInfo(),
               socketService.send("createChatChannel", {
                 "channel": room.roomInfo.name,
-                "username": Account(
-                  username: authenticator.currentUser.username,
-                  email: '',
-                  defaultLanguage: '',
-                  defaultTheme: '',
-                  highscore: 0,
-                  totalXP: 0,
-                  avatarUrl: '',
-                  badges: [],
-                  bestGames: [],
-                  gamesPlayed: [],
-                  gamesWon: 0,
-                ),
+                "username": authenticator.currentUser.username,
                 'isRoomChannel': true,
               })
             });
@@ -115,9 +120,7 @@ class MultiplayerGameService extends SoloGameService {
 
     socketService.on(
       "drawRack",
-      (rack) => {
-        linkService.updateRack(rack as String)
-      },
+      (rack) => {linkService.updateRack(rack as String)},
     );
   }
 
@@ -176,15 +179,12 @@ class MultiplayerGameService extends SoloGameService {
   }
 
   leave() {
-    if (room.roomInfo.creatorName ==
-        authenticator.currentUser.username) {
+    if (room.roomInfo.creatorName == authenticator.currentUser.username) {
       leaveRoomCreator();
-    }
-    else {
+    } else {
       leaveRoomOther();
     }
     linkService.buttonChange();
     linkService.setCurrentOpenedChat('');
   }
-
 }

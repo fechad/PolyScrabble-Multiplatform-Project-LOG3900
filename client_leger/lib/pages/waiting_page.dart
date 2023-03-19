@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
@@ -6,6 +7,7 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+
 import '../classes/game.dart';
 import '../components/avatar.dart';
 import '../components/sidebar.dart';
@@ -228,61 +230,64 @@ class _WaitingPageState extends State<WaitingPage> {
                           ])),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
-                      child: Row(children: const [
-                        Avatar(),
-                        Avatar(),
-                        Avatar(),
-                        Avatar(),
-                      ])),
-                  linkService.getIsInAGame() ? Padding(
-                      padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
-                      child: InkWell(
-                    onTap: () {
-                      linkService.setCurrentOpenedChat('');
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.close_rounded,
-                      color: Colors.black,
-                      size: 60,
-                    ),
-                  )) :
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
                       child: Row(children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            minimumSize: Size(50, 40),
-                            textStyle: const TextStyle(fontSize: 20),
-                          ),
-                          child: const Text('Quitter'),
-                          onPressed: () {
-                            gameService.leave();
-                            Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                              return MyHomePage(title: "polyscrabble");
-                            })));
-                          },
-                        ),
-                        SizedBox(width: 40),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Palette.mainColor,
-                              minimumSize: Size(50, 40),
-                              textStyle: const TextStyle(fontSize: 20),
-                            ),
-                            child: const Text('Démarrer'),
-                            onPressed: canStart
-                                ? () => {
-                                      gameService.requestGameStart(),
-                                      linkService.setCurrentOpenedChat(''),
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: ((context) {
-                                        return const GamePageWidget();
-                                      })))
-                                    }
-                                : null),
+                        Avatar(url: 'https://picsum.photos/seed/540/600'),
+                        Avatar(url: 'https://picsum.photos/seed/540/600'),
+                        Avatar(url: 'https://picsum.photos/seed/540/600'),
+                        Avatar(url: 'https://picsum.photos/seed/540/600'),
                       ])),
+                  linkService.getIsInAGame()
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
+                          child: InkWell(
+                            onTap: () {
+                              linkService.setCurrentOpenedChat('');
+                              Navigator.pop(context);
+                            },
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: Colors.black,
+                              size: 60,
+                            ),
+                          ))
+                      : Padding(
+                          padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
+                          child: Row(children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                minimumSize: Size(50, 40),
+                                textStyle: const TextStyle(fontSize: 20),
+                              ),
+                              child: const Text('Quitter'),
+                              onPressed: () {
+                                gameService.leave();
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: ((context) {
+                                  return MyHomePage(title: "polyscrabble");
+                                })));
+                              },
+                            ),
+                            SizedBox(width: 40),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Palette.mainColor,
+                                  minimumSize: Size(50, 40),
+                                  textStyle: const TextStyle(fontSize: 20),
+                                ),
+                                child: const Text('Démarrer'),
+                                onPressed: canStart
+                                    ? () => {
+                                          gameService.requestGameStart(),
+                                          linkService.setCurrentOpenedChat(''),
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: ((context) {
+                                            return const GamePageWidget();
+                                          })))
+                                        }
+                                    : null),
+                          ])),
                 ]),
               ),
               Column(children: [

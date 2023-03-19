@@ -119,54 +119,114 @@ class Room {
       };
 }
 
+class UserSettings {
+  String avatarUrl;
+  String defaultLanguage;
+  String defaultTheme;
+  String victoryMusic;
+
+  UserSettings(
+      {required this.avatarUrl,
+      required this.defaultLanguage,
+      required this.defaultTheme,
+      required this.victoryMusic});
+
+  UserSettings.fromJson(dynamic json)
+      : avatarUrl = json['avatarUrl'],
+        defaultLanguage = json['defaultLanguage'],
+        defaultTheme = json['defaultTheme'],
+        victoryMusic = json['victoryMusic'];
+
+  Map<String, dynamic> toJson() => {
+        'avatarUrl': avatarUrl,
+        'defaultLanguage': defaultLanguage,
+        'defaultTheme': defaultTheme,
+        'victoryMusic': victoryMusic,
+      };
+}
+
+class ProgressInfo {
+  int totalXP;
+  int currentLevel;
+  int currentLevelXp;
+  int xpForNextLevel;
+  int victoriesCount;
+
+  ProgressInfo(
+      {required this.totalXP,
+      required this.currentLevel,
+      required this.currentLevelXp,
+      required this.xpForNextLevel,
+      required this.victoriesCount});
+
+  ProgressInfo.fromJson(dynamic json)
+      : totalXP = json['totalXP'],
+        currentLevel = json['currentLevel'],
+        currentLevelXp = json['currentLevelXp'],
+        xpForNextLevel = json['xpForNextLevel'],
+        victoriesCount = json['victoriesCount'];
+
+  Map<String, dynamic> toJson() => {
+        'totalXP': totalXP,
+        'currentLevel': currentLevel,
+        'currentLevelXP': currentLevelXp,
+        'xpForNextLevel': xpForNextLevel,
+        'victoriesCount': victoriesCount
+      };
+}
+
 class Account {
   String username;
   String email;
-  String defaultLanguage;
-  String defaultTheme;
-  int highscore;
-  int totalXP;
+  UserSettings userSettings;
+  ProgressInfo progressInfo;
+  Map<String, int>? highScores;
   List<String> badges;
-  String avatarUrl;
-  List<GameHeader> bestGames;
-  List<GameHeader> gamesPlayed;
+  List<String> bestGames;
+  List<String> gamesPlayed;
   int gamesWon;
 
   Account(
       {required this.username,
       required this.email,
-      required this.defaultLanguage,
-      required this.defaultTheme,
-      required this.highscore,
-      required this.totalXP,
+      required this.userSettings,
+      required this.progressInfo,
+      required this.highScores,
       required this.badges,
-      required this.avatarUrl,
       required this.bestGames,
       required this.gamesPlayed,
       required this.gamesWon});
 
-  Account.fromJson(dynamic json, jsonGameHeader)
+  Account.fromJson(dynamic json)
       : username = json['username'],
         email = json['email'],
-        defaultLanguage = json['defaultLanguage'],
-        defaultTheme = json['defaultTheme'],
-        highscore = json['highscore'],
-        totalXP = json['totalXP'],
-        badges = json['badges'],
-        avatarUrl = json['avatarUrl'],
-        bestGames = jsonGameHeader,
-        gamesPlayed = jsonGameHeader,
+        userSettings = UserSettings.fromJson(json['userSettings']),
+        progressInfo = ProgressInfo.fromJson(json['progressInfo']),
+        highScores = json['highScores'],
+        badges = json['badges']
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
+        bestGames = json['bestGames']
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
+        gamesPlayed = json['gamesPlayed']
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
         gamesWon = json['gamesWon'];
 
   Map<String, dynamic> toJson() => {
         'username': username,
         'email': email,
-        'defaultLanguage': defaultLanguage,
-        'defaultTheme': defaultTheme,
-        'highscore': highscore,
-        'totalXP': totalXP,
+        'userSettings': userSettings,
+        'progressInfo': progressInfo,
+        'highScores': highScores,
         'badges': badges,
-        'avatarUrl': avatarUrl,
         'bestGames': bestGames,
         'gamesPlayed': gamesPlayed,
         'gamesWon': gamesWon,
@@ -244,7 +304,6 @@ class DiscussionChannel {
       };
 }
 
-
 class Message {
   String text;
   String? sender;
@@ -256,7 +315,7 @@ class Message {
         sender = json['sender'];
 
   Map<String, dynamic> toJson() => {
-    'text': text,
-    'sender': sender,
-  };
+        'text': text,
+        'sender': sender,
+      };
 }

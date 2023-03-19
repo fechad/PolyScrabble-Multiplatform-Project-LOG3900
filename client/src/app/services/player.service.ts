@@ -21,7 +21,7 @@ export class PlayerService {
         this.room = new Room();
         this.player = new Player();
         // TODO: remove this bypass for disabled logging
-        this.player.email = 'kurama@polyscrabble.ca';
+        this.player.email = 'anna@polyscrabble.ca';
         // TODO: Remove this call once logging is re enabled
         this.getPlayerInfo();
     }
