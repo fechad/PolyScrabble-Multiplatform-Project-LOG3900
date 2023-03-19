@@ -12,7 +12,7 @@
         "coverage": "ng test --code-coverage",
         "lint": "ng lint --format stylish",
         "start:electron": "ng build --base-href ./ && electron .",
-        "build:electron": "ng build && electron-packager . --asar --prune --ignore=/e2e --ignore=/src --overwrite --out=./build",
+        "build:electron": "ng build && electron-packager . --asar --prune --ignore=/node_modules/(?!(electron-store))/ --ignore=/node_modules/(?!(conf))/ --ignore=/e2e --ignore=/src --overwrite --out=./build",
         "lint:fix": "npm run lint -- --fix"
     },
     "private": true,
