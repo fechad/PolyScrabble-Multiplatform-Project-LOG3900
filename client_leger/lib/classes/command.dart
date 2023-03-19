@@ -25,12 +25,11 @@ class ExchangeCommand {
     String lettersToExchange = '';
     for (Tile tile in rack) {
       if (letterIndexes.contains(tile.index)) {
-        lettersToExchange += tile.letter;
+        lettersToExchange += tile.letter.toLowerCase();
       }
     }
 
     String command = '!échanger $lettersToExchange';
-
     socketService.send('message', command);
   }
 }
@@ -58,6 +57,7 @@ class SkipTurnCommand {
     socketService.send('message', letter);
   }
 }
+
 
 
 

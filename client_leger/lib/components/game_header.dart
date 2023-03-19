@@ -17,47 +17,55 @@ class GameHeaderWidget extends StatefulWidget {
 
 class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  int timeChosen = int.parse(gameService.gameData.timerPerTurn);
+  int timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn);
   String timerFormat = '00:00';
   late Timer _timer;
   late int minutes;
   late int seconds;
+  bool alreadyReceived = false;
 
   @override
   void initState() {
     super.initState();
-    configure();
     setTimer();
+    configure();
   }
 
   configure() {
     socketService.on(
         "playerTurnChanged",
-        (currentPlayerTurnPseudo) => {
-              inGameService.player.isItsTurn =
-                  inGameService.player.pseudo == currentPlayerTurnPseudo,
-              linkService.setTurn(inGameService.player.isItsTurn),
-              _timer.cancel(),
-              setTimer(),
-            });
+            (currentPlayerTurnPseudo) => {
+          print('turn changed'),
+          inGameService.player.isItsTurn = inGameService.player.pseudo
+              .compareTo(currentPlayerTurnPseudo) ==
+              0,
+          linkService.setTurn(inGameService.player.isItsTurn),
+          _timer.cancel(),
+          setTimer(),
+        });
+
     socketService.on(
         "timeUpdated",
-        (room) => {
-              gameService.room = gameService.decodeModel(room),
-              timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn) -
-                  gameService.room.elapsedTime,
-            });
+            (room) => {
+          gameService.room = gameService.decodeModel(room),
+          timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn) -
+              gameService.room.elapsedTime,
+
+          if (!alreadyReceived)  socketService.send('getRackInfos', gameService.room.roomInfo.name),
+          alreadyReceived = true,
+        });
+
   }
 
   setTimer() {
     placementValidator.cancelPlacement();
     linkService.cancelPlacements();
     linkService.resetRack();
-    timeChosen = int.parse(gameService.gameData.timerPerTurn);
+    timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn);
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
-      (Timer timer) {
+          (Timer timer) {
         if (timeChosen == 0) {
           setState(() {
             seconds = timeChosen % 60;
@@ -83,9 +91,6 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    timeChosen = int.parse(gameService.gameData.timerPerTurn);
-    const oneSec = const Duration(seconds: 1);
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(Icons.filter_none, size: 32),
@@ -129,8 +134,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
           GestureDetector(
             onTap: () {
               setState(() => {
-                    scaffoldKey.currentState?.openEndDrawer(),
-                  });
+                scaffoldKey.currentState?.openEndDrawer(),
+              });
             },
             child: Avatar(),
           ),
@@ -143,8 +148,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
           GestureDetector(
             onTap: () {
               setState(() => {
-                    scaffoldKey.currentState?.openEndDrawer(),
-                  });
+                scaffoldKey.currentState?.openEndDrawer(),
+              });
             },
             child: Avatar(),
           ),
@@ -156,8 +161,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
           GestureDetector(
             onTap: () {
               setState(() => {
-                    scaffoldKey.currentState?.openEndDrawer(),
-                  });
+                scaffoldKey.currentState?.openEndDrawer(),
+              });
             },
             child: Avatar(),
           ),
@@ -169,8 +174,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
           GestureDetector(
             onTap: () {
               setState(() => {
-                    scaffoldKey.currentState?.openEndDrawer(),
-                  });
+                scaffoldKey.currentState?.openEndDrawer(),
+              });
             },
             child: Avatar(),
           ),
@@ -188,14 +193,14 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
             padding: EdgeInsets.fromLTRB(10, 0, 0, 45),
             onPressed: linkService.getMyTurn()
                 ? () {
-                    setState(() {
-                      inGameService.changePlayerTurn();
-                      linkService.changeTurn();
-                      //setTimer();
-                    });
-                  }
+              setState(() {
+                inGameService.changePlayerTurn();
+                linkService.changeTurn();
+              });
+            }
                 : null)
       ]),
     ]);
   }
 }
+

@@ -24,6 +24,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get isInAGame {
+    _$valueAtom.reportRead();
+    return super.isInAGame;
+  }
+
+  @override
   Observable<bool> get wantToExchange {
     _$valueAtom.reportRead();
     return super.wantToExchange;
@@ -75,16 +81,6 @@ mixin _$LinkService on _LinkService, Store {
   late final _$_LinkServiceActionController =
   ActionController(name: '_LinkService');
 
-  @override
-  void changExchangeBool() {
-    final _$actionInfo = _$_LinkServiceActionController.startAction(
-        name: '_LinkService.changeExchangeBool');
-    try {
-      return super.changeExchangeBool();
-    } finally {
-      _$_LinkServiceActionController.endAction(_$actionInfo);
-    }
-  }
 
   @override
   void changeTurn() {
@@ -125,6 +121,28 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setTempRows');
     try {
       return super.setRows(x, y, square);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setIsInAGame(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setIsInAGame' );
+    try {
+      return super.setIsInAGame(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setWantToExchange(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setWantToExchange' );
+    try {
+      return super.setWantToExchange(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }

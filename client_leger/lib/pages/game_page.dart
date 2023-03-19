@@ -12,6 +12,7 @@ import 'package:client_leger/services/placement_validator_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../classes/game.dart';
 import '../components/board.dart';
 import '../components/game_sidebar.dart';
 import '../components/user_resume.dart';
@@ -40,16 +41,30 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   List<Widget> Avatars = [];
   String lettersPlaced = '';
   int drawer = 0;
-  int timeChosen = int.parse(gameService.gameData.timerPerTurn);
-  String timerFormat = '00:00';
-  late Timer _timer;
-  late int minutes;
-  late int seconds;
+  String serverMsg = '';
 
   @override
   void initState() {
     super.initState();
     inGameService.configure();
+    linkService.setIsInAGame(true);
+
+    socketService.on(
+        "message",
+            (msg) => {
+          serverMsg = Message.fromJson(msg).text,
+          if(serverMsg.contains('Placement invalide')) {
+            inGameService.handleBadPlacement(),
+            setState(() {
+              placementValidator.cancelPlacement();
+              lettersPlaced = '';
+              linkService.cancelPlacements();
+              boardController.rebuild();
+              linkService.resetRack();
+            })
+          }
+          else if (serverMsg.contains('a effectué le placement suivant:')) linkService.confirm(),
+        });
   }
 
   tileChange(int letterIndex) {
@@ -68,38 +83,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     });
   }
 
-  // setTimer() {
-  //   placementValidator.cancelPlacement();
-  //   linkService.cancelPlacements();
-  //   linkService.resetRack();
-  //   timeChosen = int.parse(gameService.gameData.timerPerTurn);
-  //   const oneSec = const Duration(seconds: 1);
-  //   _timer = Timer.periodic(
-  //     oneSec,
-  //     (Timer timer) {
-  //       if (timeChosen == 0) {
-  //         setState(() {
-  //           seconds = timeChosen % 60;
-  //           //check if timer reaches 0 and its my turn, then skip turn
-  //           timerFormat = Duration(seconds: seconds).toString().substring(2, 7);
-  //           timer.cancel();
-  //           if (linkService.getMyTurn()) inGameService.changePlayerTurn();
-  //           Timer(const Duration(milliseconds: 500), (() => setTimer()));
-  //         });
-  //       } else {
-  //         setState(() {
-  //           minutes = timeChosen ~/ 60;
-  //           seconds = timeChosen % 60;
-  //           //only keep minutes and seconds
-  //           timerFormat = Duration(minutes: minutes, seconds: seconds)
-  //               .toString()
-  //               .substring(2, 7);
-  //         });
-  //       }
-  //     },
-  //   );
-  // }
-
   changeTurn() {
     setState(() {
       linkService.setTurn(!linkService.getMyTurn());
@@ -109,7 +92,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   @override
   void dispose() {
     _unfocusNode.dispose();
-    _timer.cancel();
     super.dispose();
   }
 
@@ -119,7 +101,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
     return Scaffold(
-        //key: scaffoldKey,
         backgroundColor: Color.fromRGBO(249, 255, 246, 1),
         drawer: ChatDrawer(),
         endDrawer: UserResume(),
@@ -162,12 +143,12 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                       setState(() {
                         letterIndexesToExchange.clear();
                         linkService.resetRack();
-                        //linkService.changeExchangeBool();
+                        linkService.setWantToExchange(false);
                       })
                     },
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
+                        MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
                     child: Text('Annuler'),
                   ),
                   SizedBox(
@@ -205,7 +186,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                     },
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
+                        MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
                     child: Text('Annuler'),
                   ),
                   SizedBox(
@@ -214,23 +195,32 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                   ElevatedButton(
                     onPressed: linkService.getMyTurn()
                         ? () {
-                            setState(() {
-                              final PlacementCommand command = PlacementCommand(
-                                  position:
-                                      '${placementValidator.getRowLetter(placementValidator.firstLetterPosition[1])}${placementValidator.firstLetterPosition[0] + 1}',
-                                  direction: placementValidator.isHorizontal
-                                      ? 'h'
-                                      : 'v',
-                                  letter:
-                                      placementValidator.letters.toLowerCase());
-                              gameCommandService
-                                  .constructPlacementCommand(command);
-                              linkService.resetRack();
-                              lettersPlaced = '';
-                              placementValidator.cancelPlacement();
-                              linkService.confirm();
-                            });
-                          }
+                      setState(() {
+                        if (linkService.getMyTurn()) {
+                          final PlacementCommand command = PlacementCommand(
+                              position:
+                              '${placementValidator.getRowLetter(
+                                  placementValidator
+                                      .firstLetterPosition[1])}${placementValidator
+                                  .firstLetterPosition[0] + 1}',
+                              direction: placementValidator.isHorizontal
+                                  ? 'h'
+                                  : 'v',
+                              letter:
+                              placementValidator.letters.toLowerCase());
+                          gameCommandService
+                              .constructPlacementCommand(command);
+                          linkService.resetRack();
+                          lettersPlaced = '';
+                          placementValidator.cancelPlacement();
+                          //linkService.confirm();
+                        }
+                        else {
+                          placementValidator.cancelPlacement();
+                          linkService.resetRack();
+                        }
+                      });
+                    }
                         : null,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Palette.mainColor,
@@ -243,3 +233,4 @@ class _GamePageWidgetState extends State<GamePageWidget> {
         ]));
   }
 }
+
