@@ -1,8 +1,13 @@
 import 'package:http/http.dart' as http;
 
+import '../classes/game.dart';
 import '../config/environment.dart';
 
 const String authUrl = 'auth';
+const String userInfoUrl = 'userInfo';
+const String opponentInfoUrl = 'opponentInfo';
+const String avatarUrl = 'images/avatars';
+const String badgeUrl = 'images/badges';
 const String baseUrl = environment;
 String url = getServerURL();
 
@@ -44,5 +49,19 @@ class HttpService {
     final secondReplace = firstReplace.replaceAll("]", '');
     final respJson = secondReplace.split(",");
     return Future.value(respJson);
+  }
+
+  Future<http.Response> updateUserSettings(
+      String userEmail, UserSettings newSettings) {
+    //this.clearError();
+    return http.patch(Uri.parse('${url}/api/${userInfoUrl}/${userEmail}'),
+        body: newSettings.toJson());
+  }
+
+  Future<http.Response> getOpponentInfo(String username) {
+    //this.clearError();
+    return http.get(
+      Uri.parse('${url}/api/${userInfoUrl}/${opponentInfoUrl}/${username}'),
+    );
   }
 }

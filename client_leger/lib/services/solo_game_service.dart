@@ -7,6 +7,7 @@ class SoloGameService {
   GameData gameData;
   late Room room;
   late Player player;
+  late Player scorePlayer;
   bool onProcess = false;
   SoloGameService({required this.gameData}) {
     room = Room(

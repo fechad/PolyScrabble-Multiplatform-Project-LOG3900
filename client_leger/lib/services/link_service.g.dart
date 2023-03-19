@@ -79,8 +79,7 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   late final _$_LinkServiceActionController =
-  ActionController(name: '_LinkService');
-
+      ActionController(name: '_LinkService');
 
   @override
   void changeTurn() {
@@ -129,7 +128,7 @@ mixin _$LinkService on _LinkService, Store {
   @override
   void setIsInAGame(value) {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
-        name: '_LinkService.setIsInAGame' );
+        name: '_LinkService.setIsInAGame');
     try {
       return super.setIsInAGame(value);
     } finally {
@@ -140,7 +139,7 @@ mixin _$LinkService on _LinkService, Store {
   @override
   void setWantToExchange(value) {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
-        name: '_LinkService.setWantToExchange' );
+        name: '_LinkService.setWantToExchange');
     try {
       return super.setWantToExchange(value);
     } finally {
@@ -151,7 +150,7 @@ mixin _$LinkService on _LinkService, Store {
   @override
   void setTurn(value) {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
-        name: '_LinkService.setTurn' );
+        name: '_LinkService.setTurn');
     try {
       return super.setTurn(value);
     } finally {
@@ -162,7 +161,7 @@ mixin _$LinkService on _LinkService, Store {
   @override
   void setCurrentSelectedIndex(value) {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
-        name: '_LinkService.setTurn' );
+        name: '_LinkService.setTurn');
     try {
       return super.setCurrentSelectedIndex(value);
     } finally {
@@ -274,4 +273,3 @@ mixin _$LinkService on _LinkService, Store {
     return ''' rack: ${tempRack} ''';
   }
 }
-

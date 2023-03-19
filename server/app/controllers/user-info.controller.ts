@@ -50,6 +50,15 @@ export class UserInfoController {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
             }
         });
+        this.router.get('/opponentInfo/:username', async (req: Request, res: Response) => {
+            try {
+                await this.databaseService.getDocumentByField('accounts', 'username', req.params.username).then((data: Account) => {
+                    res.json(this.buildClientAccountInfo(data));
+                });
+            } catch (error) {
+                res.status(StatusCodes.NOT_FOUND).send(error.message);
+            }
+        });
         this.router.patch('/:email', async (req: Request, res: Response) => {
             try {
                 await this.databaseService.updateDocumentByID('accounts', req.params.email, this.reduceClientAccountInfo(req.body));

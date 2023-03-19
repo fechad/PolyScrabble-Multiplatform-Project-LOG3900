@@ -3,14 +3,18 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../classes/game.dart';
 import '../config/colors.dart';
 import '../pages/game_page.dart';
 import '../services/link_service.dart';
 import 'avatar.dart';
 
 class GameHeaderWidget extends StatefulWidget {
+  final List<Account> opponentsInfo;
   final VoidCallback resetLetters;
-  const GameHeaderWidget({Key? key, required this.resetLetters}) : super(key: key);
+  const GameHeaderWidget(
+      {Key? key, required this.resetLetters, required this.opponentsInfo})
+      : super(key: key);
 
   @override
   _GameHeaderWidgetState createState() => _GameHeaderWidgetState();
@@ -35,27 +39,27 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   configure() {
     socketService.on(
         "playerTurnChanged",
-            (currentPlayerTurnPseudo) => {
-          inGameService.player.isItsTurn = inGameService.player.pseudo
-              .compareTo(currentPlayerTurnPseudo) ==
-              0,
-          linkService.setTurn(inGameService.player.isItsTurn),
+        (currentPlayerTurnPseudo) => {
+              inGameService.player.isItsTurn = inGameService.player.pseudo
+                      .compareTo(currentPlayerTurnPseudo) ==
+                  0,
+              linkService.setTurn(inGameService.player.isItsTurn),
               widget.resetLetters(),
-          _timer.cancel(),
-          setTimer(),
-        });
+              _timer.cancel(),
+              setTimer(),
+            });
 
     socketService.on(
         "timeUpdated",
-            (room) => {
-          gameService.room = gameService.decodeModel(room),
-          timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn) -
-              gameService.room.elapsedTime,
-
-          if (!alreadyReceived)  socketService.send('getRackInfos', gameService.room.roomInfo.name),
-          alreadyReceived = true,
-        });
-
+        (room) => {
+              gameService.room = gameService.decodeModel(room),
+              timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn) -
+                  gameService.room.elapsedTime,
+              if (!alreadyReceived)
+                socketService.send(
+                    'getRackInfos', gameService.room.roomInfo.name),
+              alreadyReceived = true,
+            });
   }
 
   setTimer() {
@@ -66,7 +70,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         if (timeChosen == 0) {
           setState(() {
             seconds = timeChosen % 60;
@@ -94,14 +98,14 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   Widget build(BuildContext context) {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.filter_none, size: 32),
+        const Icon(Icons.filter_none, size: 32),
         Text(' ${linkService.getLetterBankCount()}',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontFamily: 'Nunito',
               fontSize: 24,
             )),
-        SizedBox(
+        const SizedBox(
           width: 85,
         ),
         Container(
@@ -116,92 +120,69 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               height: 40,
               child: Center(
                   child: Text("$timerFormat",
-                      style: TextStyle(fontSize: 24, color: Colors.black)))),
+                      style:
+                          const TextStyle(fontSize: 24, color: Colors.black)))),
         ),
-        SizedBox(
+        const SizedBox(
           width: 40,
         ),
         //TODO : put number of observers
-        Text("10",
+        const Text("10",
             style: TextStyle(
               fontSize: 20,
             )),
-        SizedBox(width: 10),
-        Icon(Icons.remove_red_eye_rounded, size: 40)
+        const Icon(Icons.remove_red_eye_rounded, size: 40)
       ]),
-      SizedBox(height: 20),
-      Row(children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          GestureDetector(
-            onTap: () {
-              setState(() => {
-                scaffoldKey.currentState?.openEndDrawer(),
-              });
-            },
-            child: Avatar(),
-          ),
-          SizedBox(height: 10),
-          //TODO get scores
-          Text("251", style: TextStyle(fontSize: 14, color: Colors.black)),
-          SizedBox(width: 10),
-        ]),
-        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          GestureDetector(
-            onTap: () {
-              setState(() => {
-                scaffoldKey.currentState?.openEndDrawer(),
-              });
-            },
-            child: Avatar(),
-          ),
-          SizedBox(height: 10),
-          Text("251", style: TextStyle(fontSize: 14, color: Colors.black)),
-          SizedBox(width: 10),
-        ]),
-        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          GestureDetector(
-            onTap: () {
-              setState(() => {
-                scaffoldKey.currentState?.openEndDrawer(),
-              });
-            },
-            child: Avatar(),
-          ),
-          SizedBox(height: 10),
-          Text("251", style: TextStyle(fontSize: 14, color: Colors.black)),
-          SizedBox(width: 10),
-        ]),
-        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          GestureDetector(
-            onTap: () {
-              setState(() => {
-                scaffoldKey.currentState?.openEndDrawer(),
-              });
-            },
-            child: Avatar(),
-          ),
-          SizedBox(height: 10),
-          Text("251", style: TextStyle(fontSize: 14, color: Colors.black)),
-          SizedBox(width: 10),
-        ]),
-        IconButton(
-            color: Palette.mainColor,
-            disabledColor: Colors.grey,
-            icon: Icon(
-              Icons.double_arrow_rounded,
-              size: 50,
-            ),
-            padding: EdgeInsets.fromLTRB(10, 0, 0, 45),
-            onPressed: linkService.getMyTurn()
-                ? () {
-              setState(() {
-                inGameService.changePlayerTurn();
-                linkService.changeTurn();
-              });
-            }
-                : null)
-      ]),
+      const SizedBox(height: 10),
+      // TODO: Check if sizedbox is better
+      Container(
+          width: MediaQuery.of(context).size.width * 0.2,
+          height: MediaQuery.of(context).size.height * 0.125,
+          child: Row(
+            children: [
+              Flexible(
+                  child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  if (widget.opponentsInfo.isEmpty) {
+                    return const CircularProgressIndicator(); // display a loading indicator
+                  } else {
+                    return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Avatar(
+                              url: widget
+                                  .opponentsInfo[index].userSettings.avatarUrl),
+                          const SizedBox(height: 10),
+                          Text('${gameService.room.players[index].points}',
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black)),
+                          const SizedBox(width: 10),
+                        ]);
+                  }
+                },
+                itemCount: gameService.room.players.length,
+                reverse: false,
+                padding: const EdgeInsets.all(6.0),
+              )),
+              IconButton(
+                  color: Palette.mainColor,
+                  disabledColor: Colors.grey,
+                  icon: const Icon(
+                    Icons.double_arrow_rounded,
+                    size: 50,
+                  ),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 45),
+                  onPressed: linkService.getMyTurn()
+                      ? () {
+                          setState(() {
+                            inGameService.changePlayerTurn();
+                            linkService.changeTurn();
+                          });
+                        }
+                      : null)
+            ],
+          ))
     ]);
   }
 }
-

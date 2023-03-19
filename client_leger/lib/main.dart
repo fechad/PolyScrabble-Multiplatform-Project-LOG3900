@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
 
 AuthService authenticator = AuthService();
-
+late List<CameraDescription> cameras;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
+
   authenticator = await AuthService.create();
   runApp(const MyApp());
 }

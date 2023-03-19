@@ -74,6 +74,7 @@ export class SocketGameService extends SocketHandlerService {
         const roomName = this.getSocketRoom(socket);
         if (!roomName) return;
         const room = this.roomService.getRoom(roomName) as Room;
+
         if (!room) return;
         if (room.players.length > room.maxPlayers || room.players.length <= 1) return;
         let currentTurnPlayer = room.getCurrentPlayerTurn();
@@ -285,6 +286,7 @@ export class SocketGameService extends SocketHandlerService {
 
     private isRoomAndPlayerValid(socket: io.Socket, roomName: string): boolean {
         const room = this.roomService.getRoom(roomName);
+
         if (!room) return false;
         if (!room.getPlayer(socket.id)) return false;
         return true;

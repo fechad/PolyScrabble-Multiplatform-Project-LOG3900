@@ -83,7 +83,6 @@ abstract class _LinkService with Store {
     return isInAGame.value;
   }
 
-
   int getCurrentSelectedIndex() {
     return currentSelectedIndex.value;
   }
@@ -154,7 +153,6 @@ abstract class _LinkService with Store {
     wantToExchange.value = value;
   }
 
-
   @action
   setTurn(bool value) {
     myTurn.value = value;
@@ -172,7 +170,7 @@ abstract class _LinkService with Store {
         y: y,
         currentSquare: square,
         previousSquare:
-        (rows[y] as Row).children[x] as DragTarget<Map<dynamic, dynamic>>);
+            (rows[y] as Row).children[x] as DragTarget<Map<dynamic, dynamic>>);
     placementStack.add(placement);
     (rows[y] as Row).children[x] = placement.currentSquare;
   }
@@ -238,10 +236,10 @@ abstract class _LinkService with Store {
     int index = 0;
     rack.clear();
     for (String letter in data.toUpperCase().split("")) {
-      Tile newTile = Tile(letter: letter, index: index++, rebuildController: controller);
+      Tile newTile =
+          Tile(letter: letter, index: index++, rebuildController: controller);
       rack.add(newTile);
     }
     resetRack();
   }
 }
-

@@ -26,6 +26,7 @@ export class HttpService {
     private readonly gameBaseUrl: string;
     private readonly authUrl: string;
     private readonly userInfoUrl: string;
+    private readonly opponentInfoUrl: string;
     private readonly avatarUrl: string;
     private readonly badgeUrl: string;
     private baseUrl: string;
@@ -36,6 +37,7 @@ export class HttpService {
         this.botBaseUrl = 'bots';
         this.authUrl = 'auth';
         this.userInfoUrl = 'userInfo';
+        this.opponentInfoUrl = 'opponentInfo';
         this.avatarUrl = 'images/avatars';
         this.badgeUrl = 'images/badges';
         this.baseUrl = environment.serverUrl;
@@ -46,6 +48,11 @@ export class HttpService {
         return this.http
             .get<{ timestamp: string; signature: string; apiKey: string }>(`${this.baseUrl}/images/signature`)
             .pipe(catchError(this.handleError<{ timestamp: string; signature: string; apiKey: string }>('getPredefinedAvatarsURL')));
+    }
+
+    getOpponentInfo(username: string): Observable<ClientAccountInfo> {
+        // this.clearError();
+        return this.http.get<ClientAccountInfo>(`${this.baseUrl}/${this.userInfoUrl}/${this.opponentInfoUrl}/${username}`);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

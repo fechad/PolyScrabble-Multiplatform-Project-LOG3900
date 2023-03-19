@@ -47,9 +47,9 @@ class Tile extends StatelessWidget {
 
   Tile(
       {super.key,
-        required this.letter,
-        required this.index,
-        this.rebuildController});
+      required this.letter,
+      required this.index,
+      this.rebuildController});
 
   int getTileScore() {
     if (letter == '' || letter == null || letter == '*') return 0;
@@ -74,71 +74,8 @@ class Tile extends StatelessWidget {
           }
           return rebuildController?.rebuild();
         },
-        child:
-        linkService.getWantToExchange() ?
-        Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color(0xFFFFEBCE),
-              border: Border.all(
-                color: wantToExchange
-                    ? Color.fromARGB(170, 22, 235, 82)
-                    : const Color(0xAA000000),
-                width: 1,
-              ),
-            ),
-            margin: const EdgeInsets.only(left: 2.5, right: 2.5),
-            width: 45,
-            height: 45,
-            child: Stack(
-              children: [
-                Center(
-                    child:
-                    Text(letter, style: const TextStyle(fontSize: 24))),
-                Positioned(
-                  child:
-                  Text('$value', style: const TextStyle(fontSize: 10)),
-                  bottom: 4.0,
-                  right: 4.0,
-                )
-              ],
-            ))
-            : Draggable<Map>(
-            data: {'letter': letter, 'value': value.toString(), 'index': index},
-            childWhenDragging: Container(
-              color: Color(0x00000000),
-            ),
-            //maxSimultaneousDrags: linkService.getWantToExchange() ? 0 : 1,
-            feedback: Material(
-                color: Color(0x00000000),
-                child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color(0xFFFFEBCE),
-                      border: Border.all(
-                        color: const Color(0xAA000000),
-                        width: 1,
-                      ),
-                    ),
-                    margin: const EdgeInsets.only(left: 2.5, right: 2.5),
-                    width: 50,
-                    height: 50,
-                    child: Stack(
-                      children: [
-                        Center(
-                            child: Text(letter,
-                                style: const TextStyle(
-                                    fontSize: 24, color: Colors.black))),
-                        Positioned(
-                          child: Text('$value',
-                              style: const TextStyle(
-                                  fontSize: 10, color: Colors.black)),
-                          bottom: 4.0,
-                          right: 4.0,
-                        )
-                      ],
-                    ))),
-            child: Container(
+        child: linkService.getWantToExchange()
+            ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: const Color(0xFFFFEBCE),
@@ -156,16 +93,80 @@ class Tile extends StatelessWidget {
                   children: [
                     Center(
                         child:
-                        Text(letter, style: const TextStyle(fontSize: 24))),
+                            Text(letter, style: const TextStyle(fontSize: 24))),
                     Positioned(
                       child:
-                      Text('$value', style: const TextStyle(fontSize: 10)),
+                          Text('$value', style: const TextStyle(fontSize: 10)),
                       bottom: 4.0,
                       right: 4.0,
                     )
                   ],
                 ))
-        ));
+            : Draggable<Map>(
+                data: {
+                    'letter': letter,
+                    'value': value.toString(),
+                    'index': index
+                  },
+                childWhenDragging: Container(
+                  color: Color(0x00000000),
+                ),
+                //maxSimultaneousDrags: linkService.getWantToExchange() ? 0 : 1,
+                feedback: Material(
+                    color: Color(0x00000000),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xFFFFEBCE),
+                          border: Border.all(
+                            color: const Color(0xAA000000),
+                            width: 1,
+                          ),
+                        ),
+                        margin: const EdgeInsets.only(left: 2.5, right: 2.5),
+                        width: 50,
+                        height: 50,
+                        child: Stack(
+                          children: [
+                            Center(
+                                child: Text(letter,
+                                    style: const TextStyle(
+                                        fontSize: 24, color: Colors.black))),
+                            Positioned(
+                              child: Text('$value',
+                                  style: const TextStyle(
+                                      fontSize: 10, color: Colors.black)),
+                              bottom: 4.0,
+                              right: 4.0,
+                            )
+                          ],
+                        ))),
+                child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFFFEBCE),
+                      border: Border.all(
+                        color: wantToExchange
+                            ? Color.fromARGB(170, 22, 235, 82)
+                            : const Color(0xAA000000),
+                        width: 1,
+                      ),
+                    ),
+                    margin: const EdgeInsets.only(left: 2.5, right: 2.5),
+                    width: 45,
+                    height: 45,
+                    child: Stack(
+                      children: [
+                        Center(
+                            child: Text(letter,
+                                style: const TextStyle(fontSize: 24))),
+                        Positioned(
+                          child: Text('$value',
+                              style: const TextStyle(fontSize: 10)),
+                          bottom: 4.0,
+                          right: 4.0,
+                        )
+                      ],
+                    ))));
   }
 }
-
