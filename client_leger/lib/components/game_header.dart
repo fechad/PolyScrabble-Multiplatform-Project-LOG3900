@@ -9,7 +9,8 @@ import '../services/link_service.dart';
 import 'avatar.dart';
 
 class GameHeaderWidget extends StatefulWidget {
-  const GameHeaderWidget({Key? key}) : super(key: key);
+  final VoidCallback resetLetters;
+  const GameHeaderWidget({Key? key, required this.resetLetters}) : super(key: key);
 
   @override
   _GameHeaderWidgetState createState() => _GameHeaderWidgetState();
@@ -35,11 +36,11 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     socketService.on(
         "playerTurnChanged",
             (currentPlayerTurnPseudo) => {
-          print('turn changed'),
           inGameService.player.isItsTurn = inGameService.player.pseudo
               .compareTo(currentPlayerTurnPseudo) ==
               0,
           linkService.setTurn(inGameService.player.isItsTurn),
+              widget.resetLetters(),
           _timer.cancel(),
           setTimer(),
         });

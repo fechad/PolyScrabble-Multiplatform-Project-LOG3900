@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import '../classes/game.dart';
 import '../components/board.dart';
 import '../components/game_sidebar.dart';
+import '../components/tile.dart';
 import '../components/user_resume.dart';
 import '../config/colors.dart';
 import '../services/game_command_service.dart';
@@ -42,13 +43,17 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   String lettersPlaced = '';
   int drawer = 0;
   String serverMsg = '';
+  List<String> hints = [];
 
   @override
   void initState() {
     super.initState();
     inGameService.configure();
     linkService.setIsInAGame(true);
+    _configure();
+  }
 
+  _configure() {
     socketService.on(
         "message",
             (msg) => {
@@ -63,8 +68,161 @@ class _GamePageWidgetState extends State<GamePageWidget> {
               linkService.resetRack();
             })
           }
-          else if (serverMsg.contains('a effectué le placement suivant:')) linkService.confirm(),
+          else if (serverMsg.contains('a effectué le placement suivant:')) {
+            linkService.confirm(),
+            linkService.resetRack(),
+            lettersPlaced = '',
+            placementValidator.cancelPlacement(),
+          }
         });
+
+    socketService.on('hint', (data) => {
+      hints = Message.fromJson(data).text.replaceAll("_", "-").split(' '),
+      showDialog(
+          context: context,
+          builder: (context) {
+            return
+              Container(
+                width: 200,
+                height: 200,
+                child:
+                AlertDialog(
+                    title: Text("Choisissez un indice à prévisualiser: ",
+                        style: TextStyle(fontSize: 24,)),
+                    content: SizedBox(
+                        width: 400,
+                        height: 370,
+                        child:
+                        ListView.builder(
+                            itemCount: int.parse(hints[hints.length-1]),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                            itemBuilder: (context, index) {
+                              return
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child:
+                                    SizedBox(
+                                        height: 50,
+                                        child:
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            shadowColor: Colors.black,
+                                            elevation: 5,
+                                            side: BorderSide(color: Colors.grey, width: 1.0, style: BorderStyle.solid),
+                                          ),
+                                          onPressed: () {
+                                            lettersPlaced = hints[index].split("-")[1];
+                                            serverPlacement(hints[index].split("-")[0], hints[index].split("-")[1]);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                              )),
+                                        )));
+                            }))),
+              );
+          }
+      )
+    });
+  }
+
+  int getTileScore(String letter) {
+    if (letter == '' || letter == null || letter == '*') return 0;
+    final normalLetter = letter.toLowerCase();
+    if (normalLetter.toLowerCase() != normalLetter) return 0;
+    return POINTS[letter.toLowerCase().codeUnits[0] - A_ASCII];
+  }
+
+  void addPlacement(int x, int y, String value, String letter, color) {
+    placementValidator.addLetter(letter, x, y);
+    if (!placementValidator.validPlacement) return;
+
+    Container newSquare = Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFFFEBCE),
+          border: Border.all(
+            color: const Color(0xFFFFFFFF),
+            width: 1,
+          ),
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFFFEBCE),
+              border: Border.all(
+                color: const Color(0xAA000000),
+                width: 1,
+              ),
+            ),
+            width: 43,
+            height: 43,
+            child: Stack(
+              children: [
+                Center(
+                    child: Text(letter, style: const TextStyle(fontSize: 24))),
+                Positioned(
+                  child: Text(value, style: const TextStyle(fontSize: 10)),
+                  bottom: 4.0,
+                  right: 4.0,
+                )
+              ],
+            )));
+    setState(() {
+      linkService.setRows(x, y, newSquare);
+      linkService.removeLetter(Tile(letter: letter, index: getIndex(letter.toUpperCase())));
+    });
+  }
+
+  getIndex(String letter) {
+    for (Tile tile in linkService.getRack()) {
+      if (tile.letter == letter) return tile.index;
+    }
+  }
+
+  void serverPlacement(String position, String word) {
+    int y = (position[0].codeUnitAt(0) - 97);
+    int x = -1;
+    String direction = position[position.length-1];
+    if(position.length == 3) x = int.parse(position[1]) - 1;
+    else x = int.parse(position.substring(1,3)) - 1;
+    List<String> letters = word.split('');
+
+    addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
+        Color(0xFFFFEBCE));
+    letters.removeAt(0);
+
+    if (letters.isEmpty) return;
+
+    if (direction == 'h') {
+      x = x + 1;
+      for (int i = x; i < 15; i++) {
+        final square = (linkService.getRows()[y] as Row).children[x];
+
+        if (square.runtimeType.toString().contains('DragTarget')) {
+          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
+              Color(0xFFFFEBCE));
+          letters.removeAt(0);
+        }
+        if (letters.isEmpty) break;
+        x = x + 1;
+      }
+    } else if (direction == 'v') {
+      y = y + 1;
+      for (int i = y; i < 15; i++) {
+        final square = (linkService.getRows()[y] as Row).children[x];
+
+        if (square.runtimeType.toString().contains('DragTarget')) {
+          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
+              Color(0xFFFFEBCE));
+          letters.removeAt(0);
+        }
+        if (letters.isEmpty) break;
+        y = y + 1;
+      }
+    }
   }
 
   tileChange(int letterIndex) {
@@ -129,7 +287,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
           ]),
           Column(children: [
             SizedBox(height: 10),
-            GameHeaderWidget(),
+            GameHeaderWidget(resetLetters: resetLettersPlaced,),
             SizedBox(height: 10),
             ObjectiveBox(),
             SizedBox(height: 32),
@@ -162,6 +320,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                         gameCommandService.constructExchangeCommand(command);
                         linkService.resetRack();
                         letterIndexesToExchange.clear();
+                        linkService.setWantToExchange(false);
                       });
                     },
                     style: ButtonStyle(
@@ -197,6 +356,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                         ? () {
                       setState(() {
                         if (linkService.getMyTurn()) {
+                          linkService.cancelPlacements();
                           final PlacementCommand command = PlacementCommand(
                               position:
                               '${placementValidator.getRowLetter(
@@ -208,16 +368,17 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                                   : 'v',
                               letter:
                               placementValidator.letters.toLowerCase());
+
                           gameCommandService
                               .constructPlacementCommand(command);
                           linkService.resetRack();
                           lettersPlaced = '';
                           placementValidator.cancelPlacement();
-                          //linkService.confirm();
                         }
                         else {
                           placementValidator.cancelPlacement();
                           linkService.resetRack();
+                          lettersPlaced = '';
                         }
                       });
                     }
@@ -231,6 +392,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
               )
           ])
         ]));
+  }
+
+  resetLettersPlaced() {
+    placementValidator.cancelPlacement();
+    lettersPlaced = '';
+    linkService.cancelPlacements();
+    boardController.rebuild();
+    linkService.resetRack();
   }
 }
 

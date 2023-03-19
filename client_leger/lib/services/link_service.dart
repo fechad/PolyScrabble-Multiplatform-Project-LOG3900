@@ -213,7 +213,7 @@ abstract class _LinkService with Store {
   removeLetter(Tile tile) {
     //TODO: remove corect letter not the first one
     for (Tile letter in tempRack) {
-      if (letter.letter == tile.letter) {
+      if (letter.letter == tile.letter.toUpperCase()) {
         tempRack.remove(letter);
         break;
       }
