@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ThemedDifficulty, ThemedTimers } from '@app/constants/themed-turn-timers';
+import { ThemedDifficulty, ThemedTimers } from '@app/constants/themed-mode-constants';
 
 @Component({
     selector: 'app-themed-page',
