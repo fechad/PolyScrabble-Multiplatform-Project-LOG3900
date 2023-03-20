@@ -1,0 +1,23 @@
+<div class="flex-row">
+    <img [src] = "data.image" alt="photo" class = "jv-pic">
+    <div class = summary>
+        <div class="head">
+            <h1>
+                {{data.name}}
+            </h1>
+            <div class = time>
+                <div>{{time}}</div>
+                <span class="material-symbols-outlined">
+                    Alarm
+                </span>
+            </div>
+        </div>
+        <div class="head">
+            <div class="diff">
+                <div *ngFor = "let dif of diff"  class = "skull">💀</div>
+            </div>
+            <button class = "button fight" (click) = "handleUserAnswer(true)">Affronter</button>
+        </div>   
+    </div>
+        
+</div>

@@ -9,9 +9,10 @@ import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-
 import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { RACK_CAPACITY } from '@app/constants/constants';
 import { DEFAULT_MAX_GAP, SCALES } from '@app/constants/virtual-player-constants';
-import { BotGreeting } from '@app/enums/bot-greetings';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
+import { Language } from '@app/enums/language';
+import { DEFAULT_ENGLISH_QUOTES, DEFAULT_FRENCH_QUOTES, Quotes } from '@app/enums/themed-quotes/quotes';
 import { AdaptiveScale } from '@app/interfaces/adaptive-scale';
 import { UserPlacement } from '@app/interfaces/user-placement';
 import { VirtualBasis } from '@app/interfaces/virtual-basis';
@@ -19,16 +20,19 @@ import { VirtualPlayerTools } from '@app/interfaces/virtual-player-tools';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
 import { IntervalComputer } from './interval-computer';
 
+const bigScore = 30;
+const extremeScore = 50;
 export class VirtualPlayer extends Player implements Observable {
     observers: Observer[];
     centerNode: BoardNode;
-    greeting: BotGreeting;
 
     protected maxGap: number;
     protected possiblePlacements: UserPlacement[];
     protected basis: VirtualBasis;
     protected tools: VirtualPlayerTools;
     protected intervalComputer: IntervalComputer;
+    protected quotes: Quotes;
+    private language: Language;
 
     constructor(
         pseudo: string,
@@ -37,10 +41,11 @@ export class VirtualPlayer extends Player implements Observable {
         letterBank: LetterBank,
         desiredLevel: string = GameLevel.Beginner,
         scale: AdaptiveScale = SCALES.default,
+        language: Language = Language.French,
     ) {
         super('', pseudo, isCreator);
         this.observers = [];
-
+        this.language = language;
         this.basis = { level: desiredLevel, actions: [], scoreIntervals: [] };
         const baseTools: VirtualTools = {
             translator: new IndexationTranslator(),
@@ -54,13 +59,15 @@ export class VirtualPlayer extends Player implements Observable {
         this.centerNode = centerNode;
         this.maxGap = DEFAULT_MAX_GAP;
         this.intervalComputer = new IntervalComputer(scale);
-        this.setGreeting();
+        this.setQuotes();
     }
 
     get level(): string {
         return this.basis.level;
     }
-
+    get greeting(): string {
+        return this.quotes.greeting;
+    }
     async playTurn(): Promise<string> {
         return (await this.chooseAction()) as string;
     }
@@ -70,7 +77,7 @@ export class VirtualPlayer extends Player implements Observable {
     }
 
     sendGreeting() {
-        this.sendMessage(this.greeting);
+        this.sendMessage(this.quotes.greeting);
     }
 
     sendMessage(message: string) {
@@ -93,6 +100,19 @@ export class VirtualPlayer extends Player implements Observable {
         }
     }
 
+    setQuotes(frenchQuotes: Quotes = DEFAULT_FRENCH_QUOTES, englishQuotes: Quotes = DEFAULT_ENGLISH_QUOTES): void {
+        switch (this.language) {
+            case Language.English:
+                this.quotes = englishQuotes;
+                break;
+            case Language.French:
+                this.quotes = frenchQuotes;
+                break;
+            default:
+                this.quotes = frenchQuotes;
+                break;
+        }
+    }
     protected passTurnAction(): string {
         return `${FullCommandVerbs.SKIP}`;
     }
@@ -117,26 +137,13 @@ export class VirtualPlayer extends Player implements Observable {
             offset++;
         } while (filtered.length === 0);
         const chosenPlacement = filtered[Math.floor(Math.random() * filtered.length)];
-
-        // You can remove the "if" below. These are just an example of situational messages
-        const highPoints = 10;
-        const lowPoints = 5;
-        if (chosenPlacement.points > highPoints) {
-            this.sendMessage('Je suis en feu!');
-        }
-        if (chosenPlacement.points <= lowPoints) {
-            this.sendMessage("Ouf, j'aurais pu faire mieux");
-        }
+        if (chosenPlacement.points >= extremeScore) this.sendMessage(this.quotes.extremeScore);
+        else if (chosenPlacement.points > bigScore) this.sendMessage(this.quotes.bigScore);
 
         return `${FullCommandVerbs.PLACE} ${chosenPlacement.row}${chosenPlacement.col}${chosenPlacement.direction} ${chosenPlacement.letters}`;
     }
 
     protected async chooseAction(): Promise<string> {
         return this.placeLettersAction();
-    }
-
-    private setGreeting() {
-        this.greeting = BotGreeting[this.pseudo];
-        if (this.greeting === undefined) this.greeting = BotGreeting.Generic;
     }
 }

@@ -1,0 +1,29 @@
+.jv {
+    margin: 2vw;
+}
+
+.jv-pic {
+    width: 14vw;
+    height: 14vw;
+    border: solid 2px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.103);
+    cursor: default;
+}
+
+.diff {
+    height: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.skull {
+    font-size: 1.8vw;
+}
+
+.enabled:hover  {
+    transform: translateY(-1px);
+    cursor: pointer;
+}

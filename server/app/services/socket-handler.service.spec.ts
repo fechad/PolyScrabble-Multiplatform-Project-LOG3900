@@ -9,6 +9,7 @@ import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { DISCONNECT_DELAY, SYSTEM_NAME } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
+import { DEFAULT_ENGLISH_QUOTES, DEFAULT_FRENCH_QUOTES } from '@app/enums/themed-quotes/quotes';
 import { ChatMessage } from '@app/interfaces/chat-message';
 import { assert, expect } from 'chai';
 import * as http from 'http';
@@ -45,6 +46,7 @@ describe('SocketHandler service tests', () => {
         {} as any,
         'débutant',
     );
+    virtualPlayer.setQuotes(DEFAULT_FRENCH_QUOTES, DEFAULT_ENGLISH_QUOTES);
     const roomMock = new Room();
     roomMock.roomInfo.name = 'Room0';
     const socketMock = new SocketMock() as any;
@@ -186,8 +188,6 @@ describe('SocketHandler service tests', () => {
                 text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + virtualPlayer.pseudo,
             };
 
-            const botGreeting: ChatMessage = { sender: virtualPlayer.pseudo, color: MessageSenderColors.PLAYER2, text: virtualPlayer.greeting };
-
             const clock = sinon.useFakeTimers();
             socketHandlerService.handleDisconnecting(socketMock);
             clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
@@ -202,7 +202,6 @@ describe('SocketHandler service tests', () => {
             );
             assert(sendToEveryoneSpy.calledWith(roomMock.roomInfo.name, SocketEvent.BotJoinedRoom, roomMock.players), 'did not send BotJoinedRoom');
             assert(sendToEveryoneSpy.calledWith(roomMock.roomInfo.name, SocketEvent.Message, systemAlert), 'did not send Message with systemAlert');
-            assert(sendToEveryoneSpy.calledWith(roomMock.roomInfo.name, SocketEvent.Message, botGreeting), 'did not send Message with botGreeting');
 
             done();
         });

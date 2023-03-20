@@ -87,7 +87,7 @@ export class DatabaseService {
     // Legacy function. Keeping it as an example for people who will work on db. Will delete at some point.
     async addDummyScores(): Promise<WriteResult[]> {
         const currentDate = new Date().toISOString();
-        const usernames: string[] = ['Homer en mer', 'Aymen amen', 'Frankkk drankkk', 'Fedwin for the win', 'Etienne à Vienne', 'Anna kin'];
+        const usernames: string[] = ['homer', 'aymen', 'frank', 'fedwin', 'etienne', 'anna'];
         const gameTypes = ['classic'];
         const scores: Score[] = [];
         for (const gameMode of gameTypes) {

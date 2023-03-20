@@ -1,4 +1,4 @@
-import { Badge } from '@app/interfaces/firestoreDB/badge';
+import { Badge } from '@app/interfaces/serveur info exchange/badge';
 
 export const SANTA_BADGE: Badge = {
     imageURL: 'SantaBadge.png',
