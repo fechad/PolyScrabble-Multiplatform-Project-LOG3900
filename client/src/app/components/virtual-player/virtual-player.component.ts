@@ -7,6 +7,7 @@ import { DEFAULT_DICTIONARY_TITLE } from '@app/components/best-scores-table/best
 import { ThemedPopUpComponent } from '@app/components/themed-pop-up/themed-pop-up.component';
 import { SocketEvent } from '@app/enums/socket-event';
 import { Badge } from '@app/interfaces/serveur info exchange/badge';
+import { AudioService } from '@app/services/audio.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
@@ -25,6 +26,7 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
 
     constructor(
         private playerService: PlayerService,
+        private audioService: AudioService,
         protected socketService: SocketClientService,
         private router: Router,
         private dialog: MatDialog,
@@ -73,6 +75,7 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.RoomCreated, (serverRoom: Room) => {
             if (!serverRoom.roomInfo.name.startsWith('Room')) return;
+            if (serverRoom.botsLevel !== this.botId) return;
             this.room.roomInfo.name = serverRoom.roomInfo.name;
             this.socketService.send(SocketEvent.CreateChatChannel, {
                 channel: serverRoom.roomInfo.name,
@@ -80,6 +83,8 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
                 isRoomChannel: true,
             });
             this.room.players = serverRoom.players;
+            const themeMusicDelay = 0;
+            this.audioService.playBotThemeMusic(this.botId, themeMusicDelay);
             this.router.navigate(['/game']);
             return;
         });

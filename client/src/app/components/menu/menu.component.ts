@@ -12,6 +12,7 @@ import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { AudioService } from '@app/services/audio.service';
 import { HintService } from '@app/services/hint.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
@@ -44,6 +45,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         protected socketService: SocketClientService,
         private dialog: MatDialog,
         protected hintService: HintService,
+        private audioService: AudioService,
     ) {
         super(socketService);
         this.isWaitMultiPage = false;
@@ -133,6 +135,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     leaveRoom() {
+        this.audioService.stopSound();
         if (this.selectedDiscussionChannel.owner?.username === this.playerService.player.pseudo) {
             this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
         } else {
@@ -185,6 +188,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     async logOut() {
+        this.audioService.stopSound();
         if (environment.production) await lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
         this.socketService.send(SocketEvent.LeaveChatChannel, { channel: 'General Chat', username: this.playerService.player.pseudo });
         this.playerService.player.pseudo = '';
@@ -209,6 +213,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     leaveGame() {
+        this.audioService.stopSound();
         this.socketService.disconnect();
         this.router.navigate(['/main']);
     }

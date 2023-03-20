@@ -9,14 +9,17 @@ export class AudioService {
     private source: AudioBufferSourceNode | null = null;
     private isPlayingMainTheme = false;
     private mainTheme: string;
+    private themeMusicsRoot;
     constructor() {
         const audioContext = window.AudioContext || webkitAudioContext;
         this.context = new audioContext();
-        this.mainTheme = '../../assets/sounds/kord.mp3';
+        this.mainTheme = 'assets/sounds/kord.mp3';
+        this.themeMusicsRoot = 'assets/themeMusics/';
     }
 
-    playSound(url: string, startDelay: number = 0) {
+    playSound(url: string, startDelay: number = 0, loop: boolean = false) {
         const source = this.context.createBufferSource();
+        source.loop = loop;
         const request = new XMLHttpRequest();
 
         request.open('GET', url, true);
@@ -33,6 +36,10 @@ export class AudioService {
         };
         this.source = source;
         request.send();
+    }
+
+    playBotThemeMusic(botId: string, startDelay: number) {
+        this.playSound(this.themeMusicsRoot + botId + '.mp3', startDelay);
     }
     playMainTheme() {
         if (this.isPlayingMainTheme) return;
