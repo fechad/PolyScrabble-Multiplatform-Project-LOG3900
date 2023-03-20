@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/solo_game_service.dart';
 
+import '../classes/constants.dart';
 import '../classes/game.dart';
 import '../components/chat_model.dart';
 import '../main.dart';
@@ -41,8 +42,13 @@ class MultiplayerGameService extends SoloGameService {
     await Future.delayed(Duration(seconds: 1));
 
     for (Player p in gameService.room.players) {
-      final res = await httpService.getOpponentInfo(p.pseudo);
-      opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
+      if (JVS.containsKey(p.pseudo))
+        opponentsInfo.add(JVS[p.pseudo]!);
+      else {
+        final res = await httpService.getOpponentInfo(p.pseudo);
+        print('entered in loop');
+        opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
+      }
     }
     return opponentsInfo;
   }

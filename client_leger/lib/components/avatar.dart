@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../classes/game.dart';
@@ -12,9 +14,30 @@ class Avatar extends StatefulWidget {
   _AvatarWidgetState createState() => _AvatarWidgetState();
 }
 
+
 class _AvatarWidgetState extends State<Avatar> {
+  Widget rightImageFormat() {
+    if (widget.url.startsWith("assets"))
+      return Container(
+        width: 78,
+        height: 78,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(widget.url)
+              as ImageProvider,
+              fit: BoxFit.fill,
+            ),
+            shape: BoxShape.circle),
+      );
+    else return Image.network(
+      widget.url,
+      fit: BoxFit.cover,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
       child: GestureDetector(
@@ -30,10 +53,8 @@ class _AvatarWidgetState extends State<Avatar> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
           ),
-          child: Image.network(
-            widget.url,
-            fit: BoxFit.fill,
-          ),
+          child: rightImageFormat()
+
         ),
       ),
     );

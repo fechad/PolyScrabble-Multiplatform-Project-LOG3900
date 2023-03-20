@@ -1,3 +1,5 @@
+import 'package:client_leger/components/highscores.dart';
+
 import 'game.dart';
 
 const List<String> virtualPlayers = <String>[
@@ -44,3 +46,72 @@ List<String> predefinedAvatarsUrl = [
   'https://res.cloudinary.com/dejrgre8q/image/upload/v1678651584/samples/people/kitchen-bar.jpg',
   'custom'
 ];
+
+final Account SANTA =  new Account(
+    username: "Santa",
+      email: "santa@polyscrabble.ca",
+      userSettings: new UserSettings(avatarUrl: "assets/images/avatars/SantaAvatar.png", defaultLanguage: "fr", defaultTheme: "dark", victoryMusic: "macarena"),
+      progressInfo: new ProgressInfo(totalXP: 999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 999, victoriesCount: 999),
+      highScores: null,
+      badges: ["Santa"],
+      bestGames: ["999"],
+      gamesPlayed: ["999"],
+      gamesWon: 999,
+);
+
+final Account MOZART =  new Account(
+  username: "Mozart",
+  email: "mozart@polyscrabble.ca",
+  userSettings: new UserSettings(avatarUrl: "assets/images/avatars/MozartAvatar.png", defaultLanguage: "fr", defaultTheme: "dark", victoryMusic: "macarena"),
+  progressInfo: new ProgressInfo(totalXP: 999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 999, victoriesCount: 999),
+  highScores: null,
+  badges: ["Mozart"],
+  bestGames: ["999"],
+  gamesPlayed: ["999"],
+  gamesWon: 999,
+);
+
+final Account SERENA =  new Account(
+  username: "Serena",
+  email: "serena@polyscrabble.ca",
+  userSettings: new UserSettings(avatarUrl: "assets/images/avatars/SerenaAvatar.png", defaultLanguage: "fr", defaultTheme: "dark", victoryMusic: "macarena"),
+  progressInfo: new ProgressInfo(totalXP: 999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 999, victoriesCount: 999),
+  highScores: null,
+  badges: ["Serena"],
+  bestGames: ["999"],
+  gamesPlayed: ["999"],
+  gamesWon: 999,
+);
+
+final Account TRUMP =  new Account(
+  username: "Trump",
+  email: "trump@polyscrabble.ca",
+  userSettings: new UserSettings(avatarUrl: "assets/images/avatars/TrumpAvatar.png", defaultLanguage: "fr", defaultTheme: "dark", victoryMusic: "macarena"),
+  progressInfo: new ProgressInfo(totalXP: 999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 999, victoriesCount: 999),
+  highScores: null,
+  badges: ["Trump"],
+  bestGames: ["999"],
+  gamesPlayed: ["999"],
+  gamesWon: 999,
+);
+
+final Account EINSTEIN =  new Account(
+  username: "Einstein",
+  email: "einstein@polyscrabble.ca",
+  userSettings: new UserSettings(avatarUrl: "assets/images/avatars/EinsteinAvatar.png", defaultLanguage: "fr", defaultTheme: "dark", victoryMusic: "macarena"),
+  progressInfo: new ProgressInfo(totalXP: 999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 999, victoriesCount: 999),
+  highScores: null,
+  badges: ["Einstein"],
+  bestGames: ["999"],
+  gamesPlayed: ["999"],
+  gamesWon: 999,
+);
+
+final Map<String, Account> JVS = {
+  "Santa" : SANTA,
+  "Mozart" : MOZART,
+  "Serena" : SERENA,
+  "Trump" : TRUMP,
+  "Einstein" : EINSTEIN,
+};
+

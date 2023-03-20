@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
+import 'package:client_leger/pages/themed_page.dart';
 import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
 
@@ -114,12 +115,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: const Text('Scrabble Mania'),
+                  child: const Text('Scrabble Thème'),
                   onPressed: () {
-                    setState(() {
-                      page = 1;
-                      scaffoldKey.currentState?.openEndDrawer();
-                    });
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: ((context) {
+                          return ThemedPage();
+                        })));
+                    //setState(() {
+                      //page = 1;
+                      //scaffoldKey.currentState?.openEndDrawer();
+                    //});
                   },
                 ),
                 SizedBox(height: 200),
