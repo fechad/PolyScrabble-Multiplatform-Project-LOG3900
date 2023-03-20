@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { BoardMessage } from '@app/classes/board-model/board-message';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
@@ -6,12 +7,16 @@ import { GoalManager } from '@app/classes/goals/goal-manager';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
+import { EinsteinVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/einstein-vp';
+import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { VirtualPlayerAdaptative } from '@app/classes/virtual-player/virtual-player-adaptative';
 import { VirtualPlayerBeginner } from '@app/classes/virtual-player/virtual-player-beginner';
 import { VirtualPlayerExpert } from '@app/classes/virtual-player/virtual-player-expert';
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
+import { SCALES } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
+import { santaEnglishQuotes, santaFrenchQuotes } from '@app/enums/themed-quotes/santa-quotes';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
@@ -54,10 +59,24 @@ export class GameManager {
         switch (desiredLevel) {
             case GameLevel.Beginner:
                 return new VirtualPlayerBeginner(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+
             case GameLevel.Adaptive:
                 return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+
             case GameLevel.Expert:
                 return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+
+            case GameLevel.Santa:
+                const santa = new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel, SCALES.santa);
+                santa.setQuotes(santaFrenchQuotes, santaEnglishQuotes);
+                return santa;
+
+            case GameLevel.Trump:
+                return new TrumpVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+
+            case GameLevel.Einstein:
+                return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+
             default:
                 return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel);
         }

@@ -1,0 +1,5 @@
+<div class="jv">
+    <img class = "jv-pic" [src]="imagePath" alt="jv face" [class.enabled]="hasBeatenSanta" (click) = "openPopUp()"/>
+    <div class = "diff">
+        <div *ngFor = "let dif of diff"  class = "skull">💀</div>
+</div>

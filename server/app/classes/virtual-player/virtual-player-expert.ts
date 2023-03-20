@@ -27,16 +27,6 @@ export class VirtualPlayerExpert extends VirtualPlayer {
         this.possiblePlacements.sort((leftPlacement, rightPlacement) => (leftPlacement.points || 0) - (rightPlacement.points || 0));
         const placement = this.possiblePlacements[this.possiblePlacements.length - 1];
 
-        // You can remove the "if" below. These are just an example of situational messages
-        const highPoints = 35;
-        const lowPoints = 20;
-        if (placement.points > highPoints) {
-            this.sendMessage('Je suis en feu!');
-        }
-        if (placement.points <= lowPoints) {
-            this.sendMessage("Ouf, j'aurais pu faire mieux");
-        }
-
         return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
     }
 }

@@ -17,6 +17,7 @@ import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { SettingsPageComponent } from '@app/pages/settings-page/settings-page.component';
+import { ThemedPageComponent } from '@app/pages/themed-page/themed-page.component';
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: LoginPageComponent },
@@ -26,6 +27,7 @@ export const routes: Routes = [
     { path: 'game/multiplayer/create/:mode', component: GameCreateMultiplayerPageComponent },
     { path: 'game/multiplayer/join', component: GameJoinMultiplayerPageComponent },
     { path: 'game/multiplayer/wait', component: GameWaitMultiplayerPageComponent },
+    { path: 'game/themed', component: ThemedPageComponent },
     { path: 'admin', component: AdminPageComponent },
     { path: 'admin/scores', component: BestScoresPageComponent },
     { path: 'admin/games', component: AdminGamesPageComponent },

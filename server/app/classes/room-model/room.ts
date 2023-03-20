@@ -7,7 +7,6 @@ import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
 import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
-import { BotGreeting } from '@app/enums/bot-greetings';
 import { GameLevel } from '@app/enums/game-level';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
@@ -219,12 +218,6 @@ export class Room {
 
     getWinner(): Player[] {
         return this.gameManager.getWinner(this.players);
-    }
-
-    getBotGreeting(): BotGreeting | undefined {
-        if (!this.bots) return;
-        // TODO: Find a way to use all bot greetings
-        return this.bots[0].greeting;
     }
 
     hasARealPlayerLeft(): boolean {

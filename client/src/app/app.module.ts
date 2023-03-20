@@ -50,6 +50,9 @@ import { ChatWindowPageComponent } from './pages/chat-window-page/chat-window-pa
 import { ForgotPasswordPageComponent } from './pages/forgot-password-page/forgot-password-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
+import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
+import { VirtualPlayerComponent } from './components/virtual-player/virtual-player.component';
+import { ThemedPopUpComponent } from './components/themed-pop-up/themed-pop-up.component';
 
 /**
  * Main module that is used in main.ts.
@@ -104,6 +107,9 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
         ForgotPasswordPageComponent,
         PredefinedAvatarsPopupComponent,
         ChatWindowPageComponent,
+        ThemedPageComponent,
+        VirtualPlayerComponent,
+        ThemedPopUpComponent,
     ],
     imports: [
         AppMaterialModule,

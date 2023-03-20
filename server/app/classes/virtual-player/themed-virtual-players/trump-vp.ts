@@ -3,9 +3,10 @@ import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { SCALES } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
+import { Language } from '@app/enums/language';
+import { trumpEnglishQuotes, trumpFrenchQuotes } from '@app/enums/themed-quotes/trump-quotes';
 
-// TODO: Place back 30
-const ANGRY_THRESHOLD = 10;
+const ANGRY_THRESHOLD = 30;
 export class TrumpVirtualPlayer extends VirtualPlayer {
     hasCheated: boolean;
     angryTurnsLeft: number;
@@ -15,8 +16,10 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
         desiredLevel: string = GameLevel.Beginner,
+        language: Language = Language.French,
     ) {
-        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.beginner);
+        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.beginner, language);
+        this.setQuotes(trumpFrenchQuotes, trumpEnglishQuotes);
         this.hasCheated = false;
         this.angryTurnsLeft = 0;
     }
@@ -24,9 +27,14 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         if (this.angryTurnsLeft < 1 && gap < ANGRY_THRESHOLD) return this.intervalComputer.setScoreInterval(gap);
 
         // TODO: add cheat logic
-        if (!this.hasCheated) this.hasCheated = true;
-
-        if (this.angryTurnsLeft < 1) this.angryTurnsLeft = 2;
+        if (!this.hasCheated) {
+            this.hasCheated = true;
+            this.sendMessage(this.quotes.cheatAnnouncement);
+            if (this.angryTurnsLeft < 1) this.angryTurnsLeft = 2;
+        } else if (this.angryTurnsLeft < 1) {
+            this.angryTurnsLeft = 2;
+            this.sendMessage(this.quotes.angryAnnouncement);
+        }
         this.intervalComputer.scale = SCALES.angryTrump;
 
         this.intervalComputer.isRuthless = true;

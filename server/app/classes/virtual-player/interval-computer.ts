@@ -28,7 +28,8 @@ export class IntervalComputer {
     private computeInterval(gap: number): void {
         gap = Math.abs(gap);
         const min = Math.max(gap * (1 - this.adaptiveScale.lowerScale), this.adaptiveScale.min);
-        const max = Math.max(gap * (1 + this.adaptiveScale.upperScale), BUFFER_WORD_SEARCH + min);
+        const upperComputation = gap * (1 + this.adaptiveScale.upperScale);
+        const max = this.isRuthless ? Math.max(upperComputation, BUFFER_WORD_SEARCH + min) : Math.min(upperComputation, this.adaptiveScale.max);
         this.interval = { min: Math.floor(min), max: Math.floor(max) };
     }
 }
