@@ -24,7 +24,7 @@ class HttpService {
   }
 
   Future<http.Response> getUserInfo(String email) {
-    return http.get(Uri.parse('$url/api/$authUrl/user/$email'));
+    return http.get(Uri.parse('$url/api/userInfo/$email'));
   }
 
   Future<http.Response> createUser(String email, String username) {

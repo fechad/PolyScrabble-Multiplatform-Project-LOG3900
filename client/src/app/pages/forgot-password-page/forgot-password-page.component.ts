@@ -29,8 +29,8 @@ export class ForgotPasswordPageComponent {
         private authService: Authenticator,
     ) {
         if (!environment.production) {
-            this.playerService.player.email = 'kurama@polyscrabble.ca';
-            this.playerService.player.pseudo = `User ${new Date().toLocaleTimeString([], { hour12: false })}`;
+            this.playerService.player.email = 'anna@polyscrabble.ca';
+            this.playerService.player.pseudo = 'anna';
             router.navigateByUrl('/main');
         }
         // email validator: https://mailtrap.io/blog/angular-email-validation/

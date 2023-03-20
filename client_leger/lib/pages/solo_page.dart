@@ -191,8 +191,6 @@ class _SoloPageState extends State<SoloPage> {
                                     gameService.gameData.timerPerTurn = value;
                                     gameService.room.roomInfo.timerPerTurn =
                                         value;
-                                    gameService.room.roomInfo.timerPerTurn =
-                                        value;
                                   });
                                 },
                                 items: time.map<DropdownMenuItem<String>>(
@@ -206,7 +204,7 @@ class _SoloPageState extends State<SoloPage> {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 30.0),
+                                  const EdgeInsets.symmetric(vertical: 25.0),
                               child: ElevatedButton(
                                 onPressed: () {
                                   checkFormValues();

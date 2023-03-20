@@ -28,6 +28,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   late int minutes;
   late int seconds;
   bool alreadyReceived = false;
+  String currentPlayer = '';
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               linkService.setTurn(inGameService.player.isItsTurn),
               widget.resetLetters(),
               _timer.cancel(),
+              currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
             });
 
@@ -136,7 +138,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
       const SizedBox(height: 10),
       // TODO: Check if sizedbox is better
       Container(
-          width: MediaQuery.of(context).size.width * 0.2,
+          width: MediaQuery.of(context).size.width * 0.25,
           height: MediaQuery.of(context).size.height * 0.125,
           child: Row(
             children: [
@@ -150,20 +152,32 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                     return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Avatar(
-                              url: widget
-                                  .opponentsInfo[index].userSettings.avatarUrl),
+                          Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    strokeAlign: StrokeAlign.center,
+                                    width: 5,
+                                    color: currentPlayer ==
+                                            gameService
+                                                .room.players[index].pseudo
+                                        ? Palette.mainColor
+                                        : Colors.transparent)),
+                            child: Avatar(
+                                url: widget.opponentsInfo[index].userSettings
+                                    .avatarUrl),
+                          ),
                           const SizedBox(height: 10),
                           Text('${gameService.room.players[index].points}',
                               style: const TextStyle(
                                   fontSize: 14, color: Colors.black)),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 70),
                         ]);
                   }
                 },
                 itemCount: gameService.room.players.length,
                 reverse: false,
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               )),
               IconButton(
                   color: Palette.mainColor,

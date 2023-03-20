@@ -119,7 +119,7 @@ class _GameCardState extends State<GameCard> {
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Palette.mainColor,
-                            minimumSize: Size(50, 40),
+                            minimumSize: Size(45, 35),
                             textStyle: const TextStyle(fontSize: 20),
                           ),
                           child: this.password != ''

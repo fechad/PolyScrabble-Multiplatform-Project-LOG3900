@@ -64,27 +64,49 @@ export class DatabaseService {
         );
     }
     async addDummyAccounts(): Promise<WriteResult[]> {
-        const usernames: string[] = ['hilomer', 'manou', 'frank', 'fred', 'tonio', 'anna', 'kurama', 'Simon', 'Lucie', 'Jojo'];
-        const accounts: Account[] = [];
+        const usernames: string[] = [
+            'hilomer',
+            'manou',
+            'frank',
+            'fred',
+            'tonio',
+            'anna',
+            'Simon',
+            'Lucie',
+            'Jojo',
+            'Jack',
+            'Niko',
+            'Zeoui',
+            'OuiOui',
+            'Filoulou',
+        ];
+        // eslint-disable-next-line prefer-const
+        let accounts: Account[] = [];
         for (const name of usernames) {
-            const account: Account = {
+            let url = DEFAULT_USER_SETTINGS.avatarUrl;
+            if (name === 'anna' || name === 'Simon' || name === 'Lucie' || name === 'Jojo') {
+                url = 'https://cdn3.iconfinder.com/data/icons/chat-bot-glyph-silhouettes-1/300/14112417Untitled-3-512.png';
+            }
+            if (name === 'Jack' || name === 'Niko' || name === 'Zeoui' || name === 'OuiOui' || name === 'Filoulou') {
+                url = 'https://static.botsrv2.com/backoffice/images/qb_logo/246ba2505dfa7ea81c50a61a23b741fa.png';
+            }
+            accounts.push({
                 username: name,
                 email: `${name}@polyscrabble.ca`,
                 badges: [SANTA_BADGE, EINSTEIN_BADGE, TRUMP_BADGE, MOZART_BADGE, SERENA_BADGE],
-                userSettings: DEFAULT_USER_SETTINGS,
+                userSettings: {
+                    defaultLanguage: 'french',
+                    defaultTheme: 'light',
+                    victoryMusic: 'WeAreTheChamps.mp3',
+                    avatarUrl: url,
+                },
                 totalXP: 9999,
 
                 bestGames: [],
                 gamesPlayed: [],
                 gamesWon: 0,
-            };
-            if (name === 'anna') {
-                account.userSettings.avatarUrl =
-                    'https://static1.cbrimages.com/wordpress/wp-content/uploads/2022/10/spy-x-family-twilight-anxious.jpg';
-            }
-            accounts.push(account);
+            });
         }
-
         return this.batchSave('accounts', accounts, (entry: Account) => entry.email);
     }
     // TODO: remove legacy function
