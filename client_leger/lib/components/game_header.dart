@@ -22,8 +22,8 @@ class GameHeaderWidget extends StatefulWidget {
 
 class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  int timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn);
   String timerFormat = '00:00';
+  int timeChosen = 0;
   late Timer _timer;
   late int minutes;
   late int seconds;
@@ -50,6 +50,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
             });
+
 
     socketService.on(
         "timeUpdated",
