@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+export const ThemedPseudos = ['Santa', 'Serena', 'Einstein', 'Mozart', 'Trump'];
 export const ThemedTimers = {
     Santa: 120,
     Mozart: 90,

@@ -8,6 +8,7 @@ import { Room } from '@app/classes/room';
 import { EndGamePopupComponent } from '@app/components/endgame-popup/endgame-popup.component';
 import { BASE_TEN, MINUTE_IN_SECOND } from '@app/constants/constants';
 import { RACK_CAPACITY } from '@app/constants/rack-constants';
+import { ThemedPseudos } from '@app/constants/themed-mode-constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
@@ -84,11 +85,18 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     async getOpponentsInfo() {
         if (this.opponentsInfo.length !== 0) return;
 
-        this.room.players.map(async (p: Player) => {
+        for (const p of this.room.players) {
+            if (p.pseudo === this.playerService.account.username) {
+                this.opponentsInfo.push(this.playerService.account);
+                continue;
+            }
+            if (this.room.roomInfo.isSolo) {
+                this.getBotInfo();
+                continue;
+            }
             const res = await lastValueFrom(this.httpService.getOpponentInfo(p.pseudo));
-
             this.opponentsInfo.push(res);
-        });
+        }
     }
 
     getPlayerInfo(isClient: boolean, info: string): string | number {
@@ -181,5 +189,25 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.winnerPseudo = winnerArray[0].pseudo;
         }
         this.numberOfWinner = winnerArray.length;
+    }
+    private getBotInfo() {
+        const bot = this.room.players.filter((entry: Player) => entry.pseudo !== this.playerService.account.username)[0];
+        let avatarPath = 'assets/images/avatars/';
+        const index = ThemedPseudos.findIndex((entry) => entry === bot.pseudo);
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        avatarPath += index === -1 ? 'default' : bot.pseudo;
+        avatarPath += 'Avatar.png';
+        const info: ClientAccountInfo = {
+            username: bot.pseudo,
+            email: '',
+            userSettings: { avatarUrl: avatarPath, defaultLanguage: 'french', defaultTheme: 'dark', victoryMusic: 'RickRoll.mp3' },
+            highscores: {},
+            progressInfo: { totalXP: 9999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 1000, victoriesCount: 69 },
+            badges: [],
+            bestGames: [],
+            gamesPlayed: [],
+            gamesWon: 69,
+        };
+        this.opponentsInfo.push(info);
     }
 }
