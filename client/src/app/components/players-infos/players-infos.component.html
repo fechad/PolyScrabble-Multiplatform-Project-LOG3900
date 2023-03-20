@@ -16,13 +16,13 @@
         <div class="gamers">
             <div
                 class="player-panel"
-                *ngFor="let player of opponentsInfo"
+                *ngFor="let player of room.players"
                 [class.player-winner]="winnerPseudo === getPlayerInfo(true, 'pseudo') || numberOfWinner > 1"
             >
-                <div class="avatar" [class.player-active]="player.username === currentPlayerTurnPseudo" (click)="inputSideNav.toggle()">
-                    <img class="avatar" [src]="player.userSettings.avatarUrl" />
+                <div class="avatar" [class.player-active]="player.pseudo === currentPlayerTurnPseudo" (click)="inputSideNav.toggle()">
+                    <img class="avatar" [src]="getPlayerAvatarUrl(player.pseudo)" />
                 </div>
-                <div>{{ room.players[opponentsInfo.indexOf(player)].points }}</div>
+                <div>{{ player.points }}</div>
             </div>
         </div>
         <div class="side-button-container">

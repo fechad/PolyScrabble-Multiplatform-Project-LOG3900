@@ -42,10 +42,8 @@ class MultiplayerGameService extends SoloGameService {
 
     for (Player p in gameService.room.players) {
       final res = await httpService.getOpponentInfo(p.pseudo);
-      print('entered in loop');
       opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
     }
-    print(opponentsInfo.length);
     return opponentsInfo;
   }
 

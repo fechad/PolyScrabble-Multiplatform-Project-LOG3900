@@ -229,7 +229,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                             ),
                             Padding(
                               padding:
-                              const EdgeInsets.symmetric(vertical: 30.0),
+                              const EdgeInsets.symmetric(vertical: 25.0),
                               child: ElevatedButton(
                                 onPressed: () {
                                   checkFormValues();

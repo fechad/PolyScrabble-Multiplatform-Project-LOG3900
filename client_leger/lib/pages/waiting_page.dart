@@ -268,7 +268,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                 })));
                               },
                             ),
-                            SizedBox(width: 40),
+                            SizedBox(width: 30),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Palette.mainColor,

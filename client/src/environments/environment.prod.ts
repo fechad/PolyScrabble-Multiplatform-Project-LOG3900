@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    serverUrl: 'http://localhost:3000/api',
+    serverUrl: 'https://lucid-defender-381122.nn.r.appspot.com/api',
 };

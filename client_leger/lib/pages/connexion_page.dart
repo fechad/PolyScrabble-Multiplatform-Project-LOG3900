@@ -216,7 +216,8 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                           duration:
                                               Duration(milliseconds: 1000),
                                           content: Text(
-                                              'Vérification de la connexion ...')));
+                                              'Vérification de la connexion ...'))
+                                  );
                                   Timer(const Duration(milliseconds: 1000),
                                       (() => {}));
                                 }

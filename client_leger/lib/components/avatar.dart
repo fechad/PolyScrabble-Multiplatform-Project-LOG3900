@@ -16,7 +16,7 @@ class _AvatarWidgetState extends State<Avatar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -24,14 +24,15 @@ class _AvatarWidgetState extends State<Avatar> {
           });
         },
         child: Container(
-          width: 65,
+          width: 55,
+          height: 55,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
           ),
           child: Image.network(
             widget.url,
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
         ),
       ),

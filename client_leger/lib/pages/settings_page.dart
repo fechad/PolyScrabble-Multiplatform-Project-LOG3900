@@ -206,8 +206,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                                                     // Attempt to take a picture and then get the location
                                                                     // where the image file is saved.
-                                                                    print(
-                                                                        'before taking pic');
 
                                                                     final image =
                                                                         await _picker.pickImage(
@@ -221,18 +219,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                                                             image!.path;
                                                                         tookPicture =
                                                                             true;
-                                                                        print(
-                                                                            'pic path');
-                                                                        print(
-                                                                            selectedUrl);
-                                                                        print(
-                                                                            'done taking pic');
                                                                       });
                                                                     });
                                                                   } catch (e) {
                                                                     // If an error occurs, log the error to the console.
-                                                                    print(
-                                                                        'Eror with cam');
                                                                     print(e);
                                                                   }
                                                                 },
@@ -246,8 +236,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                                                 selectedUrl =
                                                                     predefinedAvatarsUrl[
                                                                         index];
-                                                                print(
-                                                                    selectedUrl);
                                                               });
                                                             },
                                                             child: CircleAvatar(
@@ -431,7 +419,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           return AlertDialog(
                               title: const Text('Changement de mot de passe'),
                               content: Container(
-                                  height: 250,
+                                  height: 300,
                                   width: 400,
                                   child: Column(children: [
                                     TextFormField(
@@ -460,7 +448,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      height: 20,
+                                      height: 50,
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -476,7 +464,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                           style: TextButton.styleFrom(
                                               foregroundColor: Colors.red),
                                           child: const Text('Annuler',
-                                              style: TextStyle(fontSize: 20)),
+                                              style: TextStyle(fontSize: 14)),
                                         ),
                                         TextButton(
                                           onPressed: () => {
@@ -490,7 +478,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                                   Palette.mainColor),
                                           child: const Text(
                                             'Sauvegarder',
-                                            style: TextStyle(fontSize: 20),
+                                            style: TextStyle(fontSize: 14),
                                           ),
                                         )
                                       ],

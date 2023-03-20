@@ -107,6 +107,10 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         }
         return infoToReturn;
     }
+    getPlayerAvatarUrl(username: string): string | undefined {
+        const wantedPlayer = this.opponentsInfo.find((player) => player.username === username);
+        return wantedPlayer?.userSettings.avatarUrl;
+    }
     showEndGameDialog() {
         const description: InformationalPopupData = {
             header: 'La partie est finie',

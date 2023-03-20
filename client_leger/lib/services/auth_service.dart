@@ -4,6 +4,7 @@ import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../classes/constants.dart';
 import '../firebase_options.dart';
@@ -31,6 +32,7 @@ class AuthService {
   }
 
   Future<void> initializeApp() async {
+    WidgetsFlutterBinding.ensureInitialized();
     app = await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
