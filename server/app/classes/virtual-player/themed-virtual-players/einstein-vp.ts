@@ -2,6 +2,7 @@ import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { SCALES, TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
+import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
 import { einsteinEnglishQuotes, einsteinFrenchQuotes } from '@app/enums/themed-quotes/einstein-quotes';
 
@@ -38,5 +39,17 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         this.intervalComputer.isRuthless = false;
         // TODO: Maybe implement a proper cooldown quote
         this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
+    }
+
+    protected override placeLettersAction(): string {
+        if (this.angryTurnsLeft < 1) super.placeLettersAction();
+
+        this.possiblePlacements = this.tools.finder.getPlacement(this.rack.getLetters());
+        if (this.possiblePlacements.length === 0) return this.switchLettersAction();
+
+        this.possiblePlacements.sort((leftPlacement, rightPlacement) => (leftPlacement.points || 0) - (rightPlacement.points || 0));
+        const placement = this.possiblePlacements[this.possiblePlacements.length - 1];
+
+        return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
     }
 }
