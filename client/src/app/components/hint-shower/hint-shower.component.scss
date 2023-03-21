@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.hint {
+    cursor: pointer;
+    width: 100%;
+    padding: 16px;
+    border-radius: 4px;
+    font-size: 24px;
+    font-weight: 800;
+    border: solid 2px rgba(0, 0, 0, 0.2);
+    margin: 8px;
+    text-align: center;
+}

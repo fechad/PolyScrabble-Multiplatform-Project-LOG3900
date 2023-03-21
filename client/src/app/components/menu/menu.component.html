@@ -18,10 +18,9 @@
         </div>
 
         <div *ngIf="isGamePage" class="icons-container game-page">
-            <div  *ngIf="!isGameOver" (click)="hintService.showHint()" class="hint-icon">
-                <div class="red-dot">{{ hintService.nbHints }}</div>
-                <i class="material-symbols-outlined" *ngIf="!isGameOver">emoji_objects</i>
-                <div>+ {{ hintService.hintValue }}pts</div>
+            <div  *ngIf="!isGameOver" (click)="showHint()" class="hint-icon">
+                <div class="red-dot" [class.disabled] = " !isYourTurn() || hintService.nbHints === 0">{{ hintService.nbHints ? hintService.nbHints : 0 }}</div>
+                <i class="material-symbols-outlined" *ngIf="!isGameOver" [class.disabled] = " !isYourTurn() || hintService.nbHints === 0">emoji_objects</i>
             </div>
             <span *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in">
                 chat_bubble

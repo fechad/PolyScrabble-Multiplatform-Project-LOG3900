@@ -53,6 +53,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
 import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
 import { VirtualPlayerComponent } from './components/virtual-player/virtual-player.component';
 import { ThemedPopUpComponent } from './components/themed-pop-up/themed-pop-up.component';
+import { HintShowerComponent } from './components/hint-shower/hint-shower.component';
 
 /**
  * Main module that is used in main.ts.
@@ -110,6 +111,7 @@ import { ThemedPopUpComponent } from './components/themed-pop-up/themed-pop-up.c
         ThemedPageComponent,
         VirtualPlayerComponent,
         ThemedPopUpComponent,
+        HintShowerComponent,
     ],
     imports: [
         AppMaterialModule,

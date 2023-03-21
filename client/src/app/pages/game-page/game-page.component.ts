@@ -94,6 +94,8 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             this.hintService.hintValue = 0;
+            this.hintService.currentHint = 0;
+            this.hintService.hideFraction = true;
             if (this.playerService.player.pseudo !== currentPlayerTurnPseudo) return;
             this.hintCommand();
         });
