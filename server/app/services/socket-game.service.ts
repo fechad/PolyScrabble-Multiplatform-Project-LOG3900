@@ -3,14 +3,7 @@ import { CommandVerbs } from '@app/classes/command/command-verbs';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import {
-    BOT_COMMAND_TIMEOUT_SEC,
-    COUNT_PLAYER_TURN,
-    END_TIMER_VALUE,
-    ONE_SECOND_IN_MS,
-    SYSTEM_NAME,
-    THREE_SECONDS_IN_MS
-} from '@app/constants/constants';
+import { BOT_COMMAND_TIMEOUT_SEC, BOT_DELAY, COUNT_PLAYER_TURN, END_TIMER_VALUE, ONE_SECOND_IN_MS, SYSTEM_NAME } from '@app/constants/constants';
 import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -52,7 +45,6 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
 
         this.handlePlayerLeavingGame(socket);
-        console.log(room.roomInfo.name);
         this.socketLeaveRoom(socket, room.roomInfo.name);
     }
 
