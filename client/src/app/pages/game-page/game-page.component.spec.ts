@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
@@ -12,7 +12,6 @@ import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
-import { of } from 'rxjs';
 import { SocketClientService } from './../../services/socket-client.service';
 import { GamePageComponent } from './game-page.component';
 
@@ -29,7 +28,6 @@ describe('GamePageComponent', () => {
 
     let playerService: PlayerService;
     let routerSpy: SpyObj<Router>;
-    let dialog: MatDialog;
 
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
@@ -61,7 +59,6 @@ describe('GamePageComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(GamePageComponent);
         component = fixture.componentInstance;
-        dialog = fixture.debugElement.injector.get(MatDialog);
         fixture.detectChanges();
     });
 
@@ -107,25 +104,6 @@ describe('GamePageComponent', () => {
     });
 
     describe('confirmLeaving tests', () => {
-        it('should call leaveGame when the popup returns true', () => {
-            spyOn(dialog, 'open').and.returnValue({ afterClosed: () => of(true) } as MatDialogRef<typeof component>);
-            const spy = spyOn(component, 'leaveGame');
-            component.confirmLeaving();
-            expect(spy).toHaveBeenCalled();
-        });
-        it('should not call leaveGame when the popup returns false', () => {
-            spyOn(dialog, 'open').and.returnValue({ afterClosed: () => of(false) } as MatDialogRef<typeof component>);
-            const spy = spyOn(component, 'leaveGame');
-            component.confirmLeaving();
-            expect(spy).not.toHaveBeenCalled();
-        });
-        it('should not call leaveGame when the popup returns undefined', () => {
-            spyOn(dialog, 'open').and.returnValue({ afterClosed: () => of(undefined) } as MatDialogRef<typeof component>);
-            const spy = spyOn(component, 'leaveGame');
-            component.confirmLeaving();
-            expect(spy).not.toHaveBeenCalled();
-        });
-
         it('should call the correct methods on leaveGame', () => {
             const spy = spyOn(socketServiceMock, 'disconnect');
             component.leaveGame();

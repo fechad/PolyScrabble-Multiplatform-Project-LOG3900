@@ -187,6 +187,14 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.router.navigate(['/settings']);
     }
 
+    navigateHome() {
+        this.router.navigate(['/main']);
+    }
+
+    navigateUserPage() {
+        this.router.navigate(['/user']);
+    }
+
     async logOut() {
         this.audioService.stopSound();
         if (environment.production) await lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
@@ -210,6 +218,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             if (!result) return;
             this.leaveGame();
         });
+    }
+
+    goBackToHome() {
+        this.router.navigate(['/main']);
     }
 
     leaveGame() {
