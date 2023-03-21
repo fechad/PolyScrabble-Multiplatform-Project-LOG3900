@@ -148,10 +148,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.socketService.on(SocketEvent.ToggleAngryBotAvatar, (botName: string) => {
             const bot = this.opponentsInfo.find((entry: ClientAccountInfo) => entry.username === botName);
             if (!bot) return;
-            const currentAvatar = bot.userSettings.avatarUrl;
-            bot.userSettings.avatarUrl = currentAvatar.startsWith(BASE_AVATAR_PATH + 'angry')
-                ? BASE_AVATAR_PATH + bot.username + 'Avatar.png'
-                : BASE_AVATAR_PATH + 'angry' + bot.username + 'Avatar.png';
+            this.toggleAvatar(bot);
+            this.toggleBotMusic(bot);
         });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.playerService.player.isItsTurn) {
@@ -188,7 +186,17 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.room.players = players;
         });
     }
-
+    private toggleAvatar(bot: ClientAccountInfo) {
+        const currentAvatar = bot.userSettings.avatarUrl;
+        bot.userSettings.avatarUrl = currentAvatar.startsWith(BASE_AVATAR_PATH + 'angry')
+            ? BASE_AVATAR_PATH + bot.username + 'Avatar.png'
+            : BASE_AVATAR_PATH + 'angry' + bot.username + 'Avatar.png';
+    }
+    private toggleBotMusic(bot: ClientAccountInfo) {
+        const currentAvatar = bot.userSettings.avatarUrl;
+        if (currentAvatar.startsWith(BASE_AVATAR_PATH + 'angry')) return this.audioService.playWinnerMusic('Better.mp3');
+        this.audioService.playBotThemeMusic(bot.username, 0);
+    }
     private setPlayersTurnToFalse() {
         for (const player of this.room.players) {
             player.isItsTurn = false;
