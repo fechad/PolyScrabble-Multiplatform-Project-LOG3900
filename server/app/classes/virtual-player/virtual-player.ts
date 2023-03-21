@@ -8,7 +8,7 @@ import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { RACK_CAPACITY } from '@app/constants/constants';
-import { DEFAULT_MAX_GAP, SCALES } from '@app/constants/virtual-player-constants';
+import { BIG_SCORE, DEFAULT_MAX_GAP, EXTREME_SCORE, SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
 import { Language } from '@app/enums/language';
@@ -20,8 +20,6 @@ import { VirtualPlayerTools } from '@app/interfaces/virtual-player-tools';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
 import { IntervalComputer } from './interval-computer';
 
-const bigScore = 30;
-const extremeScore = 50;
 export class VirtualPlayer extends Player implements Observable {
     observers: Observer[];
     centerNode: BoardNode;
@@ -137,8 +135,8 @@ export class VirtualPlayer extends Player implements Observable {
             offset++;
         } while (filtered.length === 0);
         const chosenPlacement = filtered[Math.floor(Math.random() * filtered.length)];
-        if (chosenPlacement.points >= extremeScore) this.sendMessage(this.quotes.extremeScore);
-        else if (chosenPlacement.points > bigScore) this.sendMessage(this.quotes.bigScore);
+        if (chosenPlacement.points >= EXTREME_SCORE) this.sendMessage(this.quotes.extremeScore);
+        else if (chosenPlacement.points > BIG_SCORE) this.sendMessage(this.quotes.bigScore);
 
         return `${FullCommandVerbs.PLACE} ${chosenPlacement.row}${chosenPlacement.col}${chosenPlacement.direction} ${chosenPlacement.letters}`;
     }
