@@ -11,7 +11,6 @@ import 'multiplayer_game_service.dart';
 part 'link_service.g.dart';
 
 final RebuildController controller = RebuildController();
-final RebuildController boardController = RebuildController();
 SocketService socketService = SocketService.instance;
 SocketService socketServiceBot = SocketService.instance;
 final gameService = MultiplayerGameService(

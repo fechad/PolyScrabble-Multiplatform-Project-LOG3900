@@ -10,6 +10,7 @@ export class SocketRoomService extends SocketHandlerService {
     handleCreateSoloRoom(socket: io.Socket, data: { room: Room; botName: string; desiredLevel: string }) {
         if (!data.room) return;
         if (!data.room.roomInfo.isSolo) return;
+
         const availableRoom = this.roomService.createRoom(data.room);
         const desiredLevel = data.desiredLevel as GameLevel;
         availableRoom.botsLevel = desiredLevel;

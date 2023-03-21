@@ -144,6 +144,7 @@ export class SocketManager {
             });
 
             socket.on(SocketEvent.LeaveGame, async () => {
+                console.log('receiving');
                 await this.socketGameService.handleLeaveGame(socket);
             });
 

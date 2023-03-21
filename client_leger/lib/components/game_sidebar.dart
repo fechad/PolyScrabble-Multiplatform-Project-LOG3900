@@ -80,6 +80,7 @@ class _GameSidebar extends State<GameSidebar> {
                                 onPressed: () {
                                   inGameService.confirmLeaving();
                                   linkService.setIsInAGame(false);
+                                  linkService.getRows().clear();
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

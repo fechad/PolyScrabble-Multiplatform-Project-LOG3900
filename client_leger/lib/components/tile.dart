@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../config/colors.dart';
 import '../main.dart';
 import '../pages/game_page.dart';
 
@@ -39,17 +40,30 @@ class TileNotification extends Notification {
   TileNotification(this.data);
 }
 
-class Tile extends StatelessWidget {
+class Tile extends StatefulWidget {
   final String letter;
   final int index;
   bool wantToExchange = false;
   final RebuildController? rebuildController;
 
-  Tile(
-      {super.key,
-      required this.letter,
-      required this.index,
-      this.rebuildController});
+  Tile({super.key,
+    required this.letter,
+    required this.index,
+    this.rebuildController});
+
+
+  @override
+  _TileState createState() => _TileState(letter: letter, index: index, rebuildController : rebuildController);
+}
+
+
+class _TileState extends State<Tile> {
+  _TileState({required this.letter, required this.index, this.rebuildController});
+  final String letter;
+  final int index;
+  bool wantToExchange = false;
+  final RebuildController? rebuildController;
+  Color borderColor = Colors.black;
 
   int getTileScore() {
     if (letter == ' ' || letter == null || letter == '*') return 0;
@@ -62,17 +76,24 @@ class Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     final int value = getTileScore();
     return GestureDetector(
+        key: GlobalKey<ScaffoldState>(),
         onDoubleTap: () {
-          if (linkService.getMyTurn()) {
-            wantToExchange = !wantToExchange;
-            linkService.setWantToExchange(true);
-            if (wantToExchange) {
-              TileNotification(index).dispatch(context);
-            } else {
-              TileNotification(index).dispatch(context);
+          setState(() {
+            print(borderColor);
+            if (linkService.getMyTurn()) {
+              wantToExchange = !wantToExchange;
+              linkService.setWantToExchange(true);
+              if (wantToExchange) {
+                borderColor = Color.fromARGB(170, 22, 235, 82);
+                print(borderColor);
+                TileNotification(index).dispatch(context);
+              } else {
+                borderColor = Colors.black;
+                TileNotification(index).dispatch(context);
+              }
             }
-          }
-          return rebuildController?.rebuild();
+          });
+          //return rebuildController?.rebuild();
         },
         child: linkService.getWantToExchange()
             ? Container(
@@ -80,9 +101,7 @@ class Tile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   color: const Color(0xFFFFEBCE),
                   border: Border.all(
-                    color: wantToExchange
-                        ? Color.fromARGB(170, 22, 235, 82)
-                        : const Color(0xAA000000),
+                    color: borderColor,
                     width: 1,
                   ),
                 ),
@@ -146,9 +165,7 @@ class Tile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       color: const Color(0xFFFFEBCE),
                       border: Border.all(
-                        color: wantToExchange
-                            ? Color.fromARGB(170, 22, 235, 82)
-                            : const Color(0xAA000000),
+                        color: borderColor,
                         width: 1,
                       ),
                     ),

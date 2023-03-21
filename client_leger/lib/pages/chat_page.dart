@@ -12,6 +12,7 @@ import '../components/receiver_message.dart';
 import '../components/system_message.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../services/init_service.dart';
+import '../services/link_service.dart';
 
 class GeneralChatWidget extends StatefulWidget {
   final String chatName;
@@ -71,6 +72,13 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                 },
               _scrollDown()
             });
+
+    //TODO: join only once
+    socketService.send("joinChatChannel", {
+      'name': chatName,
+      'user': authenticator.currentUser.username,
+      'isRoomChannel': false,
+    });
   }
 
   void _scrollDown() {
@@ -110,22 +118,40 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
           title: Align(
               alignment: const AlignmentDirectional(0, 1),
               child: Container(
-                child: (Text(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text(
                   chatName,
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.of(context).title1.override(
                         fontFamily: 'Poppins',
                         fontSize: 40,
                       ),
-                )),
+                ), SizedBox(width: 50),
+                      chatName != 'General Chat' ?
+                      SizedBox(
+                          height: 50,
+                          width: 90,
+                          child:
+                          ElevatedButton(
+                              child: Text('Quitter',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  )),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () => {
+                                gameService.leave(),
+                                Navigator.pop(context),
+                              })) : Container(), ]),
               )),
           actions: [
             InkWell(
               onTap: () {
                 linkService.setCurrentOpenedChat('');
-                Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                  return MyHomePage(title: 'PolyScrabble');
-                })));
+                Navigator.pop(context);
               },
               child: Icon(
                 Icons.close_rounded,
