@@ -129,15 +129,18 @@ export class SocketGameService extends SocketHandlerService {
 
             const pointGap = room.computeAverageHumanPoints() - virtualPlayer.points;
             virtualPlayer.setScoreInterval(pointGap);
-            const message = await virtualPlayer.playTurn();
-            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, {
-                text: message,
-                sender: virtualPlayer.pseudo,
-                color: MessageSenderColors.PLAYER2,
-            });
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo);
-            this.handleCommand(socket, room, message, virtualPlayer);
-        }, THREE_SECONDS_IN_MS);
+            this.updateWantedMessages(room);
+            setTimeout(async () => {
+                const message = await virtualPlayer.playTurn();
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, {
+                    text: message,
+                    sender: virtualPlayer.pseudo,
+                    color: MessageSenderColors.PLAYER2,
+                });
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo);
+                this.handleCommand(socket, room, message, virtualPlayer);
+            }, BOT_DELAY);
+        }, BOT_DELAY);
     }
 
     handleBotMissedTurn(socket: io.Socket, room: Room, currentTurnPlayer: Player | undefined) {

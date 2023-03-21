@@ -9,7 +9,7 @@ export const SYSTEM_NAME = 'Maître de jeu';
 export const RACK_CAPACITY = 7;
 export const COUNT_PLAYER_TURN = 6;
 export const TWENTY_SECONDS_IN_MS = 17000;
-export const THREE_SECONDS_IN_MS = 3000;
+export const BOT_DELAY = 1500;
 export const DISCONNECT_DELAY = 4000;
 export const END_TIMER_VALUE = -1;
 

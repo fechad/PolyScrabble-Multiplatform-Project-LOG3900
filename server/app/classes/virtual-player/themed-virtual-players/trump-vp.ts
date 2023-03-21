@@ -25,15 +25,15 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
     }
     override setScoreInterval(gap: number): void {
         if (this.angryTurnsLeft < 1 && gap < ANGRY_THRESHOLD) return this.intervalComputer.setScoreInterval(gap);
-
-        // TODO: add cheat logic
         if (!this.hasCheated) {
             this.hasCheated = true;
             this.sendMessage(this.quotes.cheatAnnouncement, TOGGLE_PREFIX + this.pseudo);
-            if (this.angryTurnsLeft < 1) this.angryTurnsLeft = 2;
-        } else if (this.angryTurnsLeft < 1) {
             this.angryTurnsLeft = 2;
-            this.sendMessage(this.quotes.angryAnnouncement);
+        }
+        // TODO: add cheat logic
+        if (this.angryTurnsLeft < 1) {
+            this.angryTurnsLeft = 2;
+            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
         }
         this.intervalComputer.scale = SCALES.angryTrump;
 
