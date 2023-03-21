@@ -23,8 +23,6 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
     @ViewChild('menuContainer', { static: false }) private menuContainer!: ElementRef<HTMLDivElement>;
     @ViewChild('menuDarkBackground', { static: false }) private menuDarkBackground!: ElementRef<HTMLDivElement>;
     selectedDiscussionChannel: DiscussionChannel;
-    availableDiscussionChannels: DiscussionChannel[];
-    roomChannel: DiscussionChannel;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcRenderer: any;
@@ -32,8 +30,6 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
         super(socketService);
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
-        this.availableDiscussionChannels = [];
-        this.roomChannel = new DiscussionChannel('');
         this.setIpcRender();
     }
 
@@ -47,6 +43,14 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
 
     get isGameOver(): boolean {
         return this.room.roomInfo.isGameOver as boolean;
+    }
+
+    get availableDiscussionChannels(): DiscussionChannel[] {
+        return this.playerService.discussionChannelService.availableChannels;
+    }
+
+    get roomChannel(): DiscussionChannel {
+        return this.playerService.discussionChannelService.roomChannel;
     }
 
     async ngOnInit() {
@@ -121,11 +125,11 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
         });
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
-            this.availableDiscussionChannels = channels;
+            this.playerService.discussionChannelService.availableChannels = channels;
         });
 
         this.socketService.on(SocketEvent.RoomChannelUpdated, (roomChannel: DiscussionChannel) => {
-            this.roomChannel = roomChannel || new DiscussionChannel('');
+            this.playerService.discussionChannelService.roomChannel = roomChannel || new DiscussionChannel('');
             if (roomChannel) {
                 this.showRoomChatChannel();
                 return;

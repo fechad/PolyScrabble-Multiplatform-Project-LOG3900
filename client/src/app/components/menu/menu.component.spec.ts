@@ -99,7 +99,7 @@ describe('MenuComponent', () => {
         const tooHighIndex = 50;
         let closeChatMenuSpy: jasmine.Spy;
         beforeEach(() => {
-            component.availableDiscussionChannels = [discussionChannel];
+            playerService.discussionChannelService.availableChannels = [discussionChannel];
             closeChatMenuSpy = spyOn(component, 'closeChatMenu');
         });
 
@@ -129,7 +129,7 @@ describe('MenuComponent', () => {
         describe('channelMessage event tests', () => {
             it('should update the message of discussions channel on channelMessage if channel exist', () => {
                 discussionChannel.messages = [];
-                component.availableDiscussionChannels = [discussionChannel];
+                playerService.discussionChannelService.availableChannels = [discussionChannel];
 
                 const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(discussionChannel);
                 socketHelper.peerSideEmit(SocketEvent.ChannelMessage, [channelMessage]);
@@ -140,7 +140,7 @@ describe('MenuComponent', () => {
             it('should not update the message of discussions channel on channelMessage if channel does not exist', () => {
                 discussionChannel.name = 'other';
                 discussionChannel.messages = [];
-                component.availableDiscussionChannels = [discussionChannel];
+                playerService.discussionChannelService.availableChannels = [discussionChannel];
 
                 const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(undefined);
                 socketHelper.peerSideEmit(SocketEvent.ChannelMessage, [channelMessage]);
@@ -150,7 +150,7 @@ describe('MenuComponent', () => {
         });
 
         it('should update available discussion channel on availableChannels', () => {
-            component.availableDiscussionChannels = [];
+            playerService.discussionChannelService.availableChannels = [];
             socketHelper.peerSideEmit(SocketEvent.AvailableChannels, [discussionChannel]);
             expect(component.availableDiscussionChannels).toEqual([discussionChannel]);
         });
@@ -328,17 +328,17 @@ describe('MenuComponent', () => {
 
     describe('handleGameWaitPage tests', () => {
         it('should call showRoomChatChannel on handleGameWaitPage if isWaitMultiPage', () => {
-            component.roomChannel = new DiscussionChannel('channel');
+            playerService.discussionChannelService.roomChannel = new DiscussionChannel('channel');
             component.isWaitMultiPage = true;
             discussionChannel.name = playerService.room.roomInfo.name;
-            component.availableDiscussionChannels = [discussionChannel];
+            playerService.discussionChannelService.availableChannels = [discussionChannel];
             const showChatChannelSpy = spyOn(component, 'showRoomChatChannel');
             (component as any).handleGameWaitPage();
             expect(showChatChannelSpy);
         });
 
         it('should not call showRoomChatChannel if it is not isWaitMultiPage', () => {
-            component.roomChannel = new DiscussionChannel('channel');
+            playerService.discussionChannelService.roomChannel = new DiscussionChannel('channel');
             component.isWaitMultiPage = false;
             const showChatChannelSpy = spyOn(component, 'showRoomChatChannel');
             (component as any).handleGameWaitPage();
@@ -353,7 +353,7 @@ describe('MenuComponent', () => {
     });
 
     it('should return the correct discussionChannel on  getDiscussionChannelByName', () => {
-        component.availableDiscussionChannels = [discussionChannel];
+        playerService.discussionChannelService.availableChannels = [discussionChannel];
         expect((component as any).getDiscussionChannelByName(discussionChannel.name)).toEqual(discussionChannel);
     });
 });

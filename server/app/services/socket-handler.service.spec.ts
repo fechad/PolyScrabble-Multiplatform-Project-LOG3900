@@ -92,7 +92,10 @@ describe('SocketHandler service tests', () => {
 
             socketHandlerService.roomService.roomsAvailable = [roomMock];
             const previousRoomServiceLength = socketHandlerService.roomService.roomsAvailable.length;
+
+            const clock = sinon.useFakeTimers();
             socketHandlerService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
 
             expect(socketHandlerService.roomService.roomsAvailable.length).equal(previousRoomServiceLength - 1);
             done();

@@ -41,6 +41,20 @@ export class SocketGameService extends SocketHandlerService {
         super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
     }
 
+    async handleLeaveGame(socket: io.Socket) {
+        const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
+        if (!room) return;
+        const player = room.getPlayer(socket.id);
+        if (!player) return;
+
+        this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
+        const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
+
+        this.handlePlayerLeavingGame(socket);
+        this.socketLeaveRoom(socket, room.roomInfo.name);
+    }
+
     handleGetPlayerInfo(socket: io.Socket, roomName: string) {
         this.updatePlayerView(socket, roomName);
     }

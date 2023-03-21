@@ -4,10 +4,10 @@ import { PageCommunicationManager } from '@app/classes/communication-manager/pag
 import { Room } from '@app/classes/room';
 import { Score } from '@app/classes/score';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
-import { GeneralChatComponent } from '@app/components/general-chat/general-chat.component';
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
+import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -28,6 +28,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
         public playerService: PlayerService,
         private dialog: MatDialog,
         private httpService: HttpService,
+        private sessionStorageService: SessionStorageService,
         protected socketService: SocketClientService,
     ) {
         super(socketService);
@@ -41,6 +42,8 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
 
     ngOnInit() {
         this.connectSocket();
+        this.playerService.resetPlayerAndRoomInfo();
+        this.sessionStorageService.clear();
     }
 
     setGameType(type: string) {
@@ -57,17 +60,6 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
             width: DIALOG_WIDTH,
             autoFocus: true,
             data: scores,
-        });
-    }
-
-    showGeneralChat() {
-        this.dialog.open(GeneralChatComponent, {
-            width: '100%',
-            maxWidth: '100%',
-            height: '100%',
-            maxHeight: '100%',
-            autoFocus: true,
-            panelClass: 'pop-up-chat',
         });
     }
 

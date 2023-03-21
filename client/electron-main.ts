@@ -32,6 +32,7 @@ function createWindow() {
 
     gameWindow.on('closed', function () {
         gameWindow.destroy();
+        app.quit();
     });
 }
 
@@ -69,7 +70,7 @@ ipcMain.on('open-chat', (event, data) => {
 
 ipcMain.on('close-chat', (event) => {
     // childWindow.webContents.openDevTools();
-    chatWindow.destroy();
+    chatWindow?.destroy();
 });
 
 ipcMain.handle('getStoreValue', (event, key) => {

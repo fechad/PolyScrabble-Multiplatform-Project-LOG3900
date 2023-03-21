@@ -16,19 +16,22 @@ export class Room {
         this.botsLevel = 'adaptive';
     }
 
-    reinitialize(gameType: string) {
+    reinitialize(gameType?: string) {
         this.roomInfo = {
             name: '',
             creatorName: '',
             timerPerTurn: '',
             dictionary: '',
-            gameType,
+            gameType: gameType || '',
             maxPlayers: 4,
             isPublic: true,
             password: '',
         };
         this.players = [];
         this.isBankUsable = true;
+        this.botsLevel = '';
+        this.currentPlayerPseudo = '';
+        this.elapsedTime = 0;
     }
 
     // tested on game-page.component.spec.ts

@@ -14,7 +14,7 @@ import {
     DEFAULT_BOARD_INDEXES_COLOR,
     DEFAULT_CASE_COUNT,
     // eslint-disable-next-line prettier/prettier
-    DEFAULT_STARTING_POSITION
+    DEFAULT_STARTING_POSITION,
 } from '@app/constants/board-constants';
 import { A_ASCII } from '@app/constants/constants';
 import { DEFAULT_TILE_COLOR, POINTS } from '@app/constants/rack-constants';
@@ -236,6 +236,7 @@ export class BoardService {
         return true;
     }
     private handleLetterInCurrentPosition(letter: string, position: Position, direction: string) {
+        if (!this.lettersInBoard[position.x] || !this.lettersInBoard[position.x][position.y]) return;
         while (this.lettersInBoard[position.x][position.y].content !== '') {
             if (this.lettersInBoard[position.x][position.y].typeOfSelection === SelectionType.BOARD) {
                 this.lettersInBoard[position.x][position.y].content = letter;

@@ -164,7 +164,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         //     }
         // });
         this.focusHandlerService.showHint.subscribe((hint: string) => {
-            if (hint === 'ERROR') return;
+            if (hint === 'ERROR' || this.room.elapsedTime < 1) return;
             this.hints = hint;
             this.showHint();
         });

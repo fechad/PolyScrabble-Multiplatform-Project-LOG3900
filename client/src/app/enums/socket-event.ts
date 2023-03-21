@@ -53,6 +53,7 @@ export enum SocketEvent {
     TimeUpdated = 'timeUpdated',
     StartGameRequest = 'startGameRequest',
     GameStarted = 'gameStarted',
+    LeaveGame = 'leaveGame',
 
     // SOCKET-ROOM-SERVICE
     JoinRoomSoloStatus = 'joinRoomSoloStatus',
