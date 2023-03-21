@@ -46,7 +46,6 @@ class MultiplayerGameService extends SoloGameService {
         opponentsInfo.add(JVS[p.pseudo]!);
       else {
         final res = await httpService.getOpponentInfo(p.pseudo);
-        print('entered in loop');
         opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
       }
     }

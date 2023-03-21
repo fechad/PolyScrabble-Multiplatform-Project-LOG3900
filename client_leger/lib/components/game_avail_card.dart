@@ -1,5 +1,6 @@
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
+import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/game.dart';
@@ -79,8 +80,21 @@ class _GameCardState extends State<GameCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
+            Column(
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                  child: Text(
+                    roomName,
+                    style: FlutterFlowTheme.of(context).bodyText1.override(
+                      fontFamily: 'Nunito',
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+              padding: EdgeInsetsDirectional.fromSTEB(25, 0, 0, 0),
               child: Text(
                 "🤖 $difficulty",
                 style: FlutterFlowTheme.of(context).bodyText1.override(
@@ -89,7 +103,7 @@ class _GameCardState extends State<GameCard> {
                     ),
                 textAlign: TextAlign.start,
               ),
-            ),
+            )]),
             Spacer(),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
@@ -107,7 +121,7 @@ class _GameCardState extends State<GameCard> {
           Row(
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                 child: Row(
                   children: [
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
@@ -115,7 +129,7 @@ class _GameCardState extends State<GameCard> {
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(40, 0, 16, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(130, 0, 16, 0),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Palette.mainColor,

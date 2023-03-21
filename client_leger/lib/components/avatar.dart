@@ -47,8 +47,8 @@ class _AvatarWidgetState extends State<Avatar> {
           });
         },
         child: Container(
-          width: 55,
-          height: 55,
+          width: 45,
+          height: 45,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             shape: BoxShape.circle,

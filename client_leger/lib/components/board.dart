@@ -108,10 +108,10 @@ class _BoardState extends State<Board> {
   _configureSocket() {
     socketService.on(
         "drawBoard",
-        (data) => {
-              placementData = PlacementData.fromJson(data),
-              serverPlacement(placementData)
-            });
+            (data) => {
+          placementData = PlacementData.fromJson(data),
+          serverPlacement(placementData)
+        });
   }
 
   void constructBoard() {
@@ -129,7 +129,7 @@ class _BoardState extends State<Board> {
   }
 
   int getTileScore(String letter) {
-    if (letter == '' || letter == null || letter == '*') return 0;
+    if (letter == ' ' || letter == null || letter == '*') return 0;
     final normalLetter = letter.toLowerCase();
     if (normalLetter.toLowerCase() != normalLetter) return 0;
     return POINTS[letter.toLowerCase().codeUnits[0] - A_ASCII];
@@ -174,7 +174,7 @@ class _BoardState extends State<Board> {
   void serverPlacement(PlacementData placement) {
     int y = (placement.row.codeUnitAt(0) - 97);
     int x = placement.column - 1;
-    List<String> letters = placement.word.split('');
+    List<String> letters = placement.word.toUpperCase().split('');
 
     addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
         Color(0xFFFFEBCE));
@@ -213,44 +213,144 @@ class _BoardState extends State<Board> {
 
   void placeTile(
       int x, int y, String? value, String? letter, int? index, color) {
-    placementValidator.addLetter(letter!, x, y);
+    placementValidator.addLetter(letter!.toLowerCase(), x, y);
 
     if (!placementValidator.validPlacement) return;
-    Container square = Container(
-        decoration: BoxDecoration(
-          color: color,
-          border: Border.all(
-            color: const Color(0xFFFFFFFF),
-            width: 1,
-          ),
-        ),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color(0xFFFFEBCE),
-              border: Border.all(
-                color: const Color(0xAA000000),
-                width: 1,
-              ),
+    if (letter == '*') {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return
+              Container(
+                width: 200,
+                height: 200,
+                child:
+                AlertDialog(
+                    title: Text("Choisissez la lettre: ",
+                        style: TextStyle(fontSize: 24,)),
+                    content: SizedBox(
+                        width: 400,
+                        height: 370,
+                        child:
+                        GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 5,
+                                mainAxisSpacing: 30,
+                                crossAxisSpacing: 30,
+                                mainAxisExtent: 80),
+                            itemCount: 26,
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                            itemBuilder: (context, index) {
+                              return
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child:
+                                    SizedBox(
+                                        height: 50,
+                                        width: 50,
+                                        child:
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            backgroundColor: Color(0xFFFFEBCE),
+                                            side: BorderSide(color: Colors.black, width: 1.0, style: BorderStyle.solid),
+                                          ),
+                                          onPressed: () {
+                                            letter = String.fromCharCode(index+65);
+                                            Container square = Container(
+                                                decoration: BoxDecoration(
+                                                  color: color,
+                                                  border: Border.all(
+                                                    color: const Color(0xFFFFFFFF),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      color: const Color(0xFFFFEBCE),
+                                                      border: Border.all(
+                                                        color: const Color(0xAA000000),
+                                                        width: 1,
+                                                      ),
+                                                    ),
+                                                    width: 43,
+                                                    height: 43,
+                                                    child: Stack(
+                                                      children: [
+                                                        Center(
+                                                            child: Text(
+                                                                letter!, style: const TextStyle(fontSize: 24))),
+                                                        Positioned(
+                                                          child: Text(value!, style: const TextStyle(fontSize: 10)),
+                                                          bottom: 4.0,
+                                                          right: 4.0,
+                                                        )
+                                                      ],
+                                                    )));
+                                            Navigator.pop(context);
+
+                                            setState(() {
+                                              linkService.setRows(x, y, square);
+                                              linkService.removeLetter(Tile(letter: letter!, index: index!));
+                                              String confirmedLetters = placementValidator.letters.toLowerCase().replaceFirst('*', letter!);
+                                              placementValidator.letters = confirmedLetters;
+                                              alertGamePage(placementValidator.letters);
+                                            });
+                                          },
+                                          child: Text("${String.fromCharCode(index+65)}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                              )),
+                                        )));
+                            }))),
+              );
+          }
+      );
+    }
+    else {
+      Container square = Container(
+          decoration: BoxDecoration(
+            color: color,
+            border: Border.all(
+              color: const Color(0xFFFFFFFF),
+              width: 1,
             ),
-            width: 43,
-            height: 43,
-            child: Stack(
-              children: [
-                Center(
-                    child: Text(letter!, style: const TextStyle(fontSize: 24))),
-                Positioned(
-                  child: Text(value!, style: const TextStyle(fontSize: 10)),
-                  bottom: 4.0,
-                  right: 4.0,
-                )
-              ],
-            )));
-    setState(() {
-      linkService.setRows(x, y, square);
-      linkService.removeLetter(Tile(letter: letter, index: index!));
-      alertGamePage(placementValidator.letters);
-    });
+          ),
+          child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color(0xFFFFEBCE),
+                border: Border.all(
+                  color: const Color(0xAA000000),
+                  width: 1,
+                ),
+              ),
+              width: 43,
+              height: 43,
+              child: Stack(
+                children: [
+                  Center(
+                      child: Text(
+                          letter!, style: const TextStyle(fontSize: 24))),
+                  Positioned(
+                    child: Text(value!, style: const TextStyle(fontSize: 10)),
+                    bottom: 4.0,
+                    right: 4.0,
+                  )
+                ],
+              )));
+
+      setState(() {
+        linkService.setRows(x, y, square);
+        linkService.removeLetter(Tile(letter: letter!.toLowerCase(), index: index!));
+        alertGamePage(placementValidator.letters);
+      });
+    }
   }
 
   void colorTile(int x, int y) {
@@ -272,9 +372,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                'Mot x3',
-                style: TextStyle(fontSize: 10, color: Colors.white),
-              )));
+                    'Mot x3',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  )));
         },
         onAccept: (data) {
           setState(() {
@@ -301,9 +401,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                'Mot x2',
-                style: TextStyle(fontSize: 10, color: Colors.white),
-              )));
+                    'Mot x2',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  )));
         },
         onAccept: (data) {
           setState(() {
@@ -330,9 +430,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                'Lettre x3',
-                style: TextStyle(fontSize: 10, color: Colors.white),
-              )));
+                    'Lettre x3',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  )));
         },
         onAccept: (data) {
           setState(() {
@@ -359,9 +459,9 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                'Lettre x2',
-                style: TextStyle(fontSize: 10, color: Colors.white),
-              )));
+                    'Lettre x2',
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  )));
         },
         onAccept: (data) {
           setState(() {
@@ -379,7 +479,7 @@ class _BoardState extends State<Board> {
             width: 45,
             decoration: BoxDecoration(
               color:
-                  candidateData.isEmpty ? Color(0xFFFFEBCE) : Color(0xCCCCB89B),
+              candidateData.isEmpty ? Color(0xFFFFEBCE) : Color(0xCCCCB89B),
               border: Border.all(
                 color: Color(0xFFFFFFFF),
                 width: 0.5,

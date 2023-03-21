@@ -52,7 +52,7 @@ class Tile extends StatelessWidget {
       this.rebuildController});
 
   int getTileScore() {
-    if (letter == '' || letter == null || letter == '*') return 0;
+    if (letter == ' ' || letter == null || letter == '*') return 0;
     final normalLetter = letter.toLowerCase();
     if (normalLetter.toLowerCase() != normalLetter) return 0;
     return POINTS[letter.toLowerCase().codeUnits[0] - A_ASCII];
