@@ -2,4 +2,5 @@
 export const VICTORY_MUSIC = {
     'WeAreTheChamps.mp3': 'We are the champions',
     'RickRoll.mp3': 'Never gonna give you up',
+    'Better.mp3': 'I AM BETTER',
 };

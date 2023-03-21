@@ -12,6 +12,7 @@ import { ThemedPseudos } from '@app/constants/themed-mode-constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
+import { AudioService } from '@app/services/audio.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
@@ -40,6 +41,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         public playerService: PlayerService,
         private dialog: MatDialog,
         private httpService: HttpService,
+        private audioService: AudioService,
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
@@ -189,6 +191,9 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.winnerPseudo = winnerArray[0].pseudo;
         }
         this.numberOfWinner = winnerArray.length;
+        const firstWinner = this.opponentsInfo.find((player) => player.username === winnerArray[0].pseudo);
+        if (!firstWinner) return;
+        this.audioService.playWinnerMusic(firstWinner?.userSettings.victoryMusic as string);
     }
     private getBotInfo() {
         const bot = this.room.players.filter((entry: Player) => entry.pseudo !== this.playerService.account.username)[0];

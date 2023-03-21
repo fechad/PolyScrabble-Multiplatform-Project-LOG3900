@@ -9,15 +9,35 @@ export class AudioService {
     private source: AudioBufferSourceNode | null = null;
     private isPlayingMainTheme = false;
     private mainTheme: string;
-    private themeMusicsRoot;
+    private winMusicRoot: string;
+    private themeMusicsRoot: string;
     constructor() {
         const audioContext = window.AudioContext || webkitAudioContext;
         this.context = new audioContext();
         this.mainTheme = 'assets/sounds/kord.mp3';
         this.themeMusicsRoot = 'assets/themeMusics/';
+        this.winMusicRoot = 'assets/sounds/';
     }
 
-    playSound(url: string, startDelay: number = 0, loop: boolean = false) {
+    playBotThemeMusic(botId: string, startDelay: number) {
+        this.playSound(this.themeMusicsRoot + botId + '.mp3', startDelay, true);
+    }
+    playMainTheme() {
+        if (this.isPlayingMainTheme) return;
+        this.playSound(this.mainTheme);
+        this.isPlayingMainTheme = true;
+    }
+    playWinnerMusic(winnerMusicTitle: string) {
+        this.playSound(this.winMusicRoot + winnerMusicTitle);
+    }
+    stopSound() {
+        if (!this.source) return;
+        this.source.stop();
+        this.source = null;
+        this.isPlayingMainTheme = false;
+    }
+    private playSound(url: string, startDelay: number = 0, loop: boolean = false) {
+        this.stopSound();
         const source = this.context.createBufferSource();
         source.loop = loop;
         const request = new XMLHttpRequest();
@@ -36,20 +56,5 @@ export class AudioService {
         };
         this.source = source;
         request.send();
-    }
-
-    playBotThemeMusic(botId: string, startDelay: number) {
-        this.playSound(this.themeMusicsRoot + botId + '.mp3', startDelay);
-    }
-    playMainTheme() {
-        if (this.isPlayingMainTheme) return;
-        this.playSound(this.mainTheme);
-        this.isPlayingMainTheme = true;
-    }
-    stopSound() {
-        if (!this.source) return;
-        this.source.stop();
-        this.source = null;
-        this.isPlayingMainTheme = false;
     }
 }
