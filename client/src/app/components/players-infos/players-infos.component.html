@@ -17,16 +17,21 @@
             <div
                 class="player-panel"
                 *ngFor="let player of room.players"
-            >   <div *ngIf = "winnerPseudo === player.pseudo || numberOfWinner > 1"class = "crown" >👑</div>
+                [class.player-winner]="winnerPseudo === getPlayerInfo(true, 'pseudo') || numberOfWinner > 1"
+            >
                 <div class="avatar" [class.player-active]="player.pseudo === currentPlayerTurnPseudo" (click)="inputSideNav.toggle()">
                     <img class="avatar" [src]="getPlayerAvatarUrl(player.pseudo)" />
                 </div>
-                <div class = "points">{{ player.points }}</div>
+                <div>{{ player.points }}</div>
             </div>
         </div>
         <div class="side-button-container">
             <!-- [disabled]="!isActivePlayer || isGameOver" -->
             <i class="fa fa-forward" (click)="changePlayerTurn()" [class.disabled]="!isActivePlayer || isGameOver"></i>
         </div>
+    </div>
+    <div *ngIf="isGameOver && numberOfWinner === 1" class="flex-center">Félicitation à: {{ winnerPseudo }}!</div>
+    <div *ngIf="isGameOver && numberOfWinner > 1" class="flex-center">
+        Félicitation à: {{ getPlayerInfo(true, 'pseudo') }} et {{ getPlayerInfo(false, 'pseudo') }}!
     </div>
 </div>
