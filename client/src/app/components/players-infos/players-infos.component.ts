@@ -124,8 +124,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     }
     showEndGameDialog() {
         const description: InformationalPopupData = {
-            header: 'La partie est finie',
-            body: 'Tres belle partie!',
+            header: 'Dommage...',
+            body: 'Tres belle partie! Malheureusement, la victoire revient à ' + this.winnerPseudo,
         };
         this.dialog.open(EndGamePopupComponent, {
             width: END_GAME_WIDTH,

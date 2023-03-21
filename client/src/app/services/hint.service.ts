@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { HintShowerComponent } from '@app/components/hint-shower/hint-shower.component';
+import { Hint } from '@app/interfaces/hint';
 import { FocusHandlerService } from './focus-handler.service';
 
 @Injectable({
@@ -9,20 +12,26 @@ export class HintService {
     hintValue: number;
     currentHint: number;
     hints: string[];
+    hideFraction: boolean;
 
-    constructor(private focusHandlerService: FocusHandlerService) {
+    constructor(private focusHandlerService: FocusHandlerService, private dialog: MatDialog) {
         this.hintValue = 0;
         this.currentHint = 0;
+        this.hideFraction = true;
     }
 
     showHint() {
-        if (!this.hints) return;
-        const args = this.hints[this.currentHint % (this.hints.length - 2)];
-        const test = args.split('_');
-        const value = test.pop();
-        if (value) this.hintValue = parseInt(value, 10);
-        this.focusHandlerService.showHint.next(this.currentHint);
-        this.currentHint++;
+        if (!this.hints) {
+            return;
+        }
+        const dialog = this.dialog.open(HintShowerComponent, {
+            width: '500',
+            autoFocus: true,
+            data: { hints: this.hints } as Hint,
+        });
+        dialog.afterClosed().subscribe(async (result) => {
+            this.focusHandlerService.showHint.next(result);
+        });
     }
 
     handleGamePageHintEvent(data: { text: string }) {

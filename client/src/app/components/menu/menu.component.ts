@@ -85,6 +85,14 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.menuDarkBackground.nativeElement.classList.add('show');
     }
 
+    showHint() {
+        if (this.playerService.player.isItsTurn) this.hintService.showHint();
+    }
+
+    isYourTurn() {
+        return this.playerService.player.isItsTurn;
+    }
+
     closeChatMenu() {
         this.chatMenu.nativeElement.classList.remove('show');
         this.menuDarkBackground.nativeElement.classList.remove('show');
@@ -188,6 +196,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     navigateHome() {
+        this.audioService.stopSound();
         this.router.navigate(['/main']);
     }
 

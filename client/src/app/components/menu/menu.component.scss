@@ -131,6 +131,14 @@ app-general-chat {
     color: white;
 }
 
+.material-symbols-outlined.disabled {
+    color: #cccccc42;
+    cursor: default;
+}
+
+.red-dot.disabled {
+    background-color: #ccccccc4;
+}
 .hint-icon {
     width: 60px;
     &:hover {
