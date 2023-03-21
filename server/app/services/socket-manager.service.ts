@@ -143,6 +143,10 @@ export class SocketManager {
                 this.socketChannelService.handleLeaveChannel(socket, roomName, playerRemoved.pseudo);
             });
 
+            socket.on(SocketEvent.LeaveGame, async () => {
+                await this.socketGameService.handleLeaveGame(socket);
+            });
+
             socket.on(SocketEvent.SetRoomAvailable, (roomName: string) => {
                 this.socketRoomService.handleSetRoomAvailable(socket, roomName);
             });

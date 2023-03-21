@@ -1,35 +1,31 @@
 <div #menuContainer class="menu-container">
     <div class="menu" [class.game-page]="isGamePage">
-        <div *ngIf="!isGamePage" class=" first icons-container">
-            <i class = "fa fa-user" (click)="navigateUserPage()"></i>
+        <div *ngIf="!isGamePage" class="first icons-container">
+            <i class="fa fa-user" (click)="navigateUserPage()"></i>
             <i class="fa fa-home" (click)="navigateHome()"></i>
-            <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">
-                chat_bubble
-            </div>
+            <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
             <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon">Close chat</button>
-            <i class = "fa fa-trophy" (click)="navigateUserPage()"></i>
-            <i class = "fa fa-eye" (click)="navigateUserPage()"></i>
+            <i class="fa fa-trophy" (click)="navigateUserPage()"></i>
+            <i class="fa fa-eye" (click)="navigateUserPage()"></i>
         </div>
         <div *ngIf="!isGamePage" class="second icons-container">
             <i class="fa fa-gear" (click)="navigateSettings()"></i>
-            <div *ngIf="!isNewChatWindowOpen" (click)="logOut()" class="icon material-symbols-outlined discussion-out">
-                logout
-            </div>
+            <div *ngIf="!isNewChatWindowOpen" (click)="logOut()" class="icon material-symbols-outlined discussion-out">logout</div>
         </div>
 
         <div *ngIf="isGamePage" class="icons-container game-page">
-            <div  *ngIf="!isGameOver" (click)="showHint()" class="hint-icon">
-                <div class="red-dot" [class.disabled] = " !isYourTurn() || hintService.nbHints === 0">{{ hintService.nbHints ? hintService.nbHints : 0 }}</div>
-                <i class="material-symbols-outlined" *ngIf="!isGameOver" [class.disabled] = " !isYourTurn() || hintService.nbHints === 0">emoji_objects</i>
+            <div *ngIf="!isGameOver" (click)="showHint()" class="hint-icon" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
+                <div class="red-dot" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
+                    {{ hintService.nbHints ? hintService.nbHints : 0 }}
+                </div>
+                <i class="material-symbols-outlined" *ngIf="!isGameOver" [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
+                    >emoji_objects</i
+                >
             </div>
-            <span *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in">
-                chat_bubble
-                </span>
+            <span *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in"> chat_bubble </span>
             <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon game-page">Close chat</button>
             <i class="fa fa-flag" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
-            <div *ngIf="isGameOver" (click)="goBackToHome()" class="material-symbols-outlined quit">
-                logout
-            </div>
+            <div *ngIf="isGameOver" (click)="leaveGame()" class="material-symbols-outlined quit">logout</div>
         </div>
 
         <!-- CHAT MENU -->

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
@@ -25,7 +24,6 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
-        private router: Router,
         private hintService: HintService,
         public playerService: PlayerService,
     ) {
@@ -76,11 +74,6 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
 
     letterBankCommand() {
         this.socketService.send(SocketEvent.Message, '!réserve');
-    }
-
-    leaveGame() {
-        this.socketService.disconnect();
-        this.router.navigate(['/main']);
     }
 
     protected configureBaseSocketFeatures() {

@@ -33,9 +33,8 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     @ViewChild('chatContainer', { static: false }) private chatContainer!: ElementRef<HTMLDivElement>;
     @ViewChild('menuContainer', { static: false }) private menuContainer!: ElementRef<HTMLDivElement>;
     @ViewChild('menuDarkBackground', { static: false }) private menuDarkBackground!: ElementRef<HTMLDivElement>;
+
     selectedDiscussionChannel: DiscussionChannel;
-    availableDiscussionChannels: DiscussionChannel[];
-    roomChannel: DiscussionChannel;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcRenderer: any;
     constructor(
@@ -50,8 +49,6 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         super(socketService);
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
-        this.availableDiscussionChannels = [];
-        this.roomChannel = new DiscussionChannel('');
         try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.ipcRenderer = (window as any).require('electron').ipcRenderer;
@@ -76,7 +73,16 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         return this.playerService.isNewChatWindowOpen;
     }
 
+    get availableDiscussionChannels(): DiscussionChannel[] {
+        return this.playerService.discussionChannelService.availableChannels;
+    }
+
+    get roomChannel(): DiscussionChannel {
+        return this.playerService.discussionChannelService.roomChannel;
+    }
+
     ngOnInit() {
+        this.closeChatNewWindow();
         this.connectSocket();
     }
 
@@ -229,13 +235,9 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         });
     }
 
-    goBackToHome() {
-        this.router.navigate(['/main']);
-    }
-
     leaveGame() {
         this.audioService.stopSound();
-        this.socketService.disconnect();
+        this.socketService.send(SocketEvent.LeaveGame);
         this.router.navigate(['/main']);
     }
 
@@ -249,8 +251,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             this.closeChat();
             this.playerService.isNewChatWindowOpen = true;
         } catch (error) {
-            // eslint-disable-next-line no-console
-            console.info(error);
+            return;
         }
     }
 
@@ -259,8 +260,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             this.ipcRenderer.send('close-chat');
             this.playerService.isNewChatWindowOpen = false;
         } catch (error) {
-            // eslint-disable-next-line no-console
-            console.info(error);
+            return;
         }
     }
 
@@ -274,11 +274,11 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         });
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
-            this.availableDiscussionChannels = channels;
+            this.playerService.discussionChannelService.availableChannels = channels;
         });
 
         this.socketService.on(SocketEvent.RoomChannelUpdated, (roomChannel: DiscussionChannel) => {
-            this.roomChannel = roomChannel || new DiscussionChannel('');
+            this.playerService.discussionChannelService.roomChannel = roomChannel || new DiscussionChannel('');
             this.handleGameWaitPage();
         });
 
@@ -304,14 +304,18 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             this.router.navigate(['/game']);
         });
 
-        this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
-        if (this.isGamePage) {
+        if (this.playerService.discussionChannelService.availableChannels.length === 0) {
+            this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
+        }
+
+        if (this.isGamePage && this.playerService.discussionChannelService.roomChannel.name === '') {
             this.socketService.send(SocketEvent.JoinChatChannel, {
                 name: this.room.roomInfo.name,
                 user: this.playerService.player.pseudo,
                 isRoomChannel: true,
             });
         }
+
         this.updateAvailableChannels();
     }
 

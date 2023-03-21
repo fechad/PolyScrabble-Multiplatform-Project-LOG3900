@@ -103,15 +103,6 @@ describe('GamePageComponent', () => {
         expect(spy).toHaveBeenCalledWith('message', '!aide');
     });
 
-    describe('confirmLeaving tests', () => {
-        it('should call the correct methods on leaveGame', () => {
-            const spy = spyOn(socketServiceMock, 'disconnect');
-            component.leaveGame();
-            expect(spy).toHaveBeenCalled();
-            expect(routerSpy.navigate).toHaveBeenCalledWith(['/main']);
-        });
-    });
-
     describe('updateFocus tests', () => {
         // TODO: see if we must set currentFocus to none for this project
         it('should call stopPropagation on updateFocus and set currentFocus to none', () => {

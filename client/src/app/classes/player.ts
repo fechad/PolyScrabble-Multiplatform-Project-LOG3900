@@ -22,4 +22,10 @@ export class Player {
         this.isCreator = player.isCreator;
         this.isItsTurn = player.isItsTurn;
     }
+
+    resetPlayerInfo() {
+        this.points = 0;
+        this.isCreator = false; // Remove this from here, obsolete
+        this.isItsTurn = false;
+    }
 }

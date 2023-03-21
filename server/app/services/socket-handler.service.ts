@@ -52,20 +52,25 @@ export class SocketHandlerService {
     }
 
     async handleDisconnecting(socket: io.Socket): Promise<void> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(this.handlePlayerLeavingGame(socket));
+            }, DISCONNECT_DELAY);
+        });
+    }
+
+    handlePlayerLeavingGame(socket: io.Socket) {
         const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
         if (!room || this.handleOnlyPlayerLeft(room)) return;
 
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const player = room.getPlayer(socket.id);
-                if (!player) return;
-                if (room.isSolo) {
-                    this.handleSoloPlayerLeft(room);
-                    return;
-                }
-                resolve(this.handleMultiPlayerLeft(socket, room, player));
-            }, DISCONNECT_DELAY);
-        });
+        const player = room.getPlayer(socket.id);
+        if (!player) return;
+        if (room.isSolo) {
+            this.handleSoloPlayerLeft(room);
+            return;
+        }
+
+        this.handleMultiPlayerLeft(socket, room, player);
     }
 
     handleOnlyPlayerLeft(room: Room): boolean {

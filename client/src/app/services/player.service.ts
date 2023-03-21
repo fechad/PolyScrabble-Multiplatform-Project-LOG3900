@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DiscussionChannelService } from '@app/classes/discussion-channel-service';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { DEFAULT_ACCOUNT } from '@app/constants/constants';
@@ -16,19 +17,25 @@ export class PlayerService {
     room: Room;
     account: ClientAccountInfo = DEFAULT_ACCOUNT;
     isNewChatWindowOpen: boolean;
+    discussionChannelService: DiscussionChannelService;
+
     constructor(private httpService?: HttpService) {
         this.isNewChatWindowOpen = false;
         this.room = new Room();
         this.player = new Player();
+        this.discussionChannelService = new DiscussionChannelService();
+
         // TODO: remove this bypass for disabled logging
         this.player.email = 'anna@polyscrabble.ca';
         // TODO: Remove this call once logging is re enabled
         this.getPlayerInfo();
     }
+
     getPlayerInfo() {
         if (!this.httpService) return;
         this.httpService.getUserInfo(this.player.email).subscribe((userInfo) => (this.account = userInfo));
     }
+
     reducePLayerInfo(): Account {
         return {
             username: this.account.username,
@@ -41,6 +48,12 @@ export class PlayerService {
             bestGames: this.account.bestGames,
         };
     }
+
+    resetPlayerAndRoomInfo() {
+        this.player.resetPlayerInfo();
+        this.room.reinitialize();
+    }
+
     async updateUserSettings(newSettings: UserSettings) {
         if (!this.httpService) return;
         this.account.userSettings = newSettings;

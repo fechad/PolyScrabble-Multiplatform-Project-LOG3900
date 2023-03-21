@@ -162,6 +162,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         });
 
         this.socketService.on(SocketEvent.TimeUpdated, (room: Room) => {
+            this.room.elapsedTime = room.elapsedTime;
             this.remainingTime = Math.max(+room.roomInfo.timerPerTurn - room.elapsedTime, 0);
         });
 
