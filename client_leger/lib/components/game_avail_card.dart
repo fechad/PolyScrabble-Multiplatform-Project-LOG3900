@@ -48,6 +48,7 @@ class _GameCardState extends State<GameCard> {
     isItsTurn: false,
   );
   TextEditingController _pswdController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -129,7 +130,7 @@ class _GameCardState extends State<GameCard> {
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(130, 0, 16, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(100, 0, 16, 0),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Palette.mainColor,
@@ -152,13 +153,20 @@ class _GameCardState extends State<GameCard> {
                                         builder: (context) {
                                           return Container(
                                             child: AlertDialog(
-                                              title: Text("Partie privée"),
-                                              content: TextFormField(
+                                              title: Text("Mot de passe requis"),
+                                              content:  Container(
+                                              height: 55,
+                                              width: 350,
+                                              child: Form(
+                                              key: _formKey,
+                                              child: Column(
+                                              children: [
+                                              TextFormField(
                                                 controller: _pswdController,
                                                 decoration:
                                                     const InputDecoration(
                                                   hintText:
-                                                      'Veuillez entrer le mot de passe pour joindre la partie',
+                                                      'Veuillez entrer le mot de passe',
                                                 ),
                                                 obscureText: true,
                                                 validator: (value) {
@@ -172,6 +180,7 @@ class _GameCardState extends State<GameCard> {
                                                     return 'Mot de passe invalide';
                                                 },
                                               ),
+                                          ]))),
                                               actions: [
                                                 ElevatedButton(
                                                     child: Text('Quitter'),

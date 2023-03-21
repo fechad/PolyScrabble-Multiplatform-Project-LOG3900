@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 
+import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
 import '../pages/home_page.dart';
+import '../services/link_service.dart';
 import 'chat_card.dart';
+import 'chat_model.dart';
 
 class ChatDrawer extends StatefulWidget {
   const ChatDrawer({super.key});
@@ -15,12 +18,26 @@ class ChatDrawer extends StatefulWidget {
 
 class _ChatDrawerWidgetState extends State<ChatDrawer> {
   final TextEditingController textController = TextEditingController();
+  final TextEditingController _channelNameController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isSearching = false;
 
   @override
   void initState() {
     super.initState();
-    // On page load action.
+    _configure();
+  }
+
+  _configure() {
+    socketService.on(
+        'availableChannels',
+            (data) => {
+            {
+              setState(() =>
+                  chatService.getDiscussions()
+              )
+            },
+        });
   }
 
   @override
@@ -126,10 +143,86 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                   })),
           FFButtonWidget(
             onPressed: () {
-              chatService.addDiscussion('Nouveau canal');
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      child: AlertDialog(
+                        title: Text("Création d'un canal"),
+                        content:
+                        Container(
+                            height: 55,
+                            width: 350,
+                            child: Form(
+                            key: _formKey,
+                            child: Column(
+                            children: [
+                            TextFormField(
+                              controller: _channelNameController,
+                              decoration:
+                          const InputDecoration(
+                            hintText:
+                            'Veuillez entrer le nom du canal',
+                          ),
+                          validator: (value) {
+                            for (ChatModel channel in chatService.getDiscussions()){
+                              if (channel.name == value) return 'Un canal a déjà ce nom';
+                            };
+                            if (value!.isEmpty) {
+                              return 'Le nom ne peut être vide';
+                            }
+                            if (value.toLowerCase().startsWith('room')) {
+                              return "Le nom ne peut commencer par 'room'";
+                            }
+                          },
+                          ),
+                            ]))
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              child: Text('Annuler'),
+                              style: ElevatedButton
+                                  .styleFrom(
+                                backgroundColor:
+                                Colors.red,
+                                textStyle:
+                                const TextStyle(
+                                    fontSize: 15),
+                              ),
+                              onPressed: () => {
+                                _channelNameController
+                                    .clear(),
+                                Navigator.pop(
+                                    context),
+                              }),
+                          ElevatedButton(
+                            child: Text('Créer'),
+                            style:
+                            ElevatedButton.styleFrom(
+                              backgroundColor:
+                              Palette.mainColor,
+                              textStyle: const TextStyle(
+                                  fontSize: 15),
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                chatService.addDiscussion(
+                                    _channelNameController.text);
+                                Navigator.pop(
+                                    context);
+                                _channelNameController
+                                    .clear();
+                              }
+                            }
+                          ),
+                        ],
+                      ),
+                    );
+                  });
               setState(() {});
             },
-            text: 'New Chat',
+            text: 'Nouveau canal',
             options: FFButtonOptions(
               width: 240,
               height: 50,

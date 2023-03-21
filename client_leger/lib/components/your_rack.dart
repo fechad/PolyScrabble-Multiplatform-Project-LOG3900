@@ -1,6 +1,7 @@
 import 'package:client_leger/components/tile.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
+import 'package:client_leger/services/init_service.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -36,6 +37,13 @@ class _YourRackState extends State<YourRack> {
   @override
   void initState() {
     super.initState();
+    socketService.on('drawRack', (letters) =>
+    {
+      setState(() {
+        linkService.resetRack();
+        linkService.getRack();
+      }),
+    });
   }
 
   @override
@@ -57,10 +65,9 @@ class _YourRackState extends State<YourRack> {
               tileChange(notification.data);
               return true;
             },
-            child: RebuildWrapper(
-                controller: controller,
                 child: Observer(
                     builder: (context) =>
-                        Row(children: linkService.getRack())))));
+                        Row(children: linkService.getRack()))
+            ));
   }
 }

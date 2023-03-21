@@ -1,6 +1,8 @@
 import 'package:client_leger/services/socket_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
+import '../classes/game.dart';
 import '../config/environment.dart';
+import '../main.dart';
 import 'link_service.dart';
 
 Io.Socket socket = Io.io(
@@ -49,5 +51,25 @@ void connect() {
   } catch (e) {
     print(e);
   }
+
+  gameService.room = Room(
+      elapsedTime: 0,
+      players: [],
+      roomInfo: RoomInfo(
+          name: '',
+          timerPerTurn: '',
+          gameType: 'classic',
+          dictionary: 'dictionnaire par défaut',
+          maxPlayers: 4,
+          creatorName: authenticator.currentUser.username,
+          isPublic: false, //by default games are private
+          password: ''),
+      isBankUsable: false);
+  gameService.player = Player(
+      pseudo: authenticator.currentUser.username,
+      socketId: socketService.getSocketID() ?? 'id',
+      points: 0,
+      isCreator: true,
+      isItsTurn: false);
 
 }

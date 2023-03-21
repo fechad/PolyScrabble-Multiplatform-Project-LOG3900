@@ -9,7 +9,7 @@ import {
     END_TIMER_VALUE,
     ONE_SECOND_IN_MS,
     SYSTEM_NAME,
-    THREE_SECONDS_IN_MS,
+    THREE_SECONDS_IN_MS
 } from '@app/constants/constants';
 import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
@@ -52,6 +52,7 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
 
         this.handlePlayerLeavingGame(socket);
+        console.log(room.roomInfo.name);
         this.socketLeaveRoom(socket, room.roomInfo.name);
     }
 

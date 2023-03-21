@@ -55,7 +55,7 @@ class ChatService {
 
   void addDiscussion(String name) {
     socket
-        .emit('createChatChannel', [name, authenticator.currentUser.username]);
+        .emit('createChatChannel', {'channel':name, 'username': authenticator.getCurrentUser(), 'isRoomChannel': false});
   }
 
   void deleteDiscussion(String name) {
