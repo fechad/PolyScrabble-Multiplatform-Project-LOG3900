@@ -29,6 +29,7 @@ export enum SocketEvent {
     AvailableRooms = 'availableRooms',
     StartGame = 'startGame',
     ChangeTurn = 'changeTurn',
+    ToggleAngryBotAvatar = 'toggleAngryBotAvatar',
     BotPlayAction = 'botPlayAction',
     GetAllGoals = 'getAllGoals',
 

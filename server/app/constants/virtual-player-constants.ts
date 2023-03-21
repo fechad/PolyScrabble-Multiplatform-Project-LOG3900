@@ -47,6 +47,7 @@ const EXPERT_SCALE: AdaptiveScale = {
     lowerScale: 0.05,
     upperScale: 0.4,
 };
+export const TOGGLE_PREFIX = 'toggleMe';
 export const SCALES = {
     default: DEFAULT_SCALE,
     beginner: BEGINNER_SCALE,

@@ -80,8 +80,8 @@ export class VirtualPlayer extends Player implements Observable {
         this.sendMessage(this.quotes.greeting);
     }
 
-    sendMessage(message: string) {
-        this.notifyObservers({ message, sender: this.pseudo });
+    sendMessage(message: string, senderOverwrite?: string) {
+        this.notifyObservers({ message, sender: senderOverwrite ? senderOverwrite : this.pseudo });
     }
 
     registerObserver(observer: Observer) {
