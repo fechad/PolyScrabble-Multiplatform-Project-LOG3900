@@ -1,16 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
-import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SocketEvent } from '@app/enums/socket-event';
-import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
-import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HintService } from '@app/services/hint.service';
 import { PlayerService } from '@app/services/player.service';
@@ -30,7 +26,6 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         private sessionStorageService: SessionStorageService,
         private focusHandlerService: FocusHandlerService,
         private router: Router,
-        private dialog: MatDialog,
         private hintService: HintService,
         public playerService: PlayerService,
     ) {
@@ -85,27 +80,6 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
 
     leaveGame() {
         this.socketService.disconnect();
-        this.router.navigate(['/main']);
-    }
-
-    confirmLeaving() {
-        const description: InformationalPopupData = {
-            header: 'Voulez-vous vraiment abandonner ?',
-            body: 'Vous ne serez pas dans le tableau des meilleurs scores.',
-        };
-        const dialog = this.dialog.open(ConfirmationPopupComponent, {
-            width: DIALOG_WIDTH,
-            autoFocus: true,
-            data: description,
-        });
-
-        dialog.afterClosed().subscribe((result) => {
-            if (!result) return;
-            this.leaveGame();
-        });
-    }
-
-    goBackToHome() {
         this.router.navigate(['/main']);
     }
 
