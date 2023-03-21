@@ -11,6 +11,7 @@ import {
     SYSTEM_NAME,
     THREE_SECONDS_IN_MS,
 } from '@app/constants/constants';
+import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
@@ -253,12 +254,18 @@ export class SocketGameService extends SocketHandlerService {
         this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
         return;
     }
-
+    toggleAngryBotAvatar(room: Room, botName: string) {
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ToggleAngryBotAvatar, botName);
+    }
     private updateWantedMessages(room: Room) {
         // eslint-disable-next-line no-unused-vars, no-underscore-dangle
         for (const _wantedMessage of room.botCommunicationManager.wantedMessages) {
             const messageInfo = room.botCommunicationManager.popFirstWantedMessage();
             if (!messageInfo || !messageInfo.message) return;
+            if (!messageInfo.sender.startsWith(TOGGLE_PREFIX))
+                return this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender);
+            messageInfo.sender = messageInfo.sender.replace(new RegExp('^' + TOGGLE_PREFIX), '');
+            this.toggleAngryBotAvatar(room, messageInfo.sender);
             this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender);
         }
     }

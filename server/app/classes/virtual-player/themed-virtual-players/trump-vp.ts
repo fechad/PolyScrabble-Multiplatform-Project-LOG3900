@@ -1,7 +1,7 @@
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { SCALES } from '@app/constants/virtual-player-constants';
+import { SCALES, TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
 import { Language } from '@app/enums/language';
 import { trumpEnglishQuotes, trumpFrenchQuotes } from '@app/enums/themed-quotes/trump-quotes';
@@ -29,7 +29,7 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         // TODO: add cheat logic
         if (!this.hasCheated) {
             this.hasCheated = true;
-            this.sendMessage(this.quotes.cheatAnnouncement);
+            this.sendMessage(this.quotes.cheatAnnouncement, TOGGLE_PREFIX + this.pseudo);
             if (this.angryTurnsLeft < 1) this.angryTurnsLeft = 2;
         } else if (this.angryTurnsLeft < 1) {
             this.angryTurnsLeft = 2;
@@ -44,5 +44,7 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         if (this.angryTurnsLeft >= 1) return;
         this.intervalComputer.scale = SCALES.default;
         this.intervalComputer.isRuthless = false;
+        // TODO: Maybe implement a proper cooldown quote
+        this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
     }
 }

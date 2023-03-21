@@ -1,7 +1,7 @@
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { SCALES } from '@app/constants/virtual-player-constants';
+import { SCALES, TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
 import { einsteinEnglishQuotes, einsteinFrenchQuotes } from '@app/enums/themed-quotes/einstein-quotes';
 
@@ -25,7 +25,7 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
 
         if (this.angryTurnsLeft < 1) {
             this.angryTurnsLeft = 3;
-            this.sendMessage(this.quotes.angryAnnouncement);
+            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
         }
         this.intervalComputer.scale = SCALES.expert;
 
@@ -36,5 +36,7 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         if (this.angryTurnsLeft >= 1) return;
         this.intervalComputer.scale = SCALES.default;
         this.intervalComputer.isRuthless = false;
+        // TODO: Maybe implement a proper cooldown quote
+        this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
     }
 }

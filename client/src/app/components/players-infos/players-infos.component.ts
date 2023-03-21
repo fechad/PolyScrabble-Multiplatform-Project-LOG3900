@@ -20,6 +20,7 @@ import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { lastValueFrom } from 'rxjs';
 const END_GAME_WIDTH = '400px';
+const BASE_AVATAR_PATH = 'assets/images/avatars/';
 @Component({
     selector: 'app-players-infos',
     templateUrl: './players-infos.component.html',
@@ -144,6 +145,14 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
                 this.room.isBankUsable = false;
             }
         });
+        this.socketService.on(SocketEvent.ToggleAngryBotAvatar, (botName: string) => {
+            const bot = this.opponentsInfo.find((entry: ClientAccountInfo) => entry.username === botName);
+            if (!bot) return;
+            const currentAvatar = bot.userSettings.avatarUrl;
+            bot.userSettings.avatarUrl = currentAvatar.startsWith(BASE_AVATAR_PATH + 'angry')
+                ? BASE_AVATAR_PATH + bot.username + 'Avatar.png'
+                : BASE_AVATAR_PATH + 'angry' + bot.username + 'Avatar.png';
+        });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.playerService.player.isItsTurn) {
                 this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
@@ -197,7 +206,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     }
     private getBotInfo() {
         const bot = this.room.players.filter((entry: Player) => entry.pseudo !== this.playerService.account.username)[0];
-        let avatarPath = 'assets/images/avatars/';
+        let avatarPath = BASE_AVATAR_PATH;
         const index = ThemedPseudos.findIndex((entry) => entry === bot.pseudo);
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         avatarPath += index === -1 ? 'default' : bot.pseudo;
@@ -205,7 +214,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         const info: ClientAccountInfo = {
             username: bot.pseudo,
             email: '',
-            userSettings: { avatarUrl: avatarPath, defaultLanguage: 'french', defaultTheme: 'dark', victoryMusic: 'RickRoll.mp3' },
+            userSettings: { avatarUrl: avatarPath, defaultLanguage: 'french', defaultTheme: 'dark', victoryMusic: 'Better.mp3' },
             highscores: {},
             progressInfo: { totalXP: 9999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 1000, victoriesCount: 69 },
             badges: [],
