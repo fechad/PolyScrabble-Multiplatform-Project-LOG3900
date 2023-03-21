@@ -8,15 +8,14 @@ import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { EinsteinVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/einstein-vp';
+import { SantaVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/santa-vp';
 import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { VirtualPlayerAdaptative } from '@app/classes/virtual-player/virtual-player-adaptative';
 import { VirtualPlayerBeginner } from '@app/classes/virtual-player/virtual-player-beginner';
 import { VirtualPlayerExpert } from '@app/classes/virtual-player/virtual-player-expert';
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
-import { SCALES } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
-import { santaEnglishQuotes, santaFrenchQuotes } from '@app/enums/themed-quotes/santa-quotes';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
@@ -67,8 +66,7 @@ export class GameManager {
                 return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank, desiredLevel);
 
             case GameLevel.Santa:
-                const santa = new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel, SCALES.santa);
-                santa.setQuotes(santaFrenchQuotes, santaEnglishQuotes);
+                const santa = new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
                 return santa;
 
             case GameLevel.Trump:
