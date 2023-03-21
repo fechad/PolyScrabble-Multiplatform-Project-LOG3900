@@ -18,7 +18,9 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import confetti from 'canvas-confetti';
 import { lastValueFrom } from 'rxjs';
+
 const END_GAME_WIDTH = '400px';
 @Component({
     selector: 'app-players-infos',
@@ -79,6 +81,13 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.remainingTime = 0;
     }
 
+    launchConfetti() {
+        confetti({
+            particleCount: 200,
+            spread: 200,
+        });
+    }
+
     getPlayer(pseudo: string): Player | undefined {
         const player = this.room.players.find((element) => element.pseudo === pseudo);
         return player;
@@ -123,8 +132,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     }
     showEndGameDialog() {
         const description: InformationalPopupData = {
-            header: 'La partie est finie',
-            body: 'Tres belle partie!',
+            header: 'Dommage...',
+            body: 'Tres belle partie! Malheuresement, la victoire revient à ' + this.winnerPseudo,
         };
         this.dialog.open(EndGamePopupComponent, {
             width: END_GAME_WIDTH,
@@ -165,7 +174,6 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             this.setPlayersTurnToFalse();
             this.findWinner(winnerArray);
-            this.showEndGameDialog();
         });
 
         this.socketService.on(SocketEvent.UpdatePlayerScore, (player: Player) => {
@@ -191,6 +199,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.winnerPseudo = winnerArray[0].pseudo;
         }
         this.numberOfWinner = winnerArray.length;
+        if (this.getPlayerInfo(true, 'pseudo') === this.winnerPseudo || this.numberOfWinner === 2) this.launchConfetti();
+        else this.showEndGameDialog();
         const firstWinner = this.opponentsInfo.find((player) => player.username === winnerArray[0].pseudo);
         if (!firstWinner) return;
         this.audioService.playWinnerMusic(firstWinner?.userSettings.victoryMusic as string);
