@@ -6,6 +6,7 @@
     font-size: 20px;
 }
 
+
 .reserve {
     margin: 8px;
 }
@@ -22,7 +23,7 @@
 }
 
 .player-panel.player-winner {
-    background-color: #e9af4e;
+    background-color: #e9b04ee3;
 }
 
 .avatar {
@@ -30,6 +31,16 @@
     width: 64px;
     height: 64px;
     background-color: gray;
+}
+
+.crown{
+    position: relative;
+    bottom: 9%;
+    font-size: 36px;
+    height: 1px;
+    left: 70%;
+    transform: rotate(42deg);
+    overflow: visible;
 }
 
 .fa-clone, .fa-eye {
@@ -99,7 +110,7 @@
     transform: translateY(-2px);
 }
 
-.player-panel div {
+.points {
     color: #515151;
     font-family: 'Nunito';
     font-size: 25px;

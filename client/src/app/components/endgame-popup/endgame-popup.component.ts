@@ -9,6 +9,7 @@ import { InformationalPopupData } from '@app/interfaces/informational-popup-data
 })
 export class EndGamePopupComponent {
     constructor(@Inject(MAT_DIALOG_DATA) public description: InformationalPopupData, private dialogRef: MatDialogRef<EndGamePopupComponent>) {}
+
     handleUserAnswer(userAnswer: boolean) {
         this.dialogRef.close(userAnswer);
     }
