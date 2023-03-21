@@ -209,19 +209,30 @@ abstract class _LinkService with Store {
 
   @action
   removeLetter(Tile tile) {
-    //TODO: remove corect letter not the first one
-    for (Tile letter in tempRack) {
-      if (letter.letter == tile.letter.toUpperCase()) {
-        tempRack.remove(letter);
-        break;
+    //TODO: remove correct letter not the first one
+    if (tile.letter.codeUnitAt(0) >= 65 && tile.letter.codeUnitAt(0) <= 90) {
+      for (Tile letter in tempRack) {
+        if (letter.letter == '*') {
+          tempRack.remove(letter);
+          break;
+        }
       }
     }
+      else {
+        for (Tile letter in tempRack) {
+           if (letter.letter == tile.letter.toUpperCase()) {
+           tempRack.remove(letter);
+           break;
+        }
+      }
+      }
   }
 
   @action
   resetRack() {
     tempRack.clear();
     for (Tile letter in rack) {
+      if (letter.letter == ' ') continue;
       final deepCopy = Tile(
           letter: letter.letter,
           index: letter.index,

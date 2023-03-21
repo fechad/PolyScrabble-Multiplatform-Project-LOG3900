@@ -56,27 +56,25 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   _configure() {
     socketService.on(
         "message",
-        (msg) => {
-              serverMsg = Message.fromJson(msg).text,
-              if (serverMsg.contains('Placement invalide'))
-                {
-                  inGameService.handleBadPlacement(),
-                  setState(() {
-                    placementValidator.cancelPlacement();
-                    lettersPlaced = '';
-                    linkService.cancelPlacements();
-                    boardController.rebuild();
-                    linkService.resetRack();
-                  })
-                }
-              else if (serverMsg.contains('a effectué le placement suivant:'))
-                {
-                  linkService.confirm(),
-                  linkService.resetRack(),
-                  lettersPlaced = '',
-                  placementValidator.cancelPlacement(),
-                }
-            });
+            (msg) => {
+          serverMsg = Message.fromJson(msg).text,
+          if(serverMsg.contains('Placement invalide')) {
+            inGameService.handleBadPlacement(),
+            setState(() {
+              placementValidator.cancelPlacement();
+              lettersPlaced = '';
+              linkService.cancelPlacements();
+              boardController.rebuild();
+              linkService.resetRack();
+            })
+          }
+          else if (serverMsg.contains('a effectué le placement suivant:')) {
+            linkService.confirm(),
+            linkService.resetRack(),
+            lettersPlaced = '',
+            placementValidator.cancelPlacement(),
+          }
+        });
 
     socketService.on(
         'hint',
@@ -144,7 +142,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   }
 
   void addPlacement(int x, int y, String value, String letter, color) {
-    placementValidator.addLetter(letter, x, y);
+    placementValidator.addLetter(letter.toLowerCase(), x, y);
     if (!placementValidator.validPlacement) return;
 
     Container newSquare = Container(
@@ -179,8 +177,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             )));
     setState(() {
       linkService.setRows(x, y, newSquare);
-      linkService.removeLetter(
-          Tile(letter: letter, index: getIndex(letter.toUpperCase())));
+      linkService.removeLetter(Tile(letter: letter.toLowerCase(), index: getIndex(letter)));
     });
   }
 
@@ -193,12 +190,13 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   void serverPlacement(String position, String word) {
     int y = (position[0].codeUnitAt(0) - 97);
     int x = -1;
+
     String direction = position[position.length - 1];
     if (position.length == 3)
       x = int.parse(position[1]) - 1;
     else
       x = int.parse(position.substring(1, 3)) - 1;
-    List<String> letters = word.split('');
+    List<String> letters = word.toUpperCase().split('');
 
     addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
         Color(0xFFFFEBCE));
@@ -377,30 +375,34 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                   ElevatedButton(
                     onPressed: linkService.getMyTurn()
                         ? () {
-                            setState(() {
-                              if (linkService.getMyTurn()) {
-                                linkService.cancelPlacements();
-                                final PlacementCommand command = PlacementCommand(
-                                    position:
-                                        '${placementValidator.getRowLetter(placementValidator.firstLetterPosition[1])}${placementValidator.firstLetterPosition[0] + 1}',
-                                    direction: placementValidator.isHorizontal
-                                        ? 'h'
-                                        : 'v',
-                                    letter: placementValidator.letters
-                                        .toLowerCase());
+                      setState(() {
+                        if (linkService.getMyTurn()) {
+                          linkService.cancelPlacements();
+                          final PlacementCommand command = PlacementCommand(
+                              position:
+                              '${placementValidator.getRowLetter(
+                                  placementValidator
+                                      .firstLetterPosition[1])}${placementValidator
+                                  .firstLetterPosition[0] + 1}',
+                              direction: placementValidator.isHorizontal
+                                  ? 'h'
+                                  : 'v',
+                              letter:
+                              placementValidator.letters);
 
-                                gameCommandService
-                                    .constructPlacementCommand(command);
-                                linkService.resetRack();
-                                lettersPlaced = '';
-                                placementValidator.cancelPlacement();
-                              } else {
-                                placementValidator.cancelPlacement();
-                                linkService.resetRack();
-                                lettersPlaced = '';
-                              }
-                            });
-                          }
+                          gameCommandService
+                              .constructPlacementCommand(command);
+                          linkService.resetRack();
+                          lettersPlaced = '';
+                          placementValidator.cancelPlacement();
+                        }
+                        else {
+                          placementValidator.cancelPlacement();
+                          linkService.resetRack();
+                          lettersPlaced = '';
+                        }
+                      });
+                    }
                         : null,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Palette.mainColor,

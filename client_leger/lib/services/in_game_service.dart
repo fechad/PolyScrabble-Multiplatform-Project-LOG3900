@@ -68,7 +68,7 @@ class InGameService extends MultiplayerGameService {
 
   confirmLeaving() {
     gameService.leave();
-    socketService.disconnect();
+    //socketService.disconnect();
   }
 
   helpCommand() {

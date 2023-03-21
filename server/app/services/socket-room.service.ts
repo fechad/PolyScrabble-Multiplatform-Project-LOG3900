@@ -30,6 +30,7 @@ export class SocketRoomService extends SocketHandlerService {
 
     handleLeaveRoomCreator(socket: io.Socket, roomName: string) {
         if (!this.roomService.isRoomNameValid(roomName)) return;
+
         this.socketLeaveRoom(socket, roomName);
         this.roomService.removeRoom(roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
