@@ -8,7 +8,6 @@ import {
     UNREACHABLE_SERVER_MESSAGE,
     UNREACHABLE_SERVER_STATUS_CDOE,
 } from '@app/constants/http-constants';
-import { Bot } from '@app/interfaces/bot';
 import { Game } from '@app/interfaces/game';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { Observable, of } from 'rxjs';
@@ -22,7 +21,6 @@ const CLOUD_NAME = 'dejrgre8q';
 })
 export class HttpService {
     private readonly scoresBaseUrl: string;
-    private readonly botBaseUrl: string;
     private readonly gameBaseUrl: string;
     private readonly authUrl: string;
     private readonly userInfoUrl: string;
@@ -34,7 +32,6 @@ export class HttpService {
     constructor(private http: HttpClient) {
         this.scoresBaseUrl = 'scores';
         this.gameBaseUrl = 'games';
-        this.botBaseUrl = 'bots';
         this.authUrl = 'auth';
         this.userInfoUrl = 'userInfo';
         this.opponentInfoUrl = 'opponentInfo';
@@ -161,31 +158,6 @@ export class HttpService {
         const gameUrl = `${this.baseUrl}/${this.gameBaseUrl}`;
         return this.http.get<Game[]>(gameUrl, { headers: httpHeaders }).pipe(catchError(this.handleError<Game[]>('getAllGames')));
     }
-
-    getAllBots(): Observable<Bot[]> {
-        this.clearError();
-        const httpHeaders = new HttpHeaders().set('Cache-Control', 'no-cache').set('Expires', '0');
-        const botsUrl = `${this.baseUrl}/${this.botBaseUrl}`;
-        return this.http.get<Bot[]>(botsUrl, { headers: httpHeaders }).pipe(catchError(this.handleError<Bot[]>('getAllBots')));
-    }
-    updateBot(name: string, updatedBot: Bot): Observable<Bot> {
-        this.clearError();
-        const httpHeaders = new HttpHeaders().set('Cache-Control', 'no-cache').set('Expires', '0');
-        const botsUrl = `${this.baseUrl}/${this.botBaseUrl}/${encodeURIComponent(name)}`;
-        return this.http.patch<Bot>(botsUrl, updatedBot, { headers: httpHeaders }).pipe(catchError(this.handleError<Bot>('updateBot')));
-    }
-    deleteBot(name: string): Observable<Bot> {
-        this.clearError();
-        const httpHeaders = new HttpHeaders().set('Cache-Control', 'no-cache').set('Expires', '0');
-        const botsUrl = `${this.baseUrl}/${this.botBaseUrl}/${encodeURIComponent(name)}`;
-        return this.http.delete<Bot>(botsUrl, { headers: httpHeaders }).pipe(catchError(this.handleError<Bot>('deleteBot')));
-    }
-    deleteAllBots(): Observable<Bot[]> {
-        this.clearError();
-        const botsUrl = `${this.baseUrl}/${this.botBaseUrl}`;
-        return this.http.delete<Bot[]>(botsUrl, { headers: this.createCacheHeaders() }).pipe(catchError(this.handleError<Bot[]>('deleteAllBots')));
-    }
-
     anErrorOccurred(): boolean {
         return this.errorMessage !== '';
     }

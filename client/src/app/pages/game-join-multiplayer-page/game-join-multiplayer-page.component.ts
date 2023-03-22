@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
+import { DEFAULT_BOT_IMAGE } from '@app/constants/default-user-settings';
 import { SocketEvent } from '@app/enums/socket-event';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -32,6 +33,10 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
 
     get room(): Room {
         return this.playerService.room;
+    }
+
+    get botAvatarUrl(): string {
+        return DEFAULT_BOT_IMAGE;
     }
 
     ngOnInit() {
@@ -74,6 +79,14 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         this.isInRoom = false;
         this.isRejected = true;
         this.room.reinitialize(this.room.roomInfo.gameType);
+    }
+
+    // TODO: remove duplicated code
+    getFormattedTimerPerTurn(room: Room) {
+        const timerPerTurn = parseInt(room.roomInfo.timerPerTurn, 10);
+        const min = 60;
+        const last = -2;
+        return Math.floor(timerPerTurn / min).toString() + 'm' + ('0' + (timerPerTurn - Math.floor(timerPerTurn / min) * min).toString()).slice(last);
     }
 
     protected configureBaseSocketFeatures() {

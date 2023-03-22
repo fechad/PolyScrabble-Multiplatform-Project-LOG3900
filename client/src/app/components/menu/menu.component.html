@@ -57,22 +57,22 @@
                 <button class="close-chat-button" (click)="closeChat()">X</button>
             </div>
         </div>
-        <div *ngIf="isWaitMultiPage && selectedDiscussionChannel.name === room.roomInfo.name" class="waiting-room-header">
+        <div *ngIf="isWaitMultiPage" class="waiting-room-header">
             <div class="game-info-container">
                 <div class="game-info">
                     <div class="game-info-icon">[+_+]</div>
-                    <div class="game-info-value">Difficile</div>
+                    <div class="game-info-value">{{ room.botsLevel }}</div>
                 </div>
                 <div class="game-info">
-                    <div class="game-info-icon">[V]</div>
-                    <div class="game-info-value">1 min</div>
+                    <span class="material-symbols-outlined game-info-icon"> Alarm </span>
+                    <div class="game-info-value">{{ formattedTimerPerTurn }}</div>
                 </div>
             </div>
             <div class="game-players">
-                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg" />
-                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg" />
-                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg" />
-                <img class="avatar" src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg" />
+                <img class="avatar" [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                <img class="avatar" [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                <img class="avatar" [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                <img class="avatar" [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
             </div>
             <div class="game-buttons">
                 <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option">Quitter</button>

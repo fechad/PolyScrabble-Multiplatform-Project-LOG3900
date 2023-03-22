@@ -9,12 +9,20 @@
             [class.their-message]="!isSender(chat) && !chat.system"
             [class.system-message]="chat.system"
         >
-            <p class="hour">{{ chat.time }}</p>
-            <div *ngIf="!chat.system" class="bubble-text" [class.my]="isSender(chat)" [class.their]="!isSender(chat) && !chat.system">
-                <p *ngIf="isSender(chat)">{{ chat.message }}</p>
-                <p *ngIf="!isSender(chat)" class="name">{{ chat.sender }}</p>
-                <p *ngIf="!isSender(chat)">{{ chat.message }}</p>
+            <div class="user-chat-container" [class.my]="isSender(chat)" *ngIf="!chat.system">
+                <img
+                    class="chat-avatar"
+                    [src]="chat.avatarUrl || 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png'"
+                />
+                <div class="chat-info-container" [class.my]="isSender(chat)">
+                    <p class="hour">{{ chat.time }}</p>
+                    <div class="bubble-text" [class.my]="isSender(chat)">
+                        <p *ngIf="!isSender(chat)" class="name">{{ chat.sender }}</p>
+                        <p>{{ chat.message }}</p>
+                    </div>
+                </div>
             </div>
+
             <hr *ngIf="chat.system" style="margin-top: 0%" width="10%" size="1" />
             <p *ngIf="chat.system">{{ chat.message }}</p>
         </div>

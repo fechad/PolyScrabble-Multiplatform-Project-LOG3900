@@ -254,6 +254,20 @@ app-general-chat {
     margin: 0px 10px;
 }
 
+.game-info-icon {
+    font-weight: bold;
+    min-width: 45px;
+    color: white;
+    font-size: 30px;
+    color: black;
+    font-variation-settings: inherit;
+}
+
+.game-info-value {
+    font-weight: bold;
+    font-size: 20px;
+}
+
 .game-buttons {
     min-width: $gameChatExtremityContainerWidth;
     display: flex;
@@ -268,6 +282,7 @@ app-general-chat {
     height: $avatarMinDimension;
     border-radius: $avatarMinDimension;
     margin: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.15);
 }
 
 button.new-channel {

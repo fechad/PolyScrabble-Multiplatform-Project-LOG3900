@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DiscussionChannelService } from '@app/classes/discussion-channel-service';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
-import { DEFAULT_ACCOUNT } from '@app/constants/constants';
+import { DEFAULT_ACCOUNT } from '@app/constants/default-user-settings';
 import { Account } from '@app/interfaces/account';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
@@ -15,7 +15,7 @@ import { HttpService } from './http.service';
 export class PlayerService {
     player: Player;
     room: Room;
-    account: ClientAccountInfo = DEFAULT_ACCOUNT;
+    account: ClientAccountInfo = { ...DEFAULT_ACCOUNT };
     isNewChatWindowOpen: boolean;
     discussionChannelService: DiscussionChannelService;
 
@@ -28,12 +28,17 @@ export class PlayerService {
         // TODO: remove this bypass for disabled logging
         this.player.email = 'anna@polyscrabble.ca';
         // TODO: Remove this call once logging is re enabled
-        this.getPlayerInfo();
+        this.setUserInfo();
     }
 
-    getPlayerInfo() {
+    setUserInfo() {
         if (!this.httpService) return;
-        this.httpService.getUserInfo(this.player.email).subscribe((userInfo) => (this.account = userInfo));
+        // TODO: uncomment later
+        // this.httpService.getUserInfo(this.player.email).subscribe((userInfo) => {
+        //     console.info(userInfo);
+        //     this.player.clientAccountInfo = userInfo;
+        //     this.account = userInfo;
+        // });
     }
 
     reducePLayerInfo(): Account {

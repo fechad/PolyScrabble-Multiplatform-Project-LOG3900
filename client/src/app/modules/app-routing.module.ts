@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserProfileComponent } from '@app/components/user-profile/user-profile.component';
-import { AdminBotPageComponent } from '@app/pages/admin-bot-page/admin-bot-page.component';
 import { AdminDictionariesPageComponent } from '@app/pages/admin-dictionaries-page/admin-dictionaries-page.component';
 import { AdminGamesPageComponent } from '@app/pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
@@ -32,7 +31,6 @@ export const routes: Routes = [
     { path: 'admin/scores', component: BestScoresPageComponent },
     { path: 'admin/games', component: AdminGamesPageComponent },
     { path: 'admin/dictionaries', component: AdminDictionariesPageComponent },
-    { path: 'admin/bots', component: AdminBotPageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'user', component: UserProfileComponent },
     { path: 'settings', component: SettingsPageComponent },

@@ -150,7 +150,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
                 isRoomChannel: true,
             });
             if (this.isSolo) {
-                this.room.players = serverRoom.players;
+                this.room.setPlayers(serverRoom.players);
                 this.router.navigate(['/game']);
                 return;
             }
@@ -165,7 +165,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         this.room.roomInfo.dictionary = this.gameForm.controls.dictionary.value;
         this.room.roomInfo.isSolo = this.isSolo;
         this.room.roomInfo.creatorName = this.playerService.player.pseudo;
-        if (this.gameForm.controls.isPublic.value) {
+        if (this.gameForm.controls.isPublic.value > 0) {
             this.room.roomInfo.isPublic = true;
             this.room.roomInfo.password = this.gameForm.controls.roomPassword.value;
         } else {

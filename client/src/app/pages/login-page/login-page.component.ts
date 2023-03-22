@@ -31,7 +31,7 @@ export class LoginPageComponent implements AfterViewInit {
     ) {
         if (!environment.production) {
             this.playerService.player.email = 'anna@polyscrabble.ca';
-            this.playerService.player.pseudo = 'anna';
+            this.playerService.player.pseudo = 'anna' + new Date().toLocaleTimeString([], { hour12: false });
             router.navigateByUrl('/main');
         }
 
@@ -146,7 +146,7 @@ export class LoginPageComponent implements AfterViewInit {
                 this.playerService.player.pseudo = (loginResult as any).username;
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 this.playerService.player.email = (loginResult as any).email;
-                this.playerService.getPlayerInfo();
+                this.playerService.setUserInfo();
                 this.router.navigate(['/main']);
 
                 // ...

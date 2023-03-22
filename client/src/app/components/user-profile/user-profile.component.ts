@@ -16,7 +16,8 @@ export class UserProfileComponent implements OnInit {
     badgeUrls: string[];
     constructor(public httpService: HttpService, private playerService: PlayerService) {}
     ngOnInit(): void {
-        this.playerService.getPlayerInfo();
+        // TODO: uncomment later
+        // this.playerService.setUserInfo();
         this.userInfo = this.playerService.account;
         this.progressInfo = this.playerService.account.progressInfo;
     }

@@ -23,9 +23,7 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { CloudinaryModule } from '@cloudinary/ng';
 import { BestScoresTableComponent } from './components/best-scores-table/best-scores-table.component';
-import { BotsTableComponent } from './components/bots-table/bots-table.component';
 import { ConfirmationPopupComponent } from './components/confirmation-popup/confirmation-popup.component';
-import { EditBotPopupComponent } from './components/edit-bot-popup/edit-bot-popup.component';
 import { EmojisPickerComponent } from './components/emojis-picker/emojis-picker.component';
 import { EndGamePopupComponent } from './components/endgame-popup/endgame-popup.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
@@ -35,13 +33,15 @@ import { GoalDialogDataComponent } from './components/goal-dialog-data/goal-dial
 import { GoalComponent } from './components/goal/goal.component';
 import { GoalsContainerComponent } from './components/goals-container/goals-container.component';
 import { HeaderComponent } from './components/header/header.component';
+import { HintShowerComponent } from './components/hint-shower/hint-shower.component';
 import { LeaderBoardDialogDataComponent } from './components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MessagesDisplayComponent } from './components/messages-display/messages-display.component';
 import { PredefinedAvatarsPopupComponent } from './components/predefined-avatars-popup/predefined-avatars-popup.component';
+import { ThemedPopUpComponent } from './components/themed-pop-up/themed-pop-up.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserSummaryComponent } from './components/user-summary/user-summary.component';
-import { AdminBotPageComponent } from './pages/admin-bot-page/admin-bot-page.component';
+import { VirtualPlayerComponent } from './components/virtual-player/virtual-player.component';
 import { AdminDictionariesPageComponent } from './pages/admin-dictionaries-page/admin-dictionaries-page.component';
 import { AdminGamesPageComponent } from './pages/admin-games-page/admin-games-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
@@ -51,9 +51,6 @@ import { ForgotPasswordPageComponent } from './pages/forgot-password-page/forgot
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
-import { VirtualPlayerComponent } from './components/virtual-player/virtual-player.component';
-import { ThemedPopUpComponent } from './components/themed-pop-up/themed-pop-up.component';
-import { HintShowerComponent } from './components/hint-shower/hint-shower.component';
 
 /**
  * Main module that is used in main.ts.
@@ -86,9 +83,6 @@ import { HintShowerComponent } from './components/hint-shower/hint-shower.compon
         GoalsContainerComponent,
         GoalComponent,
         GoalDialogDataComponent,
-        AdminBotPageComponent,
-        BotsTableComponent,
-        EditBotPopupComponent,
         AdminGamesPageComponent,
         BestScoresPageComponent,
         GamesTableComponent,
