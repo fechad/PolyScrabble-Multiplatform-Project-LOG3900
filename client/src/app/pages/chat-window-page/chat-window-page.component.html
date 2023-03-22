@@ -1,4 +1,4 @@
-<div #menuContainer class="menu-container">
+<div #menuContainer class="menu-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
     <div class="menu" [class.game-page]="isGamePage">
         <div *ngIf="!isGamePage" class="icons-container">
             <button (click)="showChatMenu()" class="icon">Chat</button>

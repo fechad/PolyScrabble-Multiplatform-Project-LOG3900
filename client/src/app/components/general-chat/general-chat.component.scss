@@ -22,6 +22,7 @@ $avatarMinDimension: 60px;
     width: 100%;
     justify-content: center;
     align-items: center;
+    color: var(--basic-font-color);
 }
 
 .user-chat-container {
@@ -87,6 +88,9 @@ $avatarMinDimension: 60px;
     float: right;
 }
 
+.my {
+}
+
 .bubble-text {
     padding: 16px;
     border-radius: 4px;
@@ -97,7 +101,7 @@ $avatarMinDimension: 60px;
     overflow-wrap: break-word;
 
     &.my {
-        background-color: #7daf6b;
+        background-color: var(--accent);
     }
 }
 
@@ -122,6 +126,11 @@ $avatarMinDimension: 60px;
     overflow-wrap: break-word;
 }
 
+.their {
+    background-color: var(--their-chat-bubble-background);
+    overflow-wrap: break-word;
+}
+
 .search-bar {
     width: 80%;
     height: 5%;
@@ -141,6 +150,7 @@ $avatarMinDimension: 60px;
     padding-left: 10%;
     margin: 0;
     cursor: pointer;
+    color: var(--basic-font-color);
 }
 
 .button {
@@ -158,6 +168,7 @@ $avatarMinDimension: 60px;
     flex-direction: column;
     height: 75%;
     width: 100%;
+    background-color: var(--section-background);
 }
 
 .btn-container {
@@ -182,13 +193,15 @@ $avatarMinDimension: 60px;
     font-size: 24px;
     font-family: 'Nunito';
     margin-right: 16px;
+    background-color: var(--section-background);
+    color: var(--basic-font-color);
 }
 
 .enabled {
-    color: #7daf6b;
+    color: var(--accent);
     cursor: pointer;
 }
 
 .disabled {
-    color: rgba(0, 0, 0, 0.212);
+    color: var(--their-chat-bubble-background);
 }

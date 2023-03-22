@@ -11,6 +11,7 @@ import { HintService } from '@app/services/hint.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-game-page',
@@ -26,6 +27,7 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         private focusHandlerService: FocusHandlerService,
         private hintService: HintService,
         public playerService: PlayerService,
+        protected themeService: ThemeService,
     ) {
         super(socketService);
     }

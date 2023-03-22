@@ -1,4 +1,4 @@
-<div (click)="updateFocus($event)" class="chat-container">
+<div (click)="updateFocus($event)" class="chat-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
     <form [formGroup]="chatForm" (ngSubmit)="handleSubmit()" ngClass="chatForm">
         <app-messages-display [messages]="chatHistory.controls" (click)="closeEmojiPicker()"></app-messages-display>
         <div class="emoji-input-container">

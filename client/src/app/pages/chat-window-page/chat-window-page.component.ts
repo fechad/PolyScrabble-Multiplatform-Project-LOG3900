@@ -8,6 +8,7 @@ import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-chat-window-page',
@@ -26,7 +27,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcRenderer: any;
-    constructor(private playerService: PlayerService, protected socketService: SocketClientService) {
+    constructor(private playerService: PlayerService, protected socketService: SocketClientService, protected themeService: ThemeService) {
         super(socketService);
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');

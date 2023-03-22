@@ -3,7 +3,7 @@
         <app-user-summary></app-user-summary>
     </mat-sidenav>
     <mat-sidenav-content>
-        <div class="page-container">
+        <div class="page-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
             <div class="page-body">
                 <div class="header"></div>
                 <div class="body-main-container">

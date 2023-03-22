@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
     <div class="chat-title">
         <H1 class="bold-title">{{ discussionChannel.name }}</H1>
     </div>
@@ -16,7 +16,7 @@
                 />
                 <div class="chat-info-container" [class.my]="isSender(chat)">
                     <p class="hour">{{ chat.time }}</p>
-                    <div class="bubble-text" [class.my]="isSender(chat)">
+                    <div class="bubble-text" [class.my]="isSender(chat)" [class.their]="!isSender(chat)">
                         <p *ngIf="!isSender(chat)" class="name">{{ chat.sender }}</p>
                         <p>{{ chat.message }}</p>
                     </div>

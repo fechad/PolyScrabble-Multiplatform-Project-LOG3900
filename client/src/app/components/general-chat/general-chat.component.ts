@@ -4,6 +4,7 @@ import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-general-chat',
@@ -13,7 +14,7 @@ import { SocketClientService } from '@app/services/socket-client.service';
 export class GeneralChatComponent implements OnInit, AfterContentChecked {
     @Input() discussionChannel: DiscussionChannel;
     enable: boolean;
-    constructor(private playerService: PlayerService, private socketService: SocketClientService) {
+    constructor(private playerService: PlayerService, private socketService: SocketClientService, protected themeService: ThemeService) {
         this.enable = false;
         this.discussionChannel = new DiscussionChannel('');
     }

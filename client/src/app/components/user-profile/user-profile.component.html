@@ -1,5 +1,5 @@
 <div class="page-container">
-    <div class = "page-body">
+    <div class="page-body mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
         <div class="name">
             <img class="avatar" [src]="userInfo.userSettings.avatarUrl" alt="SantaBadge" />
             <H1>{{ userInfo.username }}</H1>

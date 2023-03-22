@@ -14,6 +14,7 @@ import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 
 const DEFAULT_DICTIONARY_TITLE = 'dictionnaire par défaut';
 @Component({
@@ -34,6 +35,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         protected socketService: SocketClientService,
         private httpService: HttpService,
         private dialog: MatDialog,
+        protected themeService: ThemeService,
     ) {
         super(socketService);
         this.gameForm = this.fb.group({

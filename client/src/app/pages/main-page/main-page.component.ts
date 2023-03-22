@@ -9,6 +9,7 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -30,6 +31,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
         private httpService: HttpService,
         private sessionStorageService: SessionStorageService,
         protected socketService: SocketClientService,
+        protected themeService: ThemeService,
     ) {
         super(socketService);
         this.title = 'LOG2990';

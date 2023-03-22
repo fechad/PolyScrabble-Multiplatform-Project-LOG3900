@@ -4,6 +4,7 @@ import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 import { GeneralChatComponent } from './general-chat.component';
 
 const playerName = 'player1';
@@ -15,11 +16,14 @@ describe('GeneralChatComponent', () => {
     let socketHelper: SocketTestHelper;
     let socketServiceMock: SocketClientServiceMock;
     let playerService: PlayerService;
+    let themeService: ThemeService;
+
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock(socketHelper);
 
         playerService = new PlayerService();
+        themeService = new ThemeService(playerService);
         playerService.player.pseudo = playerName;
 
         await TestBed.configureTestingModule({
@@ -27,6 +31,7 @@ describe('GeneralChatComponent', () => {
             providers: [
                 { provide: PlayerService, useValue: playerService },
                 { provide: SocketClientService, useValue: socketServiceMock },
+                { provide: ThemeService, usevalue: themeService },
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

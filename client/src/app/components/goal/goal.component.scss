@@ -7,16 +7,16 @@
     margin-top: 8px;
 
     text-align: start;
-    color: rgb(0, 0, 0);
+    color: var(--basic-font-color);
     font-family: 'Nunito';
     font-size: 20px;
 
     border: 0px;
     height: 64px;
     width: 100%;
-    border: solid 2px #CCCCCC;
+    border: solid 2px rgba(0, 0, 0, 0.4);
     padding: 20px;
-    background-color: #ffffff;
+    background-color: var(--section-background);
 
     cursor: pointer;
     transition: background-color 0.15s, box-shadow 0.15s, transform 0.15s;
@@ -24,14 +24,13 @@
 
 .goal-container.goal-reached,
 .goal-container.goal-private.goal-reached {
-    background-color: #f2ffeb;
-    border: solid 4px #7DAF6B;
+    background-color: var(--section-background);
+    border: solid 4px var(--accent);
 }
-
 
 .goal-container > .reward {
     font-size: 24px;
-    color: rgb(0, 0, 0);
+    color: var(--basic-font-color);
 }
 
 .goal-container:hover {
@@ -40,12 +39,12 @@
 
 .goal-container:enabled:active {
     transform: translateY(2px);
-    box-shadow: 0px -7px 0px #7daf6b inset;
+    box-shadow: 0px -7px 0px var(--accent) inset;
 }
 
 .goal-container.goal-private:enabled:active {
     transform: translateY(2px);
-    box-shadow: 0px -7px 0px #5f8352 inset;
+    box-shadow: 0px -7px 0px var(--nav-bar-background) inset;
 }
 
 .goal-container.goal-reached:enabled:active,

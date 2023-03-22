@@ -8,6 +8,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/message';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 import { DEFAULT_USER_NAME, UNRESPONSIVE_SERVER_ERROR } from './constants';
 export const SCRABBLE_MESSAGE = '(っ◔◡◔)っ 👑 scrabble 👑';
 @Component({
@@ -23,7 +24,12 @@ export class ChatComponent extends ComponentCommunicationManager implements OnIn
     private serverResponded: boolean;
     private messageColor: string;
 
-    constructor(protected socketService: SocketClientService, private focusHandlerService: FocusHandlerService, private fb: FormBuilder) {
+    constructor(
+        protected socketService: SocketClientService,
+        private focusHandlerService: FocusHandlerService,
+        private fb: FormBuilder,
+        protected themeService: ThemeService,
+    ) {
         super(socketService);
         this.chatForm = this.fb.group({
             message: ['', [Validators.required, Validators.minLength(MIN_MESSAGE_LENGTH), Validators.maxLength(MAX_MESSAGE_LENGTH)]],
