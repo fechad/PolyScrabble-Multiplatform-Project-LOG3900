@@ -11,6 +11,10 @@ app-rack {
     width: 100%;
 }
 
+.mat-drawer-content {
+    background-color: var(--app-background);
+}
+
 .command {
     display: flex;
     flex-direction: column;
@@ -79,14 +83,11 @@ app-rack {
     max-height: 50px;
 }
 
-
 .fa-comment {
     color: #7daf6b;
     font-size: 43px;
     cursor: pointer;
 }
-
-
 
 .quit {
     cursor: pointer;
@@ -102,6 +103,7 @@ app-rack {
     justify-content: space-between;
     min-width: 300px;
     margin-right: 20px;
+    background-color: var(--app-background);
 }
 
 .top-content {

@@ -3,6 +3,7 @@ import { PageCommunicationManager } from '@app/classes/communication-manager/pag
 import { Room } from '@app/classes/room';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-game-option-page',
@@ -10,7 +11,7 @@ import { SocketClientService } from '@app/services/socket-client.service';
     styleUrls: ['./game-option-page.component.scss', '../dark-theme.scss'],
 })
 export class GameOptionPageComponent extends PageCommunicationManager implements OnInit {
-    constructor(public playerService: PlayerService, protected socketService: SocketClientService) {
+    constructor(public playerService: PlayerService, protected socketService: SocketClientService, protected themeService: ThemeService) {
         super(socketService);
     }
 

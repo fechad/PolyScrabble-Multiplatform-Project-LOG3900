@@ -9,6 +9,7 @@ import { UserSettings } from '@app/interfaces/serveur info exchange/user-setting
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
+import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
@@ -24,7 +25,13 @@ export class SettingsPageComponent implements OnInit {
     musicOptions: { key: string; value: string }[];
     avatarChanged: boolean;
     protected settingsForm: FormGroup;
-    constructor(private formBuilder: FormBuilder, private dialog: MatDialog, private httpService: HttpService, private playerService: PlayerService) {
+    constructor(
+        private formBuilder: FormBuilder,
+        private dialog: MatDialog,
+        private httpService: HttpService,
+        private playerService: PlayerService,
+        protected themeService: ThemeService,
+    ) {
         this.userSettings = this.playerService.account.userSettings;
         this.avatarChanged = false;
         this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
@@ -34,7 +41,7 @@ export class SettingsPageComponent implements OnInit {
             defaultLanguage: [this.userSettings.defaultLanguage, [Validators.required]],
             victoryMusic: [this.userSettings.victoryMusic, [Validators.required]],
         });
-
+        themeService.verifyTheme();
         this.fileReader = new FileReader();
         this.currentAvatar = null;
     }

@@ -8,7 +8,9 @@ import { MAX_MESSAGE_LENGTH, MIN_MESSAGE_LENGTH, TIMER_TEST_DELAY } from '@app/c
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { ChatMessage } from '@app/interfaces/message';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 import { Socket } from 'socket.io-client';
 import { ChatComponent, SCRABBLE_MESSAGE } from './chat.component';
 import { DEFAULT_USER_NAME, SYSTEM_NAME } from './constants';
@@ -30,6 +32,8 @@ describe('ChatComponent', () => {
     let socketHelper: SocketTestHelper;
     let mouseEvent: MouseEvent;
     let focusHandlerService: FocusHandlerService;
+    let themeService: ThemeService;
+    let playerService: PlayerService;
     const validText = 'HELLO';
     const validColor: string = MessageSenderColors.SYSTEM;
     const validMessage1: ChatMessage = { text: validText, sender: SYSTEM_NAME, color: validColor };
@@ -41,6 +45,8 @@ describe('ChatComponent', () => {
         socketServiceMock = new SocketClientServiceMock();
         socketServiceMock.socket = socketHelper as unknown as Socket;
         focusHandlerService = new FocusHandlerService();
+        playerService = new PlayerService();
+        themeService = new ThemeService(playerService);
         await TestBed.configureTestingModule({
             declarations: [ChatComponent],
             imports: [ReactiveFormsModule, FormsModule],
@@ -48,6 +54,7 @@ describe('ChatComponent', () => {
                 { provide: FormBuilder },
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
+                { provide: ThemeService, useValue: themeService },
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

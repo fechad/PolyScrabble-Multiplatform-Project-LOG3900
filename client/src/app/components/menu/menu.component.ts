@@ -18,6 +18,7 @@ import { HintService } from '@app/services/hint.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -46,6 +47,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         private dialog: MatDialog,
         protected hintService: HintService,
         private audioService: AudioService,
+        protected themeService: ThemeService,
     ) {
         super(socketService);
         this.isWaitMultiPage = false;

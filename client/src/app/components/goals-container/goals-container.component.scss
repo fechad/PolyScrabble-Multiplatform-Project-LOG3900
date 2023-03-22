@@ -35,6 +35,8 @@ app-goal {
 .choice-button {
     min-height: 45px;
     width: 100%;
+    background-color: var(--section-background);
+    color: var(--basic-font-color);
 }
 
 #goals-container {

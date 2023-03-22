@@ -10,6 +10,7 @@ import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 import { GameJoinMultiplayerPageComponent } from './game-join-multiplayer-page.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -25,6 +26,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
     let sameGameTypeRoom2: Room;
     let player: Player;
     let playerService: PlayerService;
+    let themeService: ThemeService;
     // we want to test private methods
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let componentPrivateAccess: any;
@@ -35,6 +37,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
         socketServiceMock = new SocketClientServiceMock(socketHelper);
 
         playerService = new PlayerService();
+        themeService = new ThemeService(playerService);
         playerService.room.roomInfo = DEFAULT_ROOM_INFO;
         playerService.room.currentPlayerPseudo = '';
 
@@ -64,6 +67,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
                 { provide: SocketClientService, useValue: socketServiceMock },
                 { provide: PlayerService, useValue: playerService },
                 { provide: Router, useValue: routerSpy },
+                { provide: ThemeService, useValue: themeService },
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

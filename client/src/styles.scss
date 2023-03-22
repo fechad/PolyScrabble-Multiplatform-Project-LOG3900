@@ -1,3 +1,50 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$client-primary: mat.define-palette(mat.$indigo-palette);
+$client-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$client-warn: mat.define-palette(mat.$red-palette);
+$client-background: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$client-theme: mat.define-light-theme(
+    (
+        color: (
+            primary: $client-primary,
+            accent: $client-accent,
+            warn: $client-warn,
+        ),
+    )
+);
+
+$client-theme: mat.define-dark-theme(
+    (
+        color: (
+            primary: $client-primary,
+            accent: $client-accent,
+            warn: $client-warn,
+        ),
+    )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($client-theme);
+
 // Import prebuilt-theme for mat-dialog pop up
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
@@ -32,6 +79,13 @@ app-menu {
 
 select {
     width: inherit !important;
+    color: var(--basic-font-color);
+    background-color: var(--modal-background);
+
+    option {
+        color: var(--basic-font-color);
+        background-color: var(--modal-background);
+    }
 }
 /* CSS from https://getcssscan.com/css-buttons-examples button 29 example */
 
@@ -40,6 +94,14 @@ select {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.mat-dialog-container {
+    background-color: var(--section-background);
+}
+
+.mat-dialog-title {
+    color: var(--basic-font-color);
 }
 
 .dark-background {
@@ -73,6 +135,7 @@ select {
     font-size: 35px;
     font-weight: $importantTextBold;
     margin-bottom: 0px;
+    color: var(--basic-font-color);
 }
 
 .page-title {
@@ -82,7 +145,7 @@ select {
 .button {
     align-items: center;
     appearance: none;
-    background-color: #7daf6b;
+    background-color: var(--accent);
     border: 0;
     border-radius: 8px;
     box-sizing: border-box;
@@ -107,6 +170,17 @@ select {
     height: 45px;
     width: 100%;
     box-shadow: 0px 3px 3px 1px rgba(0, 0, 0, 0.25);
+
+    &:hover {
+        cursor: pointer;
+        background: var(--accent-hover);
+    }
+
+    &:active {
+        cursor: pointer;
+        background: var(--accent-active);
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    }
 }
 
 .input-container {
@@ -121,7 +195,7 @@ select {
 .simple-label {
     position: relative;
     top: 0px;
-    color: black;
+    color: var(--basic-font-color);
     font-size: 14px;
     transition: all 0.2s ease-out;
     min-height: 22px;
@@ -134,12 +208,23 @@ select {
 
 .simple-label.placeholder {
     top: 25px;
-    color: gray;
+    color: var(--basic-font-color);
     font-size: 16px;
 }
 
 .simple-label.placeholder:hover {
     cursor: text;
+}
+
+.simple-input-container {
+    width: 100%;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: 0px;
+    border-bottom: 2px solid;
 }
 
 .simple-input {
@@ -152,7 +237,11 @@ select {
 
     background-color: transparent;
     border: 0px;
-    border-bottom: 2px solid black;
+}
+
+select {
+    color: var(--basic-font-color);
+    background-color: var(--app-background);
 }
 
 .simple-input.invalid {
@@ -161,7 +250,8 @@ select {
 
 .simple-input:focus {
     outline: none;
-    border-bottom: 2px solid green;
+    border-bottom: 2px solid var(--accent);
+    color: var(--basic-font-color);
 }
 
 .simple-input-error-msg {
@@ -179,6 +269,11 @@ select {
 .info-text-container.sign-in {
     margin-top: 0px;
     justify-content: center;
+}
+
+.mat-stroked-button:not(.mat-button-disabled) {
+    background-color: var(--accent);
+    color: white;
 }
 
 .input {
@@ -212,8 +307,8 @@ select {
 }
 
 .button:disabled {
-    background-color: rgba(125, 175, 107, 0.5);
-    color: white;
+    background-color: var(--accent-disabled);
+    color: var(--accent-disabled-font);
     cursor: default;
 }
 
@@ -313,7 +408,7 @@ select {
 .gray-box {
     border-radius: 8px;
     padding: 30px;
-    background-color: #ffffff;
+    background-color: var(--section-background);
     border: 1px solid rgba(0, 0, 0, 0.5);
     box-shadow: 0px 8px 12px 4px rgba(0, 0, 0, 0.2);
 }
@@ -583,9 +678,32 @@ $primary-color: #ffffff;
 }
 
 .fa-wechat {
-    color: #7daf6b;
+    color: var(--accent);
     cursor: pointer;
     position: absolute;
     right: 2%;
     bottom: 2%;
+}
+
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--app-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--their-chat-bubble-background);
+    border-radius: 10px;
 }

@@ -7,6 +7,7 @@ import { MAX_LENGTH_PSEUDO, MIN_LENGTH_PSEUDO } from '@app/constants/constants';
 import { Authentificator as Authenticator } from '@app/services/auth.service';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
+import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -28,6 +29,7 @@ export class LoginPageComponent implements AfterViewInit {
         private playerService: PlayerService,
         private httpService: HttpService,
         private authService: Authenticator,
+        protected themeService: ThemeService,
     ) {
         if (!environment.production) {
             this.playerService.player.email = 'anna@polyscrabble.ca';

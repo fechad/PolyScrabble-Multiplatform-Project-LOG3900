@@ -16,7 +16,7 @@
 }
 
 .avatar.player-active {
-    border: #38cb3e 5px solid;
+    border: var(--accent-hover) 5px solid;
 }
 
 .player-panel.player-winner {
@@ -36,7 +36,7 @@
 }
 
 .fa-forward {
-    color: #7daf6b;
+    color: var(--accent);
     font-size: 56px;
     margin-right: 16px;
     cursor: pointer;
@@ -61,7 +61,7 @@
 }
 
 .client-player.player-panel.player-active {
-    border: #38cb3e 5px solid;
+    border: var(--accent-hover) 5px solid;
 }
 
 .client-player.player-panel.player-winner {
@@ -75,6 +75,10 @@
     align-items: center;
 }
 
+.player-info-container {
+    color: var(--basic-font-color);
+}
+
 .player-panel {
     display: flex;
     flex-direction: column;
@@ -82,7 +86,7 @@
     justify-content: space-evenly;
     padding: 10px;
 
-    background-color: #ffffff;
+    background-color: var(--app-background);
     width: 64px;
     height: 120px;
     border-radius: 5px;
@@ -99,7 +103,7 @@
 }
 
 .player-panel div {
-    color: #515151;
+    color: var(--basic-font-color);
     font-family: 'Nunito';
     font-size: 25px;
 }
@@ -114,7 +118,7 @@
     font-family: 'Nunito';
     font-size: 25px;
     align-items: center;
-    color: #515151;
+    color: var(--basic-font-color);
     min-width: 100px;
 }
 

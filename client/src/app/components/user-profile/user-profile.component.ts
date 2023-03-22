@@ -3,6 +3,7 @@ import { ProgressInfo } from '@app/interfaces/progress-info';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -14,7 +15,7 @@ export class UserProfileComponent implements OnInit {
     userInfo: ClientAccountInfo;
     progressInfo: ProgressInfo;
     badgeUrls: string[];
-    constructor(public httpService: HttpService, private playerService: PlayerService) {}
+    constructor(public httpService: HttpService, private playerService: PlayerService, protected themeService: ThemeService) {}
     ngOnInit(): void {
         // TODO: uncomment later
         // this.playerService.setUserInfo();

@@ -27,7 +27,7 @@ app-general-chat {
 
 .material-symbols-outlined.discussion-in {
     font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
-    color: #7daf6b;
+    color: var(--accent);
 }
 
 .material-symbols-outlined.discussion-out {
@@ -52,7 +52,7 @@ app-general-chat {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: #4b6940;
+    background-color: var(--nav-bar-background);
     min-height: 100vh;
 
     &.game-page {
@@ -67,7 +67,7 @@ app-general-chat {
     align-items: center;
     width: 100%;
     height: 100vh;
-    background-color: white;
+    background-color: var(--section-background);
 
     &.game-page {
         width: 32%;
@@ -162,7 +162,7 @@ app-general-chat {
     align-items: center;
     justify-content: space-between;
     height: 100vh;
-    background-color: white;
+    background-color: var(--app-background);
     outline: 1px solid;
     transition: left 0.35s;
 }
@@ -174,6 +174,7 @@ app-general-chat {
 .chat-title {
     font-size: 25px;
     font-weight: bold;
+    color: var(--basic-font-color);
 }
 
 .chats-list-container {
@@ -193,7 +194,7 @@ app-general-chat {
 
 .chat-button:hover {
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--chat-button-hover);
 }
 
 .chats-list {
@@ -204,6 +205,7 @@ app-general-chat {
 
 .chat-name {
     font-size: 20px;
+    color: var(--basic-font-color);
 }
 
 .search-chat-container {
@@ -215,12 +217,13 @@ app-general-chat {
 }
 
 .search-button {
-    font-size: 18px;
-    height: 34px;
-
+    height: 32px;
+    display: flex;
+    justify-content: center;
     background-color: transparent;
     border: 0px;
-    border-bottom: 2px solid black;
+    margin-bottom: 8px;
+    color: var(--basic-font-color);
 }
 
 .button {
@@ -240,6 +243,7 @@ app-general-chat {
     justify-content: space-between;
     margin: 10px 10px 0px 10px;
     width: 100%;
+    background-color: var(--section-background);
 }
 
 .game-info-container {

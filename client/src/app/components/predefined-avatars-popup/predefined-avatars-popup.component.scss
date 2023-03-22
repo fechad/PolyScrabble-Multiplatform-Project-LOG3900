@@ -54,7 +54,7 @@ $avatarWidth: 80px;
     border: 2px solid rgba(0, 0, 0, 0.2);
 
     &.selected {
-        border: 4px solid rgba(4, 119, 0, 0.644);
+        border: 4px solid var(--nav-bar-background);
     }
 }
 

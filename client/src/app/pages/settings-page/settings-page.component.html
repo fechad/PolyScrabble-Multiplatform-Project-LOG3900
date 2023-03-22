@@ -1,5 +1,5 @@
 <div class="page-container">
-    <div class="page-body">
+    <div class="page-body mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
         <div class="body-main-container">
             <div class="page-title">
                 <div class="form-title settings-title">Paramètre</div>
@@ -14,11 +14,25 @@
                     <div class="theme-section">
                         <p class="section-title">Thème de couleur</p>
                         <div class="radio-button-option">
-                            <input type="radio" id="dark" name="defaultTheme" value="dark" formControlName="defaultTheme" />
+                            <input
+                                type="radio"
+                                (input)="themeService.switchTheme()"
+                                id="dark"
+                                name="defaultTheme"
+                                value="dark"
+                                formControlName="defaultTheme"
+                            />
                             <label for="dark">Sombre</label><br />
                         </div>
                         <div>
-                            <input type="radio" id="light" name="defaultTheme" value="light" formControlName="defaultTheme" />
+                            <input
+                                type="radio"
+                                (input)="themeService.switchTheme()"
+                                id="light"
+                                name="defaultTheme"
+                                value="light"
+                                formControlName="defaultTheme"
+                            />
                             <label for="light">Clair</label><br />
                         </div>
                     </div>
@@ -48,7 +62,7 @@
                     </div>
                     <button class="password-section">Changer le mot de passe</button>
 
-                    <input class="save-button" type="submit" value="Sauvegarder" (click)="sendData()" [disabled]="!changed" />
+                    <input class="save-button button" type="submit" value="Sauvegarder" (click)="sendData()" [disabled]="!changed" />
                 </div>
             </form>
         </div>

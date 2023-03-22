@@ -37,6 +37,7 @@
     border-radius: 4px;
     margin: 2px;
     cursor: pointer;
+    color: var(--basic-font-color);
 }
 
 .rack-letter.placement {
@@ -53,7 +54,7 @@
     align-items: center;
     justify-content: center;
     border: 3px solid #515151;
-    background: white;
+    background: var(--modal-background);
     border-radius: 4px;
     overflow: auto;
     margin-top: 5px;

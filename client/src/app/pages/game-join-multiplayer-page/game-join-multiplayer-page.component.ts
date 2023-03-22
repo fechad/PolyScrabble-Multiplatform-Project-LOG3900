@@ -6,6 +6,7 @@ import { DEFAULT_BOT_IMAGE } from '@app/constants/default-user-settings';
 import { SocketEvent } from '@app/enums/socket-event';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-game-join-multiplayer-page',
@@ -20,7 +21,12 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
     isRejected: boolean;
     canJoinRoom: boolean;
 
-    constructor(protected socketService: SocketClientService, private router: Router, public playerService: PlayerService) {
+    constructor(
+        protected socketService: SocketClientService,
+        private router: Router,
+        public playerService: PlayerService,
+        protected themeService: ThemeService,
+    ) {
         super(socketService);
         this.isPseudoValid = true;
         this.canJoinRoom = true;

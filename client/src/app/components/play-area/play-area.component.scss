@@ -9,7 +9,7 @@ $tileDragWidth: 38px;
     justify-content: center;
     gap: 20px;
 }
-.rack{
+.rack {
     height: 50px;
 }
 
@@ -148,5 +148,5 @@ $tileDragWidth: 38px;
 }
 
 .tile.edge {
-    background-color: white;
+    background-color: var(--app-background);
 }
