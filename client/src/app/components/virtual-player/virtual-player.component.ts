@@ -82,7 +82,7 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
                 username: this.playerService.reducePLayerInfo(),
                 isRoomChannel: true,
             });
-            this.room.players = serverRoom.players;
+            this.room.setPlayers(serverRoom.players);
             const themeMusicDelay = 0;
             this.audioService.playBotThemeMusic(this.botId, themeMusicDelay);
             this.router.navigate(['/game']);

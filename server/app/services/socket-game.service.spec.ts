@@ -142,12 +142,14 @@ describe('socketGameService service tests', () => {
             roomMock.players = [firstPlayer, firstPlayer];
             const secondPlayer = {
                 ...firstPlayer,
+                avatarUrl: '',
                 replaceRack: () => {
                     return;
                 },
                 addCommand: () => {
                     return;
                 },
+                pseudo: '',
             };
             secondPlayer.pseudo = 'two';
             const getCurrentPlayerTurnStub = sinon.stub(roomMock, 'getCurrentPlayerTurn').callsFake(() => {
@@ -171,7 +173,7 @@ describe('socketGameService service tests', () => {
 
         it('should call sendToEveryoneInRoom if room.elapsedTime < room.timerPerTurn ', (done) => {
             roomMock.elapsedTime = 10;
-
+            roomMock.players = [firstPlayer];
             const clock = sinon.useFakeTimers();
             socketGameService.setTimer(socketMock, roomMock);
             clock.tick(TIMER_DELAY);
@@ -181,6 +183,18 @@ describe('socketGameService service tests', () => {
 
         it('should clear the interval if room.elapsedTime has a negative value', (done) => {
             roomMock.elapsedTime = -1;
+            roomMock.players = [firstPlayer];
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.setTimer(socketMock, roomMock);
+            clock.tick(TIMER_DELAY);
+            assert(changeTurnSpy.notCalled, 'called changeTurn when the timer is supposed to be cleared');
+            done();
+        });
+
+        it('should clear the interval if there are no player left in room on setTimer', (done) => {
+            roomMock.elapsedTime = 10;
+            roomMock.players = [];
 
             const clock = sinon.useFakeTimers();
             socketGameService.setTimer(socketMock, roomMock);

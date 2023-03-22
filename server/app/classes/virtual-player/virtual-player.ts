@@ -8,6 +8,7 @@ import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { RACK_CAPACITY } from '@app/constants/constants';
+import { DEFAULT_BOT_ACCOUNT } from '@app/constants/default-user-settings';
 import { BIG_SCORE, DEFAULT_MAX_GAP, EXTREME_SCORE, SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { GameLevel } from '@app/enums/game-level';
@@ -41,7 +42,7 @@ export class VirtualPlayer extends Player implements Observable {
         scale: AdaptiveScale = SCALES.default,
         language: Language = Language.French,
     ) {
-        super('', pseudo, isCreator);
+        super('', pseudo, isCreator, DEFAULT_BOT_ACCOUNT);
         this.observers = [];
         this.language = language;
         this.basis = { level: desiredLevel, actions: [], scoreIntervals: [] };
@@ -79,7 +80,7 @@ export class VirtualPlayer extends Player implements Observable {
     }
 
     sendMessage(message: string, senderOverwrite?: string) {
-        this.notifyObservers({ message, sender: senderOverwrite ? senderOverwrite : this.pseudo });
+        this.notifyObservers({ message, sender: senderOverwrite ? senderOverwrite : this.pseudo, avatarUrl: this.avatarUrl });
     }
 
     registerObserver(observer: Observer) {

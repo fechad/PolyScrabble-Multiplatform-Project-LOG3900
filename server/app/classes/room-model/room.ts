@@ -85,6 +85,12 @@ export class Room {
         return this.gameManager.managerLetterBank;
     }
 
+    reset() {
+        this.players = [];
+        this.bots = [];
+        this.fillerNamesUsed = [];
+    }
+
     hasTimer(): boolean {
         return this.gameManager.hasTimeout;
     }

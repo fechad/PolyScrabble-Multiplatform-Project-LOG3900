@@ -129,7 +129,7 @@ export class SocketGameService extends SocketHandlerService {
                     sender: virtualPlayer.pseudo,
                     color: MessageSenderColors.PLAYER2,
                 });
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo);
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo, virtualPlayer.avatarUrl);
                 this.handleCommand(socket, room, message, virtualPlayer);
             }, BOT_DELAY);
         }, BOT_DELAY);
@@ -146,7 +146,7 @@ export class SocketGameService extends SocketHandlerService {
             sender: virtualPlayer.pseudo,
             color: MessageSenderColors.PLAYER2,
         });
-        this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo);
+        this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo, virtualPlayer.avatarUrl);
         this.handleCommand(socket, room, message, virtualPlayer);
     }
 
@@ -154,14 +154,16 @@ export class SocketGameService extends SocketHandlerService {
         const isCommand = this.commandController.hasCommandSyntax(message);
         if (!isCommand) {
             const chatMessage = this.convertToChatMessage(room, socket.id, message);
+            const player = room.getPlayer(socket.id);
             if (commandSender instanceof VirtualPlayer === false) {
                 this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.Message, chatMessage);
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, room.getPlayerName(socket.id) as string);
+                if (!player) return;
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, player.pseudo, player.avatarUrl);
                 return;
             }
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, chatMessage);
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, room.getPlayerName(socket.id) as string);
-
+            if (!player) return;
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, player.pseudo, player.avatarUrl);
             return;
         }
 
@@ -210,8 +212,10 @@ export class SocketGameService extends SocketHandlerService {
         if (!room) return;
         room.stopOtherTimerCreation();
         const timerInterval = setInterval(async () => {
-            if (room.elapsedTime < 0) {
+            if (room.elapsedTime < 0 || room.players.length <= 0) {
                 clearInterval(timerInterval);
+                if (room.players.length > 0) return;
+                this.roomService.removeRoom(room.roomInfo.name);
                 return;
             }
 
@@ -261,6 +265,7 @@ export class SocketGameService extends SocketHandlerService {
         if (!currentTurnPlayer) return;
 
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer.pseudo);
+
         this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
         return;
     }
@@ -273,20 +278,21 @@ export class SocketGameService extends SocketHandlerService {
             const messageInfo = room.botCommunicationManager.popFirstWantedMessage();
             if (!messageInfo || !messageInfo.message) return;
             if (!messageInfo.sender.startsWith(TOGGLE_PREFIX))
-                return this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender);
+                return this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender, messageInfo.avatarUrl);
             messageInfo.sender = messageInfo.sender.replace(new RegExp('^' + TOGGLE_PREFIX), '');
             this.toggleAngryBotAvatar(room, messageInfo.sender);
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender);
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender, messageInfo.avatarUrl);
         }
     }
 
-    private sendChannelMessageToEveryoneInRoom(channelName: string, message: string, sender?: string) {
+    private sendChannelMessageToEveryoneInRoom(channelName: string, message: string, sender?: string, avatarUrl?: string) {
         const discussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);
         if (!discussionChannel) return;
         const channelMessage = {
             channelName,
             system: sender ? false : true,
             sender,
+            avatarUrl,
             message,
             time: new Date().toLocaleTimeString([], { hour12: false }),
         };
@@ -424,6 +430,7 @@ export class SocketGameService extends SocketHandlerService {
 
         const currentPlayerTurn = room.getCurrentPlayerTurn();
         if (!currentPlayerTurn) return;
+
         this.socketEmit(socket, SocketEvent.PlayerTurnChanged, currentPlayerTurn.pseudo);
     }
 

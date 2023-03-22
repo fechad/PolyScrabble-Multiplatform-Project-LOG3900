@@ -44,6 +44,7 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
             message: inputElement.value,
             time: new Date().toLocaleTimeString([], { hour12: false }), // TODO: put it server side
             sender: this.playerService.player.pseudo,
+            avatarUrl: this.playerService.player.clientAccountInfo.userSettings.avatarUrl,
             channelName: this.discussionChannel.name,
         };
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);

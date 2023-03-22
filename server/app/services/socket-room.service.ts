@@ -62,7 +62,10 @@ export class SocketRoomService extends SocketHandlerService {
         const serverRoom = this.roomService.getRoom(roomName);
         if (!serverRoom || !serverRoom.canAddPlayer(joinRoomForm.password)) return;
         const playerToAdd = joinRoomForm.player;
-        serverRoom.addPlayer(new Player(playerToAdd.socketId, playerToAdd.pseudo, playerToAdd.isCreator), joinRoomForm.password);
+        serverRoom.addPlayer(
+            new Player(playerToAdd.socketId, playerToAdd.pseudo, playerToAdd.isCreator, playerToAdd.clientAccountInfo),
+            joinRoomForm.password,
+        );
 
         if (serverRoom.players.length >= serverRoom.maxPlayers) this.roomService.setUnavailable(roomName);
         this.socketJoin(socket, roomName);

@@ -14,11 +14,9 @@ import { InformationalPopupData } from '@app/interfaces/informational-popup-data
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { AudioService } from '@app/services/audio.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
-import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
-import { lastValueFrom } from 'rxjs';
 const END_GAME_WIDTH = '400px';
 const BASE_AVATAR_PATH = 'assets/images/avatars/';
 @Component({
@@ -41,13 +39,13 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         private focusHandlerService: FocusHandlerService,
         public playerService: PlayerService,
         private dialog: MatDialog,
-        private httpService: HttpService,
         private audioService: AudioService,
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
         this.opponentsInfo = [];
-        this.getOpponentsInfo();
+        if (!this.room.roomInfo.isSolo) return;
+        this.setBotInfo();
     }
 
     get isActivePlayer(): boolean {
@@ -81,25 +79,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     }
 
     getPlayer(pseudo: string): Player | undefined {
-        const player = this.room.players.find((element) => element.pseudo === pseudo);
+        const player = this.room.players.find((element: Player) => element.clientAccountInfo.username === pseudo);
         return player;
-    }
-
-    async getOpponentsInfo() {
-        if (this.opponentsInfo.length !== 0) return;
-
-        for (const p of this.room.players) {
-            if (p.pseudo === this.playerService.account.username) {
-                this.opponentsInfo.push(this.playerService.account);
-                continue;
-            }
-            if (this.room.roomInfo.isSolo) {
-                this.getBotInfo();
-                continue;
-            }
-            const res = await lastValueFrom(this.httpService.getOpponentInfo(p.pseudo));
-            this.opponentsInfo.push(res);
-        }
     }
 
     getPlayerInfo(isClient: boolean, info: string): string | number {
@@ -119,9 +100,10 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         return infoToReturn;
     }
     getPlayerAvatarUrl(username: string): string | undefined {
-        const wantedPlayer = this.opponentsInfo.find((player) => player.username === username);
-        return wantedPlayer?.userSettings.avatarUrl;
+        const wantedPlayer = this.room.players.find((player) => player.pseudo === username);
+        return wantedPlayer?.clientAccountInfo.userSettings.avatarUrl;
     }
+
     showEndGameDialog() {
         const description: InformationalPopupData = {
             header: 'Dommage...',
@@ -146,10 +128,10 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             }
         });
         this.socketService.on(SocketEvent.ToggleAngryBotAvatar, (botName: string) => {
-            const bot = this.opponentsInfo.find((entry: ClientAccountInfo) => entry.username === botName);
+            const bot = this.room.players.find((player: Player) => player.pseudo === botName);
             if (!bot) return;
-            this.toggleAvatar(bot);
-            this.toggleBotMusic(bot);
+            this.toggleAvatar(bot.clientAccountInfo);
+            this.toggleBotMusic(bot.clientAccountInfo);
         });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.playerService.player.isItsTurn) {
@@ -177,13 +159,13 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         });
 
         this.socketService.on(SocketEvent.UpdatePlayerScore, (player: Player) => {
-            const playerToUpdate = this.getPlayer(player.pseudo);
+            const playerToUpdate = this.getPlayer(player.clientAccountInfo.username);
             if (!playerToUpdate) return;
             playerToUpdate.points = player.points;
         });
 
         this.socketService.on(SocketEvent.BotJoinedRoom, (players: Player[]) => {
-            this.room.players = players;
+            this.room.setPlayers(players);
         });
     }
     private toggleAvatar(bot: ClientAccountInfo) {
@@ -209,18 +191,19 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.winnerPseudo = winnerArray[0].pseudo;
         }
         this.numberOfWinner = winnerArray.length;
-        const firstWinner = this.opponentsInfo.find((player) => player.username === winnerArray[0].pseudo);
+        const firstWinner = this.room.players.find((player) => player.pseudo === winnerArray[0].pseudo);
         if (!firstWinner) return;
-        this.audioService.playWinnerMusic(firstWinner?.userSettings.victoryMusic as string);
+        this.audioService.playWinnerMusic(firstWinner?.clientAccountInfo.userSettings.victoryMusic as string);
     }
-    private getBotInfo() {
+
+    private setBotInfo() {
         const bot = this.room.players.filter((entry: Player) => entry.pseudo !== this.playerService.account.username)[0];
         let avatarPath = BASE_AVATAR_PATH;
         const index = ThemedPseudos.findIndex((entry) => entry === bot.pseudo);
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         avatarPath += index === -1 ? 'default' : bot.pseudo;
         avatarPath += 'Avatar.png';
-        const info: ClientAccountInfo = {
+        bot.clientAccountInfo = {
             username: bot.pseudo,
             email: '',
             userSettings: { avatarUrl: avatarPath, defaultLanguage: 'french', defaultTheme: 'dark', victoryMusic: 'Better.mp3' },
@@ -231,6 +214,5 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             gamesPlayed: [],
             gamesWon: 69,
         };
-        this.opponentsInfo.push(info);
     }
 }

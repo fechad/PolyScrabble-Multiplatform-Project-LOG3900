@@ -1,8 +1,9 @@
 import { Rack } from '@app/classes/rack';
+import { DEFAULT_ACCOUNT } from '@app/constants/default-user-settings';
+import { ClientAccountInfo } from '@app/interfaces/client-exchange/client-account-info';
 import { CommandResult } from '@app/interfaces/command-result';
 
 export class Player {
-    pseudo: string;
     socketId: string;
     points: number;
     rack: Rack;
@@ -11,9 +12,11 @@ export class Player {
     managerId: number;
     lastThreeCommands?: CommandResult[];
     accountID?: string;
+    clientAccountInfo: ClientAccountInfo;
 
-    constructor(socketId: string, pseudo: string, isCreator: boolean) {
-        this.pseudo = pseudo;
+    constructor(socketId: string, pseudo: string, isCreator: boolean, clientAccountInfo?: ClientAccountInfo) {
+        this.clientAccountInfo = clientAccountInfo ? { ...clientAccountInfo } : { ...DEFAULT_ACCOUNT };
+        if (pseudo) this.pseudo = pseudo;
         this.socketId = socketId;
         this.rack = new Rack('');
         this.isCreator = isCreator;
@@ -22,9 +25,23 @@ export class Player {
         this.lastThreeCommands = new Array<CommandResult>();
     }
 
+    get avatarUrl(): string {
+        if (!this.clientAccountInfo) return '';
+        return this.clientAccountInfo.userSettings.avatarUrl;
+    }
+
+    get pseudo() {
+        return this.clientAccountInfo.username;
+    }
+
+    set pseudo(pseudo: string) {
+        this.clientAccountInfo.username = pseudo;
+    }
+
     replaceRack(rack: Rack) {
         this.rack = rack;
     }
+
     addCommand(command: CommandResult) {
         if (!this.lastThreeCommands) return;
         this.lastThreeCommands?.splice(0, 0, command);

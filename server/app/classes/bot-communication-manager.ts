@@ -1,17 +1,17 @@
 import { Observer } from './observer-pattern/observer';
 
 export class BotCommunicationManager implements Observer {
-    wantedMessages: { message: string; sender: string }[];
+    wantedMessages: { message: string; sender: string; avatarUrl: string }[];
     constructor() {
         this.wantedMessages = [];
     }
 
-    handleObservableNotification(data: { message: string; sender: string }): void {
+    handleObservableNotification(data: { message: string; sender: string; avatarUrl: string }): void {
         if (!data || !data.message) return;
         this.wantedMessages.push(data);
     }
 
-    popFirstWantedMessage(): { message: string; sender: string } | undefined {
+    popFirstWantedMessage(): { message: string; sender: string; avatarUrl: string } | undefined {
         if (this.wantedMessages.length <= 0) return;
         const messageToSend = this.wantedMessages[0];
         this.wantedMessages.splice(0, 1);

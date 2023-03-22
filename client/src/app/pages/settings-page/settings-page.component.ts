@@ -3,14 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { PredefinedAvatarsPopupComponent } from '@app/components/predefined-avatars-popup/predefined-avatars-popup.component';
+import { DEFAULT_USER_IMAGE } from '@app/constants/default-user-settings';
 import { VICTORY_MUSIC } from '@app/constants/victory-musics';
 import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { lastValueFrom } from 'rxjs';
-
-export const DEFAULT_IMG_URL = 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png';
 
 @Component({
     selector: 'app-settings-page',
@@ -30,7 +29,7 @@ export class SettingsPageComponent implements OnInit {
         this.avatarChanged = false;
         this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
         this.settingsForm = this.formBuilder.group({
-            avatarUrl: [this.userSettings.avatarUrl || DEFAULT_IMG_URL, [Validators.required]],
+            avatarUrl: [this.userSettings.avatarUrl || DEFAULT_USER_IMAGE, [Validators.required]],
             defaultTheme: [this.userSettings.defaultTheme, [Validators.required]],
             defaultLanguage: [this.userSettings.defaultLanguage, [Validators.required]],
             victoryMusic: [this.userSettings.victoryMusic, [Validators.required]],

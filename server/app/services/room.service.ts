@@ -55,14 +55,14 @@ export class RoomService {
         if (roomAvailableToRemove) {
             const roomIndex = this.roomsAvailable.indexOf(roomAvailableToRemove);
             roomAvailableToRemove.players = [];
-            delete this.roomsAvailable[roomIndex];
             this.roomsAvailable.splice(roomIndex, 1);
+            roomAvailableToRemove.reset();
         }
         if (roomUnavailableToRemove) {
             const roomIndex = this.roomsUnavailable.indexOf(roomUnavailableToRemove);
             roomUnavailableToRemove.players = [];
-            delete this.roomsAvailable[roomIndex];
-            this.roomsUnavailable.splice(this.roomsUnavailable.indexOf(roomUnavailableToRemove), 1);
+            this.roomsUnavailable.splice(roomIndex, 1);
+            roomUnavailableToRemove.reset();
         }
     }
 
@@ -87,7 +87,10 @@ export class RoomService {
     private convertToServerRoom(clientRoom: Room): Room {
         const serverRoom = new Room(clientRoom);
         for (const player of clientRoom.players) {
-            serverRoom.addPlayer(new Player(player.socketId, player.pseudo, player.isCreator), serverRoom.roomInfo.password);
+            serverRoom.addPlayer(
+                new Player(player.socketId, player.pseudo, player.isCreator, player.clientAccountInfo),
+                serverRoom.roomInfo.password,
+            );
         }
         return serverRoom;
     }

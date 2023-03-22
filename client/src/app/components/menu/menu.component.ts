@@ -7,6 +7,7 @@ import { ComponentCommunicationManager } from '@app/classes/communication-manage
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
+import { DEFAULT_BOT_IMAGE } from '@app/constants/default-user-settings';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
@@ -57,6 +58,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         }
     }
 
+    get botAvatarUrl(): string {
+        return DEFAULT_BOT_IMAGE;
+    }
+
     get room(): Room {
         return this.playerService.room;
     }
@@ -79,6 +84,13 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     get roomChannel(): DiscussionChannel {
         return this.playerService.discussionChannelService.roomChannel;
+    }
+
+    get formattedTimerPerTurn() {
+        const timerPerTurn = parseInt(this.room.roomInfo.timerPerTurn, 10);
+        const min = 60;
+        const last = -2;
+        return Math.floor(timerPerTurn / min).toString() + 'm' + ('0' + (timerPerTurn - Math.floor(timerPerTurn / min) * min).toString()).slice(last);
     }
 
     ngOnInit() {
@@ -161,11 +173,11 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     handlePlayerFound(data: { room: Room; player: Player }) {
-        this.room.players = data.room.players;
+        this.room.setPlayers(data.room.players);
 
         const description: InformationalPopupData = {
             header: "Demande d'accès à la partie",
-            body: `Voulez-vous accepter ${data.player.pseudo} dans la salle de jeu?`,
+            body: `Voulez-vous accepter ${data.player.clientAccountInfo.username} dans la salle de jeu?`,
         };
 
         const dialog = this.dialog.open(ConfirmationPopupComponent, {
@@ -176,10 +188,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
         dialog.afterClosed().subscribe(async (result) => {
             if (!result) {
-                this.rejectPlayer(data.player.pseudo);
+                this.rejectPlayer(data.player.clientAccountInfo.username);
                 return;
             }
-            this.acceptPlayer(data.player.pseudo);
+            this.acceptPlayer(data.player.clientAccountInfo.username);
         });
     }
 
@@ -283,7 +295,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         });
 
         this.socketService.on(SocketEvent.PlayerAccepted, (room: Room) => {
-            this.room.players = room.players;
+            this.room.setPlayers(room.players);
         });
 
         this.socketService.on(SocketEvent.PlayerFound, (data: { room: Room; player: Player }) => {

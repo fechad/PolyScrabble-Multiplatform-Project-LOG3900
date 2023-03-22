@@ -65,7 +65,7 @@ export class AuthController {
                 const account: Account = {
                     email: req.body.email,
                     username: req.body?.username,
-                    userSettings: DEFAULT_USER_SETTINGS,
+                    userSettings: { ...DEFAULT_USER_SETTINGS },
                     badges: [],
                     bestGames: [],
                     gamesPlayed: [],

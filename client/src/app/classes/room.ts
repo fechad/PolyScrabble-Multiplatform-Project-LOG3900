@@ -41,7 +41,17 @@ export class Room {
         this.roomInfo.dictionary = roomServer.roomInfo.dictionary;
         this.roomInfo.gameType = roomServer.roomInfo.gameType;
         this.roomInfo.maxPlayers = roomServer.roomInfo.maxPlayers;
-        this.players = roomServer.players;
+        this.setPlayers(roomServer.players);
         this.elapsedTime = roomServer.elapsedTime;
+    }
+
+    setPlayers(players: Player[]) {
+        if (!players) return;
+        this.players = [];
+        for (const jsonPlayer of players) {
+            const clientPlayer = new Player();
+            clientPlayer.setPlayerGameAttributes(jsonPlayer);
+            this.players.push(clientPlayer);
+        }
     }
 }

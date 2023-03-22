@@ -52,15 +52,18 @@ export class SocketHandlerService {
     }
 
     async handleDisconnecting(socket: io.Socket): Promise<void> {
+        const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
+        if (!room) return;
+
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve(this.handlePlayerLeavingGame(socket));
+                resolve(this.handlePlayerLeavingGame(socket, room));
             }, DISCONNECT_DELAY);
         });
     }
 
-    handlePlayerLeavingGame(socket: io.Socket) {
-        const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
+    handlePlayerLeavingGame(socket: io.Socket, leavingRoom?: Room) {
+        const room = leavingRoom || this.roomService.getRoom(this.getSocketRoom(socket) as string);
         if (!room || this.handleOnlyPlayerLeft(room)) return;
 
         const player = room.getPlayer(socket.id);
@@ -97,7 +100,10 @@ export class SocketHandlerService {
     }
 
     swapPlayerForBot(room: Room, player: Player) {
-        const bot = room.createVirtualPlayer(FILLER_BOT_NAMES[room.fillerNamesUsed.length]);
+        const fillerName = FILLER_BOT_NAMES[room.fillerNamesUsed.length];
+        const bot = room.createVirtualPlayer(fillerName);
+        room.fillerNamesUsed.push(fillerName);
+
         bot.points = player.points;
         bot.replaceRack(player.rack);
 
@@ -109,8 +115,6 @@ export class SocketHandlerService {
             text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + bot.pseudo,
         };
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemAlert);
-        const botGreeting: ChatMessage = { sender: bot.pseudo, color: MessageSenderColors.PLAYER2, text: bot.greeting };
-        bot.notifyObservers({ roomName: room.roomInfo.name, chatMessage: botGreeting });
     }
 
     handleReconnect(socket: io.Socket, playerData: PlayerData) {

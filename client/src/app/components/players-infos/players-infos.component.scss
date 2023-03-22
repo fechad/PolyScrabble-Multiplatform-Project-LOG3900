@@ -1,5 +1,3 @@
-
-
 #dictionary-text {
     text-align: center;
     font-family: 'Nunito';
@@ -10,7 +8,7 @@
     margin: 8px;
 }
 
-.head-info{
+.head-info {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -32,12 +30,13 @@
     background-color: gray;
 }
 
-.fa-clone, .fa-eye {
+.fa-clone,
+.fa-eye {
     font-size: 36px;
 }
 
 .fa-forward {
-    color: #7DAF6B;
+    color: #7daf6b;
     font-size: 56px;
     margin-right: 16px;
     cursor: pointer;

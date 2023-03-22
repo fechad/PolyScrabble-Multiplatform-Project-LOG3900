@@ -81,12 +81,24 @@
                         </select>
                     </div>
 
-                    <div *ngIf="!isSolo" class="room-type-container">
-                        <div>Partie publique</div>
-                        <input type="checkbox" formControlName="isPublic" class="room-type-checkbox" />
+                    <div *ngIf="!isSolo" class="input-container">
+                        <label #visibilityLabel (click)="focusInput(levelSelect)" class="simple-label placeholder select">Type de parties </label>
+                        <select
+                            #levelSelect
+                            (focus)="setPlaceholderAsLabel(visibilityLabel)"
+                            (input)="setPlaceholderAsLabel(visibilityLabel)"
+                            (blur)="setLabelAsPlaceholder(visibilityLabel, 'isPublic')"
+                            class="simple-input"
+                            [class.invalid]="false"
+                            formControlName="isPublic"
+                        >
+                            <option [value]="0">Privée</option>
+                            <option [value]="1">Publique</option>
+                            <option [value]="2">Publique avec mot de passe</option>
+                        </select>
                     </div>
 
-                    <div *ngIf="!isSolo" [class.hide]="!gameForm.get('isPublic')?.value" class="input-container">
+                    <div *ngIf="!isSolo" [class.hide]="gameForm.get('isPublic')?.value < 2" class="input-container">
                         <label #roomPasswordLabel (click)="focusInput(roomPasswordInput)" class="simple-label placeholder">Mot de Passe</label>
                         <input
                             #roomPasswordInput

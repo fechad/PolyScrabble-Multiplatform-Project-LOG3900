@@ -13,11 +13,11 @@
                     <div class="game-info-container">
                         <div class="game-info">
                             <div class="game-info-icon">[+_+]</div>
-                            <div class="game-info-value">Difficile</div>
+                            <div class="game-info-value">{{ availableRoom?.botsLevel }}</div>
                         </div>
                         <div class="game-info">
-                            <div class="game-info-icon">[V]</div>
-                            <div class="game-info-value">Difficile</div>
+                            <span class="material-symbols-outlined game-info-icon"> Alarm </span>
+                            <div class="game-info-value">{{ getFormattedTimerPerTurn(availableRoom) }}</div>
                         </div>
                     </div>
 
@@ -25,19 +25,19 @@
                         <div class="game-players">
                             <img
                                 class="avatar"
-                                src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg"
+                                [src]="availableRoom.players[0] ? availableRoom.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
                             />
                             <img
                                 class="avatar"
-                                src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg"
+                                [src]="availableRoom.players[1] ? availableRoom.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
                             />
                             <img
                                 class="avatar"
-                                src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136559198249/th-1494950794.jpg"
+                                [src]="availableRoom.players[2] ? availableRoom.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
                             />
                             <img
                                 class="avatar"
-                                src="https://cdn.discordapp.com/attachments/752935531696095366/1077056136886358106/th-2630855852.jpg"
+                                [src]="availableRoom.players[3] ? availableRoom.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
                             />
                         </div>
                         <div class="game-buttons">
