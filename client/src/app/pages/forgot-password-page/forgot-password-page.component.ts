@@ -9,7 +9,6 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-forgot-password-page',
@@ -30,11 +29,6 @@ export class ForgotPasswordPageComponent {
         private authService: Authenticator,
         protected themeService: ThemeService,
     ) {
-        if (!environment.production) {
-            this.playerService.player.email = 'anna@polyscrabble.ca';
-            this.playerService.player.pseudo = 'anna';
-            router.navigateByUrl('/main');
-        }
         // email validator: https://mailtrap.io/blog/angular-email-validation/
         this.loginForm = this.formBuilder.group({
             temporaryPassword: ['', [Validators.required, Validators.minLength(MIN_LENGTH_PSEUDO), Validators.maxLength(MAX_LENGTH_PSEUDO)]],

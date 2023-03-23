@@ -20,7 +20,6 @@ import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
-import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-menu',
@@ -226,7 +225,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     async logOut() {
         this.audioService.stopSound();
-        if (environment.production) await lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
+        lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
         this.socketService.send(SocketEvent.LeaveChatChannel, { channel: 'General Chat', username: this.playerService.player.pseudo });
         this.playerService.player.pseudo = '';
         this.router.navigate(['/home']);

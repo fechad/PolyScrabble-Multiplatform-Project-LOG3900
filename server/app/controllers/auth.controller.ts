@@ -1,9 +1,10 @@
 import { DEFAULT_USER_SETTINGS } from '@app/constants/default-user-settings';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Authentificator } from '@app/services/auth.service';
-import { DatabaseService } from '@app/services/database.service';
+import { DatabaseService, USED_USERNAMES_COLLECTION } from '@app/services/database.service';
 import { EmailService } from '@app/services/email-service';
 import { Request, Response, Router } from 'express';
+import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 
 import { Service } from 'typedi';
@@ -31,32 +32,31 @@ export class AuthController {
             try {
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
-                    .then((data) => res.json(data))
+                    .then((data) => {
+                        this.databaseService.log('userActions', req.params.email, { message: 'login/connection', time: firestore.Timestamp.now() });
+                        res.json(data);
+                    })
                     // eslint-disable-next-line no-console
                     .catch((e) => console.log(e));
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
             }
         });
-
-        this.router.put('/login', async (req: Request, res: Response) => {
-            try {
-                if (this.authentificator.userExists(req.body.username)) {
-                    res.status(StatusCodes.BAD_REQUEST).send(`Le nom ${req.body.username} existe déja`);
-                    return;
-                }
-                this.authentificator.loginUser(req.body.username);
-                res.send();
-            } catch (error) {
-                res.status(StatusCodes.SERVICE_UNAVAILABLE).send(error.message);
-            }
-        });
         this.router.put('/logout', async (req: Request, res: Response) => {
             try {
                 this.authentificator.logoutUser(req.body.username);
+                const userEmailInfo: { email: string } | null = await this.databaseService.getDocumentByID(
+                    USED_USERNAMES_COLLECTION,
+                    req.body.username,
+                );
+                if (!userEmailInfo) throw new Error('Username was not linked to an email');
+                this.databaseService.log('userActions', (userEmailInfo as { email: string }).email, {
+                    message: 'logout/déconnexion',
+                    time: firestore.Timestamp.now(),
+                });
                 res.send();
             } catch (error) {
-                res.status(StatusCodes.SERVICE_UNAVAILABLE).send(error.message);
+                res.status(StatusCodes.BAD_REQUEST).send(error.message);
             }
         });
 
@@ -75,6 +75,10 @@ export class AuthController {
                 await this.databaseService
                     .batchSave('accounts', [account], (entry: Account) => entry.email)
                     .then(async () => {
+                        await this.databaseService.log('userActions', req.body.email, {
+                            message: 'accountCreated/CréationDuCompte',
+                            time: firestore.Timestamp.now(),
+                        });
                         res.status(StatusCodes.CREATED).send();
                     })
                     // eslint-disable-next-line no-console

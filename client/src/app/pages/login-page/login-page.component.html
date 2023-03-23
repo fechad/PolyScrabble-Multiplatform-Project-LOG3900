@@ -3,7 +3,7 @@
         <app-hearder></app-hearder>
         <div class="body-main-container">
             <div class="gray-box">
-                <form class="auth-form" [formGroup]="loginForm">
+                <form (keydown.enter)="$event.preventDefault()" class="auth-form" [formGroup]="loginForm">
                     <div *ngIf="isLoginForm" class="form-title">Connexion</div>
                     <div *ngIf="!isLoginForm" class="form-title">Inscription</div>
 
@@ -68,6 +68,7 @@
                             (focus)="setPlaceholderAsLabel(passwordConfirmLabel)"
                             (input)="setPlaceholderAsLabel(passwordConfirmLabel)"
                             (blur)="setLabelAsPlaceholder(passwordConfirmLabel, 'confirmPassword')"
+                            (keyup.enter)="submitRegistration()"
                             formControlName="confirmPassword"
                             name="confirmPassword"
                             type="password"
