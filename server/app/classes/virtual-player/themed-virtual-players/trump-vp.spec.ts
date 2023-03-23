@@ -31,14 +31,16 @@ describe('Tump virtual player', () => {
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);
         expect(trumpVp.angryTurnsLeft).to.equal(1);
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);
-        expect(trumpVp.angryTurnsLeft).to.equal(0);
+        expect(trumpVp.angryTurnsLeft).to.equal(-1);
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);
         expect(trumpVp.angryTurnsLeft).to.equal(1);
     });
     it('should use default scale after it runs out of angry turns and the gap falls below the threshold', () => {
         trumpVp.angryTurnsLeft = 1;
-
+        trumpVp.hasCheated = true;
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);
+        expect(trumpVp.angryTurnsLeft).to.equal(-1);
+        trumpVp.setScoreInterval(ANGRY_THRESHOLD - 1);
         expect(trumpVp.angryTurnsLeft).to.equal(0);
         expect((trumpVp as any).intervalComputer.adaptiveScale).to.equal(SCALES.default);
     });
