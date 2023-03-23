@@ -3,6 +3,7 @@ import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
 import { DEFAULT_USER_SETTINGS } from '@app/constants/default-user-settings';
 import { app } from '@app/firebase-config';
 import { Account } from '@app/interfaces/firestoreDB/account';
+import { Log } from '@app/interfaces/firestoreDB/log';
 import { Score } from '@app/interfaces/score';
 import { DocumentData, Firestore, getFirestore, WriteResult } from 'firebase-admin/firestore';
 
@@ -13,6 +14,8 @@ const DEFAULT_MAX_BATCH_SIZE = 100;
 export const DATABASE_NAME = 'Cluster0';
 export const SCORE_COLLECTION = 'scores';
 export const BOT_COLLECTION = 'bots';
+export const LOGS_COLLECTION = 'logs';
+export const USED_USERNAMES_COLLECTION = 'usedUsernames';
 
 @Service()
 export class DatabaseService {
@@ -33,6 +36,9 @@ export class DatabaseService {
             throw new Error('Database connection error');
         }
         return this.db;
+    }
+    async log(docID: string, subCollectionId: string, log: Log) {
+        this.db.collection(LOGS_COLLECTION).doc(docID).collection(subCollectionId).add(log);
     }
 
     // TODO: Rewrite that for loop to not have an unoptimal if statement

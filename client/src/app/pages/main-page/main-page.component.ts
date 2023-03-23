@@ -43,6 +43,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
     }
 
     ngOnInit() {
+        this.themeService.verifyTheme();
         this.connectSocket();
         this.playerService.resetPlayerAndRoomInfo();
         this.sessionStorageService.clear();

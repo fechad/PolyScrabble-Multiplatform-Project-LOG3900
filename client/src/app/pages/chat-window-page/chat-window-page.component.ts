@@ -57,7 +57,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
     async ngOnInit() {
         this.playerService.player = await this.ipcRenderer.invoke('getStoreValue', 'player');
         this.playerService.room = await this.ipcRenderer.invoke('getStoreValue', 'room');
-        this.playerService.account = await this.ipcRenderer.invoke('getStoreValue', 'account');
+        this.playerService.player.clientAccountInfo = await this.ipcRenderer.invoke('getStoreValue', 'account');
 
         this.connectSocket();
     }
