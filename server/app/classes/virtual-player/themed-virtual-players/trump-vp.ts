@@ -10,6 +10,7 @@ const ANGRY_THRESHOLD = 30;
 export class TrumpVirtualPlayer extends VirtualPlayer {
     hasCheated: boolean;
     angryTurnsLeft: number;
+    isAngry: boolean;
     constructor(
         pseudo: string,
         isCreator: boolean,
@@ -24,27 +25,45 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         this.angryTurnsLeft = 0;
     }
     override setScoreInterval(gap: number): void {
+        // This if statement is here so that we can switch him back to not angry after he plays the last angry move rather than during
+        if (this.angryTurnsLeft < 0 && gap < ANGRY_THRESHOLD) this.calmDown();
         if (this.angryTurnsLeft < 1 && gap < ANGRY_THRESHOLD) return this.intervalComputer.setScoreInterval(gap);
+        this.angryLogic(gap);
+        if (this.angryTurnsLeft >= 1) return;
+        this.angryTurnsLeft--;
+    }
+    private angryLogic(gap: number) {
         if (!this.hasCheated) {
-            this.hasCheated = true;
-            this.sendMessage(this.quotes.cheatAnnouncement, TOGGLE_PREFIX + this.pseudo);
-            this.angryTurnsLeft = 2;
-        }
-        // TODO: add cheat logic
-        if (this.angryTurnsLeft < 1) {
-            this.angryTurnsLeft = 2;
-            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
+            this.cheat();
+        } else if (this.angryTurnsLeft < 1) {
+            this.refreshAngry();
         }
         this.intervalComputer.scale = SCALES.angryTrump;
 
         this.intervalComputer.isRuthless = true;
-        this.angryTurnsLeft -= 1;
+        this.angryTurnsLeft--;
         this.intervalComputer.setScoreInterval(gap);
-
-        if (this.angryTurnsLeft >= 1) return;
+    }
+    private calmDown() {
         this.intervalComputer.scale = SCALES.default;
         this.intervalComputer.isRuthless = false;
         // TODO: Maybe implement a proper cooldown quote
         this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
+        this.angryTurnsLeft = 0;
+        this.isAngry = false;
+    }
+    private cheat() {
+        // TODO: add cheat logic
+        this.hasCheated = true;
+        this.isAngry = true;
+        this.angryTurnsLeft = 2;
+        this.sendMessage(this.quotes.cheatAnnouncement, TOGGLE_PREFIX + this.pseudo);
+    }
+    private refreshAngry() {
+        if (!this.isAngry) {
+            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
+            this.isAngry = true;
+        }
+        this.angryTurnsLeft = 2;
     }
 }
