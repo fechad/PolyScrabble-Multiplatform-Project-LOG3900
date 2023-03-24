@@ -18,6 +18,7 @@ import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MenuComponent } from './menu.component';
 import SpyObj = jasmine.SpyObj;
@@ -57,7 +58,7 @@ describe('MenuComponent', () => {
         channelMessage = { channelName: discussionChannelName, system: false, time: '', message: '' };
 
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule, MatDialogModule],
+            imports: [HttpClientModule, MatDialogModule, TranslateModule.forRoot()],
             declarations: [MenuComponent],
             providers: [
                 { provide: HttpService },

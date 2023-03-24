@@ -1,6 +1,6 @@
 <div class="page-container">
     <div class="page-body mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
-        <H1>Joueurs virtuels à thème</H1>
+        <H1 [translate]="'THEME.TITLE'"></H1>
         <div class="container">
             <div class="row">
                 <app-virtual-player [botId]="'Mozart'" [difficulty]="difficulty.Mozart" [time]="time.Mozart"></app-virtual-player>

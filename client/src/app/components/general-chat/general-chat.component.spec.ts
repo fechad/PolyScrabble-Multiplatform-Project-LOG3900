@@ -5,6 +5,7 @@ import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { GeneralChatComponent } from './general-chat.component';
 
 const playerName = 'player1';
@@ -21,17 +22,17 @@ describe('GeneralChatComponent', () => {
     beforeEach(async () => {
         socketHelper = new SocketTestHelper();
         socketServiceMock = new SocketClientServiceMock(socketHelper);
-
         playerService = new PlayerService();
-        themeService = new ThemeService(playerService);
         playerService.player.pseudo = playerName;
+        themeService = new ThemeService(playerService);
 
         await TestBed.configureTestingModule({
             declarations: [GeneralChatComponent],
+            imports: [TranslateModule.forRoot()],
             providers: [
                 { provide: PlayerService, useValue: playerService },
                 { provide: SocketClientService, useValue: socketServiceMock },
-                { provide: ThemeService, usevalue: themeService },
+                { provide: ThemeService, useValue: themeService },
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

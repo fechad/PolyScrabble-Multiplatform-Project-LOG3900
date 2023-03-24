@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
@@ -16,6 +17,7 @@ import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { AudioService } from '@app/services/audio.service';
 import { HintService } from '@app/services/hint.service';
 import { HttpService } from '@app/services/http.service';
+import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
@@ -47,6 +49,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         protected hintService: HintService,
         private audioService: AudioService,
         protected themeService: ThemeService,
+        protected languageService: LanguageService,
     ) {
         super(socketService);
         this.isWaitMultiPage = false;
@@ -177,8 +180,11 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.room.setPlayers(data.room.players);
 
         const description: InformationalPopupData = {
-            header: "Demande d'accès à la partie",
-            body: `Voulez-vous accepter ${data.player.clientAccountInfo.username} dans la salle de jeu?`,
+            header: this.languageService.currentLanguage === 'fr' ? "Demande d'accès à la partie" : 'Game access request',
+            body:
+                this.languageService.currentLanguage === 'fr'
+                    ? `Voulez-vous accepter ${data.player.clientAccountInfo.username} dans la salle de jeu?`
+                    : `Would you like to accept ${data.player.clientAccountInfo.username} in this game lobby?`,
         };
 
         const dialog = this.dialog.open(ConfirmationPopupComponent, {
@@ -233,8 +239,11 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     confirmLeaving() {
         const description: InformationalPopupData = {
-            header: 'Voulez-vous vraiment abandonner ?',
-            body: 'Vous ne serez pas dans le tableau des meilleurs scores.',
+            header: this.languageService.currentLanguage === 'fr' ? 'Voulez-vous vraiment abandonner ?' : 'Do you really want to quit?',
+            body:
+                this.languageService.currentLanguage === 'fr'
+                    ? 'Vous ne serez pas dans le tableau des meilleurs scores.'
+                    : 'Your score wont appear in the rankings.',
         };
         const dialog = this.dialog.open(ConfirmationPopupComponent, {
             width: DIALOG_WIDTH,

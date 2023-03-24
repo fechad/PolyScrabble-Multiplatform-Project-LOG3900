@@ -1,7 +1,10 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { ThemeService } from '@app/services/theme.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -15,7 +18,8 @@ describe('HeaderComponent', () => {
         themeService = new ThemeService(playerService);
 
         await TestBed.configureTestingModule({
-            providers: [{ provide: ThemeService, useValue: themeService }],
+            imports: [HttpClientModule, TranslateModule.forRoot()],
+            providers: [{ provide: ThemeService, useValue: themeService }, { provide: HttpService }],
             declarations: [HeaderComponent],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

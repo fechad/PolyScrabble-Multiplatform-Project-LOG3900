@@ -22,7 +22,7 @@
                     <hr *ngIf="i === 0" size="1" width="97%" />
                 </div>
             </div>
-            <button (click)="createChatChannel('custom channel')" class="button new-channel">New Chat</button>
+            <button (click)="createChatChannel('custom channel')" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
         </div>
     </div>
     <div #chatContainer class="chat-container" [class.game-page]="isGamePage">

@@ -53,14 +53,14 @@
                     <hr *ngIf="i === 0" size="1" width="97%" />
                 </div>
             </div>
-            <button (click)="createChatChannel('custom channel')" class="button new-channel">New Chat</button>
+            <button (click)="createChatChannel('custom channel')" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
         </div>
     </div>
     <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
         <div *ngIf="!isWaitMultiPage" class="chat-header">
             <div></div>
             <div>
-                <button (click)="openChatOnNewWindow()">new window</button>
+                <button (click)="openChatOnNewWindow()" [translate]="'GENERAL-PAGE.BUTTON'"></button>
                 <button class="close-chat-button" (click)="closeChat()">X</button>
             </div>
         </div>
@@ -82,8 +82,13 @@
                 <img class="avatar" [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
             </div>
             <div class="game-buttons">
-                <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option">Quitter</button>
-                <button [disabled]="room.players.length <= 1 || !isGameCreator" (click)="requestGameStart()" class="button">Démarrer</button>
+                <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option" [translate]="'OTHER.QUIT'"></button>
+                <button
+                    [disabled]="room.players.length <= 1 || !isGameCreator"
+                    (click)="requestGameStart()"
+                    class="button"
+                    [translate]="'OTHER.START'"
+                ></button>
             </div>
         </div>
         <app-general-chat [discussionChannel]="selectedDiscussionChannel"></app-general-chat>

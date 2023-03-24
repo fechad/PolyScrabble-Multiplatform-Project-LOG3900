@@ -15,7 +15,7 @@
     </div>
     <input #profileImgUpload class="file-input-button" type="file" accept="image/png, image/jpeg" (change)="onProfilePictureSelected($event)" />
     <div class="buttons-container">
-        <button class="button cancel-button" (click)="closePopup()">Annuler</button>
-        <button class="button" (click)="handleUserChoice()" [disabled]="!currentAvatar && !currentAvatarURL">Confirmer</button>
+        <button class="button cancel-button" (click)="closePopup()" [translate]="'OTHER.CANCEL'"></button>
+        <button class="button" (click)="handleUserChoice()" [disabled]="!currentAvatar && !currentAvatarURL" [translate]="'OTHER.CONFIRM'"></button>
     </div>
 </div>

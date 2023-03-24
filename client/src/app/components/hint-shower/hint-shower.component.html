@@ -1,8 +1,8 @@
-<h1 mat-dialog-title style = "text-align: center; font-size: 36px;">Choisissez un indice à prévisualiser</h1>
-<div class = container>
-    <div
-    class = "hint"
-    *ngFor = "let hint of hints"
-    (click) = "closePopUp(hint)"
-    >{{hint[0]}} pour {{hint[1]}} points</div>
+<h1 mat-dialog-title style="text-align: center; font-size: 36px" [translate]="'GAME-PAGE.HINT.TITLE'"></h1>
+<div class="container">
+    <div class="hint" *ngFor="let hint of hints" (click)="closePopUp(hint)" style="display: flex; justify-content: center; align-items: center">
+        {{ hint[0] }}
+        <p [translate]="'GAME-PAGE.HINT.FOR'" style="margin: 10px"></p>
+        {{ hint[1] }} points
+    </div>
 </div>

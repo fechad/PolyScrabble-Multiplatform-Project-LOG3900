@@ -4,7 +4,7 @@
 
         <div class="body-main-container">
             <div class="page-title">
-                <div class="form-title">Partie Disponibles</div>
+                <div class="form-title" [translate]="'CLASSIC.JOIN-MULTI.TITLE'"></div>
                 <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
 
@@ -46,25 +46,22 @@
                                 class="button"
                                 (click)="openPasswordPopup(availableRoom, roomPasswordPopup, darkBackground)"
                                 [disabled]="isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType"
-                            >
-                                Joindre [KEY]
-                            </button>
+                                [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
+                            ></button>
                             <button
                                 *ngIf="availableRoom.roomInfo.isPublic && availableRoom.roomInfo.password.length === 0"
                                 class="button"
                                 (click)="joinRoom('', availableRoom)"
                                 [disabled]="isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType"
-                            >
-                                Joindre
-                            </button>
+                                [translate]="'CLASSIC.JOIN-MULTI.BUTTON'"
+                            ></button>
                             <button
                                 *ngIf="!availableRoom.roomInfo.isPublic"
                                 class="button"
                                 (click)="askToJoinRoom(availableRoom)"
                                 [disabled]="isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType"
-                            >
-                                Joindre [ASK]
-                            </button>
+                                [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
+                            ></button>
                         </div>
                     </div>
                 </div>
@@ -75,12 +72,16 @@
 
     <div #darkBackground class="dark-background">
         <div #roomPasswordPopup class="room-password-popup">
-            <div class="pop-up-title">Partie Privée</div>
-            <div>Veuillez entrer le mot de passe pour joindre la partie</div>
-            <input #roomPasswordInput class="simple-input" type="password" />
+            <div class="pop-up-title" [translate]="'CLASSIC.JOIN-MULTI.POPUP.TITLE'"></div>
+            <div [translate]="'CLASSIC.JOIN-MULTI.POPUP.BODY'"></div>
+            <input #roomPasswordInput class="simple-input" type="password" placeholder="{{ 'CLASSIC.JOIN-MULTI.POPUP.INPUT' | translate }}" />
             <div class="buttons-container">
-                <button (click)="closePasswordPopup(roomPasswordPopup, darkBackground)" class="button cancel-button popup">Quitter</button>
-                <button (click)="joinRoom(roomPasswordInput.value)" class="button popup">Joindre</button>
+                <button
+                    (click)="closePasswordPopup(roomPasswordPopup, darkBackground)"
+                    class="button cancel-button popup"
+                    [translate]="'OTHER.QUIT'"
+                ></button>
+                <button (click)="joinRoom(roomPasswordInput.value)" class="button popup" [translate]="'OTHER.JOIN'"></button>
             </div>
         </div>
     </div>

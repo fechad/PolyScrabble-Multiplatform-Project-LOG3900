@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LanguageService } from '@app/services/language.service';
 import { ThemeService } from '@app/services/theme.service';
 
 @Component({
@@ -7,5 +8,5 @@ import { ThemeService } from '@app/services/theme.service';
     styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-    constructor(protected themeService: ThemeService) {}
+    constructor(protected themeService: ThemeService, protected languageService: LanguageService) {}
 }

@@ -31,6 +31,8 @@
     "@cloudinary/ng": "^1.11.1",
     "@cloudinary/url-gen": "^1.9.2",
     "@material/button": "^14.0.0",
+    "@ngx-translate/core": "^14.0.0",
+    "@ngx-translate/http-loader": "^7.0.0",
     "electron-packager": "^17.1.1",
     "electron-store": "^8.1.0",
     "firebase": "^9.16.0",

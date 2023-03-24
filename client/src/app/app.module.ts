@@ -1,5 +1,5 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -22,6 +22,8 @@ import { GameWaitMultiplayerPageComponent } from '@app/pages/game-wait-multiplay
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { CloudinaryModule } from '@cloudinary/ng';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BestScoresTableComponent } from './components/best-scores-table/best-scores-table.component';
 import { ConfirmationPopupComponent } from './components/confirmation-popup/confirmation-popup.component';
 import { EmojisPickerComponent } from './components/emojis-picker/emojis-picker.component';
@@ -58,6 +60,12 @@ import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
  * Please do not move this module in the module folder.
  * Otherwise Angular Cli will not know in which module to put new component
  */
+
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/naming-convention
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -118,6 +126,14 @@ import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
         MatSlideToggleModule,
         DragDropModule,
         CloudinaryModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+            defaultLanguage: 'fr',
+        }),
     ],
     providers: [],
     bootstrap: [AppComponent],

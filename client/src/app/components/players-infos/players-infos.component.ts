@@ -14,6 +14,7 @@ import { InformationalPopupData } from '@app/interfaces/informational-popup-data
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { AudioService } from '@app/services/audio.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
+import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -40,6 +41,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         public playerService: PlayerService,
         private dialog: MatDialog,
         private audioService: AudioService,
+        protected languageService: LanguageService,
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
@@ -106,8 +108,11 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
 
     showEndGameDialog() {
         const description: InformationalPopupData = {
-            header: 'Dommage...',
-            body: 'Tres belle partie! Malheureusement, la victoire revient à ' + this.winnerPseudo,
+            header: this.languageService.currentLanguage === 'fr' ? 'Dommage...' : 'Too bad...',
+            body:
+                this.languageService.currentLanguage === 'fr'
+                    ? 'Tres belle partie! Malheureusement, la victoire revient à ' + this.winnerPseudo
+                    : 'Good game! Unfortunately, the winner is ' + this.winnerPseudo,
         };
         this.dialog.open(EndGamePopupComponent, {
             width: END_GAME_WIDTH,

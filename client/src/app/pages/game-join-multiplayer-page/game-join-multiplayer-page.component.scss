@@ -112,11 +112,12 @@ $gameMinWidth: 390px;
 .room-password-popup {
     display: flex;
     flex-direction: column;
-    background-color: white;
-    border: 1px solid #c0c0c0;
+    background-color: var(--modal-background);
+    border: 1px solid var(--modal-background);
     box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.25);
     border-radius: 8px;
     padding: 10px;
+    color: var(--basic-font-color);
     min-width: $gameMinWidth;
 }
 
