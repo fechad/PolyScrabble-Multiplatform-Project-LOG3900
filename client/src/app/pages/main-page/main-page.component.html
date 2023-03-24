@@ -3,15 +3,15 @@
         <app-hearder></app-hearder>
         <div class="body-main-container">
             <div class="page-title">
-                <div class="form-title">Modes de jeu</div>
+                <div class="form-title" [translate]="'MAIN.TITLE'"></div>
                 <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
 
             <div class="gray-box">
-                <button class="button" (click)="setGameType('classic')" routerLink="/game/option">Scrabble classique</button>
-                <button class="button" (click)="setGameType('log2990')" routerLink="/game/themed">Scrabble Thème</button>
-                <button class="button" (click)="showLeaderboard()">Meilleurs scores</button>
-                <button class="button" (click)="showAllScores()">Tous les scores</button>
+                <button class="button" (click)="setGameType('classic')" routerLink="/game/option" [translate]="'MAIN.BUTTON-CLASSIC'"></button>
+                <button class="button" (click)="setGameType('log2990')" routerLink="/game/themed" [translate]="'MAIN.BUTTON-THEME'"></button>
+                <!-- <button class="button" (click)="showLeaderboard()">Meilleurs scores</button>
+                <button class="button" (click)="showAllScores()">Tous les scores</button> -->
             </div>
         </div>
         <div class="footer"></div>

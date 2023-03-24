@@ -1,0 +1,117 @@
+{
+    "MAIN": {
+        "TITLE": "Mode de jeu",
+        "BUTTON-CLASSIC": "Scrabble Classique",
+        "BUTTON-THEME": "Scrabble à Thème"
+    },
+    "CLASSIC": {
+        "BUTTON-SOLO-GAME": "Jouer une partie en solo",
+        "BUTTON-MULTI-GAME": "Créer une partie multijoueur",
+        "BUTTON-JOIN": "Joindre une partie multijoueur",
+        "CREATE-SOLO": {
+            "TITLE": "Partie Solo",
+            "VP-NAME": "Nom du joueur virtuel",
+            "VP-DIFFICULTY": {
+                "LABEL": "Difficulté des joueurs virtuels",
+                "ONE": "Débutant",
+                "TWO": "Expert",
+                "THREE": "Adaptatif"
+            },
+            "TIME": "Temps par tour"
+        },
+        "CREATE-MULTI": {
+            "TITLE": "Partie Multijoueur",
+            "VP-DIFFICULTY": {
+                "LABEL": "Difficulté des joueurs virtuels",
+                "ONE": "Débutant",
+                "TWO": "Expert",
+                "THREE": "Adaptatif"
+            },
+            "TIME": "Temps par tour",
+            "GAME-TYPE": {
+                "LABEL": "Type de parties",
+                "ONE": "Privée",
+                "TWO": "Publique",
+                "THREE": "Publique avec mot de passe"
+            }
+        },
+        "JOIN-MULTI": {
+            "TITLE": "Parties Disponibles",
+            "BUTTON": "Joindre",
+            "BUTTON-LOCK": "Joindre [CLÉ]",
+            "POPUP": {
+                "TITLE": "Partie privée",
+                "BODY": "Veuillez entrer le mot de passe pour joindre la partie.",
+                "INPUT": "Entrer le mot de passe"
+            }
+        }
+    },
+    "THEME": {
+        "TITLE": "Joueurs virtuel à thème"
+    },
+    "CHAT-BAR": {
+        "GENERAL": "Canal général"
+    },
+    "GENERAL-PAGE": {
+        "BUTTON": "Nouvelle fenêtre",
+        "PLACEHOLDER": "Entrer un message"
+    },
+    "USER-PAGE": {
+        "LEVEL": "niv",
+        "VICTORIES": "victoires",
+        "OBJECTIVES": "Objectifs",
+        "TOGGLE": "Afficher complétés"
+    },
+    "SETTINGS-PAGE": {
+        "TITLE": "Paramètres",
+        "THEME-SECTION": {
+            "LABEL": "Thème de couleur",
+            "LIGHT": "Clair",
+            "DARK": "Sombre"
+        },
+        "LANGUAGE-SECTION": {
+            "LABEL": "Language",
+            "FRENCH": "Français",
+            "ENGLISH": "English"
+        },
+        "MUSIC-SECTION": {
+            "LABEL": "Musique de victoire:"
+        },
+        "PASSWORD": "Changer le mot de passe",
+        "SAVE": "Sauvegarder",
+        "EDIT": "editer"
+    },
+    "GAME-PAGE": {
+        "OBJECTIVES": "Objectifs",
+        "RACK": "Chevalets",
+        "HINT": {
+            "TITLE": "Choisissez un indice à prévisualiser",
+            "FOR": "pour"
+        },
+        "LEAVE-GAME": {
+            "TITLE": "Voulez-vous vraiment abandonner ?",
+            "BODY": "Vous ne serez pas dans le tableau des meilleurs scores."
+        },
+        "END-GAME": {
+            "TITLE-WINNER": "",
+            "BODY-WINNER": "",
+            "OK": "Ok"
+        }
+    },
+    "OTHER": {
+        "CREATE-GAME-BUTTON": "Créer la partie",
+        "CREATE-CHAT-BUTTON": "Créer un canal",
+        "BACK-BUTTON": "Retour",
+        "INVALID-GAME": "Votre mode de jeu est invalide, veuillez revenir en arrière",
+        "SERVER-NOT-FOUND": "Serveur indisponible, veuillez réessayer plus tard",
+        "PASSWORD-INPUT": "Mot de passe",
+        "START": "Démarer",
+        "QUIT": "Quitter",
+        "YES": "Oui",
+        "NO": "Non",
+        "CANCEL": "Annuler",
+        "CONFIRM": "Confirmer",
+        "CHALLENGE-BUTTON": "Affronter",
+        "JOIN": "Joindre"
+    }
+}

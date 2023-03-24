@@ -11,6 +11,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { GameJoinMultiplayerPageComponent } from './game-join-multiplayer-page.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -62,6 +63,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
         roomMock.players = [player];
 
         await TestBed.configureTestingModule({
+            imports: [TranslateModule.forRoot()],
             declarations: [GameJoinMultiplayerPageComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },

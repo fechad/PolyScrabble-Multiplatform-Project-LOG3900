@@ -15,6 +15,7 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { Socket } from 'socket.io-client';
 import { PlayersInfosComponent } from './players-infos.component';
 
@@ -60,7 +61,7 @@ describe('PlayersInfosComponent', () => {
         sessionStorageServiceSpy = jasmine.createSpyObj('SessionStorageService', ['setItem', 'getPlayerData', 'removeItem']);
 
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [HttpClientModule, TranslateModule.forRoot()],
             declarations: [PlayersInfosComponent],
             providers: [
                 { provide: SocketClientService, useValue: socketServiceMock },

@@ -1,0 +1,117 @@
+{
+    "MAIN": {
+        "TITLE": "Game Mode",
+        "BUTTON-CLASSIC": "Classic Scrabble",
+        "BUTTON-THEME": "Themed Scrabble"
+    },
+    "CLASSIC": {
+        "BUTTON-SOLO-GAME": "Play a solo game",
+        "BUTTON-MULTI-GAME": "Create a multiplayer game",
+        "BUTTON-JOIN": "Join a multiplayer game",
+        "CREATE-SOLO": {
+            "TITLE": "Solo Game",
+            "VP-NAME": "Virtual player name",
+            "VP-DIFFICULTY": {
+                "LABEL": "Virtual player difficulty",
+                "ONE": "Beginner",
+                "TWO": "Expert",
+                "THREE": "Adaptable"
+            },
+            "TIME": "Time per turn"
+        },
+        "CREATE-MULTI": {
+            "TITLE": "Multiplayer Game",
+            "VP-DIFFICULTY": {
+                "LABEL": "Virtual player difficulty",
+                "ONE": "Beginner",
+                "TWO": "Expert",
+                "THREE": "Adaptable"
+            },
+            "TIME": "Time per turn",
+            "GAME-TYPE": {
+                "LABEL": "Game type",
+                "ONE": "Private",
+                "TWO": "Public",
+                "THREE": "Public with password"
+            }
+        },
+        "JOIN-MULTI": {
+            "TITLE": "Available Games",
+            "BUTTON": "Join",
+            "BUTTON-LOCK": "Join [KEY]",
+            "POPUP": {
+                "TITLE": "Private game",
+                "BODY": "Enter the password to join the lobby.",
+                "INPUT": "Type the password"
+            }
+        }
+    },
+    "THEME": {
+        "TITLE": "Themed virtual players"
+    },
+    "CHAT-BAR": {
+        "GENERAL": "General Chat"
+    },
+    "GENERAL-PAGE": {
+        "BUTTON": "New window",
+        "PLACEHOLDER": "Type a message"
+    },
+    "USER-PAGE": {
+        "LEVEL": "lvl",
+        "VICTORIES": "victories",
+        "OBJECTIVES": "Objectives",
+        "TOGGLE": "Show completed"
+    },
+    "SETTINGS-PAGE": {
+        "TITLE": "Settings",
+        "THEME-SECTION": {
+            "LABEL": "Theme color",
+            "LIGHT": "Light",
+            "DARK": "Dark"
+        },
+        "LANGUAGE-SECTION": {
+            "LABEL": "Language",
+            "FRENCH": "Français",
+            "ENGLISH": "English"
+        },
+        "MUSIC-SECTION": {
+            "LABEL": "Victory music"
+        },
+        "PASSWORD": "Change password",
+        "SAVE": "Save",
+        "EDIT": "edit"
+    },
+    "GAME-PAGE": {
+        "OBJECTIVES": "Objectives",
+        "RACK": "Racks",
+        "HINT": {
+            "TITLE": "Choose a hint to preview",
+            "FOR": "for"
+        },
+        "LEAVE-GAME": {
+            "TITLE": "Do you really want to quit?",
+            "BODY": "You're score for this game wont be in the rankings."
+        },
+        "END-GAME": {
+            "TITLE-WINNER": "",
+            "BODY-WINNER": "",
+            "OK": "Ok"
+        }
+    },
+    "OTHER": {
+        "CREATE-GAME-BUTTON": "Create game",
+        "CREATE-CHAT-BUTTON": "New chat",
+        "BACK-BUTTON": "Back",
+        "INVALID-GAME": "This game mode is invalid, please go back and select another one",
+        "SERVER-NOT-FOUND": "Server not available, try again later",
+        "PASSWORD-INPUT": "Password",
+        "START": "Start",
+        "QUIT": "Leave",
+        "YES": "Yes",
+        "NO": "No",
+        "CANCEL": "Cancel",
+        "CONFIRM": "Confirm",
+        "CHALLENGE-BUTTON": "Challenge",
+        "JOIN": "Join"
+    }
+}

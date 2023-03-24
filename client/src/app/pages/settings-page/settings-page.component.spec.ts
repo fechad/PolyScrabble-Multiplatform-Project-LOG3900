@@ -5,7 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { HttpService } from '@app/services/http.service';
-
+import { TranslateModule } from '@ngx-translate/core';
 import { SettingsPageComponent } from './settings-page.component';
 
 describe('SettingsPageComponent', () => {
@@ -14,7 +14,8 @@ describe('SettingsPageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [HttpClientModule, TranslateModule.forRoot()],
+
             providers: [{ provide: FormBuilder }, { provide: HttpService }, { provide: MatDialog, useClass: MatDialogMock }],
             schemas: [NO_ERRORS_SCHEMA],
             declarations: [SettingsPageComponent],

@@ -6,22 +6,26 @@
             <form [formGroup]="gameForm">
                 <div class="error-message-container" *ngIf="isServerUnreachable">
                     <mat-icon>error_outline</mat-icon>
-                    <div class="error-message">Serveur indisponible, veuillez réessayer plus tard</div>
+                    <div class="error-message" [translate]="'OTHER.SERVER-NOT-FOUND'"></div>
                 </div>
                 <div class="error-message-container" *ngIf="room.roomInfo.gameType !== 'log2990' && room.roomInfo.gameType !== 'classic'">
                     <mat-icon>error_outline</mat-icon>
-                    <div class="error-message">Votre mode de jeu est invalide, veuillez revenir en arrière</div>
+                    <div class="error-message" [translate]="'OTHER.INVALID-GAME'"></div>
                 </div>
 
                 <div class="gray-box">
                     <div class="section-title-container">
-                        <div *ngIf="isSolo" class="form-title">Partie Solo</div>
-                        <div *ngIf="!isSolo" class="form-title">Partie Multijoueur</div>
+                        <div *ngIf="isSolo" class="form-title" [translate]="'CLASSIC.CREATE-SOLO.TITLE'"></div>
+                        <div *ngIf="!isSolo" class="form-title" [translate]="'CLASSIC.CREATE-MULTI.TITLE'"></div>
                         <hr style="margin-top: 0%; background-color: black" width="90%" size="1" />
                     </div>
                     <div *ngIf="isSolo" class="input-container">
-                        <label #botNameLabel (click)="focusInput(botNameSelect)" class="simple-label placeholder select"
-                            >Nom du joueur virtuel
+                        <label
+                            #botNameLabel
+                            (click)="focusInput(botNameSelect)"
+                            class="simple-label placeholder select"
+                            [translate]="'CLASSIC.CREATE-SOLO.VP-NAME'"
+                        >
                         </label>
                         <select
                             #botNameSelect
@@ -39,8 +43,12 @@
                     </div>
 
                     <div class="input-container">
-                        <label #levelLabel (click)="focusInput(levelSelect)" class="simple-label placeholder select"
-                            >Difficulté des joueurs virtuels
+                        <label
+                            #levelLabel
+                            (click)="focusInput(levelSelect)"
+                            class="simple-label placeholder select"
+                            [translate]="'CLASSIC.CREATE-MULTI.VP-DIFFICULTY.LABEL'"
+                        >
                         </label>
                         <select
                             #levelSelect
@@ -51,14 +59,20 @@
                             [class.invalid]="false"
                             formControlName="level"
                         >
-                            <option [value]="'beginner'">{{ gameLevel.Beginner }}</option>
-                            <option [value]="'expert'">{{ gameLevel.Expert }}</option>
-                            <option [value]="'adaptatif'">{{ gameLevel.Adaptative }}</option>
+                            <option [value]="'beginner'" [translate]="'CLASSIC.CREATE-MULTI.VP-DIFFICULTY.ONE'"></option>
+                            <option [value]="'expert'" [translate]="'CLASSIC.CREATE-MULTI.VP-DIFFICULTY.TWO'"></option>
+                            <option [value]="'adaptatif'" [translate]="'CLASSIC.CREATE-MULTI.VP-DIFFICULTY.THREE'"></option>
                         </select>
                     </div>
 
                     <div class="input-container">
-                        <label #timerLabel (click)="focusInput(timerSelect)" class="simple-label placeholder select">Temps par tour </label>
+                        <label
+                            #timerLabel
+                            (click)="focusInput(timerSelect)"
+                            class="simple-label placeholder select"
+                            [translate]="'CLASSIC.CREATE-MULTI.TIME'"
+                        >
+                        </label>
                         <select
                             #timerSelect
                             (focus)="setPlaceholderAsLabel(timerLabel)"
@@ -82,7 +96,12 @@
                     </div>
 
                     <div *ngIf="!isSolo" class="input-container">
-                        <label #visibilityLabel (click)="focusInput(levelSelect)" class="simple-label placeholder select">Type de parties </label>
+                        <label
+                            #visibilityLabel
+                            (click)="focusInput(levelSelect)"
+                            class="simple-label placeholder select"
+                            [translate]="'CLASSIC.CREATE-MULTI.GAME-TYPE.LABEL'"
+                        ></label>
                         <select
                             #levelSelect
                             (focus)="setPlaceholderAsLabel(visibilityLabel)"
@@ -92,14 +111,19 @@
                             [class.invalid]="false"
                             formControlName="isPublic"
                         >
-                            <option [value]="0">Privée</option>
-                            <option [value]="1">Publique</option>
-                            <option [value]="2">Publique avec mot de passe</option>
+                            <option [value]="0" [translate]="'CLASSIC.CREATE-MULTI.GAME-TYPE.ONE'"></option>
+                            <option [value]="1" [translate]="'CLASSIC.CREATE-MULTI.GAME-TYPE.TWO'"></option>
+                            <option [value]="2" [translate]="'CLASSIC.CREATE-MULTI.GAME-TYPE.THREE'"></option>
                         </select>
                     </div>
 
                     <div *ngIf="!isSolo" [class.hide]="gameForm.get('isPublic')?.value < 2" class="input-container">
-                        <label #roomPasswordLabel (click)="focusInput(roomPasswordInput)" class="simple-label placeholder">Mot de Passe</label>
+                        <label
+                            #roomPasswordLabel
+                            (click)="focusInput(roomPasswordInput)"
+                            class="simple-label placeholder"
+                            [translate]="'OTHER.PASSWORD-INPUT'"
+                        ></label>
                         <input
                             #roomPasswordInput
                             (focus)="setPlaceholderAsLabel(roomPasswordLabel)"
@@ -114,12 +138,20 @@
                     </div>
 
                     <div class="confirm-buttons-container">
-                        <button *ngIf="isSolo" class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
-                            Créer la partie
-                        </button>
-                        <button *ngIf="!isSolo" class="button" (click)="createRoom()" [disabled]="onProcess || !gameForm.valid || !hasValidGameType">
-                            Créer la partie
-                        </button>
+                        <button
+                            *ngIf="isSolo"
+                            class="button"
+                            (click)="createRoom()"
+                            [disabled]="onProcess || !gameForm.valid || !hasValidGameType"
+                            [translate]="'OTHER.CREATE-GAME-BUTTON'"
+                        ></button>
+                        <button
+                            *ngIf="!isSolo"
+                            class="button"
+                            (click)="createRoom()"
+                            [disabled]="onProcess || !gameForm.valid || !hasValidGameType"
+                            [translate]="'OTHER.CREATE-GAME-BUTTON'"
+                        ></button>
                     </div>
                 </div>
             </form>

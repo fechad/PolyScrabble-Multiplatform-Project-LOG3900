@@ -8,6 +8,7 @@ import { VICTORY_MUSIC } from '@app/constants/victory-musics';
 import { UserSettings } from '@app/interfaces/serveur info exchange/user-settings';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
+import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
@@ -31,6 +32,7 @@ export class SettingsPageComponent implements OnInit {
         private httpService: HttpService,
         private playerService: PlayerService,
         protected themeService: ThemeService,
+        protected languageService: LanguageService,
     ) {
         this.userSettings = this.playerService.account.userSettings;
         this.avatarChanged = false;
@@ -42,6 +44,7 @@ export class SettingsPageComponent implements OnInit {
             victoryMusic: [this.userSettings.victoryMusic, [Validators.required]],
         });
         themeService.verifyTheme();
+        languageService.verifyLanguage();
         this.fileReader = new FileReader();
         this.currentAvatar = null;
     }
