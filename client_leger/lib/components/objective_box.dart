@@ -3,7 +3,31 @@ import 'package:client_leger/components/racks.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ObjectiveBox extends StatelessWidget {
+import '../services/link_service.dart';
+
+class ObjectiveBox extends StatefulWidget {
+  const ObjectiveBox({super.key});
+
+
+  @override
+  ObjectiveBoxState createState() => ObjectiveBoxState();
+}
+
+
+class ObjectiveBoxState extends State<ObjectiveBox> {
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

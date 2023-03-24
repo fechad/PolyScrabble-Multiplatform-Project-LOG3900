@@ -64,15 +64,28 @@ class _WaitingPageState extends State<WaitingPage> {
     socket.on(
         'channelMessage',
         (data) => {
+          if (mounted){
               setState((() => {
                     if ((data as List<dynamic>)[0]['channelName'] ==
                         chatService.getRoomChannel().name)
                       {
                         messages = [],
                         if (linkService.getCurrentOpenedChat() !=
-                            gameService.room.roomInfo.name)
+                            gameService.room.roomInfo.name) {
                           linkService
                               .pushNewChannel(gameService.room.roomInfo.name),
+                          if (messages.isNotEmpty &&
+                              messages[messages.length - 1].sender !=
+                                  authenticator.currentUser.username)
+                            {
+                              FlutterRingtonePlayer.play(
+                                android: AndroidSounds.notification,
+                                ios: IosSounds.receivedMessage,
+                                looping: false, // Android only - API >= 28
+                                volume: 0.5, // Android only - API >= 28
+                                asAlarm: false, // Android only - all APIs
+                              ),
+                            },},
                         (data as List<dynamic>).forEach((message) => {
                               messages.add(ChatMessage(
                                   channelName: message['channelName'],
@@ -81,21 +94,9 @@ class _WaitingPageState extends State<WaitingPage> {
                                   time: message['time'],
                                   message: message['message'])),
                             }),
-                        if (messages.isNotEmpty &&
-                            messages[messages.length - 1].sender !=
-                                authenticator.currentUser.username)
-                          {
-                            FlutterRingtonePlayer.play(
-                              android: AndroidSounds.notification,
-                              ios: IosSounds.receivedMessage,
-                              looping: false, // Android only - API >= 28
-                              volume: 0.5, // Android only - API >= 28
-                              asAlarm: false, // Android only - all APIs
-                            ),
-                          },
                         _scrollDown()
                       }
-                  })),
+                  })), }
             });
 
     socketService.on(
@@ -120,7 +121,7 @@ class _WaitingPageState extends State<WaitingPage> {
                     return AlertDialog(
                       title: Text("Demande d'accès à la partie"),
                       content: Text(
-                          "Voulez-vous accepter ${gameService.room.players[gameService.room.players.length - 1].pseudo} dans la salle de jeu?"),
+                          "Voulez-vous accepter ${gameService.room.players[gameService.room.players.length - 1].clientAccountInfo.username} dans la salle de jeu?"),
                       actions: [
                         TextButton(
                             onPressed: () => {
@@ -128,7 +129,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                       .room
                                       .players[
                                           gameService.room.players.length - 1]
-                                      .pseudo),
+                                      .clientAccountInfo.username),
                                   Navigator.pop(context)
                                 },
                             child: Text("Non")),
@@ -139,7 +140,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                       .room
                                       .players[
                                           gameService.room.players.length - 1]
-                                      .pseudo),
+                                      .clientAccountInfo.username),
                                   noPlayers++,
                                   if (noPlayers > 1) canStart = true,
                                 },

@@ -1,8 +1,9 @@
+import '../classes/game.dart';
 import '../pages/chat_page.dart';
 
 class ChatModel {
   String name;
-  String? owner;
+  Account? owner;
   List<String> activeUsers;
   List<ChatMessage> messages;
   ChatModel(
@@ -11,8 +12,9 @@ class ChatModel {
       required this.activeUsers,
       required this.messages});
 
-  ChatModel.fromJson(dynamic json, jsonMessages)
+  ChatModel.fromJson(dynamic json, jsonMessages, [jsonAccount])
       : name = json['name'],
+        owner = jsonAccount,
         activeUsers = json['activeUsers']
             .toString()
             .replaceAll('[', '')

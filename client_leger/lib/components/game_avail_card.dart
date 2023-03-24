@@ -41,11 +41,11 @@ class _GameCardState extends State<GameCard> {
   final String password;
   final String roomName;
   final Player player = Player(
-    pseudo: authenticator.currentUser?.username ?? "",
     socketId: homeSocketService.getSocketID()!,
     isCreator: false,
     points: 0,
     isItsTurn: false,
+    clientAccountInfo: authenticator.getCurrentUser(), rack: Rack(letters: '', indexLetterToReplace: []),
   );
   TextEditingController _pswdController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

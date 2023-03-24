@@ -11,6 +11,7 @@ class InGameService extends MultiplayerGameService {
   int bankCount = 88;
   List<Player> players = gameService.room.players;
   late String hints;
+  late String winnerPseudo = '';
 
   InGameService({required super.gameData});
 
@@ -28,7 +29,7 @@ class InGameService extends MultiplayerGameService {
               scorePlayer = Player.fromJson(sender),
               for (Player p in gameService.room.players)
                 {
-                  if (p.pseudo == scorePlayer.pseudo)
+                  if (p.clientAccountInfo.username == scorePlayer.clientAccountInfo.username)
                     {p.points = scorePlayer.points}
                 }
             });
@@ -46,6 +47,8 @@ class InGameService extends MultiplayerGameService {
         (players) => {
               gameService.room.roomInfo.isGameOver = true,
               linkService.setTurn(false),
+              findWinner(decodePlayers(players)),
+
               //TODO find winner ? see players-infos.components.ts in heavy client
             });
 
@@ -67,6 +70,7 @@ class InGameService extends MultiplayerGameService {
   }
 
   confirmLeaving() {
+    gameService.goals = [];
     gameService.leave();
     socketService.send("leaveGame");
   }
@@ -86,9 +90,22 @@ class InGameService extends MultiplayerGameService {
     socketService.send("changeTurn", gameService.room.roomInfo.name);
   }
 
+  findWinner(List<Player> winnerArray) {
+    if (winnerArray.isEmpty) return;
+    if (winnerArray.length == 1) winnerPseudo = winnerArray[0].clientAccountInfo.username;
+    for (Player p in gameService.room.players) {
+      if (p.clientAccountInfo.username == winnerArray[0].clientAccountInfo.username) {
+        Player firstWinner = p;
+      }
+      else return;
+    }
+    //TODO play firstWinner 's victory music from settings
+  }
+
+
   getPlayer(String pseudo) {
     for (player in gameService.room.players) {
-      if (pseudo == player.pseudo) return player;
+      if (pseudo == player.clientAccountInfo.username) return player;
     }
     return null;
   }

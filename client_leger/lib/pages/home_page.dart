@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       key: scaffoldKey,
       backgroundColor: Colors.white,
       drawer: Drawer(
-        child: page == 0 ? ChatDrawer() : UserResume(),
+        child: ChatDrawer(),
         // other drawer controller properties here
       ),
       onDrawerChanged: (isOpen) {

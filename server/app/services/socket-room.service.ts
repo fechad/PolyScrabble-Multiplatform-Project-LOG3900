@@ -1,4 +1,5 @@
 import { Player } from '@app/classes/player';
+import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { GameLevel } from '@app/enums/game-level';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -71,11 +72,11 @@ export class SocketRoomService extends SocketHandlerService {
         const serverRoom = this.roomService.getRoom(roomName);
         if (!serverRoom || !serverRoom.canAddPlayer(joinRoomForm.password)) return;
         const playerToAdd = joinRoomForm.player;
+
         serverRoom.addPlayer(
             new Player(playerToAdd.socketId, playerToAdd.pseudo, playerToAdd.isCreator, playerToAdd.clientAccountInfo),
             joinRoomForm.password,
         );
-
         if (serverRoom.players.length >= serverRoom.maxPlayers) this.roomService.setUnavailable(roomName);
         this.socketJoin(socket, roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
@@ -87,7 +88,7 @@ export class SocketRoomService extends SocketHandlerService {
 
         const gameCreator = serverRoom.getPlayerByName(serverRoom.roomInfo.creatorName);
         if (!gameCreator) return;
-
+        playerToAdd.rack = new Rack('');
         this.socketEmitRoom(socket, gameCreator.socketId, SocketEvent.PlayerFound, { room: serverRoom, player: playerToAdd });
     }
 

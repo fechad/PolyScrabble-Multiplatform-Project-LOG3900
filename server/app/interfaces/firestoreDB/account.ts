@@ -7,6 +7,7 @@ export interface Account {
     email: string;
     userSettings: UserSettings;
     totalXP: number;
+    highScores: Record<string, number>;
     badges: Badge[];
     bestGames: GameHeader[];
     gamesPlayed: GameHeader[];

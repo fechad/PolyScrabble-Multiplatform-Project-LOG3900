@@ -15,6 +15,7 @@ class MultiplayerGameService extends SoloGameService {
   List<Room> availableRooms = [];
   List<ChatModel> availableChannels = [];
   List<Account> opponentsInfo = [];
+  List<Goal> goals = [];
 
   MultiplayerGameService({required super.gameData}) {
     room = Room(
@@ -31,21 +32,22 @@ class MultiplayerGameService extends SoloGameService {
             password: ''),
         isBankUsable: false);
     player = Player(
-        pseudo: authenticator.currentUser.username,
         socketId: socketService.getSocketID() ?? 'id',
         points: 0,
         isCreator: true,
-        isItsTurn: false);
+        isItsTurn: false,
+        clientAccountInfo: authenticator.getCurrentUser(),
+        rack: Rack(letters: '', indexLetterToReplace: []));
   }
   Future<List<Account>> getOpponentsInfo() async {
     if (opponentsInfo.isNotEmpty) return opponentsInfo;
     await Future.delayed(Duration(seconds: 1));
 
     for (Player p in gameService.room.players) {
-      if (JVS.containsKey(p.pseudo))
-        opponentsInfo.add(JVS[p.pseudo]!);
+      if (JVS.containsKey(p.clientAccountInfo.username))
+        opponentsInfo.add(JVS[p.clientAccountInfo.username]!);
       else {
-        final res = await httpService.getOpponentInfo(p.pseudo);
+        final res = await httpService.getOpponentInfo(p.clientAccountInfo.username);
         opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
       }
     }
@@ -84,7 +86,9 @@ class MultiplayerGameService extends SoloGameService {
       (channels) => {
         availableChannels = [],
         for (var channel in channels)
-          {availableChannels.add(chatService.decodeModel(channel))},
+          {
+            availableChannels.add(chatService.decodeModel(channel))
+          },
         if (room.roomInfo.name != '')
           {chatService.getDiscussionChannelByName(room.roomInfo.name)}
       },

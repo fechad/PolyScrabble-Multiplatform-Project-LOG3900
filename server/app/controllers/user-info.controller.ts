@@ -24,7 +24,7 @@ export class UserInfoController {
             victoriesCount: 69,
         };
         // TODO: Add a service to fetch the real highscores
-        const clientAccountInfo: ClientAccountInfo = { ...data, progressInfo, highscores: {} };
+        const clientAccountInfo: ClientAccountInfo = { ...data, progressInfo, highScores: {} };
         return clientAccountInfo;
     }
     private reduceClientAccountInfo(clientAccount: ClientAccountInfo): Account {
@@ -35,6 +35,7 @@ export class UserInfoController {
             gamesWon: clientAccount.gamesWon,
             userSettings: clientAccount.userSettings,
             totalXP: clientAccount.progressInfo.totalXP,
+            highScores: clientAccount.highScores,
             gamesPlayed: clientAccount.gamesPlayed,
             bestGames: clientAccount.bestGames,
         };

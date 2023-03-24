@@ -66,10 +66,11 @@ void connect() {
           password: ''),
       isBankUsable: false);
   gameService.player = Player(
-      pseudo: authenticator.currentUser.username,
       socketId: socketService.getSocketID() ?? 'id',
       points: 0,
       isCreator: true,
-      isItsTurn: false);
+      isItsTurn: false,
+      clientAccountInfo: authenticator.getCurrentUser(),
+      rack: Rack(letters: '', indexLetterToReplace: []));
 
 }

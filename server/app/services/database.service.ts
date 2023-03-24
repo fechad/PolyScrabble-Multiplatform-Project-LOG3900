@@ -107,7 +107,7 @@ export class DatabaseService {
                     avatarUrl: url,
                 },
                 totalXP: 9999,
-
+                highScores: {},
                 bestGames: [],
                 gamesPlayed: [],
                 gamesWon: 0,
