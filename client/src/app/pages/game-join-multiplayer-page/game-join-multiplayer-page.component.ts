@@ -15,6 +15,7 @@ import { ThemeService } from '@app/services/theme.service';
 })
 export class GameJoinMultiplayerPageComponent extends PageCommunicationManager implements OnInit {
     availableRooms: Room[];
+    publicRooms: Room[];
     selectedRoom: Room;
     isPseudoValid: boolean;
     isInRoom: boolean;
@@ -35,6 +36,7 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         this.room.roomInfo.name = '';
         this.selectedRoom = new Room();
         this.availableRooms = [];
+        this.publicRooms = [];
     }
 
     get room(): Room {
@@ -45,9 +47,20 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         return DEFAULT_BOT_IMAGE;
     }
 
+    get joinPopUpText(): string {
+        return this.playerService.isObserver ? 'Observer' : 'Joindre';
+    }
+
+    get roomsToShow(): Room[] {
+        if (this.playerService.isObserver) {
+            return this.publicRooms;
+        }
+        return this.availableRooms;
+    }
+
     ngOnInit() {
         this.connectSocket();
-        this.getAvailableRooms();
+        this.updateRooms();
     }
 
     openPasswordPopup(availableRoom: Room, roomPopup: HTMLDivElement, darkBackground: HTMLDivElement) {
@@ -63,7 +76,7 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
 
     joinRoom(password: string, room?: Room) {
         const roomToUse = room || this.selectedRoom;
-        if (!this.canJoinCreatorRoom(roomToUse)) return;
+        if (!this.playerService.isObserver && !this.canJoinCreatorRoom(roomToUse)) return;
         if (roomToUse.roomInfo.isPublic && password !== roomToUse.roomInfo.password) return;
 
         this.sendJoinRoomRequest(roomToUse, password);
@@ -76,8 +89,9 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         this.sendJoinRoomRequest(room, '');
     }
 
-    getAvailableRooms() {
+    updateRooms() {
         this.socketService.send(SocketEvent.AvailableRooms);
+        this.socketService.send(SocketEvent.PublicRooms);
     }
 
     leaveRoom(roomName: string) {
@@ -110,12 +124,32 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
             this.router.navigate(['/game/multiplayer/wait']);
         });
 
+        this.socketService.on(SocketEvent.ObserverAccepted, (roomCreator: Room) => {
+            sessionStorage.removeItem('data');
+            this.room.setRoom(roomCreator);
+
+            this.socketService.send(SocketEvent.JoinChatChannel, {
+                name: roomCreator.roomInfo.name,
+                user: this.playerService.player.pseudo,
+                isRoomChannel: true,
+            });
+            if (roomCreator.elapsedTime > 0) {
+                this.router.navigate(['/game']);
+                return;
+            }
+            this.router.navigate(['/game/multiplayer/wait']);
+        });
+
         this.socketService.on(SocketEvent.PlayerRejected, (roomCreator: Room) => {
             this.leaveRoom(roomCreator.roomInfo.name);
         });
 
         this.socketService.on(SocketEvent.UpdateAvailableRoom, (rooms: Room[]) => {
             this.availableRooms = rooms;
+        });
+
+        this.socketService.on(SocketEvent.UpdatePublicRooms, (rooms: Room[]) => {
+            this.publicRooms = rooms;
         });
     }
 
@@ -129,6 +163,16 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
 
         this.playerService.player.isCreator = false;
         this.playerService.player.socketId = this.socketService.socket.id;
+
+        if (this.playerService.isObserver) {
+            const observeRoomForm = {
+                roomName: room.roomInfo.name,
+                observer: { socketId: this.playerService.player.socketId, username: this.playerService.player.pseudo },
+                password,
+            };
+            this.socketService.send(SocketEvent.ObserveRoomRequest, observeRoomForm);
+            return;
+        }
 
         const joinRoomForm = { roomName: room.roomInfo.name, player: this.playerService.player, password };
         this.socketService.send(SocketEvent.JoinRoomRequest, joinRoomForm);

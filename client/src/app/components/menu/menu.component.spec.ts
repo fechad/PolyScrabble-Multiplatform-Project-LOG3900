@@ -201,21 +201,37 @@ describe('MenuComponent', () => {
         });
     });
 
-    describe('leaveRoom tests', () => {
+    describe('leaveDiscussionChannel tests', () => {
         it('should call leaveRoomCreator if the selectedDiscussionChannel owner is the player', () => {
             discussionChannel.owner = { username: playerService.player.pseudo } as unknown as Account;
             component.selectedDiscussionChannel = discussionChannel;
+            const socketSendSpy = spyOn(socketServiceMock, 'send');
+            component.leaveDiscussionChannel();
+            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomCreator, roomName);
+        });
+
+        it('should call leaveRoomOther if the selectedDiscussionChannel owner is the player', () => {
+            discussionChannel.owner = { username: 'other' } as unknown as Account;
+            component.selectedDiscussionChannel = discussionChannel;
+            const socketSendSpy = spyOn(socketServiceMock, 'send');
+            component.leaveDiscussionChannel();
+            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomOther, roomName);
+        });
+    });
+
+    describe('leaveRoom tests', () => {
+        it('should call leaveRoomCreator if the player is the creator', () => {
+            playerService.player.isCreator = true;
             const socketSendSpy = spyOn(socketServiceMock, 'send');
             component.leaveRoom();
             expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomCreator, roomName);
         });
 
-        it('should call reinitialize room when leaveRoomCreator', () => {
-            discussionChannel.owner = { username: playerService.player.pseudo } as unknown as Account;
-            component.selectedDiscussionChannel = discussionChannel;
-            const reinitializeRoomSpy = spyOn(component.room, 'reinitialize');
+        it('should call leaveRoomOther if the player is not the creator', () => {
+            playerService.player.isCreator = false;
+            const socketSendSpy = spyOn(socketServiceMock, 'send');
             component.leaveRoom();
-            expect(reinitializeRoomSpy).toHaveBeenCalledWith(component.room.roomInfo.gameType);
+            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomOther, roomName);
         });
 
         it('should navigate to main page when leaveRoomCreator', () => {
@@ -223,22 +239,6 @@ describe('MenuComponent', () => {
             component.selectedDiscussionChannel = discussionChannel;
             component.leaveRoom();
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/main']);
-        });
-
-        it('should call leaveRoomOther if the selectedDiscussionChannel owner is the player', () => {
-            discussionChannel.owner = { username: 'other' } as unknown as Account;
-            component.selectedDiscussionChannel = discussionChannel;
-            const socketSendSpy = spyOn(socketServiceMock, 'send');
-            component.leaveRoom();
-            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomOther, roomName);
-        });
-
-        it('should call reinitialize room when leaveRoomOther', () => {
-            discussionChannel.owner = { username: 'other' } as unknown as Account;
-            component.selectedDiscussionChannel = discussionChannel;
-            const reinitializeRoomSpy = spyOn(component.room, 'reinitialize');
-            component.leaveRoom();
-            expect(reinitializeRoomSpy).toHaveBeenCalledWith(component.room.roomInfo.gameType);
         });
 
         it('should navigate to main page when leaveRoomOther', () => {
@@ -315,10 +315,10 @@ describe('MenuComponent', () => {
             });
         });
 
-        it('should setValue correctly on logOut', () => {
-            playerService.player.pseudo = playerName;
+        it('should call resetPlayerAndRoomInfo on logOut', () => {
+            const resetPlayerAndRoomInfoSpy = spyOn(playerService, 'resetPlayerAndRoomInfo');
             component.logOut();
-            expect(playerService.player.pseudo).toEqual('');
+            expect(resetPlayerAndRoomInfoSpy).toHaveBeenCalled();
         });
 
         it('should navigate to home on logOut', () => {

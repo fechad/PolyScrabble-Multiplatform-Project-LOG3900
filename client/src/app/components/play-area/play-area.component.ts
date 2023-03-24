@@ -191,7 +191,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         this.drawBoard();
 
         this.boardService.reinitializeLettersTiles();
-        this.boardService.redrawLettersTile();
+        this.boardService.redrawLettersTile(this.room.placementsData);
     }
 
     isPlayerTurn(): boolean {
@@ -217,7 +217,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
-            const rowNumber = this.matchRowNumber(placementData.row) as number;
+            const rowNumber = this.boardService.matchRowNumber(placementData.row) as number;
             this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
         });
     }
@@ -227,7 +227,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
     }
 
     protected onRefresh() {
-        this.boardService.redrawLettersTile();
+        return;
     }
 
     private cancelPlacement() {
@@ -279,15 +279,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
                 this.board[tile.position.x][tile.position.y].content = tile.multiplierType + ' x' + tile.multiplierValue;
             }
         }
-    }
-
-    private matchRowNumber(row: string): number | void {
-        for (let i = 1; i < DEFAULT_CASE_COUNT; i++) {
-            if (row === DEFAULT_ROWS[i]) {
-                return i;
-            }
-        }
-        return;
     }
 
     private buildBoardArray() {

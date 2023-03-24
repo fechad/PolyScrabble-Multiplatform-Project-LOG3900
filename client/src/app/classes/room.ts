@@ -1,17 +1,23 @@
+import { PlacementData } from '@app/interfaces/placement-data';
+import { RoomObserver } from '@app/interfaces/room-observer';
 import { Player } from './player';
 import { RoomInfo } from './room-info';
 
 export class Room {
-    elapsedTime: number;
+    elapsedTime: number; // elapsedTime must be 0 only before the start of the game. Once it starts, it can't be 0 again. (so 1 to timerPerTurn)
     currentPlayerPseudo: string; // Remove this, obsolete
     players: Player[];
+    observers: RoomObserver[];
     roomInfo: RoomInfo;
     isBankUsable: boolean;
     botsLevel: string;
+    placementsData: PlacementData[];
 
     constructor() {
         this.roomInfo = { name: '', creatorName: '', timerPerTurn: '', dictionary: '', gameType: '', maxPlayers: 4, isPublic: true, password: '' };
         this.players = [];
+        this.observers = [];
+        this.placementsData = [];
         this.isBankUsable = true;
         this.botsLevel = 'adaptive';
     }
@@ -28,6 +34,7 @@ export class Room {
             password: '',
         };
         this.players = [];
+        this.placementsData = [];
         this.isBankUsable = true;
         this.botsLevel = '';
         this.currentPlayerPseudo = '';
@@ -43,6 +50,7 @@ export class Room {
         this.roomInfo.maxPlayers = roomServer.roomInfo.maxPlayers;
         this.setPlayers(roomServer.players);
         this.elapsedTime = roomServer.elapsedTime;
+        this.placementsData = roomServer.placementsData;
     }
 
     setPlayers(players: Player[]) {
@@ -53,5 +61,11 @@ export class Room {
             clientPlayer.setPlayerGameAttributes(jsonPlayer);
             this.players.push(clientPlayer);
         }
+    }
+
+    removePlayerByName(playerName: string) {
+        const playerToRemove = this.players.find((player: Player) => player.pseudo === playerName);
+        if (!playerToRemove) return;
+        this.players.splice(this.players.indexOf(playerToRemove), 1);
     }
 }

@@ -8,60 +8,68 @@
                 <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
 
-            <div class="column-grid" [class.two]="availableRooms.length > 1">
-                <div class="game" *ngFor="let availableRoom of availableRooms">
-                    <div class="game-info-container">
-                        <div class="game-info">
-                            <div class="game-info-icon">[+_+]</div>
-                            <div class="game-info-value">{{ availableRoom?.botsLevel }}</div>
+            <div class="column-grid" [class.two]="roomsToShow.length > 1">
+                <div *ngFor="let room of roomsToShow">
+                    <div class="game">
+                        <div class="game-info-container">
+                            <div class="game-info">
+                                <div class="game-info-icon">[+_+]</div>
+                                <div class="game-info-value">{{ room?.botsLevel }}</div>
+                            </div>
+                            <div class="game-info">
+                                <span class="material-symbols-outlined game-info-icon"> Alarm </span>
+                                <div class="game-info-value">{{ getFormattedTimerPerTurn(room) }}</div>
+                            </div>
                         </div>
-                        <div class="game-info">
-                            <span class="material-symbols-outlined game-info-icon"> Alarm </span>
-                            <div class="game-info-value">{{ getFormattedTimerPerTurn(availableRoom) }}</div>
-                        </div>
-                    </div>
 
-                    <div class="game-body">
-                        <div class="game-players">
-                            <img
-                                class="avatar"
-                                [src]="availableRoom.players[0] ? availableRoom.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                            />
-                            <img
-                                class="avatar"
-                                [src]="availableRoom.players[1] ? availableRoom.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                            />
-                            <img
-                                class="avatar"
-                                [src]="availableRoom.players[2] ? availableRoom.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                            />
-                            <img
-                                class="avatar"
-                                [src]="availableRoom.players[3] ? availableRoom.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                            />
-                        </div>
-                        <div class="game-buttons">
-                            <button
-                                *ngIf="availableRoom.roomInfo.isPublic && availableRoom.roomInfo.password.length > 0"
-                                class="button"
-                                (click)="openPasswordPopup(availableRoom, roomPasswordPopup, darkBackground)"
-                                [disabled]="isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType"
-                                [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
-                            ></button>
-                            <button
-                                *ngIf="availableRoom.roomInfo.isPublic && availableRoom.roomInfo.password.length === 0"
-                                class="button"
-                                (click)="joinRoom('', availableRoom)"
-                                [disabled]="isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType"
-                                [translate]="'CLASSIC.JOIN-MULTI.BUTTON'"
-                            ></button>
-                            <button
-                                *ngIf="!availableRoom.roomInfo.isPublic"
-                                class="button"
-                                (click)="askToJoinRoom(availableRoom)"
-                                [disabled]="isInRoom || availableRoom.roomInfo.gameType !== room.roomInfo.gameType"
-                                [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
-                            ></button>
+                        <div class="game-body">
+                            <div class="game-players">
+                                <img
+                                    class="avatar"
+                                    [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                />
+                                <img
+                                    class="avatar"
+                                    [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                />
+                                <img
+                                    class="avatar"
+                                    [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                />
+                                <img
+                                    class="avatar"
+                                    [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                />
+                            </div>
+                            <div class="game-buttons">
+                                <button
+                                    *ngIf="room.roomInfo.isPublic && room.roomInfo.password.length > 0"
+                                    class="button"
+                                    (click)="openPasswordPopup(room, roomPasswordPopup, darkBackground)"
+                                    [disabled]="isInRoom || room.roomInfo.gameType !== room.roomInfo.gameType"
+                                    [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
+                                >
+                                    {{ joinPopUpText }} [KEY]
+                                </button>
+                                <button
+                                    *ngIf="room.roomInfo.isPublic && room.roomInfo.password.length === 0"
+                                    class="button"
+                                    (click)="joinRoom('', room)"
+                                    [disabled]="isInRoom || room.roomInfo.gameType !== room.roomInfo.gameType"
+                                    [translate]="'CLASSIC.JOIN-MULTI.BUTTON'"
+                                >
+                                    {{ joinPopUpText }}
+                                </button>
+                                <button
+                                    *ngIf="!room.roomInfo.isPublic"
+                                    class="button"
+                                    (click)="askToJoinRoom(room)"
+                                    [disabled]="isInRoom || room.roomInfo.gameType !== room.roomInfo.gameType"
+                                    [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
+                                >
+                                    {{ joinPopUpText }} [ASK]
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

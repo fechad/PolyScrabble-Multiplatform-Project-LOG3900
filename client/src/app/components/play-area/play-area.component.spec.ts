@@ -7,7 +7,7 @@ import { Rack } from '@app/classes/rack';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { Tile } from '@app/classes/tile';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { DEFAULT_ROOM_INFO, TIMER_TEST_DELAY } from '@app/constants/constants';
+import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { BoardService } from '@app/services/board.service';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
@@ -87,7 +87,7 @@ describe('PlayAreaComponent', () => {
 
     describe('socket related tests', () => {
         it('should call matchRowNumber when receiving drawBoard event', () => {
-            const spy = spyOn(componentPrivateAccess, 'matchRowNumber').and.callThrough();
+            const spy = spyOn(boardService, 'matchRowNumber').and.callThrough();
             componentPrivateAccess.configureBaseSocketFeatures();
             socketHelper.peerSideEmit('drawBoard', placement.row);
             expect(spy).toHaveBeenCalled();
@@ -101,10 +101,8 @@ describe('PlayAreaComponent', () => {
 
         describe('connect() tests', () => {
             let removePlacementCommandsSpy: jasmine.Spy;
-            let configureBaseSocketFeatureSpy: jasmine.Spy;
             beforeEach(() => {
                 removePlacementCommandsSpy = spyOn(boardService, 'removePlacementCommands');
-                configureBaseSocketFeatureSpy = spyOn(componentPrivateAccess, 'configureBaseSocketFeatures');
             });
 
             it('should call the correct methods if the socket is alive', () => {
@@ -112,30 +110,7 @@ describe('PlayAreaComponent', () => {
                 componentPrivateAccess.connectSocket();
                 expect(removePlacementCommandsSpy).toHaveBeenCalled();
             });
-
-            it('should reconnect and redraw letter tiles if the socket is alive', (done) => {
-                spyOn(socketServiceMock, 'isSocketAlive').and.returnValue(true);
-                const spy = spyOn(boardService, 'redrawLettersTile');
-                componentPrivateAccess.configureSocketFeaturesOnPageSocketConnection();
-
-                setTimeout(() => {
-                    expect(configureBaseSocketFeatureSpy).toHaveBeenCalled();
-                    expect(spy).toHaveBeenCalled();
-                    done();
-                }, TIMER_TEST_DELAY);
-            });
         });
-    });
-
-    it('matchRow should match the letter given to the index ', () => {
-        const result = 15;
-        expect(componentPrivateAccess.matchRowNumber('o')).toEqual(result);
-    });
-    it('matchRow should return undefined if an empty string is given ', () => {
-        expect(componentPrivateAccess.matchRowNumber('')).toBe(undefined);
-    });
-    it('matchRow should return undefined if a letter upper than o is given ', () => {
-        expect(componentPrivateAccess.matchRowNumber('w')).toBe(undefined);
     });
 
     it('should call buildArray when ngOnChanges is called', () => {

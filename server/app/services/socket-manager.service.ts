@@ -3,6 +3,7 @@ import { CommandController } from '@app/controllers/command.controller';
 import { SocketEvent } from '@app/enums/socket-event';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { JoinRoomForm } from '@app/interfaces/join-room-form';
+import { ObserveRoomForm } from '@app/interfaces/observe-room-form';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
 import * as io from 'socket.io';
@@ -83,7 +84,9 @@ export class SocketManager {
     handleSockets() {
         this.sio.on(SocketEvent.Connection, (socket) => {
             socket.on(SocketEvent.Disconnection, async () => {
-                await this.socketHandlerService.handleDisconnecting(socket);
+                const username = await this.socketHandlerService.handleDisconnecting(socket);
+                if (!username) return;
+                // TODO: remove username from all its room
             });
 
             socket.on(SocketEvent.Reconnect, (playerData: PlayerData) => {
@@ -155,6 +158,10 @@ export class SocketManager {
                 this.socketRoomService.handleJoinRequest(socket, joinRoomForm);
             });
 
+            socket.on(SocketEvent.ObserveRoomRequest, (observeRoomForm: ObserveRoomForm) => {
+                this.socketRoomService.handleObserveRoomRequest(socket, observeRoomForm);
+            });
+
             socket.on(SocketEvent.AcceptPlayer, (data: { roomName: string; playerName: string }) => {
                 this.socketRoomService.handleAcceptPlayer(socket, data);
             });
@@ -169,6 +176,10 @@ export class SocketManager {
 
             socket.on(SocketEvent.AvailableRooms, () => {
                 this.socketRoomService.handleAvailableRooms(socket);
+            });
+
+            socket.on(SocketEvent.PublicRooms, () => {
+                this.socketRoomService.handlePublicRooms(socket);
             });
 
             socket.on(SocketEvent.StartGameRequest, (roomName: string) => {

@@ -6,6 +6,7 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SocketEvent } from '@app/enums/socket-event';
+import { BoardService } from '@app/services/board.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HintService } from '@app/services/hint.service';
 import { PlayerService } from '@app/services/player.service';
@@ -27,6 +28,7 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         private focusHandlerService: FocusHandlerService,
         private hintService: HintService,
         public playerService: PlayerService,
+        private boardService: BoardService,
         protected themeService: ThemeService,
     ) {
         super(socketService);
@@ -51,8 +53,14 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
             this.socketService.send(SocketEvent.Reconnect, { socketId: session.socketId, roomName: session.roomName });
             return;
         }
-        this.startGame();
         this.sessionStorageService.setItem('data', JSON.stringify({ socketId: this.socketService.socket.id, roomName: this.room.roomInfo.name }));
+
+        if (this.playerService.isObserver) {
+            this.boardService.redrawLettersTile(this.room.placementsData);
+            return;
+        }
+
+        this.startGame();
     }
 
     updateFocus(event: MouseEvent) {
@@ -83,6 +91,7 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
             this.room.setRoom(data.room);
             this.playerService.player.setPlayerGameAttributes(data.player);
             this.sessionStorageService.setItem('data', JSON.stringify({ socketId: data.player.socketId, roomName: data.room.roomInfo.name }));
+            this.boardService.redrawLettersTile(this.room.placementsData);
         });
         this.socketService.on('hint', (data: { text: string }) => {
             this.hintService.handleGamePageHintEvent(data);

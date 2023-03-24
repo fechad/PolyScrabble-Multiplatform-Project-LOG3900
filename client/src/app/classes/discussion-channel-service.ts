@@ -8,4 +8,9 @@ export class DiscussionChannelService {
         this.availableChannels = [];
         this.roomChannel = new DiscussionChannel('');
     }
+
+    reinitialize() {
+        this.availableChannels = [];
+        this.roomChannel = new DiscussionChannel('');
+    }
 }

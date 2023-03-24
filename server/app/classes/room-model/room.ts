@@ -11,6 +11,7 @@ import { GameLevel } from '@app/enums/game-level';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
+import { RoomObserver } from '@app/interfaces/room-observer';
 import { GameManager } from './game-manager';
 
 const MULTIPLAYER_MIN_PLAYERS = 4;
@@ -28,18 +29,22 @@ const DEFAULT_ROOM = {
     isSolo: false,
 };
 export class Room {
-    elapsedTime: number;
+    elapsedTime: number; // elapsedTime must be 0 only before the start of the game. Once it starts, it can't be 0 again. (so 1 to timerPerTurn)
     players: Player[];
+    observers: RoomObserver[];
     roomInfo: RoomInfo;
     bots: VirtualPlayer[];
     startDate: Date;
     botCommunicationManager: BotCommunicationManager;
     fillerNamesUsed: string[];
     botsLevel: GameLevel;
+    private placementsData: PlacementData[];
     private isFirstGame: boolean;
     private gameManager: GameManager;
     constructor(clientRoom?: Room) {
         this.players = [];
+        this.observers = [];
+        this.placementsData = [];
         this.elapsedTime = 0;
         this.startDate = new Date();
         this.fillerNamesUsed = [];
@@ -107,12 +112,6 @@ export class Room {
         this.gameManager.turnPassedCounter = 0;
     }
 
-    canAddPlayer(password?: string): boolean {
-        if (this.roomInfo.isPublic && this.isSamePassword(password) && this.players.length < this.maxPlayers) return true;
-        if (!this.roomInfo.isPublic && this.players.length < this.maxPlayers) return true;
-        return false;
-    }
-
     addPlayer(player: Player, password: string) {
         if (this.canAddPlayer(password)) {
             this.players.push(player);
@@ -122,6 +121,23 @@ export class Room {
             this.isFirstGame = false;
             this.startDate = new Date();
         }
+    }
+
+    addObserver(observer: RoomObserver) {
+        if (!this.canAddObserver(observer.username)) return;
+        this.observers.push(observer);
+    }
+
+    canAddPlayer(password?: string): boolean {
+        if (this.roomInfo.isPublic && this.isSamePassword(password) && this.players.length < this.maxPlayers) return true;
+        if (!this.roomInfo.isPublic && this.players.length < this.maxPlayers) return true;
+        return false;
+    }
+
+    canAddObserver(username: string, password?: string): boolean {
+        if (this.getObserverByName(username)) return false;
+        if (this.roomInfo.isPublic && this.isSamePassword(password)) return true;
+        return false;
     }
 
     createVirtualPlayer(name: string): VirtualPlayer {
@@ -171,8 +187,22 @@ export class Room {
         }
     }
 
+    removeObserver(username: string) {
+        const observerToRemove = this.getObserverByName(username);
+        if (!observerToRemove) return;
+        this.observers.splice(this.observers.indexOf(observerToRemove), 1);
+    }
+
     askPlacement(placement: PlacementData): BoardMessage {
         return this.gameManager.askPlacement(placement);
+    }
+
+    getObserver(observerSocketId: string): RoomObserver | undefined {
+        return this.observers.find((observer) => observer.socketId === observerSocketId);
+    }
+
+    getObserverByName(username: string): RoomObserver | undefined {
+        return this.observers.find((observer) => observer.username === username);
     }
 
     getPlayer(playerSocketId: string): Player | undefined {
@@ -195,7 +225,7 @@ export class Room {
 
     changePlayerTurn() {
         this.gameManager.changePlayerTurn(this.players);
-        this.elapsedTime = 0;
+        this.elapsedTime = 1;
     }
 
     canChangePlayerTurn(): boolean {
@@ -237,6 +267,10 @@ export class Room {
                 return player instanceof VirtualPlayer ? total : total + player.points;
             }, 0) / humansCount
         );
+    }
+
+    addPlacementData(placementData: PlacementData) {
+        this.placementsData.push(placementData);
     }
 
     private isSamePassword(password?: string): boolean {

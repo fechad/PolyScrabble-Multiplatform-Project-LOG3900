@@ -38,13 +38,15 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         protected themeService: ThemeService,
     ) {
         super(socketService);
+        const DEFAULT_TIMER_PER_TURN = 60;
+        const PUBLIC_GAME_VALUE = 1;
         this.gameForm = this.fb.group({
-            timerPerTurn: ['', [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
+            timerPerTurn: [DEFAULT_TIMER_PER_TURN, [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
             dictionary: [DEFAULT_DICTIONARY_TITLE, Validators.required],
-            level: ['', Validators.required],
+            level: [GameLevel.Expert, Validators.required],
             roomPassword: [''],
-            isPublic: [''],
-            botName: [''],
+            isPublic: [PUBLIC_GAME_VALUE],
+            botName: ['Simon'],
         });
         this.botNames = [];
         this.onProcess = false;

@@ -1,15 +1,15 @@
 <div #menuContainer class="menu-container">
     <div class="menu" [class.game-page]="isGamePage">
         <div *ngIf="!isGamePage" class="first icons-container">
-            <i class="fa fa-user" (click)="navigateUserPage()"></i>
-            <i class="fa fa-home" (click)="navigateHome()"></i>
+            <i *ngIf="!isWaitMultiPage" class="fa fa-user" (click)="navigateUserPage()"></i>
+            <i *ngIf="!isWaitMultiPage" class="fa fa-home" (click)="navigateHome()"></i>
             <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
             <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon">Close chat</button>
-            <i class="fa fa-trophy" (click)="navigateUserPage()"></i>
-            <i class="fa fa-eye" (click)="navigateUserPage()"></i>
+            <i *ngIf="!isWaitMultiPage" class="fa fa-trophy" (click)="navigateUserPage()"></i>
+            <i *ngIf="!isWaitMultiPage" class="fa fa-eye" (click)="navigateObserveRoomPage()"></i>
         </div>
         <div *ngIf="!isGamePage" class="second icons-container">
-            <i class="fa fa-gear" (click)="navigateSettings()"></i>
+            <i *ngIf="!isWaitMultiPage" class="fa fa-gear" (click)="navigateSettings()"></i>
             <div *ngIf="!isNewChatWindowOpen" (click)="logOut()" class="icon material-symbols-outlined discussion-out">logout</div>
         </div>
 

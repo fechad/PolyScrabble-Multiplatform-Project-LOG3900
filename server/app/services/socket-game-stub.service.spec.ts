@@ -328,13 +328,13 @@ describe('Socket-game-stub service tests', () => {
             assert(sendEveryoneStub.called, 'did not emit the playerTurn changed signal');
             done();
         });
-        it('should set the room.elapsedTime to 0 and increment the turnPassedCounter on changeTurn', (done) => {
+        it('should set the room.elapsedTime to 1 and increment the turnPassedCounter on changeTurn', (done) => {
             roomMock.elapsedTime = 20;
             const previousCounter = (roomMock['gameManager'].turnPassedCounter = 0);
             const canChangePlayerTurnStub = sinon.stub(roomMock, 'canChangePlayerTurn').returns(true);
             socketGameService.changeTurn(socketMock, roomMock);
             expect(canChangePlayerTurnStub.called, 'did not call canChangePlayerStub on changeTurn');
-            expect(roomMock.elapsedTime).to.equal(0);
+            expect(roomMock.elapsedTime).to.equal(1);
             expect(roomMock['gameManager'].turnPassedCounter).to.equal(previousCounter + 1);
             done();
         });
