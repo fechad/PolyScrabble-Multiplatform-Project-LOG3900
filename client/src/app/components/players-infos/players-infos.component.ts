@@ -212,7 +212,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             username: bot.pseudo,
             email: '',
             userSettings: { avatarUrl: avatarPath, defaultLanguage: 'french', defaultTheme: 'dark', victoryMusic: 'Better.mp3' },
-            highscores: {},
+            highScores: {},
             progressInfo: { totalXP: 9999, currentLevel: 999, currentLevelXp: 999, xpForNextLevel: 1000, victoriesCount: 69 },
             badges: [],
             bestGames: [],

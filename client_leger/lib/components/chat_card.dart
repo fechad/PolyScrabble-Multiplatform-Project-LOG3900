@@ -16,6 +16,7 @@ class ChatCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (chatModel.name.startsWith("Room")) {
+          Navigator.of(context).pop();
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -25,11 +26,12 @@ class ChatCard extends StatelessWidget {
                     players: gameService.room.players),
               ));
         } else {
+          Navigator.of(context).pop();
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      GeneralChatWidget(chatName: chatModel.name)));
+                      GeneralChatWidget(chat: chatModel)));
         }
       },
       child: Column(

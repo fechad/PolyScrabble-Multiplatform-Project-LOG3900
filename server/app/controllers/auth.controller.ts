@@ -71,6 +71,7 @@ export class AuthController {
                     gamesPlayed: [],
                     gamesWon: 0,
                     totalXP: 0,
+                    highScores: {},
                 };
                 await this.databaseService
                     .batchSave('accounts', [account], (entry: Account) => entry.email)

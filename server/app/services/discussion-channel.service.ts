@@ -9,12 +9,7 @@ export class DiscussionChannelService {
     roomChannels: DiscussionChannel[];
 
     constructor() {
-        this.availableChannels = [
-            new DiscussionChannel('General Chat'),
-            new DiscussionChannel('Chilling Chat'),
-            new DiscussionChannel('Meme Chat'),
-            new DiscussionChannel('Share your creation'),
-        ];
+        this.availableChannels = [new DiscussionChannel('General Chat')];
         this.availableChannels[0].addMessage({
             channelName: 'General Chat',
             system: true,

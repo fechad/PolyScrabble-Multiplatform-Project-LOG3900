@@ -103,11 +103,11 @@ export class SocketGameService extends SocketHandlerService {
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
+
         this.socketEmit(socket, SocketEvent.UpdatePlayerScore, player);
         this.sendToEveryoneInRoom(roomName, SocketEvent.PlayerTurnChanged, currentTurnPlayer?.pseudo);
         this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
-
         if (room.hasTimer()) return;
         room.fillWithVirtualPlayers();
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotJoinedRoom, room.players);

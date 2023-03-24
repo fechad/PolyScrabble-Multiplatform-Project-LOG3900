@@ -7,7 +7,7 @@ export interface ClientAccountInfo {
     username: string;
     email: string;
     userSettings: UserSettings;
-    highscores: Record<string, number>;
+    highScores: Record<string, number>;
     progressInfo: ProgressInfo;
     badges: Badge[];
     bestGames: GameHeader[];

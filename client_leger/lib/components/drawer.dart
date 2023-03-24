@@ -26,18 +26,33 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
   void initState() {
     super.initState();
     _configure();
+    chatService.discussionChannels = gameService.availableChannels;
   }
 
   _configure() {
     socketService.on(
-        'availableChannels',
-            (data) => {
-            {
-              setState(() =>
-                  chatService.getDiscussions()
-              )
-            },
-        });
+      "availableChannels",
+          (channels) => {
+        if (mounted) {
+          setState(() {
+            gameService.availableChannels = [];
+            for (var channel in channels) {
+              gameService.availableChannels.add(
+                  chatService.decodeModel(channel));
+            }
+            if (gameService.room.roomInfo.name != '') {
+              chatService.getDiscussionChannelByName(
+                  gameService.room.roomInfo.name);
+            }
+          }),
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -66,6 +81,17 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                     onChanged: (String txt) {
                       setState(() {
                         isSearching = txt.isNotEmpty;
+
+                        if (txt.isEmpty) chatService.discussionChannels = gameService.availableChannels;
+                        if (textController.text.isNotEmpty) {
+                          chatService.discussionChannels = [chatService.discussionChannels[0]];
+                          for (ChatModel channel in gameService.availableChannels) {
+                            if (channel.name.startsWith(textController.text)) {
+                              chatService.discussionChannels.add(channel);
+                            }
+                          }
+                        }
+
                       });
                     },
                     onSubmitted: submitMsg,
@@ -114,7 +140,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                     ),
                   ),
                 ),
-                new Container(
+                Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: const Icon(Icons.search)),
               ],
@@ -167,14 +193,16 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                           ),
                           validator: (value) {
                             for (ChatModel channel in chatService.getDiscussions()){
-                              if (channel.name == value) return 'Un canal a déjà ce nom';
-                            };
+                              if (channel.name.toLowerCase().trim().replaceAll(' ', '') == value?.toLowerCase().trim().replaceAll(' ', '')) return 'Un canal a déjà ce nom';
+                            }
+
                             if (value!.isEmpty) {
                               return 'Le nom ne peut être vide';
                             }
-                            if (value.toLowerCase().startsWith('room')) {
+                            if (value.toLowerCase().trim().startsWith('room')) {
                               return "Le nom ne peut commencer par 'room'";
                             }
+                            return null;
                           },
                           ),
                             ]))
@@ -207,12 +235,15 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                chatService.addDiscussion(
-                                    _channelNameController.text);
-                                Navigator.pop(
+                                setState(() {
+                                  chatService.addDiscussion(
+                                      _channelNameController.text);
+                                  Navigator
+                                .pop(
                                     context);
                                 _channelNameController
                                     .clear();
+                    });
                               }
                             }
                           ),

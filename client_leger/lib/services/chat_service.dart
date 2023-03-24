@@ -4,12 +4,17 @@ import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/chat_page.dart';
 import 'package:intl/intl.dart';
 
+import '../classes/game.dart';
 import 'init_service.dart';
 
 class ChatService {
   List<ChatModel> discussionChannels = [
     ChatModel(name: 'General Chat', activeUsers: [], messages: [])
   ];
+  Account owner = Account(username: '', email: '', userSettings:
+      UserSettings(avatarUrl: '', defaultLanguage: '', defaultTheme: '', victoryMusic: ''), progressInfo:
+      ProgressInfo(totalXP: 0, currentLevel: 0, currentLevelXp: 0, xpForNextLevel: 0, victoriesCount: 0),
+      highScores: {}, badges: [], bestGames: [], gamesPlayed: [], gamesWon: 0);
   ChatModel _roomChannel = ChatModel(name: '', activeUsers: [], messages: []);
   ChatService() {
     _askForDiscussions();
@@ -40,7 +45,12 @@ class ChatService {
     for (var j in data['messages']) {
       messages.add(decodeMessage(j));
     }
+
     ChatModel discussionChannels = ChatModel.fromJson(data, messages);
+    if (data['name'] != 'General Chat' && !data['name'].startsWith('Room') ) {
+      owner = Account.fromJson(data['owner']);
+    }
+    discussionChannels.owner = owner;
     return discussionChannels;
   }
 
@@ -56,6 +66,7 @@ class ChatService {
   void addDiscussion(String name) {
     socket
         .emit('createChatChannel', {'channel':name, 'username': authenticator.getCurrentUser(), 'isRoomChannel': false});
+    joinDiscussion(name);
   }
 
   void deleteDiscussion(String name) {
@@ -78,6 +89,13 @@ class ChatService {
     socket.emit('leaveChatChannel', {
       'channel': channelName,
       'username': authenticator.currentUser.username
+    });
+  }
+
+  void creatorLeaveDiscussion(String channelName) {
+    socket.emit("creatorLeaveChatChannel", {
+      'channel': channelName,
+      'isRoomChannel' : false,
     });
   }
 

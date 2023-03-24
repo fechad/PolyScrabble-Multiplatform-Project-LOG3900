@@ -75,6 +75,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             lettersPlaced = '',
             placementValidator.cancelPlacement(),
           }
+
+          else if (serverMsg.contains("a atteint l'objectif")) {
+            for (Goal goal in gameService.goals) {
+                if (goal.title == serverMsg.split(':')[1].split('Récompense')[0].trim()) {
+                  goal.reached = true,
+                }
+              }
+            }
         });
 
     socketService.on(
@@ -159,8 +167,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
               borderRadius: BorderRadius.circular(10),
               color: const Color(0xFFFFEBCE),
               border: Border.all(
-                color: const Color(0xAA000000),
-                width: 1,
+                color: Colors.red,
+                width: 3,
               ),
             ),
             width: 43,
@@ -340,7 +348,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                         final ExchangeCommand command = ExchangeCommand(
                             letterIndexes: letterIndexesToExchange);
                         gameCommandService.constructExchangeCommand(command);
-                        print(command.letterIndexes);
                         linkService.resetRack();
                         letterIndexesToExchange.clear();
                         linkService.setWantToExchange(false);

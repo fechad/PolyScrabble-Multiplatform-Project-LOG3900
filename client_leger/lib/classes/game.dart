@@ -16,32 +16,37 @@ class GameData {
 }
 
 class Player {
-  String pseudo;
   String socketId;
   int points;
   bool isCreator;
   bool isItsTurn;
+  Account clientAccountInfo;
+  Rack? rack;
 
   Player(
-      {required this.pseudo,
+      {
       required this.socketId,
       required this.points,
       required this.isCreator,
-      required this.isItsTurn});
+      required this.isItsTurn,
+      required this.clientAccountInfo,
+      this.rack});
 
   Player.fromJson(dynamic json)
-      : pseudo = json['pseudo'],
-        socketId = json['socketId'],
+      : socketId = json['socketId'],
         points = json['points'],
         isCreator = json['isCreator'],
-        isItsTurn = json['isItsTurn'];
+        isItsTurn = json['isItsTurn'],
+        clientAccountInfo = Account.fromJson(json['clientAccountInfo']),
+        rack = Rack.fromJson(json['rack']);
 
   Map<String, dynamic> toJson() => {
-        'pseudo': pseudo,
         'socketId': socketId,
         'points': points,
         'isCreator': isCreator,
         'isItsTurn': isItsTurn,
+        'clientAccountInfo' : clientAccountInfo,
+        'rack' : rack,
       };
 }
 
@@ -169,7 +174,7 @@ class ProgressInfo {
   Map<String, dynamic> toJson() => {
         'totalXP': totalXP,
         'currentLevel': currentLevel,
-        'currentLevelXP': currentLevelXp,
+        'currentLevelXp': currentLevelXp,
         'xpForNextLevel': xpForNextLevel,
         'victoriesCount': victoriesCount
       };
@@ -202,7 +207,7 @@ class Account {
         email = json['email'],
         userSettings = UserSettings.fromJson(json['userSettings']),
         progressInfo = ProgressInfo.fromJson(json['progressInfo']),
-        highScores = json['highScores'],
+        highScores = Map<String, int>.from(json['highScores']),
         badges = json['badges']
             .toString()
             .replaceAll('[', '')
@@ -231,6 +236,7 @@ class Account {
         'gamesPlayed': gamesPlayed,
         'gamesWon': gamesWon,
       };
+
 }
 
 class GameHeader {
@@ -319,3 +325,49 @@ class Message {
         'sender': sender,
       };
 }
+
+class Rack {
+  String? letters;
+  List<int>? indexLetterToReplace;
+
+  Rack({this.letters, this.indexLetterToReplace});
+
+  Rack.fromJson(dynamic json)
+      : letters = json['letters'],
+        indexLetterToReplace = json['indexLetterToReplace'];
+
+  Map<String, dynamic> toJson() => {
+    'letters': letters,
+    'indexLetterToReplace': indexLetterToReplace,
+  };
+}
+
+class Goal {
+  String title;
+  String description;
+  int reward;
+  bool reached;
+  bool isPublic;
+  List<Player> players;
+
+  Goal({required this.title, required this.description, required this.reward,
+        required this.reached, required this.isPublic, required this.players});
+
+  Goal.fromJson(dynamic json, jsonPlayers)
+      : title = json['title'],
+        description = json['description'],
+        reward = json['reward'],
+        reached = json['reached'],
+        isPublic = json['isPublic'],
+        players = jsonPlayers;
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'description': description,
+    'reward' : reward,
+    'reached' : reached,
+    'isPublic' : isPublic,
+    'players' : players,
+  };
+}
+
