@@ -1,13 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { Direction } from '@app/enums/direction';
-import { PlacementCommand } from '@app/classes/placement-command';
 import { PlayerData } from '@app/interfaces/player-data';
 import { SessionStorageService } from './session-storage.service';
 
 describe('LocalStorageService', () => {
     let service: SessionStorageService;
     let playerData: PlayerData;
-    let placementCommand: PlacementCommand;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -15,12 +12,6 @@ describe('LocalStorageService', () => {
         service.removeItem('key');
 
         playerData = { socketId: 'socketId', roomName: 'Room0' };
-        placementCommand = {
-            word: 'Mot',
-            xPosition: 3,
-            yPosition: 3,
-            direction: Direction.Horizontal,
-        };
     });
 
     it('should be created', () => {
@@ -47,22 +38,6 @@ describe('LocalStorageService', () => {
 
     it('should return an empty playerData if there are no playerData', () => {
         expect(service.getPlayerData('key')).toEqual({ socketId: '', roomName: '' });
-    });
-
-    it('should call sessionStorage.getItem on getPlacementCommands', () => {
-        const spy = spyOn(sessionStorage, 'getItem');
-        service.getPlacementCommands('key');
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('should return the placementCommands on getPlacementCommands', () => {
-        service.setItem('key', JSON.stringify([placementCommand]));
-
-        expect(service.getPlacementCommands('key')).toEqual([placementCommand]);
-    });
-
-    it('should return an empty array if there are no placementCommands', () => {
-        expect(service.getPlacementCommands('key')).toEqual([]);
     });
 
     it('should call sessionStorage.removeItem on removeItem', () => {

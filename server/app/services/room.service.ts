@@ -7,14 +7,26 @@ import { Service } from 'typedi';
 export class RoomService {
     roomsAvailable: Room[];
     roomsUnavailable: Room[];
-    roomsToPick: Room[];
     roomCount: number;
 
     constructor() {
         this.roomCount = 0;
         this.roomsAvailable = [];
         this.roomsUnavailable = [];
-        this.roomsToPick = [];
+    }
+
+    getRoomsPublic(): Room[] {
+        const publicUnavailableRoom = this.roomsUnavailable.filter((room) => !room.isSolo && room.roomInfo.isPublic);
+        const publicAvailableRoom = this.roomsAvailable.filter((room) => !room.isSolo && room.roomInfo.isPublic);
+        return publicUnavailableRoom.concat(publicAvailableRoom);
+    }
+
+    getRoomsAvailable(): Room[] {
+        return this.roomsAvailable;
+    }
+
+    getRoomsUnavailable(): Room[] {
+        return this.roomsUnavailable;
     }
 
     isRoomNameValid(roomName: string | undefined): boolean {
@@ -75,13 +87,6 @@ export class RoomService {
             return roomUnavailable;
         }
         return undefined;
-    }
-
-    getRoomsAvailable(): Room[] {
-        return this.roomsAvailable;
-    }
-    getRoomsUnavailable(): Room[] {
-        return this.roomsUnavailable;
     }
 
     private convertToServerRoom(clientRoom: Room): Room {

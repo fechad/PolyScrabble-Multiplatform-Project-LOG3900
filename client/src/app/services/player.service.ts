@@ -16,12 +16,13 @@ export class PlayerService {
     room: Room;
     isNewChatWindowOpen: boolean;
     discussionChannelService: DiscussionChannelService;
-
+    isObserver: boolean;
     constructor(private httpService?: HttpService) {
         this.isNewChatWindowOpen = false;
         this.room = new Room();
         this.player = new Player();
         this.discussionChannelService = new DiscussionChannelService();
+        this.isObserver = false;
     }
 
     get account(): ClientAccountInfo {
@@ -50,6 +51,8 @@ export class PlayerService {
     resetPlayerAndRoomInfo() {
         this.player.resetPlayerInfo();
         this.room.reinitialize();
+        this.discussionChannelService.reinitialize();
+        this.isObserver = false;
     }
 
     async updateUserSettings(newSettings: UserSettings) {

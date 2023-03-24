@@ -3,6 +3,7 @@ import { Room } from '@app/classes/room-model/room';
 import { GameLevel } from '@app/enums/game-level';
 import { SocketEvent } from '@app/enums/socket-event';
 import { JoinRoomForm } from '@app/interfaces/join-room-form';
+import { ObserveRoomForm } from '@app/interfaces/observe-room-form';
 import * as io from 'socket.io';
 import { SocketHandlerService } from './socket-handler.service';
 
@@ -27,6 +28,7 @@ export class SocketRoomService extends SocketHandlerService {
         this.socketJoin(socket, availableRoom.roomInfo.name);
         this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
+        this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
     }
 
     handleLeaveRoomCreator(socket: io.Socket, roomName: string) {
@@ -35,6 +37,7 @@ export class SocketRoomService extends SocketHandlerService {
         this.socketLeaveRoom(socket, roomName);
         this.roomService.removeRoom(roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
+        this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
     }
 
     handleLeaveRoomOther(socket: io.Socket, roomName: string): Player | undefined {
@@ -43,6 +46,12 @@ export class SocketRoomService extends SocketHandlerService {
 
         const serverRoom = this.roomService.getRoom(roomName);
         if (!serverRoom) return;
+
+        const observer = serverRoom.getObserver(socket.id);
+        if (observer) {
+            serverRoom.removeObserver(observer.username);
+        }
+
         const player = serverRoom.getPlayer(socket.id);
         if (!player) return;
         serverRoom.removePlayer(player);
@@ -82,6 +91,21 @@ export class SocketRoomService extends SocketHandlerService {
         this.socketEmitRoom(socket, gameCreator.socketId, SocketEvent.PlayerFound, { room: serverRoom, player: playerToAdd });
     }
 
+    handleObserveRoomRequest(socket: io.Socket, observeRoomForm: ObserveRoomForm) {
+        if (!observeRoomForm) return;
+        const roomName = observeRoomForm.roomName;
+        const serverRoom = this.roomService.getRoom(roomName);
+        if (!serverRoom || !serverRoom.canAddObserver(observeRoomForm.observer.username, observeRoomForm.password)) return;
+
+        serverRoom.addObserver(observeRoomForm.observer);
+
+        this.socketJoin(socket, roomName);
+        this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
+        this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
+
+        this.socketEmit(socket, SocketEvent.ObserverAccepted, serverRoom);
+    }
+
     handleAcceptPlayer(socket: io.Socket, data: { roomName: string; playerName: string }) {
         const serverRoom = this.roomService.getRoom(data.roomName);
         if (!serverRoom) return;
@@ -101,5 +125,9 @@ export class SocketRoomService extends SocketHandlerService {
 
     handleAvailableRooms(socket: io.Socket) {
         this.sendToEveryoneInRoom(socket.id, SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
+    }
+
+    handlePublicRooms(socket: io.Socket) {
+        this.sendToEveryoneInRoom(socket.id, SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
     }
 }

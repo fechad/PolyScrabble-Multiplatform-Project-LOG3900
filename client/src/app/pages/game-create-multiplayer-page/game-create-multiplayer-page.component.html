@@ -23,7 +23,7 @@
                         <label
                             #botNameLabel
                             (click)="focusInput(botNameSelect)"
-                            class="simple-label placeholder select"
+                            class="simple-label select"
                             [translate]="'CLASSIC.CREATE-SOLO.VP-NAME'"
                         >
                         </label>
@@ -46,7 +46,7 @@
                         <label
                             #levelLabel
                             (click)="focusInput(levelSelect)"
-                            class="simple-label placeholder select"
+                            class="simple-label select"
                             [translate]="'CLASSIC.CREATE-MULTI.VP-DIFFICULTY.LABEL'"
                         >
                         </label>
@@ -66,12 +66,7 @@
                     </div>
 
                     <div class="input-container">
-                        <label
-                            #timerLabel
-                            (click)="focusInput(timerSelect)"
-                            class="simple-label placeholder select"
-                            [translate]="'CLASSIC.CREATE-MULTI.TIME'"
-                        >
+                        <label #timerLabel (click)="focusInput(timerSelect)" class="simple-label select" [translate]="'CLASSIC.CREATE-MULTI.TIME'">
                         </label>
                         <select
                             #timerSelect
@@ -99,7 +94,7 @@
                         <label
                             #visibilityLabel
                             (click)="focusInput(levelSelect)"
-                            class="simple-label placeholder select"
+                            class="simple-label select"
                             [translate]="'CLASSIC.CREATE-MULTI.GAME-TYPE.LABEL'"
                         ></label>
                         <select
@@ -121,7 +116,7 @@
                         <label
                             #roomPasswordLabel
                             (click)="focusInput(roomPasswordInput)"
-                            class="simple-label placeholder"
+                            class="simple-label"
                             [translate]="'OTHER.PASSWORD-INPUT'"
                         ></label>
                         <input

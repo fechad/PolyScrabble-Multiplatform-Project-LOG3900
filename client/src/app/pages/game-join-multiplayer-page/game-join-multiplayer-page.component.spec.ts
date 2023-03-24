@@ -233,9 +233,9 @@ describe('GameJoinMultiplayerPageComponent', () => {
         });
 
         describe('Available rooms tests', () => {
-            it('should call socketServiceMock.send on getAvailableRooms', () => {
+            it('should call socketServiceMock.send on updateRooms', () => {
                 socketServiceMock.send = jasmine.createSpy();
-                component.getAvailableRooms();
+                component.updateRooms();
                 expect(socketServiceMock.send).toHaveBeenCalled();
             });
         });

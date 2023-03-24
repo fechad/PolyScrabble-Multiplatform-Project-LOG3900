@@ -165,15 +165,21 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     leaveRoom() {
-        this.audioService.stopSound();
-        if (this.selectedDiscussionChannel.owner?.username === this.playerService.player.pseudo) {
+        if (this.playerService.player.isCreator) {
             this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
         } else {
             this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
         }
 
-        this.room.reinitialize(this.room.roomInfo.gameType);
-        this.router.navigate(['/main']);
+        this.navigateHome();
+    }
+
+    leaveDiscussionChannel() {
+        if (this.selectedDiscussionChannel.owner?.username === this.playerService.player.pseudo) {
+            this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
+        } else {
+            this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
+        }
     }
 
     handlePlayerFound(data: { room: Room; player: Player }) {
@@ -209,6 +215,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     rejectPlayer(playerName: string) {
+        this.room.removePlayerByName(playerName);
         this.socketService.send(SocketEvent.RejectPlayer, { roomName: this.room.roomInfo.name, playerName });
     }
 
@@ -217,6 +224,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     navigateSettings() {
+        this.audioService.stopSound();
         this.router.navigate(['/settings']);
     }
 
@@ -226,14 +234,28 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     navigateUserPage() {
+        this.audioService.stopSound();
         this.router.navigate(['/user']);
+    }
+
+    navigateObserveRoomPage() {
+        this.audioService.stopSound();
+        this.playerService.isObserver = true;
+        this.room.roomInfo.gameType = 'classic';
+        this.router.navigate(['game/multiplayer/join']);
     }
 
     async logOut() {
         this.audioService.stopSound();
         lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
+        if (this.playerService.player.isCreator) {
+            this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
+        } else {
+            this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
+        }
+
         this.socketService.send(SocketEvent.LeaveChatChannel, { channel: 'General Chat', username: this.playerService.player.pseudo });
-        this.playerService.player.pseudo = '';
+        this.playerService.resetPlayerAndRoomInfo();
         this.router.navigate(['/home']);
     }
 
@@ -313,11 +335,8 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         });
 
         this.socketService.on(SocketEvent.PlayerLeft, (playerWhoLeft: Player) => {
-            const playerToRemove = this.room.players.find((player: Player) => player.pseudo === playerWhoLeft.pseudo);
-            if (playerToRemove) {
-                this.room.players.splice(this.room.players.indexOf(playerToRemove), 1);
-            }
-            if (this.room.players.length === this.room.roomInfo.maxPlayers - 1) {
+            this.room.removePlayerByName(playerWhoLeft.clientAccountInfo.username);
+            if (this.room.players.length <= this.room.roomInfo.maxPlayers - 1) {
                 this.socketService.send(SocketEvent.SetRoomAvailable, this.room.roomInfo.name);
             }
         });
@@ -336,6 +355,8 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
                 user: this.playerService.player.pseudo,
                 isRoomChannel: true,
             });
+        } else if (!this.isGamePage && this.playerService.discussionChannelService.roomChannel.name !== '') {
+            this.playerService.discussionChannelService.roomChannel = new DiscussionChannel('');
         }
 
         this.updateAvailableChannels();

@@ -5,7 +5,6 @@ import { PlaceDraggedLetter } from '@app/classes/command/place-dragged-letter';
 import { PlaceLetter } from '@app/classes/command/place-letter';
 import { Dimension } from '@app/classes/dimension';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
-import { PlacementCommand } from '@app/classes/placement-command';
 import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
 import { Tile } from '@app/classes/tile';
@@ -13,6 +12,7 @@ import {
     DEFAULT_BOARD_BACKGROUND_COLOR,
     DEFAULT_BOARD_INDEXES_COLOR,
     DEFAULT_CASE_COUNT,
+    DEFAULT_ROWS,
     // eslint-disable-next-line prettier/prettier
     DEFAULT_STARTING_POSITION,
 } from '@app/constants/board-constants';
@@ -22,6 +22,7 @@ import { Direction } from '@app/enums/direction';
 import { PlacementType } from '@app/enums/placement-type';
 import { SelectionType } from '@app/enums/selection-type';
 import { ANY_ARROW, DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
+import { PlacementData } from '@app/interfaces/placement-data';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { SessionStorageService } from './session-storage.service';
 
@@ -32,7 +33,6 @@ export class BoardService {
     lettersInBoard: Tile[][];
     selectedTileForManipulation: Tile | null;
     isDraggingATile: boolean;
-    private placementCommands: PlacementCommand[];
     private tileDimension: Dimension;
 
     constructor(
@@ -44,7 +44,6 @@ export class BoardService {
         this.selectedTileForManipulation = null;
         this.isDraggingATile = false;
         this.tileDimension = { width: 0, height: 0, letterRatio: 0 };
-        this.placementCommands = [];
     }
 
     private get tileWidth() {
@@ -205,12 +204,10 @@ export class BoardService {
         this.addPlacementCommand(word, startingPosition, direction as string);
     }
 
-    redrawLettersTile() {
-        const placementCommandsHistory = this.sessionStorageService.getPlacementCommands('placementCommands');
-        this.sessionStorageService.setItem('placementCommands', JSON.stringify([]));
-        this.placementCommands = [];
-        for (const placementCommand of placementCommandsHistory) {
-            this.drawWord(placementCommand.word, placementCommand.xPosition, placementCommand.yPosition, placementCommand.direction);
+    redrawLettersTile(placementsData: PlacementData[]) {
+        for (const placementData of placementsData) {
+            const rowNumber = this.matchRowNumber(placementData.row) as number;
+            this.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
         }
     }
 
@@ -223,6 +220,21 @@ export class BoardService {
         if (this.isFirstRowOrColumn(tileIndexes)) return false;
         if (this.lettersInBoard[tileIndexes.x][tileIndexes.y].content !== '') return false;
         return true;
+    }
+
+    matchRowNumber(row: string): number | void {
+        for (let i = 1; i < DEFAULT_CASE_COUNT; i++) {
+            if (row === DEFAULT_ROWS[i]) {
+                return i;
+            }
+        }
+        return;
+    }
+
+    // We keep this method just for the placementCommands tests
+    // eslint-disable-next-line no-unused-vars
+    private addPlacementCommand(word: string, startingPosition: Position, direction: string) {
+        return;
     }
 
     private canDragTile(tile: Tile): boolean {
@@ -320,11 +332,6 @@ export class BoardService {
         if (word.length < 1) return new BoardMessage('Invalid word', 'Empty word provided');
         if (xPosition >= DEFAULT_CASE_COUNT || yPosition >= DEFAULT_CASE_COUNT) return new BoardMessage('Invalid placement', 'Invalid row/column');
         return;
-    }
-
-    private addPlacementCommand(word: string, startingPosition: Position, direction: string) {
-        this.placementCommands.push({ word, xPosition: startingPosition.x, yPosition: startingPosition.y, direction });
-        this.sessionStorageService.setItem('placementCommands', JSON.stringify(this.placementCommands));
     }
 
     private setUpTiles(tilesArray: Tile[][]) {

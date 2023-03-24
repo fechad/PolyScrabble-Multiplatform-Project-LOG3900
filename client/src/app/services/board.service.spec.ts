@@ -228,6 +228,19 @@ describe('BoardService', () => {
         });
     });
 
+    describe('matchRowNumber tests', () => {
+        it('matchRow should match the letter given to the index ', () => {
+            const result = 15;
+            expect(service.matchRowNumber('o')).toEqual(result);
+        });
+        it('matchRow should return undefined if an empty string is given ', () => {
+            expect(service.matchRowNumber('')).toBe(undefined);
+        });
+        it('matchRow should return undefined if a letter upper than o is given ', () => {
+            expect(service.matchRowNumber('w')).toBe(undefined);
+        });
+    });
+
     describe('drawWord and PlacementValidation tests', () => {
         let addPlacementCommandSpy: jasmine.Spy;
         beforeEach(() => {
@@ -338,39 +351,5 @@ describe('BoardService', () => {
         servicePrivateAccess.updatePosition(Direction.Vertical, position);
         expect(position.x).toBe(xPosition);
         expect(position.y).toBe(yPosition + 1);
-    });
-
-    it('should add the command to placementCommand on drawWord', () => {
-        const previousLength = servicePrivateAccess.placementCommands.length;
-        const spy = spyOn(sessionStorageService, 'setItem');
-        service.drawWord('Bonjour', RANDOM_VALID_CASE, RANDOM_VALID_CASE, Direction.Horizontal);
-        expect(spy).toHaveBeenCalled();
-        expect(servicePrivateAccess.placementCommands.length).toEqual(previousLength + 1);
-        expect(servicePrivateAccess.placementCommands[0].word).toEqual('Bonjour');
-        expect(servicePrivateAccess.placementCommands[0].xPosition).toEqual(RANDOM_VALID_CASE);
-        expect(servicePrivateAccess.placementCommands[0].yPosition).toEqual(RANDOM_VALID_CASE);
-        expect(servicePrivateAccess.placementCommands[0].direction).toEqual(Direction.Horizontal);
-    });
-
-    it('should use the session storage items to redraw the lettersTile', (done) => {
-        const placementCommand = {
-            word: 'Mot',
-            xPosition: 3,
-            yPosition: 3,
-            direction: Direction.Horizontal,
-        };
-
-        const getPlacementCommandStub = spyOn(sessionStorageService, 'getPlacementCommands').and.returnValue([placementCommand, placementCommand]);
-        const sessionStoragePlacementLength = sessionStorageService.getPlacementCommands('placementCommands').length;
-        const setItemSpy = spyOn(sessionStorageService, 'setItem');
-        const drawWordSpy = spyOn(servicePrivateAccess, 'drawWord').and.callThrough();
-        servicePrivateAccess.redrawLettersTile();
-
-        expect(getPlacementCommandStub).toHaveBeenCalled();
-        expect(setItemSpy).toHaveBeenCalled();
-        expect(drawWordSpy).toHaveBeenCalled();
-        expect(servicePrivateAccess.placementCommands).toEqual([placementCommand, placementCommand]);
-        expect(servicePrivateAccess.placementCommands.length).toEqual(sessionStoragePlacementLength);
-        done();
     });
 });

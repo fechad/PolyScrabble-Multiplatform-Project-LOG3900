@@ -51,7 +51,7 @@ export class SocketHandlerService {
         socket.leave(roomName);
     }
 
-    async handleDisconnecting(socket: io.Socket): Promise<void> {
+    async handleDisconnecting(socket: io.Socket): Promise<string | undefined> {
         const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
         if (!room) return;
 
@@ -62,23 +62,31 @@ export class SocketHandlerService {
         });
     }
 
-    handlePlayerLeavingGame(socket: io.Socket, leavingRoom?: Room) {
+    handlePlayerLeavingGame(socket: io.Socket, leavingRoom?: Room): string | undefined {
         const room = leavingRoom || this.roomService.getRoom(this.getSocketRoom(socket) as string);
-        if (!room || this.handleOnlyPlayerLeft(room)) return;
+        if (!room) return;
+
+        const roomObserver = room.getObserver(socket.id);
+        if (roomObserver) return roomObserver.username;
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
+        if (this.handleOnlyPlayerLeft(room)) return player.pseudo;
+
         if (room.isSolo) {
             this.handleSoloPlayerLeft(room);
-            return;
+            return player.pseudo;
         }
 
         this.handleMultiPlayerLeft(socket, room, player);
+        return player.pseudo;
     }
 
     handleOnlyPlayerLeft(room: Room): boolean {
         if (room.players.length <= 1) {
             this.roomService.removeRoom(room.roomInfo.name);
+            if (!room.roomInfo.isPublic) return true;
+            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
             return true;
         }
         return false;
@@ -92,6 +100,8 @@ export class SocketHandlerService {
         room.removePlayer(player);
         if (!room.hasARealPlayerLeft()) {
             this.roomService.removeRoom(room.roomInfo.name);
+            if (!room.roomInfo.isPublic) return;
+            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
             return;
         }
         this.swapPlayerForBot(room, player);

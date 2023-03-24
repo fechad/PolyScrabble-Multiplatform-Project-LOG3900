@@ -9,6 +9,7 @@ import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
 import { CommandResult } from '@app/interfaces/command-result';
+import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
@@ -38,9 +39,18 @@ export class SocketGameService extends SocketHandlerService {
         const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
         if (!room) return;
         const player = room.getPlayer(socket.id);
-        if (!player) return;
+        const roomObserver = room.getObserver(socket.id);
 
-        this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
+        if (!player && !roomObserver) return;
+
+        if (player) {
+            this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
+        }
+        if (roomObserver) {
+            this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
+            room.removeObserver(roomObserver.username);
+        }
+
         const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
 
@@ -216,10 +226,12 @@ export class SocketGameService extends SocketHandlerService {
                 clearInterval(timerInterval);
                 if (room.players.length > 0) return;
                 this.roomService.removeRoom(room.roomInfo.name);
+                if (!room.roomInfo.isPublic) return;
+                this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
                 return;
             }
 
-            if (room.elapsedTime >= +room.roomInfo.timerPerTurn) {
+            if (room.elapsedTime > +room.roomInfo.timerPerTurn) {
                 const currentPlayer = room.getCurrentPlayerTurn();
                 if (!currentPlayer) return;
                 this.sendToEveryoneInRoom(currentPlayer.socketId, SocketEvent.Message, {
@@ -253,7 +265,7 @@ export class SocketGameService extends SocketHandlerService {
 
     changeTurn(socket: io.Socket, room: Room) {
         if (!room) return;
-        room.elapsedTime = 0;
+        room.elapsedTime = 1;
         room.incrementTurnPassedCounter();
         if (!room.canChangePlayerTurn()) {
             this.handleGamePassFinish(room);
@@ -325,6 +337,7 @@ export class SocketGameService extends SocketHandlerService {
         if (!report || !room || !sender) return;
         switch (report.commandType) {
             case CommandVerbs.PLACE:
+                room.addPlacementData(report.commandData as PlacementData);
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.DrawBoard, report.commandData);
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, sender);
                 this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
