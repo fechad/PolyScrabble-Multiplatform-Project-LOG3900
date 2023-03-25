@@ -23,7 +23,11 @@ export class UserInfoController {
             xpForNextLevel: LevelService.getRemainingNeededXp(data.totalXP),
             victoriesCount: data.gamesWon,
         };
-        const clientAccountInfo: ClientAccountInfo = { ...data, progressInfo, highScores: { classic: data.bestGames ? data.bestGames[0].score : 0 } };
+        const clientAccountInfo: ClientAccountInfo = {
+            ...data,
+            progressInfo,
+            highScores: { classic: data.bestGames[0] ? data.bestGames[0].score : 0 },
+        };
         return clientAccountInfo;
     }
     private reduceClientAccountInfo(clientAccount: ClientAccountInfo): Account {
