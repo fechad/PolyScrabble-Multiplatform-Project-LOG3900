@@ -36,6 +36,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
         super(socketService);
         this.title = 'LOG2990';
         this.message = new BehaviorSubject<string>('');
+        this.playerService.setUserInfo();
     }
 
     get room(): Room {

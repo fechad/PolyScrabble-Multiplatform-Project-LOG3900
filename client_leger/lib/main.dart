@@ -3,8 +3,6 @@ import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-import 'pages/home_page.dart';
-
 AuthService authenticator = AuthService();
 late List<CameraDescription> cameras;
 void main() async {
@@ -36,12 +34,9 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.blue,
         ),
-        //home: const MyHomePage(title: 'PolyScrabble'),
-        home: isProduction
-            ? ConnexionPageWidget()
-            :
-            //GamePageWidget());
-            MyHomePage(title: 'PolyScrabble'));
+        home: ConnexionPageWidget()
+        //MyHomePage(title: 'PolyScrabble')
+        );
   }
 }
 

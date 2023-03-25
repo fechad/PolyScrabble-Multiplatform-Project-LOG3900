@@ -40,13 +40,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    if (!isProduction) authenticator.setLoggedInEmail('');
     connect();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  verifyInfo() {
+    authenticator.setUser(authenticator.currentUser.email);
   }
 
   @override
@@ -57,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    verifyInfo();
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
@@ -119,11 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
-                          return ThemedPage();
-                        })));
+                      return ThemedPage();
+                    })));
                     //setState(() {
-                      //page = 1;
-                      //scaffoldKey.currentState?.openEndDrawer();
+                    //page = 1;
+                    //scaffoldKey.currentState?.openEndDrawer();
                     //});
                   },
                 ),

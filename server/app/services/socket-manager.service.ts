@@ -141,9 +141,9 @@ export class SocketManager {
             });
 
             socket.on(SocketEvent.LeaveRoomOther, (roomName: string) => {
-                const playerRemoved = this.socketRoomService.handleLeaveRoomOther(socket, roomName);
-                if (!playerRemoved) return;
-                this.socketChannelService.handleLeaveChannel(socket, roomName, playerRemoved.pseudo);
+                const playerRemovedPseudo = this.socketRoomService.handleLeaveRoomOther(socket, roomName);
+                if (!playerRemovedPseudo) return;
+                this.socketChannelService.handleLeaveChannel(socket, roomName, playerRemovedPseudo);
             });
 
             socket.on(SocketEvent.LeaveGame, async () => {
