@@ -6,7 +6,7 @@ export class DateService {
     getCurrentDate(): string {
         return new Date().toISOString();
     }
-    getGamePeriod(startDate: Date, endDate: Date): Period {
+    getGameDuration(startDate: Date, endDate: Date): Period {
         const diff = Math.floor((endDate.getTime() - startDate.getTime()) / THOUSAND);
         const minutes = Math.floor(diff / SECONDS_IN_MINUTE);
         const seconds = diff % SECONDS_IN_MINUTE;

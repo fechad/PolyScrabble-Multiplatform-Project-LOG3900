@@ -177,7 +177,6 @@ export class LoginPageComponent implements AfterViewInit {
             this.playerService.player.pseudo = (loginResult as any).username;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             this.playerService.player.email = (loginResult as any).email;
-            this.playerService.setUserInfo();
 
             this.router.navigate(['/main']);
         } else {

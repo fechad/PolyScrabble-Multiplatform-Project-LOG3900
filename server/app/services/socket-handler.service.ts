@@ -71,34 +71,15 @@ export class SocketHandlerService {
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
-        if (this.handleOnlyPlayerLeft(room)) return player.pseudo;
 
-        if (room.isSolo) {
-            this.handleSoloPlayerLeft(room);
-            return player.pseudo;
-        }
-
-        this.handleMultiPlayerLeft(socket, room, player);
+        this.handlePlayerLeft(socket, room, player);
         return player.pseudo;
     }
 
-    handleOnlyPlayerLeft(room: Room): boolean {
-        if (room.players.length <= 1) {
-            this.roomService.removeRoom(room.roomInfo.name);
-            if (!room.roomInfo.isPublic) return true;
-            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
-            return true;
-        }
-        return false;
-    }
-
-    handleSoloPlayerLeft(room: Room) {
-        this.roomService.removeRoom(room.roomInfo.name);
-    }
-
-    handleMultiPlayerLeft(socket: io.Socket, room: Room, player: Player) {
+    handlePlayerLeft(socket: io.Socket, room: Room, player: Player) {
         room.removePlayer(player);
         if (!room.hasARealPlayerLeft()) {
+            this.updateGame(room);
             this.roomService.removeRoom(room.roomInfo.name);
             if (!room.roomInfo.isPublic) return;
             this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
@@ -181,18 +162,19 @@ export class SocketHandlerService {
     }
 
     protected async updateGame(room: Room) {
-        const playerResults: { playerID: string; score: number }[] = [];
-        room.players.forEach((player) => {
+        const playerResults: { playerID: string; score: number; unfairQuit: boolean }[] = [];
+        const players = room.players.concat(room.leavers);
+        players.forEach((player) => {
             let playerId = 'notAnswered';
-            if (player.pseudo && !(player instanceof VirtualPlayer)) {
-                playerId = player.pseudo;
-            }
-            const result = { playerID: playerId, score: player.points };
+
+            if (player.pseudo && !(player instanceof VirtualPlayer)) playerId = player.pseudo;
+            if (player.pseudo && player instanceof VirtualPlayer) playerId = 'Bot' + player.pseudo;
+            const result = { playerID: playerId, score: player.points, unfairQuit: player.gaveUpUnfairly ? player.gaveUpUnfairly : false };
             playerResults.push(result);
         });
         const game: Game = {
             startDatetime: room.startDate.toUTCString(),
-            period: this.dateService.convertToString(this.dateService.getGamePeriod(room.startDate, new Date())),
+            period: this.dateService.convertToString(this.dateService.getGameDuration(room.startDate, new Date())),
             results: playerResults,
             gameType: room.roomInfo.gameType,
             surrender: room.roomInfo.surrender,

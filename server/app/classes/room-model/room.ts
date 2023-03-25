@@ -13,7 +13,6 @@ import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
 import { RoomObserver } from '@app/interfaces/room-observer';
 import { GameManager } from './game-manager';
-
 const MULTIPLAYER_MIN_PLAYERS = 4;
 
 const DEFAULT_ROOM = {
@@ -38,6 +37,7 @@ export class Room {
     botCommunicationManager: BotCommunicationManager;
     fillerNamesUsed: string[];
     botsLevel: GameLevel;
+    leavers: Player[];
     private placementsData: PlacementData[];
     private isFirstGame: boolean;
     private gameManager: GameManager;
@@ -50,6 +50,7 @@ export class Room {
         this.fillerNamesUsed = [];
         this.botsLevel = clientRoom ? clientRoom.botsLevel : GameLevel.Adaptive;
         this.bots = [];
+        this.leavers = [];
         this.roomInfo = !clientRoom
             ? DEFAULT_ROOM
             : {
@@ -181,10 +182,13 @@ export class Room {
 
     removePlayer(player: Player) {
         const playerToRemove = this.players.find((element) => element.socketId === player.socketId);
+        if (!playerToRemove) return;
         if (playerToRemove === this.getCurrentPlayerTurn()) this.changePlayerTurn();
-        if (playerToRemove) {
-            this.players.splice(this.players.indexOf(playerToRemove), 1);
-        }
+        if (playerToRemove) this.players.splice(this.players.indexOf(playerToRemove), 1);
+
+        if (this.elapsedTime <= 0) return;
+        this.punishUnfairGiveUp(playerToRemove);
+        this.leavers.push(playerToRemove);
     }
 
     removeObserver(username: string) {
@@ -273,6 +277,13 @@ export class Room {
         this.placementsData.push(placementData);
     }
 
+    private punishUnfairGiveUp(player: Player) {
+        if (this.hasARealPlayerLeft()) {
+            player.gaveUpUnfairly = true;
+            return;
+        }
+        if (this.isSolo) player.gaveUpUnfairly = true;
+    }
     private isSamePassword(password?: string): boolean {
         if (!password && this.roomInfo.password === '') return true;
         return this.roomInfo.password === password;

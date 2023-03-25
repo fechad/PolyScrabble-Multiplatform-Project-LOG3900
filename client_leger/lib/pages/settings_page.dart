@@ -81,6 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(victoryMusic);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: const ChatDrawer(),

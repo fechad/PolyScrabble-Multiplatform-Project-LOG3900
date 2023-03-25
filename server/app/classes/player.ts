@@ -12,6 +12,7 @@ export class Player {
     managerId: number;
     lastThreeCommands?: CommandResult[];
     accountID?: string;
+    gaveUpUnfairly?: boolean;
     clientAccountInfo: ClientAccountInfo;
 
     constructor(socketId: string, pseudo: string, isCreator: boolean, clientAccountInfo?: ClientAccountInfo) {

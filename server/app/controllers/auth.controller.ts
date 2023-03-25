@@ -74,7 +74,7 @@ export class AuthController {
                     highScores: {},
                 };
                 await this.databaseService
-                    .batchSave('accounts', [account], (entry: Account) => entry.email)
+                    .addAccount(account)
                     .then(async () => {
                         await this.databaseService.log('userActions', req.body.email, {
                             message: 'accountCreated/CréationDuCompte',
@@ -82,8 +82,7 @@ export class AuthController {
                         });
                         res.status(StatusCodes.CREATED).send();
                     })
-                    // eslint-disable-next-line no-console
-                    .catch((e) => console.log(e));
+                    .catch((error) => res.status(StatusCodes.CONFLICT).send(error.message));
             } catch (error) {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }

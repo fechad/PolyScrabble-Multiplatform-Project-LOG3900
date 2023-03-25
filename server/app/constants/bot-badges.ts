@@ -25,3 +25,10 @@ export const SERENA_BADGE: Badge = {
     id: 'Serena',
     description: 'Récompense pour avoir vaincu le Serena Williams dans un duel épique!',
 };
+export enum ThemedBadge {
+    SANTA = 'Santa',
+    EINSTEIN = 'Einstein',
+    TRUMP = 'Trump',
+    MOZART = 'Mozart',
+    SERENA = 'Serena',
+}

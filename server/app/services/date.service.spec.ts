@@ -26,7 +26,7 @@ describe('DateService', () => {
         endDate.setHours(21);
         endDate.setMinutes(5);
         endDate.setSeconds(20);
-        const res = dateService.convertToString(dateService.getGamePeriod(startDate, endDate));
+        const res = dateService.convertToString(dateService.getGameDuration(startDate, endDate));
         expect(res).to.equal('34mn 35s');
     });
 });

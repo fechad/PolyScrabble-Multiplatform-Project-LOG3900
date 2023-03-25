@@ -5,6 +5,7 @@ import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart';
 
 import '../classes/constants.dart';
 import '../firebase_options.dart';
@@ -14,20 +15,17 @@ class AuthService {
   late FirebaseAuth firebase;
   bool accountSet = false;
   late Account currentUser;
-  late String loggedInEmail;
   final bool isProduction = bool.fromEnvironment('dart.vm.product');
 
   AuthService();
 
   AuthService._create() {
-    initializeApp().then(
-      (value) => firebase = FirebaseAuth.instanceFor(app: app),
-    );
+    initializeApp().then((value) =>
+        {firebase = FirebaseAuth.instanceFor(app: app), setDefaultUser()});
   }
 
   static Future<AuthService> create() async {
     var auth = AuthService._create();
-    // setUser();
     return auth;
   }
 
@@ -41,11 +39,24 @@ class AuthService {
   Future<void> signUpUser(
       String emailAddress, String password, String username) async {
     try {
+      print('fake firebase');
+      final res = await createUser(emailAddress, username);
+      print('fake firebase done');
+      if (res.statusCode == 409) {
+        throw ("The account already exists for that email.");
+      }
+    } catch (e) {
+      if (e == "The account already exists for that email.") {
+        throw ("The account already exists for that email.");
+      }
+    }
+    try {
+      print('real firebase');
       final credential = await firebase.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
-      createUser(credential.user!.email!, username);
+      setUser(credential.user!.email!);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         throw ('This email is not valid');
@@ -94,24 +105,14 @@ class AuthService {
     await FirebaseAuth.instance.signOut();
   }
 
-  void setLoggedInEmail(String email) {
-    if (!isProduction) {
-      return setDefaultUser();
-    }
-    loggedInEmail = email;
-  }
-
-  Future<void> createUser(String email, String username) async {
+  Future<Response> createUser(String email, String username) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-    if (!isProduction) return;
-    await httpService
-        .createUser(email, username)
-        .then((value) => setUser(email));
+
+    return await httpService.createUser(email, username);
   }
 
   Future<void> setUser(String email) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-    if (!isProduction) return setDefaultUser();
     await httpService.getUserInfo(email).then((value) => {
           currentUser = Account(
             username: '${jsonDecode(value.body)['username']}',

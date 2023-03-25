@@ -27,7 +27,6 @@ describe('SocketHandler service tests', () => {
     let getRoomStub: sinon.SinonStub;
     // let getSocketRoomStub: sinon.SinonStub;
     let getPlayerStub: sinon.SinonStub;
-
     const socketHandlerService = new SocketHandlerService(
         new io.Server(http.createServer(), { cors: { origin: '*', methods: ['GET', 'POST'] } }),
         new ScoresService({} as any),
@@ -62,6 +61,7 @@ describe('SocketHandler service tests', () => {
         // getSocketRoomStub = sinon.stub(socketHandlerService, 'getSocketRoom').returns(roomMock.roomInfo.name);
         sinon.stub(socketHandlerService.commandController, 'hasCommandSyntax').returns(true);
         sinon.stub(socketHandlerService.commandController, 'executeCommand').returns(undefined);
+        sinon.stub(socketHandlerService as any, 'updateGame').callsFake(() => {});
         getPlayerStub = sinon.stub(roomMock, 'getPlayer').returns(firstPlayer);
     });
 
@@ -103,6 +103,7 @@ describe('SocketHandler service tests', () => {
 
         it('should remove the room if the player left on solo room', (done) => {
             roomMock.roomInfo.isSolo = true;
+            roomMock.players = [firstPlayer];
             socketHandlerService.roomService.roomsAvailable = [roomMock];
             const previousRoomServiceLength = socketHandlerService.roomService.roomsAvailable.length;
 

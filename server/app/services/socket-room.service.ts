@@ -41,7 +41,7 @@ export class SocketRoomService extends SocketHandlerService {
         this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
     }
 
-    handleLeaveRoomOther(socket: io.Socket, roomName: string): Player | undefined {
+    handleLeaveRoomOther(socket: io.Socket, roomName: string): string | undefined {
         if (!this.roomService.isRoomNameValid(roomName)) return;
         this.socketLeaveRoom(socket, roomName);
 
@@ -54,11 +54,11 @@ export class SocketRoomService extends SocketHandlerService {
         }
 
         const player = serverRoom.getPlayer(socket.id);
-        if (!player) return;
+        if (!player) return observer ? observer.username : undefined;
         serverRoom.removePlayer(player);
         this.socketEmitRoom(socket, roomName, SocketEvent.PlayerLeft, player);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
-        return player;
+        return player.pseudo;
     }
 
     handleSetRoomAvailable(socket: io.Socket, roomName: string) {
