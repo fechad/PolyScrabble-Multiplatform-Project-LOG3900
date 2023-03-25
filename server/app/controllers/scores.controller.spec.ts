@@ -4,7 +4,7 @@ import { Authentificator } from '@app/services/auth.service';
 import { BotsService } from '@app/services/bot.service';
 import { DatabaseService } from '@app/services/database.service';
 import { EmailService } from '@app/services/email-service';
-import { GamesHistoryService } from '@app/services/games.history.service';
+import { PlayerGameHistoryService } from '@app/services/GameEndServices/player-game-history.service';
 import { ScoresService } from '@app/services/score.service';
 import { assert, expect } from 'chai';
 import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
@@ -13,16 +13,16 @@ import * as sinon from 'sinon';
 import request from 'supertest';
 import { AuthController } from './auth.controller';
 import { BotsController } from './bots.controller';
-import { GamesHistoryController } from './game.history.controller';
 import { ImageController } from './image.controllet';
+import { PlayerStatsController } from './player-stats-controller';
 import { ScoresController } from './scores.controller';
 import { UserInfoController } from './user-info.controller';
 
 describe('ScoresController', () => {
     let scoresController: ScoresController;
     let scoresService: ScoresService;
-    let gamesHistoryController: GamesHistoryController;
-    let gamesHistoryService: GamesHistoryService;
+    let gamesHistoryController: PlayerStatsController;
+    let gamesHistoryService: PlayerGameHistoryService;
     let authController: AuthController;
     let botsService: BotsService;
     let botsController: BotsController;
@@ -43,14 +43,14 @@ describe('ScoresController', () => {
         botsController = new BotsController(botsService);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        gamesHistoryService = new GamesHistoryService({} as any);
+        gamesHistoryService = new PlayerGameHistoryService({} as any);
         // as any is used to replace the real DB service by a mock
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         authController = new AuthController({} as any, {} as any, {} as any);
         imageController = new ImageController();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         userInfoController = new UserInfoController({} as any);
-        gamesHistoryController = new GamesHistoryController(gamesHistoryService);
+        gamesHistoryController = new PlayerStatsController(gamesHistoryService);
         application = new Application(scoresController, botsController, gamesHistoryController, authController, userInfoController, imageController);
         scores = [{ points: 20, author: 'David', gameType: 'log2990', dictionary: 'English', date: new Date().toISOString() }];
     });

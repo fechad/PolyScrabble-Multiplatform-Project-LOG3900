@@ -1,8 +1,9 @@
+import { firestore } from 'firebase-admin';
+
 export interface Game {
-    startDatetime: string;
+    startDatetime: firestore.Timestamp;
+    endDatetime: firestore.Timestamp;
     period: string;
-    botIDS: string[];
     results: { playerID: string; score: number; unfairQuit: boolean }[];
     gameType: string;
-    surrender: string;
 }

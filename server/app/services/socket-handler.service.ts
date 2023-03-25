@@ -10,6 +10,7 @@ import { ChatMessage } from '@app/interfaces/chat-message';
 import { Game } from '@app/interfaces/firestoreDB/game';
 import { PlayerData } from '@app/interfaces/player-data';
 import { Score } from '@app/interfaces/score';
+import { firestore } from 'firebase-admin';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
@@ -173,16 +174,14 @@ export class SocketHandlerService {
             playerResults.push(result);
         });
         const game: Game = {
-            startDatetime: room.startDate.toUTCString(),
+            startDatetime: firestore.Timestamp.fromDate(room.startDate),
             period: this.dateService.convertToString(this.dateService.getGameDuration(room.startDate, new Date())),
             results: playerResults,
             gameType: room.roomInfo.gameType,
-            surrender: room.roomInfo.surrender,
-            botIDS: [],
+            endDatetime: firestore.Timestamp.now(),
         };
-        room.bots.forEach((bot) => game.botIDS.push(bot.pseudo));
 
-        await this.gamesHistoryService.updateGame(game.startDatetime, game);
+        await this.gamesHistoryService.updateGame(game);
         await this.playerGameHistoryService.updatePlayersGameHistories(game);
     }
 }
