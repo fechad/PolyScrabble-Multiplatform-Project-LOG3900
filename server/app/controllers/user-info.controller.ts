@@ -21,10 +21,9 @@ export class UserInfoController {
             currentLevelXp: LevelService.getTotalXpForLevel(level),
             totalXP: data.totalXP,
             xpForNextLevel: LevelService.getRemainingNeededXp(data.totalXP),
-            victoriesCount: 69,
+            victoriesCount: data.gamesWon,
         };
-        // TODO: Add a service to fetch the real highscores
-        const clientAccountInfo: ClientAccountInfo = { ...data, progressInfo, highScores: {} };
+        const clientAccountInfo: ClientAccountInfo = { ...data, progressInfo, highScores: { classic: data.bestGames[0].score } };
         return clientAccountInfo;
     }
     private reduceClientAccountInfo(clientAccount: ClientAccountInfo): Account {

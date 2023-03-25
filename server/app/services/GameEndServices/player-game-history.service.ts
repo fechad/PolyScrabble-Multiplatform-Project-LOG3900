@@ -1,28 +1,42 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { EINSTEIN_BADGE, MOZART_BADGE, SANTA_BADGE, SERENA_BADGE, ThemedBadge, TRUMP_BADGE } from '@app/constants/bot-badges';
 import { THEMED_VP_IDS } from '@app/constants/themed-mode-constants';
+import { PlayerGameStats, PlayerGameSummary } from '@app/interfaces/client-exchange/player-stats';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Game } from '@app/interfaces/firestoreDB/game';
 import { GameHeader } from '@app/interfaces/firestoreDB/game-header';
 import { DatabaseService } from '@app/services/database.service';
+import { firestore } from 'firebase-admin';
 import { Service } from 'typedi';
 
 const DATABASE_COLLECTION = 'accounts';
-const XP_GAIN_ON_VICTORY = 200;
+const XP_GAIN_ON_VICTORY = 250;
 const XP_GAIN_ON_LOSS = 50;
 @Service()
 export class PlayerGameHistoryService {
     constructor(private databaseService: DatabaseService) {}
 
+    async getUserGameStats(playerEmail: string): Promise<PlayerGameStats> {
+        const player: Account | null = await this.databaseService.getDocumentByID('accounts', playerEmail);
+        if (!player) throw new Error('Not an actual player');
+        return this.bundlePlayerStats(player);
+    }
     async updatePlayersGameHistories(game: Game) {
         const themedOpponent = this.hadThemedOpponent(game);
         const winnerUsernames = this.getWinners(game);
-
+        const endDateTime = firestore.Timestamp.now();
         game.results.forEach(async (entry) => {
             if (entry.playerID.startsWith('Bot')) return;
             const player = await this.databaseService.getDocumentByField(DATABASE_COLLECTION, 'username', entry.playerID);
 
             if (player === null) return;
-            const gameHeader: GameHeader = { type: game.gameType, score: entry.score, gameID: game.startDatetime };
+            const gameHeader: GameHeader = {
+                type: game.gameType,
+                score: entry.score,
+                gameID: game.startDatetime,
+                endDateTime,
+                won: winnerUsernames.includes(player.username),
+            };
             player.gamesPlayed.push(gameHeader);
 
             const previousBestGameIndex = player.bestGames.findIndex((bestGame) => bestGame.type === game.gameType);
@@ -38,6 +52,48 @@ export class PlayerGameHistoryService {
             if (themedOpponent && winnerUsernames.includes(player.username)) this.awardThemedBadge(player, themedOpponent);
             this.databaseService.updateDocumentByID(DATABASE_COLLECTION, player.email, player);
         });
+    }
+    private async bundlePlayerStats(player: Account): Promise<PlayerGameStats> {
+        const playedGamesCount = player.gamesPlayed.length;
+        const gamesWonCount = player.gamesWon;
+
+        const totalPoints = player.gamesPlayed.reduce((accumulator, game) => {
+            return accumulator + game.score;
+        }, 0);
+
+        const averagePointsByGame = playedGamesCount > 0 ? totalPoints / playedGamesCount : 0;
+
+        // Calculate the total duration of all played games
+        const totalDuration = player.gamesPlayed.reduce((acc, game) => {
+            return acc + (game.endDateTime.seconds - game.gameID.seconds);
+        }, 0);
+
+        // Calculate the average duration of all played games
+        const averageGameDuration = playedGamesCount > 0 ? totalDuration / playedGamesCount : 0;
+
+        const playedGames: PlayerGameSummary[] = player.gamesPlayed.map((game) => ({
+            score: game.score,
+            startDateTime: game.gameID.toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' }),
+            duration: this.secondsToTimeString(game.endDateTime.seconds - game.gameID.seconds),
+            won: game.won,
+        }));
+
+        return {
+            playedGamesCount,
+            gamesWonCount,
+            averagePointsByGame,
+            averageGameDuration: this.secondsToTimeString(averageGameDuration),
+            playedGames,
+        };
+    }
+    private secondsToTimeString(secondsCount: number) {
+        const hours = Math.floor(secondsCount / 3600);
+        const minutes = Math.floor((secondsCount % 3600) / 60);
+        const seconds = Math.floor(secondsCount % 60);
+        let formated = hours === 0 ? '' : `${hours}h `;
+        formated += minutes === 0 ? '' : `${minutes}min `;
+        formated += seconds === 0 ? '' : `${seconds}s`;
+        return formated;
     }
     private getWinners(game: Game) {
         const highestScore = Math.max(...game.results.map((player) => player.score));

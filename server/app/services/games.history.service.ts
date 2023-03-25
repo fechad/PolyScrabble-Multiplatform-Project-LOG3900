@@ -15,7 +15,7 @@ export class GamesHistoryService {
     async deleteGames(): Promise<unknown> {
         return this.databaseService.deleteCollection(DATABASE_COLLECTION);
     }
-    async updateGame(dateToUpdate: string, updatedGame: Game): Promise<WriteResult> {
-        return this.databaseService.updateDocumentByID(DATABASE_COLLECTION, updatedGame.startDatetime, updatedGame);
+    async updateGame(updatedGame: Game): Promise<WriteResult> {
+        return this.databaseService.updateDocumentByID(DATABASE_COLLECTION, updatedGame.startDatetime.valueOf(), updatedGame);
     }
 }

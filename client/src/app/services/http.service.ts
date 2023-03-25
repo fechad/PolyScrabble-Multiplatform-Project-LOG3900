@@ -8,6 +8,7 @@ import {
     UNREACHABLE_SERVER_MESSAGE,
     UNREACHABLE_SERVER_STATUS_CDOE,
 } from '@app/constants/http-constants';
+import { PlayerGameStats } from '@app/constants/player-stats';
 import { Game } from '@app/interfaces/game';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { Observable, of } from 'rxjs';
@@ -27,6 +28,7 @@ export class HttpService {
     private readonly opponentInfoUrl: string;
     private readonly avatarUrl: string;
     private readonly badgeUrl: string;
+    private readonly statsUrl: string;
     private baseUrl: string;
     private errorMessage: string;
     constructor(private http: HttpClient) {
@@ -40,7 +42,11 @@ export class HttpService {
         this.baseUrl = environment.serverUrl;
         this.errorMessage = '';
     }
-
+    getPlayerStats(playerEmail: string): Observable<PlayerGameStats> {
+        return this.http
+            .get<PlayerGameStats>(`${this.statsUrl}/${playerEmail}`)
+            .pipe(catchError(this.handleError<PlayerGameStats>('Could not get stats')));
+    }
     getCloudinarySignature(): Observable<{ timestamp: string; signature: string; apiKey: string }> {
         return this.http
             .get<{ timestamp: string; signature: string; apiKey: string }>(`${this.baseUrl}/images/signature`)
