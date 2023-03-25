@@ -31,13 +31,13 @@ class _SoloPageState extends State<SoloPage> {
   final _formKey = GlobalKey<FormState>();
   String virtualValue = 'Simon';
   String difficultyValue = 'Débutant';
-  String timeValue = '30';
+  String timeValue = '60';
 
   @override
   void initState() {
     super.initState();
     soloGameService.configureBaseSocketFeatures();
-    gameService.gameData.timerPerTurn = timeValue;
+    gameService.gameData.timerPerTurn = timeValue.toString();
     gameService.room.roomInfo.timerPerTurn = timeValue;
     gameService.gameData.isExpertLevel = false;
   }
@@ -159,8 +159,6 @@ class _SoloPageState extends State<SoloPage> {
                                   // This is called when the user selects an item.
                                   setState(() {
                                     difficultyValue = value!;
-                                    bool val = value == "Expert" ? true : false;
-                                    gameService.gameData.isExpertLevel = val;
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
@@ -178,7 +176,7 @@ class _SoloPageState extends State<SoloPage> {
                             SizedBox(
                               width: 280,
                               child: DropdownButtonFormField<String>(
-                                value: timeValue,
+                                value: timeValue.toString(),
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 style: const TextStyle(color: Colors.black),
@@ -189,8 +187,7 @@ class _SoloPageState extends State<SoloPage> {
                                   setState(() {
                                     timeValue = value!;
                                     gameService.gameData.timerPerTurn = value;
-                                    gameService.room.roomInfo.timerPerTurn =
-                                        value;
+                                    gameService.room.roomInfo.timerPerTurn = value;
                                   });
                                 },
                                 items: time.map<DropdownMenuItem<String>>(
@@ -250,7 +247,7 @@ class _SoloPageState extends State<SoloPage> {
   checkFormValues() {
     if (virtualValue == null || difficultyValue == null || timeValue == null)
       return 'Erreur';
-    soloGameService.joinRoom(virtualValue, difficultyValue);
+    soloGameService.joinRoom(virtualValue, difficultyValue.toLowerCase());
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return GamePageWidget();
     })));

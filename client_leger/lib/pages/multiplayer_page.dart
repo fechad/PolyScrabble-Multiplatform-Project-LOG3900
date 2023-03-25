@@ -5,9 +5,7 @@ import '../classes/constants.dart';
 import '../components/sidebar.dart';
 import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
-import '../services/init_service.dart';
 import '../services/link_service.dart';
-import 'home_page.dart';
 
 
 class MultiplayerPage extends StatefulWidget {
@@ -22,8 +20,9 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String difficultyValue = 'Débutant';
-  String timeValue = '30';
-  bool checkboxValue = false;
+  String timeValue = '60';
+  bool gameIsPublic = false;
+  String gameTypeValue = 'Publique';
   final TextEditingController _gamePasswordController = TextEditingController();
   bool _passwordVisible = false;
 
@@ -70,7 +69,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                     ),
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.30,
-                      height: MediaQuery.of(context).size.height * 0.60,
+                      height: MediaQuery.of(context).size.height * 0.62,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         boxShadow: [
@@ -165,67 +164,76 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                             ),
                             SizedBox(height: 16),
                             SizedBox(
-                              width: 310,
-                              child: Column(
-                                children: [
-                                  CheckboxListTile(
-                                      title: Text('Partie publique avec mot de passe',
-                                          textAlign: TextAlign.start),
-                                      controlAffinity:
-                                      ListTileControlAffinity.trailing,
-                                      activeColor: Palette.mainColor,
-                                      value: checkboxValue,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          checkboxValue = value!;
-                                        });
-                                      }),
-                                  checkboxValue
-                                      ? TextFormField(
-                                    focusNode: _focusNode,
-                                    keyboardType: TextInputType.text,
-                                    autofocus: true,
-                                    controller: _gamePasswordController,
-                                    obscureText:
-                                    !_passwordVisible, //This will obscure text dynamically
-                                    decoration: InputDecoration(
-                                      hintText: 'Entrez un mot de passe',
-                                      contentPadding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 0.0,
-                                          horizontal: 10.0),
-                                      enabledBorder:
-                                      const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            width: 1,
-                                            color: Colors.black),
-                                      ),
-                                      focusedBorder:
-                                      const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            width: 1,
-                                            color: Colors.black),
-                                      ),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _passwordVisible
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: Colors.black,
-                                        ),
-                                        onPressed: () {
-                                          // Update the state i.e. toogle the state of passwordVisible variable
-                                          setState(() {
-                                            _passwordVisible =
-                                            !_passwordVisible;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                      : SizedBox(height: 50),
-                                ],
+                              width: 280,
+                              child: Column (
+                              children: [
+                              DropdownButtonFormField<String>(
+                                value: gameTypeValue,
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                elevation: 16,
+                                style:
+                                const TextStyle(color: Colors.black),
+                                decoration: InputDecoration(labelText: "Type de partie"),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    gameTypeValue = value!;
+                                    gameIsPublic = gameType.indexOf(value!) > 0 ? true : false;
+                                  });
+                                },
+                                items: gameType.map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                               ),
+                                SizedBox(height: 5),
+                                gameType.indexOf(gameTypeValue) == 2
+                                    ? TextFormField(
+                                  focusNode: _focusNode,
+                                  keyboardType: TextInputType.text,
+                                  autofocus: true,
+                                  controller: _gamePasswordController,
+                                  obscureText:
+                                  !_passwordVisible, //This will obscure text dynamically
+                                  decoration: InputDecoration(
+                                    hintText: 'Entrez un mot de passe',
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(
+                                        vertical: 0.0,
+                                        horizontal: 10.0),
+                                    enabledBorder:
+                                    const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1,
+                                          color: Colors.black),
+                                    ),
+                                    focusedBorder:
+                                    const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1,
+                                          color: Colors.black),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _passwordVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          _passwordVisible =
+                                          !_passwordVisible;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                )
+                                    : SizedBox(height: 50),
+                              ]),
                             ),
                             Padding(
                               padding:
@@ -274,7 +282,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   checkFormValues() {
     if (difficultyValue == null || timeValue == null) return 'Erreur';
-    gameService.joinRoomMultiplayer(checkboxValue, _gamePasswordController.text);
+    gameService.joinRoomMultiplayer(gameIsPublic, _gamePasswordController.text);
     Navigator.push(context,
         MaterialPageRoute(builder: ((context) {
           return WaitingPage(

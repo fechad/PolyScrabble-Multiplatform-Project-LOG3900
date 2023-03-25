@@ -23,7 +23,7 @@ class MultiplayerGameService extends SoloGameService {
         players: [],
         roomInfo: RoomInfo(
             name: '',
-            timerPerTurn: '',
+            timerPerTurn: '60',
             gameType: 'classic',
             dictionary: 'dictionnaire par défaut',
             maxPlayers: 4,
