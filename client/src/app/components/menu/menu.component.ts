@@ -351,6 +351,11 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             }
         });
 
+        this.socketService.on(SocketEvent.RoomCreatorLeft, () => {
+            this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
+            this.router.navigate(['/main']);
+        });
+
         this.socketService.on(SocketEvent.GameStarted, () => {
             this.router.navigate(['/game']);
         });
@@ -373,11 +378,6 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     private handleGameWaitPage() {
-        if (this.isWaitMultiPage && this.roomChannel.name === '') {
-            // TODO warn that creator left;
-            this.router.navigate(['/main']);
-            return;
-        }
         if (this.isWaitMultiPage) this.showRoomChatChannel();
     }
 

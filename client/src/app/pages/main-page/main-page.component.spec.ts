@@ -10,6 +10,7 @@ import { routes } from '@app/modules/app-routing.module';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
 import { DIALOG_WIDTH, LEADERBOARD_SIZE, MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 export class MatDialogMock {
     open() {
@@ -27,7 +28,7 @@ describe('MainPageComponent', () => {
     const isoDate = '2022-03-16T14:26:51.458Z';
     beforeEach(async () => {
         return await TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserAnimationsModule],
+            imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserAnimationsModule, TranslateModule.forRoot()],
             declarations: [MainPageComponent],
             providers: [{ provide: MatDialog, useClass: MatDialogMock }, { provide: HttpService }],
             schemas: [NO_ERRORS_SCHEMA],

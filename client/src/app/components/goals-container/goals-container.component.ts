@@ -21,6 +21,7 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
     publicGoals: Goal[];
     privateGoal: Goal;
     otherPlayerPrivateGoal: Goal;
+    playersRack: { player: Player; rackLetters: string }[];
 
     constructor(protected socketService: SocketClientService, private playerService: PlayerService) {
         super(socketService);
@@ -51,6 +52,8 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
             isPublic: false,
             players: [this.player],
         };
+
+        this.playersRack = [];
         this.otherPlayerPrivateGoal = { ...this.privateGoal };
     }
 
@@ -94,6 +97,10 @@ export class GoalsContainerComponent extends ComponentCommunicationManager imple
                     this.setOtherPlayerPrivateGoal(goal);
                 });
             });
+        });
+
+        this.socketService.on(SocketEvent.PlayersRackUpdated, (playersRack: { player: Player; rackLetters: string }[]) => {
+            this.playersRack = playersRack;
         });
     }
 

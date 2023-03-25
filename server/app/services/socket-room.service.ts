@@ -38,6 +38,7 @@ export class SocketRoomService extends SocketHandlerService {
 
         this.socketLeaveRoom(socket, roomName);
         this.roomService.removeRoom(roomName);
+        this.sendToEveryoneInRoom(roomName, SocketEvent.RoomCreatorLeft);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
     }

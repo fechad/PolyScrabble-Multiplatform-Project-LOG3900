@@ -52,7 +52,7 @@ export class SocketHandlerService {
     }
 
     async handleDisconnecting(socket: io.Socket): Promise<string | undefined> {
-        const room = this.roomService.getRoom(this.getSocketRoom(socket) as string);
+        const room = this.getSocketRoom(socket);
         if (!room) return;
 
         return new Promise((resolve) => {
@@ -63,7 +63,7 @@ export class SocketHandlerService {
     }
 
     handlePlayerLeavingGame(socket: io.Socket, leavingRoom?: Room): string | undefined {
-        const room = leavingRoom || this.roomService.getRoom(this.getSocketRoom(socket) as string);
+        const room = leavingRoom || this.getSocketRoom(socket);
         if (!room) return;
 
         const roomObserver = room.getObserver(socket.id);
@@ -120,9 +120,16 @@ export class SocketHandlerService {
         this.socketEmit(socket, SocketEvent.Reconnected, { room, player });
     }
 
-    getSocketRoom(socket: io.Socket): string | undefined {
+    getSocketRoom(socket: io.Socket): Room | undefined {
         for (const room of socket.rooms) {
-            if (room.startsWith(DEFAULT_ROOM_NAME)) return room;
+            if (room.startsWith(DEFAULT_ROOM_NAME)) {
+                const wantedRoom = this.roomService.getRoom(room);
+                if (!wantedRoom) {
+                    this.socketLeaveRoom(socket, room);
+                    continue;
+                }
+                return wantedRoom;
+            }
         }
         return;
     }

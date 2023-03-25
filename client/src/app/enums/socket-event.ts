@@ -58,6 +58,7 @@ export enum SocketEvent {
     StartGameRequest = 'startGameRequest',
     GameStarted = 'gameStarted',
     LeaveGame = 'leaveGame',
+    PlayersRackUpdated = 'playersRackUpdated',
 
     // SOCKET-ROOM-SERVICE
     JoinRoomSoloStatus = 'joinRoomSoloStatus',
@@ -65,6 +66,7 @@ export enum SocketEvent {
     PlayerFound = 'playerFound',
     PlayerAccepted = 'playerAccepted',
     PlayerRejected = 'playerRejected',
+    RoomCreatorLeft = 'roomCreatorLeft',
 
     // SOCKET-CHANNEL-SERVICE
     AvailableChannels = 'availableChannels',
