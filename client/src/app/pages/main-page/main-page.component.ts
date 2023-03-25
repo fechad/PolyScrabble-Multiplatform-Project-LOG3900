@@ -6,6 +6,7 @@ import { Score } from '@app/classes/score';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { LeaderBoardDialogDataComponent } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component';
 import { HttpService } from '@app/services/http.service';
+import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -32,6 +33,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
         private sessionStorageService: SessionStorageService,
         protected socketService: SocketClientService,
         protected themeService: ThemeService,
+        protected languageService: LanguageService,
     ) {
         super(socketService);
         this.title = 'LOG2990';
@@ -45,6 +47,7 @@ export class MainPageComponent extends PageCommunicationManager implements OnIni
 
     ngOnInit() {
         this.themeService.verifyTheme();
+        this.languageService.verifyLanguage();
         this.connectSocket();
         this.playerService.resetPlayerAndRoomInfo();
         this.sessionStorageService.clear();

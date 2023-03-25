@@ -99,7 +99,7 @@ describe('Socket-game-stub service tests', () => {
             return;
         });
         getCurrentPlayerStub = sinon.stub(roomMock, 'getCurrentPlayerTurn').returns(firstPlayer);
-        getSocketRoomStub = sinon.stub(socketGameService, 'getSocketRoom').returns(roomMock.roomInfo.name);
+        getSocketRoomStub = sinon.stub(socketGameService, 'getSocketRoom').returns(roomMock);
         hasCommandSyntaxStub = sinon.stub(socketGameService.commandController, 'hasCommandSyntax').returns(true);
         executeCommandStub = sinon.stub(socketGameService.commandController, 'executeCommand').returns(undefined);
         getPlayerStub = sinon.stub(roomMock, 'getPlayer').returns(firstPlayer);
@@ -132,7 +132,6 @@ describe('Socket-game-stub service tests', () => {
             roomMock.players = [firstPlayer, secondPlayer];
             socketGameService.handleStartGame(socketMock);
             assert(getSocketRoomStub.called, 'did not call getSocketRoomStub on startGame');
-            assert(getRoomStub.called, 'did not call getRoomStub on startGame');
             assert(spy1.called, 'did not call room.choseRandomTurn() on startGame');
             done();
         });
@@ -182,7 +181,6 @@ describe('Socket-game-stub service tests', () => {
     describe('message tests', () => {
         it('should call the correctMethod to verify that a message is a command', (done) => {
             socketGameService.handleMessage(socketMock, 'theMessage');
-            assert(getRoomStub.called, 'did not call roomService.getRoom');
             assert(getSocketRoomStub.called, 'did not call socketGameService.getSocketRoom');
             assert(hasCommandSyntaxStub.called, 'did not call commandController.hasCommandSyntax() on message');
             done();

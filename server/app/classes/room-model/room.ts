@@ -93,6 +93,7 @@ export class Room {
 
     reset() {
         this.players = [];
+        this.observers = [];
         this.bots = [];
         this.fillerNamesUsed = [];
     }
@@ -275,6 +276,12 @@ export class Room {
 
     addPlacementData(placementData: PlacementData) {
         this.placementsData.push(placementData);
+    }
+
+    getPlayersRack(): { player: Player; rackLetters: string }[] {
+        return this.players.map((player) => {
+            return { player, rackLetters: player.rack.getLetters() };
+        });
     }
 
     private punishUnfairGiveUp(player: Player) {

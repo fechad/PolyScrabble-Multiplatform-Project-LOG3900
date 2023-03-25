@@ -66,13 +66,11 @@ export class RoomService {
         const roomUnavailableToRemove = this.roomsUnavailable.find((element) => element.roomInfo.name === roomName);
         if (roomAvailableToRemove) {
             const roomIndex = this.roomsAvailable.indexOf(roomAvailableToRemove);
-            roomAvailableToRemove.players = [];
             this.roomsAvailable.splice(roomIndex, 1);
             roomAvailableToRemove.reset();
         }
         if (roomUnavailableToRemove) {
             const roomIndex = this.roomsUnavailable.indexOf(roomUnavailableToRemove);
-            roomUnavailableToRemove.players = [];
             this.roomsUnavailable.splice(roomIndex, 1);
             roomUnavailableToRemove.reset();
         }

@@ -70,6 +70,7 @@ describe('LeaderBoard', () => {
         sinon.stub(roomMock, 'isGameFinished').returns(true);
         sinon.stub(roomMock, 'getCurrentPlayerTurn').returns(secondPlayer);
         sinon.stub(roomMock, 'getPlayer').returns(secondPlayer);
+        sinon.stub(socketGameService, 'getSocketRoom').returns(roomMock);
         sinon.stub(socketGameService.commandController, 'hasCommandSyntax').returns(true);
         sinon.stub(socketGameService['dateService'], 'getCurrentDate').callsFake(() => fakeDate);
     });

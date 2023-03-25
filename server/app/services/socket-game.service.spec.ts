@@ -37,6 +37,7 @@ describe('socketGameService service tests', () => {
     let sendEveryoneStub: sinon.SinonStub;
     let socketEmitStub: sinon.SinonStub;
     let getRoomStub: sinon.SinonStub;
+    let getSocketRoomStub: sinon.SinonStub;
 
     const roomService = new RoomService();
     const socketGameService = new SocketGameService(
@@ -67,7 +68,7 @@ describe('socketGameService service tests', () => {
             return;
         });
         getRoomStub = sinon.stub(roomService, 'getRoom');
-        sinon.stub(socketGameService, 'getSocketRoom').returns(roomMock.roomInfo.name);
+        getSocketRoomStub = sinon.stub(socketGameService, 'getSocketRoom').returns(roomMock);
         sinon.stub(roomMock, 'getAllGoals').callsFake(() => {
             return [];
         });
@@ -112,6 +113,9 @@ describe('socketGameService service tests', () => {
         it('should call socket sendToEveryoneInRoom on handleGetRackInfo', (done) => {
             getRoomStub.returns(roomMock);
             sinon.stub(roomMock, 'getPlayer').returns(firstPlayer);
+            sinon.stub(roomMock, 'getPlayersRack').callsFake(() => {
+                return [];
+            });
             sinon.stub(socketGameService as any, 'isRoomAndPlayerValid').returns(true);
             socketGameService.handleGetRackInfo(socketMock, roomMock.roomInfo.name);
             assert(socketEmitStub.calledOnce, 'did not call sendToEveryoneInRoom on handleGetRackInfo');
@@ -256,6 +260,7 @@ describe('socketGameService service tests', () => {
         });
 
         it('should return false if the room is not valid', () => {
+            getSocketRoomStub.restore();
             expect((socketGameService as any).isRoomValid(socketMock)).to.equal(false);
         });
 

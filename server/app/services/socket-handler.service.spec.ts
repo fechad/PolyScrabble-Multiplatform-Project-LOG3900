@@ -58,7 +58,7 @@ describe('SocketHandler service tests', () => {
             return;
         });
         sinon.stub(roomMock, 'getCurrentPlayerTurn').returns(firstPlayer);
-        // getSocketRoomStub = sinon.stub(socketHandlerService, 'getSocketRoom').returns(roomMock.roomInfo.name);
+        sinon.stub(socketHandlerService, 'getSocketRoom').returns(roomMock);
         sinon.stub(socketHandlerService.commandController, 'hasCommandSyntax').returns(true);
         sinon.stub(socketHandlerService.commandController, 'executeCommand').returns(undefined);
         sinon.stub(socketHandlerService as any, 'updateGame').callsFake(() => {});
