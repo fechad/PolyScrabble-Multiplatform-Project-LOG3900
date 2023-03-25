@@ -123,7 +123,7 @@ class _WaitingPageState extends State<WaitingPage> {
                       content: Text(
                           "Voulez-vous accepter ${gameService.room.players[gameService.room.players.length - 1].clientAccountInfo.username} dans la salle de jeu?"),
                       actions: [
-                        TextButton(
+                        ElevatedButton(
                             onPressed: () => {
                                   gameService.rejectPlayer(gameService
                                       .room
@@ -132,8 +132,16 @@ class _WaitingPageState extends State<WaitingPage> {
                                       .clientAccountInfo.username),
                                   Navigator.pop(context)
                                 },
-                            child: Text("Non")),
-                        TextButton(
+                            child: Text("Non"),
+                            style: ElevatedButton
+                        .styleFrom(
+                    backgroundColor:
+                    Palette.mainColor,
+                    textStyle:
+                    const TextStyle(
+                    fontSize: 20),
+                    )),
+                        ElevatedButton(
                             onPressed: () => {
                                   Navigator.pop(context),
                                   gameService.acceptPlayer(gameService
@@ -144,7 +152,15 @@ class _WaitingPageState extends State<WaitingPage> {
                                   noPlayers++,
                                   if (noPlayers > 1) canStart = true,
                                 },
-                            child: Text("Oui")),
+                            child: Text("Oui"),
+                        style: ElevatedButton
+                            .styleFrom(
+                          backgroundColor:
+                          Colors.red,
+                          textStyle:
+                          const TextStyle(
+                              fontSize: 20),
+                        ))
                       ],
                     );
                   })
