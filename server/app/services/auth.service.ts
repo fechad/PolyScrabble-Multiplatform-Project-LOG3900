@@ -16,7 +16,7 @@ export class Authentificator {
     }
 
     userExists(userName: string): boolean {
-        return this.userNames.find((name: string) => userName === name) ? true : false;
+        return this.userNames.includes(userName);
     }
 
     loginUser(username: string) {

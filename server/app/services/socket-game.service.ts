@@ -3,7 +3,15 @@ import { CommandVerbs } from '@app/classes/command/command-verbs';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { BOT_COMMAND_TIMEOUT_SEC, BOT_DELAY, COUNT_PLAYER_TURN, END_TIMER_VALUE, ONE_SECOND_IN_MS, SYSTEM_NAME } from '@app/constants/constants';
+import {
+    BOT_COMMAND_TIMEOUT_SEC,
+    BOT_DELAY,
+    COUNT_PLAYER_TURN,
+    DISCONNECT_DELAY,
+    END_TIMER_VALUE,
+    ONE_SECOND_IN_MS,
+    SYSTEM_NAME,
+} from '@app/constants/constants';
 import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -35,27 +43,55 @@ export class SocketGameService extends SocketHandlerService {
         super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
     }
 
-    async handleLeaveGame(socket: io.Socket) {
+    async handleDisconnecting(socket: io.Socket): Promise<string | undefined> {
         const room = this.getSocketRoom(socket);
         if (!room) return;
-        const player = room.getPlayer(socket.id);
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(this.handleLeaveGame(socket, room));
+            }, DISCONNECT_DELAY);
+        });
+    }
+
+    handleLeaveGame(socket: io.Socket, leavingRoom?: Room): string | undefined {
+        const room = leavingRoom || this.getSocketRoom(socket);
+        if (!room) return;
+
+        this.socketLeaveRoom(socket, room.roomInfo.name);
+
         const roomObserver = room.getObserver(socket.id);
-
-        if (!player && !roomObserver) return;
-
-        if (player) {
-            this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
-        }
         if (roomObserver) {
-            this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
             room.removeObserver(roomObserver.username);
+            this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
+            const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
+            return roomObserver.username;
         }
 
+        const player = room.getPlayer(socket.id);
+        if (!player) return;
+        this.handlePlayerLeft(socket, room, player);
+        return player.pseudo;
+    }
+
+    handlePlayerLeft(socket: io.Socket, room: Room, player: Player) {
+        room.removePlayer(player);
+        if (!room.hasARealPlayerLeft()) {
+            this.updateGame(room);
+            this.roomService.removeRoom(room.roomInfo.name);
+            if (!room.roomInfo.isPublic) return;
+            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
+            return;
+        }
+
+        this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
         const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
 
-        this.handlePlayerLeavingGame(socket);
-        this.socketLeaveRoom(socket, room.roomInfo.name);
+        this.swapPlayerForBot(room, player);
+        this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
     }
 
     handleGetPlayerInfo(socket: io.Socket, roomName: string) {
