@@ -61,6 +61,14 @@ $tileDragWidth: 38px;
     flex-direction: column;
     align-items: center;
     gap: 2px;
+    padding: 2%;
+    background-color: var(--app-background);
+    border-radius: 8px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    padding-right: 2%;
+    padding-bottom: 2%;
+    padding-top: 0.1%;
+    padding-left: 0.5%;
 }
 
 .y-axis {
