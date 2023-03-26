@@ -14,7 +14,13 @@
         </div>
 
         <div *ngIf="isGamePage" class="icons-container game-page">
-            <div *ngIf="!isGameOver" (click)="showHint()" class="hint-icon" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
+            <div
+                *ngIf="!isGameOver"
+                (click)="showHint()"
+                class="hint-icon icon-background"
+                [class.icon-background]="backgroundService.currentVP"
+                [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
+            >
                 <div class="red-dot" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
                     {{ hintService.nbHints ? hintService.nbHints : 0 }}
                 </div>
@@ -22,10 +28,23 @@
                     >emoji_objects</i
                 >
             </div>
-            <span *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in"> chat_bubble </span>
-            <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon game-page">Close chat</button>
-            <i class="fa fa-flag" (click)="confirmLeaving()" *ngIf="!isGameOver"></i>
-            <div *ngIf="isGameOver" (click)="leaveGame()" class="material-symbols-outlined quit">logout</div>
+            <div class="chat" [class.icon-background]="backgroundService.currentVP" *ngIf="!isNewChatWindowOpen">
+                <span (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in"> chat_bubble </span>
+            </div>
+            <div [class.icon-background]="backgroundService.currentVP" *ngIf="isNewChatWindowOpen">
+                <button (click)="closeChatNewWindow()" class="icon game-page">Close chat</button>
+            </div>
+            <div class="leave-flag" [class.icon-background]="backgroundService.currentVP" *ngIf="!isGameOver">
+                <i class="fa fa-flag" (click)="confirmLeaving()"></i>
+            </div>
+            <div
+                *ngIf="isGameOver"
+                [class.icon-background]="backgroundService.currentVP"
+                (click)="leaveGame()"
+                class="material-symbols-outlined quit"
+            >
+                logout
+            </div>
         </div>
 
         <!-- CHAT MENU -->

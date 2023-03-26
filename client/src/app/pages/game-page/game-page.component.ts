@@ -6,6 +6,7 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SocketEvent } from '@app/enums/socket-event';
+import { BackgroundService } from '@app/services/background-image.service';
 import { BoardService } from '@app/services/board.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HintService } from '@app/services/hint.service';
@@ -30,6 +31,7 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         public playerService: PlayerService,
         private boardService: BoardService,
         protected themeService: ThemeService,
+        protected backgroundService: BackgroundService,
     ) {
         super(socketService);
     }

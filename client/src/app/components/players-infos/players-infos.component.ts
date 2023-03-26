@@ -13,6 +13,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { AudioService } from '@app/services/audio.service';
+import { BackgroundService } from '@app/services/background-image.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
@@ -42,6 +43,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         private dialog: MatDialog,
         private audioService: AudioService,
         protected languageService: LanguageService,
+        protected backgroundService: BackgroundService,
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
@@ -137,6 +139,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             if (!bot) return;
             this.toggleAvatar(bot.clientAccountInfo);
             this.toggleBotMusic(bot.clientAccountInfo);
+            this.backgroundService.switchToAngry();
         });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             if (this.playerService.player.isItsTurn) {

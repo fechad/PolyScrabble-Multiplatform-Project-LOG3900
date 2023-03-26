@@ -103,7 +103,25 @@ app-rack {
     justify-content: space-between;
     min-width: 300px;
     margin-right: 20px;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
     background-color: var(--app-background);
+}
+
+.bottom-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5%;
+    min-width: 300px;
+    height: 500px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    background-image: var(--theme-background);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .top-content {
@@ -140,5 +158,11 @@ app-rack {
 }
 
 .page-body {
+    height: 100%;
+    width: 100%;
     margin-left: 0px;
+    // background-image: var(--theme-background);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
