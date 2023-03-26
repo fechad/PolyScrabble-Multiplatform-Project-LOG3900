@@ -15,6 +15,7 @@ import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { AudioService } from '@app/services/audio.service';
+import { BackgroundService } from '@app/services/background-image.service';
 import { HintService } from '@app/services/hint.service';
 import { HttpService } from '@app/services/http.service';
 import { LanguageService } from '@app/services/language.service';
@@ -49,6 +50,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         protected hintService: HintService,
         private audioService: AudioService,
         protected themeService: ThemeService,
+        protected backgroundService: BackgroundService,
         protected languageService: LanguageService,
     ) {
         super(socketService);
@@ -292,6 +294,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     leaveGame() {
         this.audioService.stopSound();
         this.socketService.send(SocketEvent.LeaveGame);
+        this.backgroundService.setBackground('');
         this.router.navigate(['/main']);
     }
 

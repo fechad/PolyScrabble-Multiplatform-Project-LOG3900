@@ -90,9 +90,17 @@ app-general-chat {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    padding-left: 10px;
     &.game-page {
         padding: 100% 0;
-        height: 80vh;
+        height: 100vh;
+        padding: 0%;
+        box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.25);
+        background-color: var(--section-background);
+
+        .leave-flag {
+            margin-bottom: 100px;
+        }
     }
 }
 
@@ -142,8 +150,8 @@ app-general-chat {
 }
 
 .icon {
-    width: $iconDimension;
-    height: $iconDimension;
+    // width: $iconDimension;
+    // height: $iconDimension;
     margin: 10px;
     color: white;
 

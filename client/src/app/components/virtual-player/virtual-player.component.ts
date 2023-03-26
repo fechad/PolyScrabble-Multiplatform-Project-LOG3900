@@ -8,6 +8,7 @@ import { ThemedPopUpComponent } from '@app/components/themed-pop-up/themed-pop-u
 import { SocketEvent } from '@app/enums/socket-event';
 import { Badge } from '@app/interfaces/serveur info exchange/badge';
 import { AudioService } from '@app/services/audio.service';
+import { BackgroundService } from '@app/services/background-image.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 
@@ -30,6 +31,7 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
         protected socketService: SocketClientService,
         private router: Router,
         private dialog: MatDialog,
+        protected backgroundService: BackgroundService,
     ) {
         super(socketService);
     }
@@ -100,5 +102,6 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
         this.playerService.player.isCreator = true;
         this.playerService.player.socketId = this.socketService.socket.id;
         this.room.players = [this.playerService.player];
+        this.backgroundService.setBackground(this.botId.toLowerCase());
     }
 }
