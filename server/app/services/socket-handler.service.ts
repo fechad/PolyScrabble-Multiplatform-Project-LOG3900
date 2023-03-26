@@ -1,7 +1,7 @@
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { DEFAULT_ROOM_NAME, DISCONNECT_DELAY, SYSTEM_NAME } from '@app/constants/constants';
+import { DEFAULT_ROOM_NAME, SYSTEM_NAME } from '@app/constants/constants';
 import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { CommandController } from '@app/controllers/command.controller';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
@@ -50,45 +50,6 @@ export class SocketHandlerService {
     }
     socketLeaveRoom(socket: io.Socket, roomName: string) {
         socket.leave(roomName);
-    }
-
-    async handleDisconnecting(socket: io.Socket): Promise<string | undefined> {
-        const room = this.getSocketRoom(socket);
-        if (!room) return;
-
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(this.handlePlayerLeavingGame(socket, room));
-            }, DISCONNECT_DELAY);
-        });
-    }
-
-    handlePlayerLeavingGame(socket: io.Socket, leavingRoom?: Room): string | undefined {
-        const room = leavingRoom || this.getSocketRoom(socket);
-        if (!room) return;
-
-        const roomObserver = room.getObserver(socket.id);
-        if (roomObserver) return roomObserver.username;
-
-        const player = room.getPlayer(socket.id);
-        if (!player) return;
-
-        this.handlePlayerLeft(socket, room, player);
-        return player.pseudo;
-    }
-
-    handlePlayerLeft(socket: io.Socket, room: Room, player: Player) {
-        room.removePlayer(player);
-        if (!room.hasARealPlayerLeft()) {
-            this.updateGame(room);
-            this.roomService.removeRoom(room.roomInfo.name);
-            if (!room.roomInfo.isPublic) return;
-            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
-            return;
-        }
-        this.swapPlayerForBot(room, player);
-        this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
     }
 
     swapPlayerForBot(room: Room, player: Player) {

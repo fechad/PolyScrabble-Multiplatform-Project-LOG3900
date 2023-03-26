@@ -3,6 +3,7 @@ import { Account } from '@app/interfaces/firestoreDB/account';
 import { ProgressInfo } from '@app/interfaces/progress-info';
 import { DatabaseService } from '@app/services/database.service';
 import { LevelService } from '@app/services/LevelServices/level.service';
+import { SocketManager } from '@app/services/socket-manager.service';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
@@ -69,6 +70,7 @@ export class UserInfoController {
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
                     .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)));
+                SocketManager.instance.discussionChannelService.updatePlayerAvatar(req.body.username, req.body.userSettings.avatarUrl);
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
             }

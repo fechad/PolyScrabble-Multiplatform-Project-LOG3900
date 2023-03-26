@@ -20,14 +20,16 @@ import { SocketHandlerService } from './socket-handler.service';
 import { SocketRoomService } from './socket-room.service';
 
 export class SocketManager {
+    private static staticInstance: SocketManager;
+
     sio: io.Server;
     commandController: CommandController;
-    private socketHandlerService: SocketHandlerService;
-    private socketRoomService: SocketRoomService;
-    private socketChannelService: SocketChannelService;
-    private socketGameService: SocketGameService;
-    private chatMessageService: ChatMessageService;
-    private discussionChannelService: DiscussionChannelService;
+    socketHandlerService: SocketHandlerService;
+    socketRoomService: SocketRoomService;
+    socketChannelService: SocketChannelService;
+    socketGameService: SocketGameService;
+    chatMessageService: ChatMessageService;
+    discussionChannelService: DiscussionChannelService;
     constructor(
         server: http.Server,
         private scoresService: ScoresService,
@@ -81,12 +83,26 @@ export class SocketManager {
         this.commandController = new CommandController(this.chatMessageService);
     }
 
+    // Must createInstance before getting it
+    static get instance() {
+        return this.staticInstance;
+    }
+
+    static createInstance(
+        server: http.Server,
+        scoresService: ScoresService,
+        playerGameHistoryService: PlayerGameHistoryService,
+        gamesHistoryService: GamesHistoryService,
+    ) {
+        this.staticInstance = new SocketManager(server, scoresService, playerGameHistoryService, gamesHistoryService);
+    }
+
     handleSockets() {
         this.sio.on(SocketEvent.Connection, (socket) => {
             socket.on(SocketEvent.Disconnection, async () => {
-                const username = await this.socketHandlerService.handleDisconnecting(socket);
+                const username = await this.socketGameService.handleDisconnecting(socket);
                 if (!username) return;
-                // TODO: remove username from all its room
+                this.socketChannelService.handleChannelDisconnecting(socket, username);
             });
 
             socket.on(SocketEvent.Reconnect, (playerData: PlayerData) => {

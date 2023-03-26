@@ -1,13 +1,19 @@
 import { DiscussionChannel } from '@app/classes/discussion-channel';
+import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Service } from 'typedi';
+import { SocketManager } from './socket-manager.service';
+
+enum ChannelMessageAttribute {
+    AvatarUrl = 'avatarUrl',
+    UserName = 'userName',
+}
 
 @Service()
 export class DiscussionChannelService {
     availableChannels: DiscussionChannel[];
     roomChannels: DiscussionChannel[];
-
     constructor() {
         this.availableChannels = [new DiscussionChannel('General Chat')];
         this.availableChannels[0].addMessage({
@@ -66,5 +72,48 @@ export class DiscussionChannelService {
             this.availableChannels.find((channel) => channel.name === channelName) ||
             this.roomChannels.find((channel) => channel.name === channelName)
         );
+    }
+
+    updatePlayerAvatar(playerUserName: string, avatarUrl: string) {
+        this.updatePlayerMessages(playerUserName, { attribute: ChannelMessageAttribute.AvatarUrl, value: avatarUrl });
+    }
+
+    updatePlayerUsername(previousUserName: string, newUserName: string) {
+        this.updatePlayerMessages(previousUserName, { attribute: ChannelMessageAttribute.UserName, value: newUserName });
+    }
+
+    getPlayerDiscussionChannels(playerUsername: string): DiscussionChannel[] {
+        const userChannels = this.availableChannels.filter((channel) => channel.userSentMessage(playerUsername));
+        const roomChannels = this.roomChannels.filter((channel) => channel.userSentMessage(playerUsername));
+        const userDiscussionChannels = userChannels.concat(roomChannels);
+        return userDiscussionChannels;
+    }
+
+    getPlayerActiveDiscussionChannels(playerUsername: string): DiscussionChannel[] {
+        const userChannels = this.availableChannels.filter((channel) => channel.userExists(playerUsername));
+        const roomChannels = this.roomChannels.filter((channel) => channel.userExists(playerUsername));
+        const userDiscussionChannels = userChannels.concat(roomChannels);
+        return userDiscussionChannels;
+    }
+
+    private updatePlayerMessages(playerUserName: string, newValue: { attribute: ChannelMessageAttribute; value: string }) {
+        const discussionChannels = this.getPlayerDiscussionChannels(playerUserName);
+        for (const discussionChannel of discussionChannels) {
+            switch (newValue.attribute) {
+                case ChannelMessageAttribute.AvatarUrl:
+                    discussionChannel.updatePlayerAvatarUrl(playerUserName, newValue.value);
+                    break;
+                case ChannelMessageAttribute.UserName:
+                    discussionChannel.updatePlayerUsername(playerUserName, newValue.value);
+                    break;
+                default:
+                    break;
+            }
+            SocketManager.instance.socketHandlerService.sendToEveryoneInRoom(
+                discussionChannel.name,
+                SocketEvent.ChannelMessage,
+                discussionChannel.messages,
+            );
+        }
     }
 }

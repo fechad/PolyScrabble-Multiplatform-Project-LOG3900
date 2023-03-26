@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-unused-vars */
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */ // we want to tests private methods
 /* eslint-disable dot-notation */ // we want to access private attribute to test
 import { Player } from '@app/classes/player';
@@ -5,7 +8,12 @@ import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
+import { DISCONNECT_DELAY, SYSTEM_NAME } from '@app/constants/constants';
 import { GoalTitle } from '@app/enums/goal-titles';
+import { MessageSenderColors } from '@app/enums/message-sender-colors';
+import { SocketEvent } from '@app/enums/socket-event';
+import { DEFAULT_ENGLISH_QUOTES, DEFAULT_FRENCH_QUOTES } from '@app/enums/themed-quotes/quotes';
+import { ChatMessage } from '@app/interfaces/chat-message';
 import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
@@ -38,6 +46,7 @@ describe('socketGameService service tests', () => {
     let socketEmitStub: sinon.SinonStub;
     let getRoomStub: sinon.SinonStub;
     let getSocketRoomStub: sinon.SinonStub;
+    let sendToEveryoneStub: sinon.SinonStub;
 
     const roomService = new RoomService();
     const socketGameService = new SocketGameService(
@@ -61,17 +70,14 @@ describe('socketGameService service tests', () => {
     const socketMock = new SocketMock() as any;
 
     beforeEach(() => {
-        sendEveryoneStub = sinon.stub(socketGameService, 'sendToEveryoneInRoom').callsFake(() => {
-            return;
-        });
-        socketEmitStub = sinon.stub(socketGameService, 'socketEmit').callsFake(() => {
-            return;
-        });
+        sendEveryoneStub = sinon.stub(socketGameService, 'sendToEveryoneInRoom').callsFake(() => {});
+        socketEmitStub = sinon.stub(socketGameService, 'socketEmit').callsFake(() => {});
         getRoomStub = sinon.stub(roomService, 'getRoom');
         getSocketRoomStub = sinon.stub(socketGameService, 'getSocketRoom').returns(roomMock);
         sinon.stub(roomMock, 'getAllGoals').callsFake(() => {
             return [];
         });
+        sendToEveryoneStub = sinon.stub(socketGameService, 'sendToEveryone').callsFake(() => {});
     });
 
     afterEach(() => {
@@ -274,5 +280,170 @@ describe('socketGameService service tests', () => {
         roomMock.players = [undefined as unknown as Player, undefined as unknown as Player];
         (socketGameService as any).updatePlayersScore(roomMock);
         assert(sendEveryoneStub.notCalled, 'called sendToEveryoneInRoom updatePlayerScore with undefined player');
+    });
+
+    describe('disconnecting tests', () => {
+        const virtualPlayer = new VirtualPlayer(
+            'Botnet',
+            false,
+            { askNode: (row: string, column: number) => {}, askNodeByIndex: (index: number) => {} } as any,
+            {} as any,
+            'débutant',
+        );
+        virtualPlayer.setQuotes(DEFAULT_FRENCH_QUOTES, DEFAULT_ENGLISH_QUOTES);
+        const secondPlayer = new Player('socketId2', 'pseudo2', false);
+
+        beforeEach(() => {
+            getRoomStub.restore();
+
+            roomMock.roomInfo.isSolo = false;
+            roomMock.players = [firstPlayer, secondPlayer];
+
+            sinon.stub(socketGameService.roomService, 'isRoomNameValid').returns(true);
+            getRoomStub = sinon.stub(socketGameService.roomService, 'getRoom').returns(roomMock);
+            sinon.stub(roomMock, 'changePlayerTurn').callsFake(() => {
+                return;
+            });
+            sinon.stub(roomMock, 'getCurrentPlayerTurn').returns(firstPlayer);
+            sinon.stub(socketGameService.commandController, 'hasCommandSyntax').returns(true);
+            sinon.stub(socketGameService.commandController, 'executeCommand').returns(undefined);
+            sinon.stub(socketGameService as any, 'updateGame').callsFake(() => {});
+            sinon.stub(roomMock, 'getPlayer').returns(firstPlayer);
+        });
+
+        const RESPONSE_DELAY = 200;
+
+        it('should not do anything if the socket disconnecting has no room', (done) => {
+            getRoomStub.returns(undefined);
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            assert(sendToEveryoneStub.notCalled, 'called sendToEveryone on disconnecting with no rooms');
+            done();
+        });
+
+        it('should remove the room if the only player left', (done) => {
+            roomMock.players = [firstPlayer];
+
+            socketGameService.roomService.roomsAvailable = [roomMock];
+            const previousRoomServiceLength = socketGameService.roomService.roomsAvailable.length;
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            expect(socketGameService.roomService.roomsAvailable.length).equal(previousRoomServiceLength - 1);
+            done();
+        });
+
+        it('should remove the room if the player left on solo room', (done) => {
+            roomMock.roomInfo.isSolo = true;
+            roomMock.players = [firstPlayer];
+            socketGameService.roomService.roomsAvailable = [roomMock];
+            const previousRoomServiceLength = socketGameService.roomService.roomsAvailable.length;
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            expect(socketGameService.roomService.roomsAvailable.length).equal(previousRoomServiceLength - 1);
+            done();
+        });
+
+        it('should remove the player from the room', (done) => {
+            expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(firstPlayer);
+            const removePlayerSpy = sinon.spy(roomMock, 'removePlayer');
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            assert(removePlayerSpy.calledWith(firstPlayer), 'did not call removePlayer with good params on disconnecting');
+            expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(undefined);
+            done();
+        });
+
+        it('should remove the room if the only real player left on multi room', (done) => {
+            expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(firstPlayer);
+            expect(roomMock.hasARealPlayerLeft()).equal(true);
+
+            roomMock.players = [firstPlayer, virtualPlayer];
+            const removePlayerSpy = sinon.spy(roomMock, 'removePlayer');
+
+            socketGameService.roomService.roomsAvailable = [roomMock];
+            const previousRoomServiceLength = socketGameService.roomService.roomsAvailable.length;
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            assert(removePlayerSpy.calledWith(firstPlayer), 'did not call removePlayer with good params on disconnecting');
+            expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(undefined);
+            expect(roomMock.hasARealPlayerLeft()).equal(false);
+            expect(socketGameService.roomService.roomsAvailable.length).equal(previousRoomServiceLength - 1);
+            done();
+        });
+
+        it('should swap the player for a bot when real player left on multi room', (done) => {
+            expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(firstPlayer);
+            const virtualPlayerSpy = sinon.spy(roomMock, 'createVirtualPlayer');
+
+            const previousRoomMockPlayersLength = roomMock.players.length;
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            assert(virtualPlayerSpy.called, 'did not call createPlayerVirtual when real player left on multi room');
+            expect(roomMock.getPlayerByName(firstPlayer.pseudo)).equal(undefined);
+            expect(roomMock.players.length).equal(previousRoomMockPlayersLength);
+            done();
+        });
+
+        it('should set the bot correctly when a real player left on multi room', (done) => {
+            const playerPoints = 10;
+            firstPlayer.points = playerPoints;
+            const createVirtualPlayerStub = sinon.stub(roomMock, 'createVirtualPlayer').returns(virtualPlayer);
+            const botReplaceRackSpy = sinon.spy(virtualPlayer, 'replaceRack');
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            assert(createVirtualPlayerStub.called, 'did not call createPlayerVirtual when real player left on multi room');
+            assert(botReplaceRackSpy.called, 'did not call replaceRack when real player left on multi room');
+            expect(virtualPlayer.points).equal(playerPoints);
+            done();
+        });
+
+        it('should call the correct methods when a real player leave on multi room', (done) => {
+            sinon.stub(roomMock, 'createVirtualPlayer').returns(virtualPlayer);
+            const socketEmitRoomSpy = sinon.spy(socketGameService, 'socketEmitRoom');
+
+            const systemAlert: ChatMessage = {
+                sender: SYSTEM_NAME,
+                color: MessageSenderColors.SYSTEM,
+                text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + virtualPlayer.pseudo,
+            };
+
+            const clock = sinon.useFakeTimers();
+            socketGameService.handleDisconnecting(socketMock);
+            clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
+
+            assert(
+                sendEveryoneStub.calledWith(roomMock.roomInfo.name, SocketEvent.PlayerTurnChanged, roomMock.getCurrentPlayerTurn()?.pseudo),
+                'did not send playerTurnChanged',
+            );
+            assert(
+                socketEmitRoomSpy.calledWith(socketMock, roomMock.roomInfo.name, SocketEvent.PlayerLeft, firstPlayer),
+                'did not call socketEmitRoom with good param when player left',
+            );
+            assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, SocketEvent.BotJoinedRoom, roomMock.players), 'did not send BotJoinedRoom');
+            assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, SocketEvent.Message, systemAlert), 'did not send Message with systemAlert');
+
+            done();
+        });
     });
 });

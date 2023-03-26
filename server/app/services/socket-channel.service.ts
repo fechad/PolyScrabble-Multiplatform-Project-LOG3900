@@ -53,6 +53,13 @@ export class SocketChannelService extends SocketHandlerService {
         else this.sendToEveryone(SocketEvent.AvailableChannels, availableChannels);
     }
 
+    handleChannelDisconnecting(socket: io.Socket, username: string) {
+        const userDiscussionChannels = this.discussionChannelService.getPlayerActiveDiscussionChannels(username);
+        for (const discussionChannel of userDiscussionChannels) {
+            this.handleLeaveChannel(socket, discussionChannel.name, username);
+        }
+    }
+
     handleLeaveChannel(socket: io.Socket, channelName: string, username: string) {
         this.discussionChannelService.leaveChannel(channelName, username);
         this.socketLeaveRoom(socket, channelName);
