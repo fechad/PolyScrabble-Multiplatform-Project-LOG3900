@@ -9,6 +9,7 @@ import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { EinsteinVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/einstein-vp';
 import { SantaVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/santa-vp';
+import { SerenaVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/serena-vp';
 import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { VirtualPlayerAdaptative } from '@app/classes/virtual-player/virtual-player-adaptative';
@@ -66,14 +67,16 @@ export class GameManager {
                 return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank, desiredLevel);
 
             case GameLevel.Santa:
-                const santa = new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
-                return santa;
+                return new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
 
             case GameLevel.Trump:
                 return new TrumpVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
 
             case GameLevel.Einstein:
                 return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+
+            case GameLevel.Serena:
+                return new SerenaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
 
             default:
                 return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel);

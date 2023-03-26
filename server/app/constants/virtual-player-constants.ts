@@ -29,6 +29,12 @@ const BEGINNER_SCALE: AdaptiveScale = {
     lowerScale: 0.2,
     upperScale: 0.15,
 };
+const SERENA_SCALE: AdaptiveScale = {
+    min: 5,
+    max: 20,
+    lowerScale: 0.2,
+    upperScale: 0.2,
+};
 const SANTA_SCALE: AdaptiveScale = {
     min: 2,
     max: 10,
@@ -55,6 +61,7 @@ export const SCALES = {
     default: DEFAULT_SCALE,
     beginner: BEGINNER_SCALE,
     expert: EXPERT_SCALE,
+    serena: SERENA_SCALE,
     santa: SANTA_SCALE,
     defaultTrump: TRUMP_DEFAULT_SCALE,
     angryTrump: TRUMP_ANGRY_SCALE,
