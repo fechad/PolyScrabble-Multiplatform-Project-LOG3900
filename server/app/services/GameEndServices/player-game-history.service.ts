@@ -10,7 +10,7 @@ import { firestore } from 'firebase-admin';
 import { Service } from 'typedi';
 
 const DATABASE_COLLECTION = 'accounts';
-const XP_GAIN_ON_VICTORY = 250;
+const XP_GAIN_ON_VICTORY = 100;
 const XP_GAIN_ON_LOSS = 50;
 @Service()
 export class PlayerGameHistoryService {

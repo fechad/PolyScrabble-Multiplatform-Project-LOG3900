@@ -240,6 +240,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     navigateHome() {
         this.audioService.stopSound();
+        if (this.router.url === '/game') this.playerService.setUserInfo();
         this.router.navigate(['/main']);
     }
 
@@ -292,7 +293,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     leaveGame() {
         this.audioService.stopSound();
         this.socketService.send(SocketEvent.LeaveGame);
-        this.router.navigate(['/main']);
+        this.navigateHome();
     }
 
     openChatOnNewWindow() {

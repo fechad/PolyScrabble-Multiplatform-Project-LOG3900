@@ -16,6 +16,10 @@ export class GamesHistoryService {
         return this.databaseService.deleteCollection(DATABASE_COLLECTION);
     }
     async updateGame(updatedGame: Game): Promise<WriteResult> {
-        return this.databaseService.updateDocumentByID(DATABASE_COLLECTION, updatedGame.startDatetime.valueOf(), updatedGame);
+        return this.databaseService.updateDocumentByID(
+            DATABASE_COLLECTION,
+            updatedGame.startDatetime.toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' }),
+            updatedGame,
+        );
     }
 }
