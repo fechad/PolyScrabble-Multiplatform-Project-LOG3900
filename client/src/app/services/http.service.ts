@@ -39,12 +39,13 @@ export class HttpService {
         this.opponentInfoUrl = 'opponentInfo';
         this.avatarUrl = 'images/avatars';
         this.badgeUrl = 'images/badges';
+        this.statsUrl = 'stats';
         this.baseUrl = environment.serverUrl;
         this.errorMessage = '';
     }
     getPlayerStats(playerEmail: string): Observable<PlayerGameStats> {
         return this.http
-            .get<PlayerGameStats>(`${this.statsUrl}/${playerEmail}`)
+            .get<PlayerGameStats>(`${this.baseUrl}/${this.statsUrl}/${playerEmail}`)
             .pipe(catchError(this.handleError<PlayerGameStats>('Could not get stats')));
     }
     getCloudinarySignature(): Observable<{ timestamp: string; signature: string; apiKey: string }> {
