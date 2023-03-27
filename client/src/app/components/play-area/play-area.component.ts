@@ -215,6 +215,10 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         }
     }
 
+    isArrow(letter: string) {
+        return letter === RIGHT_ARROW || letter === DOWN_ARROW;
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
             const rowNumber = this.boardService.matchRowNumber(placementData.row) as number;

@@ -117,6 +117,10 @@ export class SocketManager {
                 this.socketGameService.handleGetRackInfo(socket, roomName);
             });
 
+            socket.on(SocketEvent.GetPlayersRackInfos, (roomName: string) => {
+                this.socketGameService.handleGetPlayersRackInfo(socket, roomName);
+            });
+
             socket.on(SocketEvent.CreateRoom, (room: Room) => {
                 this.socketRoomService.handleCreateRoom(socket, room);
             });

@@ -142,3 +142,18 @@ $gameMinWidth: 390px;
     width: fit-content;
     margin: 0px 10px;
 }
+
+.right-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 25px;
+}
+
+.fa-eye {
+    font-size: 25px;
+}
+
+.fa-id-card {
+    font-size: 20px;
+}

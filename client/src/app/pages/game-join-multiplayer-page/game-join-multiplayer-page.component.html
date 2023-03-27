@@ -13,12 +13,18 @@
                     <div class="game">
                         <div class="game-info-container">
                             <div class="game-info">
-                                <div class="game-info-icon">[+_+]</div>
+                                <i class="fa fa-id-card game-info-icon"></i>
                                 <div class="game-info-value">{{ room?.botsLevel }}</div>
                             </div>
-                            <div class="game-info">
-                                <span class="material-symbols-outlined game-info-icon"> Alarm </span>
-                                <div class="game-info-value">{{ getFormattedTimerPerTurn(room) }}</div>
+                            <div class="right-icons">
+                                <div class="game-info">
+                                    <span class="material-symbols-outlined game-info-icon"> Alarm </span>
+                                    <div class="game-info-value">{{ getFormattedTimerPerTurn(room) }}</div>
+                                </div>
+                                <div class="game-info">
+                                    <i class="fa fa-eye game-info-icon"></i>
+                                    <div class="game-info-value">{{ room.observers.length }}</div>
+                                </div>
                             </div>
                         </div>
 

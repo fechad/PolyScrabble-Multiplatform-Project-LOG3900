@@ -1,49 +1,11 @@
-<div class="side-container">
-    <div class="show-choice">
-        <button class="choice-button" [translate]="'GAME-PAGE.OBJECTIVES'"></button>
-        <button class="choice-button" [translate]="'GAME-PAGE.RACK'"></button>
-    </div>
-    <div id="main-container">
-        <app-goal
-            *ngFor="let goal of publicGoals"
-            class="public-goal"
-            [title]="goal.title"
-            [description]="goal.description"
-            [reward]="goal.reward"
-            [reached]="goal.reached"
-            [isPublic]="goal.isPublic"
-        ></app-goal>
-        <!-- <div id="goals-container">
-            <app-goal
-                class="private-goal"
-                [title]="privateGoal.title"
-                [description]="privateGoal.description"
-                [reward]="privateGoal.reward"
-                [reached]="privateGoal.reached"
-                [isPublic]="privateGoal.isPublic"
-            ></app-goal>
-            <div id="public-goals-container">
-                <app-goal
-                    *ngFor="let goal of publicGoals"
-                    class="public-goal"
-                    [title]="goal.title"
-                    [description]="goal.description"
-                    [reward]="goal.reward"
-                    [reached]="goal.reached"
-                    [isPublic]="goal.isPublic"
-                ></app-goal>
-            </div>
-        </div>
-    </div>
-    <div class="commands-container flex-row">
-        <app-goal
-            *ngIf="is2990GameType === true"
-            class="private-goal"
-            [title]="otherPlayerPrivateGoal.title"
-            [description]="otherPlayerPrivateGoal.description"
-            [reward]="otherPlayerPrivateGoal.reward"
-            [reached]="otherPlayerPrivateGoal.reached"
-            [isPublic]="otherPlayerPrivateGoal.isPublic"
-        ></app-goal> -->
-    </div>
+<div id="main-container">
+    <app-goal
+        *ngFor="let goal of publicGoals"
+        class="public-goal"
+        [title]="goal.title"
+        [description]="goal.description"
+        [reward]="goal.reward"
+        [reached]="goal.reached"
+        [isPublic]="goal.isPublic"
+    ></app-goal>
 </div>

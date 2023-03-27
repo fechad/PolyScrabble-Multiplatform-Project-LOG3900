@@ -53,6 +53,8 @@ export class SocketRoomService extends SocketHandlerService {
         const observer = serverRoom.getObserver(socket.id);
         if (observer) {
             serverRoom.removeObserver(observer.username);
+            this.sendToEveryoneInRoom(roomName, SocketEvent.ObserversUpdated, serverRoom.observers);
+            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
         }
 
         const player = serverRoom.getPlayer(socket.id);
@@ -107,6 +109,7 @@ export class SocketRoomService extends SocketHandlerService {
         this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
 
         this.socketEmit(socket, SocketEvent.ObserverAccepted, serverRoom);
+        this.sendToEveryoneInRoom(roomName, SocketEvent.ObserversUpdated, serverRoom.observers);
     }
 
     handleAcceptPlayer(socket: io.Socket, data: { roomName: string; playerName: string }) {

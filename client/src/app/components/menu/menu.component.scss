@@ -21,7 +21,6 @@ app-general-chat {
 .material-symbols-outlined {
     cursor: pointer;
     font-size: 43px;
-    color: #f3ca38;
     font-variation-settings: 'FILL' 1, 'wght' 900, 'GRAD' 0, 'opsz' 48;
 }
 
@@ -40,6 +39,7 @@ app-general-chat {
     color: red;
     font-size: 43px;
     cursor: pointer;
+    margin-bottom: 100px;
 }
 
 .menu-container.show {
@@ -97,10 +97,6 @@ app-general-chat {
         padding: 0%;
         box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.25);
         background-color: var(--section-background);
-
-        .leave-flag {
-            margin-bottom: 100px;
-        }
     }
 }
 
@@ -255,7 +251,9 @@ app-general-chat {
 }
 
 .game-info-container {
+    color: var(--basic-font-color);
     min-width: $gameChatExtremityContainerWidth;
+    gap: 10px;
 }
 
 .game-info {
@@ -263,16 +261,18 @@ app-general-chat {
     flex-direction: row;
     align-items: center;
     gap: 5px;
-    margin: 0px 10px;
+    margin: 5px 10px;
 }
 
 .game-info-icon {
     font-weight: bold;
     min-width: 45px;
-    color: white;
     font-size: 30px;
-    color: black;
-    font-variation-settings: inherit;
+    color: var(--basic-font-color);
+
+    &.material-symbols-outlined {
+        font-variation-settings: normal;
+    }
 }
 
 .game-info-value {

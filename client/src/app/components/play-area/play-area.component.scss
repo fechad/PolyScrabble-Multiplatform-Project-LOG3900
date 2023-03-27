@@ -1,5 +1,8 @@
 $tileWIdth: 45px;
 $tileDragWidth: 38px;
+$rackTileBorder: 2px solid rgba(0, 0, 0, 0.3);
+$rackTileColor: #ecba8c;
+$rackTileBoxShadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
 
 .play-area-flex-container {
     padding-top: 16px;
@@ -85,6 +88,11 @@ $tileDragWidth: 38px;
     justify-content: center;
 }
 
+.placed-tile-letter {
+    position: relative;
+    top: 10px;
+}
+
 .placed-tile-points {
     font-size: 11px;
     width: 100%;
@@ -105,24 +113,27 @@ $tileDragWidth: 38px;
     max-width: $tileDragWidth;
     max-height: $tileDragWidth;
     min-height: $tileDragWidth;
-}
 
-.tile-drag.placement {
-    background-color: #ecba8c;
-}
+    &.placement {
+        border-radius: 5px;
+        // border: $rackTileBorder;
+        box-shadow: $rackTileBoxShadow;
+        background-color: $rackTileColor;
+    }
 
-.tile-drag.placement.new {
-    border: 3px solid red;
-}
+    &.placement.new {
+        border: 3px solid red;
+    }
 
-.tile-drag.pink {
-    background-color: pink;
+    &.pink {
+        background-color: pink;
+    }
 }
 
 .tile {
     cursor: default;
     font-size: 15px;
-    color: rgb(102, 102, 102);
+    color: var(--basic-board-tile-font-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -132,29 +143,31 @@ $tileDragWidth: 38px;
     max-width: $tileWIdth;
     max-height: $tileWIdth;
     min-height: $tileWIdth;
-    background-color: #ffebce;
+    background-color: var(--basic-board-tile-color);
+    border-radius: 5px;
 }
 
 .tile.star {
-    background-color: #ffc7c7;
+    background-color: var(--word-2-tile-color);
 }
 
 .tile.letter2-multiplier {
-    background-color: #bbbeca;
+    background-color: var(--letter-2-tile-color);
 }
 
 .tile.letter3-multiplier {
-    background-color: #a8bbff;
+    background-color: var(--letter-3-tile-color);
 }
 
 .tile.word2-multiplier {
-    background-color: #ffc7c7;
+    background-color: var(--word-2-tile-color);
 }
 
 .tile.word3-multiplier {
-    background-color: #e8a1a1;
+    background-color: var(--word-3-tile-color);
 }
 
 .tile.edge {
+    color: var(--basic-font-color);
     background-color: var(--app-background);
 }

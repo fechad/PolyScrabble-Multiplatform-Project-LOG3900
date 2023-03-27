@@ -1,4 +1,5 @@
 .goal-container {
+    color: var(--basic-font-color);
     height: fit-content;
     padding: 30px;
 }
@@ -23,6 +24,7 @@
 }
 
 #dialog-header {
+    color: var(--basic-font-color);
     display: flex;
     flex-direction: row;
     align-items: center;
