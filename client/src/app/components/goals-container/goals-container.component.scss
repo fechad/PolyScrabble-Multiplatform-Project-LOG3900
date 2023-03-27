@@ -13,25 +13,6 @@ app-goal {
     width: 100%;
 }
 
-.side-container {
-    min-width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    max-width: 100px;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.show-choice {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
-
 .choice-button {
     min-height: 45px;
     width: 100%;

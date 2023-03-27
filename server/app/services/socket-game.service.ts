@@ -66,6 +66,8 @@ export class SocketGameService extends SocketHandlerService {
             this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
             const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ObserversUpdated, room.observers);
+            this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
             return roomObserver.username;
         }
 
@@ -102,10 +104,13 @@ export class SocketGameService extends SocketHandlerService {
         if (!this.isRoomAndPlayerValid(socket, roomName)) return;
         const player = (this.roomService.getRoom(roomName) as Room).getPlayer(socket.id) as Player;
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
+    }
 
+    handleGetPlayersRackInfo(socket: io.Socket, roomName: string) {
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
-        this.sendToEveryoneInRoom(roomName, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
+        this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
+        this.socketEmit(socket, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
     }
 
     handleGetAllGoals(socket: io.Socket) {
@@ -142,7 +147,7 @@ export class SocketGameService extends SocketHandlerService {
 
         this.socketEmit(socket, SocketEvent.UpdatePlayerScore, player);
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, currentTurnPlayer?.pseudo);
-        this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
 

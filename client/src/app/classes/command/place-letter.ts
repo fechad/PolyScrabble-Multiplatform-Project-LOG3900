@@ -179,6 +179,7 @@ export class PlaceLetter extends Command {
         this.tile.color = DEFAULT_TILE_COLOR;
     }
 
+    // TODO: duplicated methods, to refactor if we have time
     private tileScore(letter: string): number {
         if (letter === '' || letter === undefined || letter === '*') return 0;
         const normalLetter = letter;

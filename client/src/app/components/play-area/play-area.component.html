@@ -1,5 +1,4 @@
 <div class="play-area-flex-container">
-
     <div #boardContainer *ngIf="isBoardReady" class="board-container">
         <div cdkDropList [id]="'' + i" class="y-axis" *ngFor="let yAxis of board; index as i">
             <div
@@ -24,7 +23,9 @@
                         [class.new]="boardService.lettersInBoard[j][i].typeOfSelection === selectionType.BOARD"
                         [class.pink]="boardService.lettersInBoard[j][i].color === 'PINK' && boardService.lettersInBoard[j][i].content"
                     >
-                        {{ boardService.lettersInBoard[j][i].content }}
+                        <div [class.placed-tile-letter]="!isArrow(boardService.lettersInBoard[j][i].content)">
+                            {{ boardService.lettersInBoard[j][i].content.toUpperCase() }}
+                        </div>
                         <div *ngIf="canShowPoint(boardService.lettersInBoard[j][i])" class="placed-tile-points">
                             {{ boardService.lettersInBoard[j][i].points }}
                         </div>

@@ -34,6 +34,7 @@ export class Room {
             password: '',
         };
         this.players = [];
+        this.observers = [];
         this.placementsData = [];
         this.isBankUsable = true;
         this.botsLevel = '';
@@ -43,14 +44,12 @@ export class Room {
 
     // tested on game-page.component.spec.ts
     setRoom(roomServer: Room) {
-        this.roomInfo.name = roomServer.roomInfo.name;
-        this.roomInfo.timerPerTurn = roomServer.roomInfo.timerPerTurn;
-        this.roomInfo.dictionary = roomServer.roomInfo.dictionary;
-        this.roomInfo.gameType = roomServer.roomInfo.gameType;
-        this.roomInfo.maxPlayers = roomServer.roomInfo.maxPlayers;
+        this.roomInfo = { ...roomServer.roomInfo };
         this.setPlayers(roomServer.players);
         this.elapsedTime = roomServer.elapsedTime;
         this.placementsData = roomServer.placementsData;
+        this.botsLevel = roomServer.botsLevel;
+        this.observers = roomServer.observers;
     }
 
     setPlayers(players: Player[]) {

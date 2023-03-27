@@ -13,6 +13,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
+import { RoomObserver } from '@app/interfaces/room-observer';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { AudioService } from '@app/services/audio.service';
 import { BackgroundService } from '@app/services/background-image.service';
@@ -99,6 +100,9 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         return Math.floor(timerPerTurn / min).toString() + 'm' + ('0' + (timerPerTurn - Math.floor(timerPerTurn / min) * min).toString()).slice(last);
     }
 
+    get isObserver(): boolean {
+        return this.playerService.isObserver;
+    }
     ngOnInit() {
         this.closeChatNewWindow();
         this.connectSocket();
@@ -358,6 +362,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.socketService.on(SocketEvent.RoomCreatorLeft, () => {
             this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
             this.router.navigate(['/main']);
+        });
+
+        this.socketService.on(SocketEvent.ObserversUpdated, (roomObservers: RoomObserver[]) => {
+            this.room.observers = roomObservers;
         });
 
         this.socketService.on(SocketEvent.GameStarted, () => {

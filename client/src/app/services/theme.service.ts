@@ -28,6 +28,14 @@ export class ThemeService {
         document.documentElement.style.removeProperty('--section-background');
         document.documentElement.style.removeProperty('--modal-background');
         document.documentElement.style.removeProperty('--app-background');
+
+        // Board Tiles:
+        document.documentElement.style.removeProperty('--their-chat-bubble-background');
+        document.documentElement.style.removeProperty('--basic-board-tile-color');
+        document.documentElement.style.removeProperty('--letter-2-tile-color');
+        document.documentElement.style.removeProperty('--letter-3-tile-color');
+        document.documentElement.style.removeProperty('--word-2-tile-color');
+        document.documentElement.style.removeProperty('--word-3-tile-color');
     }
 
     buildLightTheme() {
@@ -51,6 +59,14 @@ export class ThemeService {
         document.documentElement.style.setProperty('--section-background', 'white');
         document.documentElement.style.setProperty('--modal-background', '#FFFFFF');
         document.documentElement.style.setProperty('--app-background', 'white');
+
+        // Board tiles:
+        document.documentElement.style.setProperty('--basic-board-tile-font-color', '#666666');
+        document.documentElement.style.setProperty('--basic-board-tile-color', '#ffebce');
+        document.documentElement.style.setProperty('--letter-2-tile-color', '#bbbeca');
+        document.documentElement.style.setProperty('--letter-3-tile-color', '#a8bbff');
+        document.documentElement.style.setProperty('--word-2-tile-color', '#ffc7c7');
+        document.documentElement.style.setProperty('--word-3-tile-color', '#e8a1a1');
     }
 
     buildDarkTheme() {
@@ -74,6 +90,14 @@ export class ThemeService {
         document.documentElement.style.setProperty('--section-background', '#353534');
         document.documentElement.style.setProperty('--modal-background', '#575957');
         document.documentElement.style.setProperty('--app-background', '#303030');
+
+        // Board tiles:
+        document.documentElement.style.setProperty('--basic-board-tile-font-color', '#000000');
+        document.documentElement.style.setProperty('--basic-board-tile-color', '#404040');
+        document.documentElement.style.setProperty('--letter-2-tile-color', '#bdc0ff');
+        document.documentElement.style.setProperty('--letter-3-tile-color', '#6f8aed');
+        document.documentElement.style.setProperty('--word-2-tile-color', '#ff8383');
+        document.documentElement.style.setProperty('--word-3-tile-color', '#ff6464');
     }
 
     createCSSVariables() {
@@ -88,6 +112,7 @@ export class ThemeService {
         const body = document.getElementsByTagName('body')[0];
         body.classList.add(this.currentTheme);
     }
+
     switchTheme() {
         const body = document.getElementsByTagName('body')[0];
         body.classList.remove(this.currentTheme);

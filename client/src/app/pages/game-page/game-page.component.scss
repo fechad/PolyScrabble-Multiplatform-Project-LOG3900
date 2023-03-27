@@ -1,3 +1,10 @@
+$avatarMinDimension: 50px;
+$rackTileDimension: 35px;
+$rackTileBorder: 2px solid rgba(0, 0, 0, 0.3);
+$rackTileColor: #ecba8c;
+$rackTileBoxShadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
+$smallContainerBoxShadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
+
 app-goals-container {
     display: flex;
     width: 100%;
@@ -114,7 +121,7 @@ app-rack {
     flex-direction: column;
     justify-content: space-between;
     padding: 5%;
-    min-width: 300px;
+    min-width: 370px;
     height: 500px;
     border-radius: 8px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -165,4 +172,103 @@ app-rack {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+.player-racks-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.player-rack-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    min-width: $avatarMinDimension;
+    max-width: $avatarMinDimension;
+    min-height: $avatarMinDimension;
+    max-height: $avatarMinDimension;
+    border-radius: $avatarMinDimension;
+    object-fit: cover;
+    margin: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.15);
+}
+
+.rack-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    // border: 2px solid rgba(0, 0, 0, 0.15);
+    box-shadow: $smallContainerBoxShadow;
+    min-height: 50px;
+    border-radius: 8px;
+}
+
+.rack-tile {
+    color: black;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: $rackTileDimension;
+    max-width: $rackTileDimension;
+    min-height: $rackTileDimension;
+    max-height: $rackTileDimension;
+    border-radius: 7px;
+    background-color: $rackTileColor;
+    // border: $rackTileBorder;
+    box-shadow: $rackTileBoxShadow;
+
+    &:first-of-type {
+        margin-left: 5px;
+    }
+
+    &:last-of-type {
+        margin-right: 5px;
+    }
+}
+
+.rack-letter {
+    position: relative;
+    top: 10px;
+    font-size: 20px;
+}
+
+.letter-point {
+    height: 100%;
+    font-size: 14px;
+    align-self: end;
+    margin-right: 3px;
+}
+
+.view-choice {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 10px;
+}
+
+.choice-button {
+    color: var(--basic-font-color);
+    font-size: 20px;
+    background-color: transparent;
+    width: 40%;
+    border: 0px;
+    &.selected {
+        color: var(--accent);
+        border-bottom: 2px solid var(--accent);
+    }
 }
