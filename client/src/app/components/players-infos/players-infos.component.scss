@@ -47,6 +47,17 @@
     cursor: default;
 }
 
+.crown{
+    z-index: 100000;
+    position: relative;
+    bottom: 0;
+    font-size: 36px;
+    height: 1px;
+    left: 60%;
+    transform: rotate(42deg);
+    overflow: visible;
+}
+
 .gamers-displayer {
     display: flex;
     flex-direction: row;
@@ -102,7 +113,7 @@
     transform: translateY(-2px);
 }
 
-.player-panel div {
+.point {
     color: var(--basic-font-color);
     font-family: 'Nunito';
     font-size: 25px;
