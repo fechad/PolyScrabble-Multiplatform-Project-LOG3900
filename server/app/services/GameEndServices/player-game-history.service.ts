@@ -25,7 +25,6 @@ export class PlayerGameHistoryService {
     async updatePlayersGameHistories(game: Game) {
         const themedOpponent = this.hadThemedOpponent(game);
         const winnerUsernames = this.getWinners(game);
-        const endDateTime = firestore.Timestamp.now();
         game.results.forEach(async (entry) => {
             if (entry.playerID.startsWith('Bot')) return;
             const player = await this.databaseService.getDocumentByField(DATABASE_COLLECTION, 'username', entry.playerID);
@@ -35,7 +34,7 @@ export class PlayerGameHistoryService {
                 type: game.gameType,
                 score: entry.score,
                 gameID: game.startDatetime,
-                endDateTime,
+                endDateTime: game.endDatetime,
                 won: winnerUsernames.includes(player.username),
             };
             player.gamesPlayed.push(gameHeader);
