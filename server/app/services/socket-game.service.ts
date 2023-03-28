@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { CommandVerbs } from '@app/classes/command/command-verbs';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';

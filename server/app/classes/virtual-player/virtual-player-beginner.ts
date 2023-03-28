@@ -3,7 +3,7 @@ import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Randomiser } from '@app/classes/randomiser';
 import { MAX_RANDOM, WEIGHT_10, WEIGHT_40 } from '@app/constants/constants';
 import { SCALES } from '@app/constants/virtual-player-constants';
-import { GameLevel } from '@app/enums/game-level';
+import { Language } from '@app/enums/language';
 import { VirtualPlayerActions } from '@app/enums/virtual-player-actions';
 import { VirtualPlayer } from './virtual-player';
 
@@ -13,9 +13,9 @@ export class VirtualPlayerBeginner extends VirtualPlayer {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        desiredLevel: string = GameLevel.Beginner,
+        language: Language = Language.French,
     ) {
-        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.beginner);
+        super(pseudo, isCreator, boardManipulator, letterBank, SCALES.beginner, language);
     }
 
     override setScoreInterval() {
@@ -24,17 +24,18 @@ export class VirtualPlayerBeginner extends VirtualPlayer {
 
     protected override async chooseAction(): Promise<string> {
         const action = this.getAction();
-        if (action === VirtualPlayerActions.PassTurn) {
-            return this.passTurnAction();
+        switch (action) {
+            case VirtualPlayerActions.PassTurn:
+                return this.passTurnAction();
+            case VirtualPlayerActions.SwitchLetters:
+                return this.switchLettersAction();
+            case VirtualPlayerActions.PlaceLetters:
+                return this.placeLettersAction();
+            default:
+                return this.passTurnAction();
         }
-        if (action === VirtualPlayerActions.SwitchLetters) {
-            return this.switchLettersAction();
-        }
-        if (action === VirtualPlayerActions.PlaceLetters) {
-            return this.placeLettersAction();
-        }
-        return this.passTurnAction();
     }
+
     private getAction(): string {
         if (this.basis.actions.length <= 0) {
             this.basis.actions = Randomiser.getDistribution<string>(

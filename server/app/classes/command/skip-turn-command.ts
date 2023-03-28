@@ -1,10 +1,10 @@
 import { Command } from '@app/classes/command/command';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { PASSER_COMMAND_LENGTH, SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ChatMessageService } from '@app/services/chat.message';
-import { CommandVerbs } from './command-verbs';
-import { PASSER_COMMAND_LENGTH, SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from './constants';
 
 export class SkipTurnCommand extends Command {
     private readonly commandParameters: string[];

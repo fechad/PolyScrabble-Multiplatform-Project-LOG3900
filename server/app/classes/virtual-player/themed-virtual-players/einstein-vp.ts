@@ -3,7 +3,7 @@ import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { SCALES, TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
-import { GameLevel } from '@app/enums/game-level';
+import { Language } from '@app/enums/language';
 import { einsteinEnglishQuotes, einsteinFrenchQuotes } from '@app/enums/themed-quotes/einstein-quotes';
 
 // TODO: Place back 30
@@ -15,9 +15,9 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        desiredLevel: string = GameLevel.Beginner,
+        language: Language = Language.French,
     ) {
-        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.default);
+        super(pseudo, isCreator, boardManipulator, letterBank, SCALES.default, language);
         this.angryTurnsLeft = 0;
         this.setQuotes(einsteinFrenchQuotes, einsteinEnglishQuotes);
     }

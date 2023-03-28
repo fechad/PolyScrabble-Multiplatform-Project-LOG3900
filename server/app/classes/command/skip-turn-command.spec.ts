@@ -1,9 +1,9 @@
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
 import { ChatMessageService } from '@app/services/chat.message';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from './constants';
 import { SkipTurnCommand } from './skip-turn-command';
 
 describe('SkipTurnCommand', () => {

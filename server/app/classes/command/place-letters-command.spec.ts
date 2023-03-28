@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
-import { BoardMessage } from '@app/classes/board-model/board-message';
 import { Matcher } from '@app/classes/goals/matcher';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
 import { THIRTY_POINTS_NEEDED_FOR_REWARD, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/constants/goals-constants';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { CommandVerbs } from '@app/enums/command-verbs';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { PlacementDirections } from '@app/enums/placement-directions';
+import { BoardMessage } from '@app/interfaces/board-message';
 import { CommandResult } from '@app/interfaces/command-result';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ChatMessageService } from '@app/services/chat.message';
 import { expect } from 'chai';
 import { beforeEach, describe, it } from 'mocha';
 import * as sinon from 'sinon';
-import { SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from './constants';
 import { PlaceLettersCommand } from './place-letters-command';
 
 describe('PlaceLettersCommand', () => {

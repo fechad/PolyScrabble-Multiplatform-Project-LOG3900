@@ -3,7 +3,6 @@ import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { BIG_SCORE, EXTREME_SCORE, MAX_GAP_SANTA, SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
-import { GameLevel } from '@app/enums/game-level';
 import { Language } from '@app/enums/language';
 import { santaEnglishQuotes, santaFrenchQuotes } from '@app/enums/themed-quotes/santa-quotes';
 import { UserPlacement } from '@app/interfaces/user-placement';
@@ -17,10 +16,9 @@ export class SantaVirtualPlayer extends VirtualPlayer {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        desiredLevel: string = GameLevel.Beginner,
         language: Language = Language.French,
     ) {
-        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.beginner, language);
+        super(pseudo, isCreator, boardManipulator, letterBank, SCALES.beginner, language);
         this.setQuotes(santaFrenchQuotes, santaEnglishQuotes);
         this.hasCheated = false;
         this.angryTurnsLeft = 0;

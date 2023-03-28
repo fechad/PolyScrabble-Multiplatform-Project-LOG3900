@@ -5,8 +5,7 @@ import { BoardMessageContent } from '@app/enums/board-message-content';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { Directions } from '@app/enums/directions';
 import { PlacementDirections } from '@app/enums/placement-directions';
-import { BoardMessage } from './board-message';
-import { BoardNodesIterator } from './board-nodes-iterator';
+import { BoardMessage } from '@app/interfaces/board-message';
 import { DirectionHandler } from './handlers/direction-handler';
 import { IndexationTranslator } from './handlers/indexation.translator';
 import { SuccessMessageBuilder } from './handlers/success-message-builder';
@@ -14,7 +13,6 @@ import { BoardNode } from './nodes/board-node';
 import { NodeStream } from './nodes/node-stream';
 
 export class Board {
-    iterator: BoardNodesIterator;
     private table: BoardNode[];
     private translator: IndexationTranslator;
     private placementScore: number;
@@ -24,7 +22,6 @@ export class Board {
         this.translator = new IndexationTranslator();
         this.table = new Array<BoardNode>(this.translator.caseCount);
         this.letterValues = letterValues;
-        this.iterator = new BoardNodesIterator(this.table);
         this.placementScore = 0;
         this.setupBoard();
     }

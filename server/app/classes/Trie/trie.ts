@@ -1,3 +1,4 @@
+import { INVALID } from '@app/constants/constants';
 import { TrieNode } from './trie-node';
 
 export class Trie {
@@ -21,9 +22,7 @@ export class Trie {
         let current = this.root;
         for (const char of word) {
             const index = current.children.findIndex((node) => node.value === char);
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-            if (index === -1) return null;
-
+            if (index === INVALID) return null;
             current = current.children[index];
         }
         return current;
@@ -36,20 +35,9 @@ export class Trie {
         return finalNode.isEndOfWord;
     }
 
-    printTrieWords(node?: TrieNode, word: string = ''): void {
-        if (!node) node = this.root;
-        if (word === '') word = this.root.value;
-        if (node.isEndOfWord) {
-            // eslint-disable-next-line no-console
-        }
-        for (const child of node.children) {
-            this.printTrieWords(child, word + child.value);
-        }
-    }
     protected findOrCreateNode(startNode: TrieNode, char: string): TrieNode {
         let index = startNode.children.findIndex((node) => node.value === char);
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (index === -1) {
+        if (index === INVALID) {
             const newNode = new TrieNode(char);
             startNode.children.push(newNode);
             index = startNode.children.length - 1;

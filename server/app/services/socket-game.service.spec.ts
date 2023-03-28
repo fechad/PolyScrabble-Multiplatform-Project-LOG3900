@@ -288,7 +288,6 @@ describe('socketGameService service tests', () => {
             false,
             { askNode: (row: string, column: number) => {}, askNodeByIndex: (index: number) => {} } as any,
             {} as any,
-            'débutant',
         );
         virtualPlayer.setQuotes(DEFAULT_FRENCH_QUOTES, DEFAULT_ENGLISH_QUOTES);
         const secondPlayer = new Player('socketId2', 'pseudo2', false);

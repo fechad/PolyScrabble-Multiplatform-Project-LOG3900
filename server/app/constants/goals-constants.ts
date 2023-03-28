@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Goal } from '@app/classes/goals/goal';
 import { GoalDescription } from '@app/enums/goal-descriptions';
 import { GoalRewards } from '@app/enums/goal-rewards';
 import { GoalTitle } from '@app/enums/goal-titles';
+import { Goal } from '@app/interfaces/goal';
 
 export const TARGET_GOAL_COUNT = 4;
 export const PUBLIC_GOAL_COUNT = 4;

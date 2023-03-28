@@ -50,7 +50,6 @@ describe('chooseAction test', () => {
     });
 
     it('should pass turn if there are no other available action', async () => {
-        virtualPlayerPrivateAccess.basis.level = 'Expert';
         getActionStub.callsFake(() => {
             return VirtualPlayerActions.PassTurn;
         });

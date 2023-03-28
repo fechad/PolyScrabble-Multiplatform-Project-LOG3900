@@ -1,8 +1,6 @@
 /* eslint-disable no-case-declarations */
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
-import { BoardMessage } from '@app/classes/board-model/board-message';
 import { IndexationTranslator } from '@app/classes/board-model/handlers/indexation.translator';
-import { Goal } from '@app/classes/goals/goal';
 import { GoalManager } from '@app/classes/goals/goal-manager';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
@@ -17,6 +15,8 @@ import { VirtualPlayerBeginner } from '@app/classes/virtual-player/virtual-playe
 import { VirtualPlayerExpert } from '@app/classes/virtual-player/virtual-player-expert';
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
 import { GameLevel } from '@app/enums/game-level';
+import { BoardMessage } from '@app/interfaces/board-message';
+import { Goal } from '@app/interfaces/goal';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { VirtualTools } from '@app/interfaces/virtual-tools';
@@ -58,28 +58,28 @@ export class GameManager {
     getNewVirtualPlayer(name: string, desiredLevel: string): VirtualPlayer {
         switch (desiredLevel) {
             case GameLevel.Beginner:
-                return new VirtualPlayerBeginner(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new VirtualPlayerBeginner(name, false, this.boardManipulator, this.letterBank);
 
             case GameLevel.Adaptive:
-                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank);
 
             case GameLevel.Expert:
-                return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank);
 
             case GameLevel.Santa:
-                return new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
 
             case GameLevel.Trump:
-                return new TrumpVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new TrumpVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
 
             case GameLevel.Einstein:
-                return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
 
             case GameLevel.Serena:
-                return new SerenaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new SerenaVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
 
             default:
-                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, desiredLevel);
+                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank);
         }
     }
 
@@ -93,7 +93,6 @@ export class GameManager {
         player.rack.insertLetters(this.letterBank.fetchRandomLetters(player.rack.getSpaceLeft()));
     }
 
-    /// eslint-disable-next-line @typescript-eslint/no-unused-vars
     askPlacement(placement: PlacementData): BoardMessage {
         return this.boardManipulator.placeLetters(placement.word.split(''), placement.row, placement.column, placement.direction);
     }
@@ -139,10 +138,7 @@ export class GameManager {
 
     isGameFinished(players: Player[]): boolean {
         if (this.letterBank.getLettersCount() !== 0) return false;
-        for (const player of players) {
-            if (player.rack.isEmpty()) return true;
-        }
-        return false;
+        return players.some((player) => player.rack.isEmpty());
     }
 
     setPlayersTurnToFalse(players: Player[]) {
@@ -162,10 +158,7 @@ export class GameManager {
 
     updateScoresOnPlaceFinish(winner: Player, players: Player[]) {
         for (const player of players) {
-            if (!player || !player.rack || !this.letterBank) {
-                continue;
-            }
-            if (player.pseudo === winner.pseudo) {
+            if (!player || !player.rack || !this.letterBank || player.pseudo === winner.pseudo) {
                 continue;
             }
             const point = player.rack.getPointsOfRack(this.letterBank);
@@ -190,7 +183,6 @@ export class GameManager {
                 winnerArray.push(player);
             }
         }
-
         return winnerArray;
     }
 }

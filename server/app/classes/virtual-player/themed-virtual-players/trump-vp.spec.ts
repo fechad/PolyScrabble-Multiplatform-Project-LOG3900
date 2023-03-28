@@ -13,7 +13,7 @@ describe('Tump virtual player', () => {
     const letterBank: LetterBank = new LetterBank();
     const manipulator: BoardManipulator = new BoardManipulator(letterBank.produceValueMap());
     beforeEach(() => {
-        trumpVp = new TrumpVirtualPlayer('trump', false, manipulator, letterBank, 'Trump');
+        trumpVp = new TrumpVirtualPlayer('trump', false, manipulator, letterBank);
     });
     it('should become angry if gap is equal or over the threshold', () => {
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);

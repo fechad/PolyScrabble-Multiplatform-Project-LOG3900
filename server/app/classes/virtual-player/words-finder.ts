@@ -1,4 +1,5 @@
 import { TrieNode } from '@app/classes/Trie/trie-node';
+import { INVALID } from '@app/constants/constants';
 import { DICTIONARY_READER } from '@app/constants/reader-constant';
 
 export class WordsFinder {
@@ -24,13 +25,11 @@ export class WordsFinder {
                 const letterIndex = this.findAvailableLetter(nodeChild.value, usedLetters, rackLetters);
                 const letterAlreadyPlaced = structureChild.value === nodeChild.value.toUpperCase() && structureChild.value !== '_';
 
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                if (letterIndex === -1 && !letterAlreadyPlaced) continue;
+                if (letterIndex === INVALID && !letterAlreadyPlaced) continue;
                 const canPlaceLetter = rackLetters.includes(nodeChild.value) && !usedLetters.has(letterIndex);
                 if (!canPlaceLetter && !letterAlreadyPlaced) continue;
 
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                const updatedUsedLetters = letterIndex === -1 ? new Set([...usedLetters]) : new Set([...usedLetters, letterIndex]);
+                const updatedUsedLetters = letterIndex === INVALID ? new Set([...usedLetters]) : new Set([...usedLetters, letterIndex]);
                 const grandChildren = this.searchChildren(base, structureChild, nodeChild, rackLetters, updatedUsedLetters);
 
                 children = children.concat(grandChildren);

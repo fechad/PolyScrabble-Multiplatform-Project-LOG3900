@@ -12,11 +12,11 @@ import {
     TARGET_GOAL_COUNT
 } from '@app/constants/goals-constants';
 import { GoalTitle } from '@app/enums/goal-titles';
+import { Goal } from '@app/interfaces/goal';
 import { expect } from 'chai';
 import { assert } from 'console';
 import { describe } from 'mocha';
 import * as sinon from 'sinon';
-import { Goal } from './goal';
 import { GoalManager } from './goal-manager';
 import { Matcher } from './matcher';
 

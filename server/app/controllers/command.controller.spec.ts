@@ -1,8 +1,8 @@
-import { CommandVerbs } from '@app/classes/command/command-verbs';
-import { INVALID_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/classes/command/constants';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
+import { INVALID_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { UserPlacement } from '@app/interfaces/user-placement';
 import { ChatMessageService } from '@app/services/chat.message';

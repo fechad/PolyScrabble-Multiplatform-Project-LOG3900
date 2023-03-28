@@ -1,7 +1,7 @@
 import { BoardMessageContent } from '@app/enums/board-message-content';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
+import { BoardMessage } from '@app/interfaces/board-message';
 import { Board } from './board';
-import { BoardMessage } from './board-message';
 import { DirectionHandler } from './handlers/direction-handler';
 import { IndexationTranslator } from './handlers/indexation.translator';
 import { BoardNode } from './nodes/board-node';

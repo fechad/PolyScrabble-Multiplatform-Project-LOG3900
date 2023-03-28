@@ -3,4 +3,6 @@ export enum CommandVerbs {
     PLACE = 'placer',
     SKIP = 'passer',
     BANK = 'réserve',
+    HINT = 'indice',
+    HELP = 'aide',
 }

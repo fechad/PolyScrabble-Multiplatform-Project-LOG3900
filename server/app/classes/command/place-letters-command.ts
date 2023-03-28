@@ -1,17 +1,7 @@
-import { BoardMessage } from '@app/classes/board-model/board-message';
 import { DirectionHandler } from '@app/classes/board-model/handlers/direction-handler';
 import { Matcher } from '@app/classes/goals/matcher';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
-import { RACK_CAPACITY } from '@app/constants/constants';
-import { THIRTY_POINTS_NEEDED_FOR_REWARD, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/constants/goals-constants';
-import { BoardMessageTitle } from '@app/enums/board-message-title';
-import { GoalTitle } from '@app/enums/goal-titles';
-import { CommandResult } from '@app/interfaces/command-result';
-import { PlacementData } from '@app/interfaces/placement-data';
-import { ChatMessageService } from '@app/services/chat.message';
-import { Command } from './command';
-import { CommandVerbs } from './command-verbs';
 import {
     DEFAULT_PLACEMENT_DIRECTION,
     MINIMUM_WORD_LENGTH,
@@ -19,7 +9,17 @@ import {
     PLACER_COMMAND_LENGTH,
     SYNTAX_ERROR_MESSAGE,
     WAIT_TURN_ERROR,
-} from './constants';
+} from '@app/constants/command-constants';
+import { RACK_CAPACITY } from '@app/constants/constants';
+import { THIRTY_POINTS_NEEDED_FOR_REWARD, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/constants/goals-constants';
+import { BoardMessageTitle } from '@app/enums/board-message-title';
+import { CommandVerbs } from '@app/enums/command-verbs';
+import { GoalTitle } from '@app/enums/goal-titles';
+import { BoardMessage } from '@app/interfaces/board-message';
+import { CommandResult } from '@app/interfaces/command-result';
+import { PlacementData } from '@app/interfaces/placement-data';
+import { ChatMessageService } from '@app/services/chat.message';
+import { Command } from './command';
 
 const positionArgumentsIndex = 1;
 const placeLettersIndex = 2;

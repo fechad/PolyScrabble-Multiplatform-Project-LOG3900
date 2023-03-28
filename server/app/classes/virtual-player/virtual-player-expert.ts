@@ -2,7 +2,7 @@ import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
-import { GameLevel } from '@app/enums/game-level';
+import { Language } from '@app/enums/language';
 import { VirtualPlayer } from './virtual-player';
 
 export class VirtualPlayerExpert extends VirtualPlayer {
@@ -11,9 +11,9 @@ export class VirtualPlayerExpert extends VirtualPlayer {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        desiredLevel: string = GameLevel.Beginner,
+        language: Language = Language.French,
     ) {
-        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.expert);
+        super(pseudo, isCreator, boardManipulator, letterBank, SCALES.expert, language);
     }
 
     override setScoreInterval() {

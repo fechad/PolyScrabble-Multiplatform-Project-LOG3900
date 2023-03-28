@@ -1,3 +1,5 @@
+import { INVALID } from '@app/constants/constants';
+
 export class WordCollection {
     private words: string[];
     constructor(words?: string[]) {
@@ -10,9 +12,7 @@ export class WordCollection {
         return this.words[index];
     }
     add(word: string) {
-        // Disabled because -1 is the default return value when word is not in array
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (this.words.indexOf(word) === -1) this.words.push(word);
+        if (this.words.indexOf(word) === INVALID) this.words.push(word);
     }
     findDerivatives(base: string): string[] {
         const derivatives: string[] = [];

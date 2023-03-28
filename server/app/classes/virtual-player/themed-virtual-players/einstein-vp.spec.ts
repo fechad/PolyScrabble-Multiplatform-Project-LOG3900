@@ -13,7 +13,7 @@ describe('Einstein virtual player', () => {
     const letterBank: LetterBank = new LetterBank();
     const manipulator: BoardManipulator = new BoardManipulator(letterBank.produceValueMap());
     beforeEach(() => {
-        einsteinVp = new EinsteinVirtualPlayer('trump', false, manipulator, letterBank, 'Trump');
+        einsteinVp = new EinsteinVirtualPlayer('trump', false, manipulator, letterBank);
     });
     it('should become angry if gap is equal or over the threshold', () => {
         einsteinVp.setScoreInterval(ANGRY_THRESHOLD);

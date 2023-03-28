@@ -7,7 +7,6 @@ export class IntervalComputer {
     private interval: ScoreInterval;
     private adaptiveScale: AdaptiveScale;
     constructor(adaptativeScale: AdaptiveScale = SCALES.default) {
-        // a inverser
         this.isRuthless = false;
         this.adaptiveScale = adaptativeScale;
         this.setScoreInterval();
