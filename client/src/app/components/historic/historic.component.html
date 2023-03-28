@@ -1,0 +1,49 @@
+<div class = "statistics">
+    <h2>Statistiques de jeu</h2>
+    <div class ="stat-displayer">
+        <div class = stat>
+            <h3>Parties jouées</h3>
+            <p>{{gameStat ? gameStat.playedGamesCount : 0}}</p>
+        </div>
+        <div class = stat>
+            <h3>Parties gagnées</h3>
+            <p>{{gameStat ? gameStat.gamesWonCount : 0}}</p>
+        </div>
+        <div class = stat>
+            <h3>Score moyen</h3>
+            <p>{{gameStat ? gameStat.averagePointsByGame: 0}}</p>
+        </div>
+        <div class = stat>
+            <h3>Temp de jeu moyen</h3>
+            <p>{{gameStat && gameStat.averageGameDuration !== "" ? gameStat.averageGameDuration : "0s"}}</p>
+        </div>
+    </div>
+</div>
+<div class = "historic-section">
+    <h2>Historiques</h2>
+    <div class ="historics">
+        <div class = "hist-container">
+            <h3>Connexions</h3>
+            <div class = first-historic>
+                <p class = "log" *ngFor = "let log of gameStat?.logs">{{log.time}} , {{log.message}}</p>
+                <p class = "log" *ngIf = "!gameStat || gameStat.logs.length === 0">Aucun message pour le moment</p>
+            </div>
+        </div>
+        <div class = "hist-container">
+            <h3>Parties jouées</h3>
+            <div class = second-historic>
+                <div *ngFor = "let game of gameStat?.playedGames" class = game-card>
+                        <div class = "line">
+                            <p>{{game.startDateTime}}</p>
+                            <p class = "crown" [class.disabled] = "!game.won">👑</p>
+                        </div>
+                        <div class = "line">
+                            <p>Durée: {{game.duration}}</p>
+                            <p>Score: {{game.score}}</p>
+                        </div>
+                </div>
+                <p class = "log" *ngIf = "!gameStat || gameStat.playedGames.length === 0">Aucune partie pour le moment</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,11 +1,10 @@
 <div class="page-container">
     <div class="page-body mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
-        <div class="body-main-container">
             <div class="page-title">
                 <div class="form-title settings-title" [translate]="'SETTINGS-PAGE.TITLE'"></div>
                 <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
-            <form [formGroup]="settingsForm">
+            <form [formGroup]="settingsForm" class = "form">
                 <div class="page-options">
                     <div class="avatar-section">
                         <img (click)="openAvatarUrlsChoices()" [src]="avatarURL" class="avatar-img" />
@@ -13,52 +12,56 @@
                     </div>
                     <div class="theme-section">
                         <p class="section-title" [translate]="'SETTINGS-PAGE.THEME-SECTION.LABEL'"></p>
-                        <div class="radio-button-option">
-                            <input
-                                type="radio"
-                                (input)="themeService.switchTheme()"
-                                id="dark"
-                                name="defaultTheme"
-                                value="dark"
-                                formControlName="defaultTheme"
-                            />
-                            <label for="dark" [translate]="'SETTINGS-PAGE.THEME-SECTION.DARK'"></label><br />
-                        </div>
-                        <div>
-                            <input
-                                type="radio"
-                                (input)="themeService.switchTheme()"
-                                id="light"
-                                name="defaultTheme"
-                                value="light"
-                                formControlName="defaultTheme"
-                            />
-                            <label for="light" [translate]="'SETTINGS-PAGE.THEME-SECTION.LIGHT'"></label><br />
+                        <div class = "radio-displayer">
+                            <div class="radio-button-option">
+                                <input
+                                    type="radio"
+                                    (input)="themeService.switchTheme()"
+                                    id="dark"
+                                    name="defaultTheme"
+                                    value="dark"
+                                    formControlName="defaultTheme"
+                                />
+                                <label for="dark" [translate]="'SETTINGS-PAGE.THEME-SECTION.DARK'"></label><br />
+                            </div>
+                            <div class="radio-button-option">
+                                <input
+                                    type="radio"
+                                    (input)="themeService.switchTheme()"
+                                    id="light"
+                                    name="defaultTheme"
+                                    value="light"
+                                    formControlName="defaultTheme"
+                                />
+                                <label for="light" [translate]="'SETTINGS-PAGE.THEME-SECTION.LIGHT'"></label><br />
+                            </div>
                         </div>
                     </div>
                     <div class="language-section">
                         <p class="section-title" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.LABEL'"></p>
-                        <div class="radio-button-option">
-                            <input
-                                type="radio"
-                                id="french"
-                                name="defaultLanguage"
-                                value="french"
-                                formControlName="defaultLanguage"
-                                (input)="languageService.switchLanguage()"
-                            />
-                            <label for="french" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.FRENCH'"></label><br />
-                        </div>
-                        <div>
-                            <input
-                                type="radio"
-                                id="english"
-                                name="defaultLanguage"
-                                value="english"
-                                formControlName="defaultLanguage"
-                                (input)="languageService.switchLanguage()"
-                            />
-                            <label for="english" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.ENGLISH'"></label><br />
+                        <div class = "radio-displayer">
+                            <div class="radio-button-option">
+                                <input
+                                    type="radio"
+                                    id="french"
+                                    name="defaultLanguage"
+                                    value="french"
+                                    formControlName="defaultLanguage"
+                                    (input)="languageService.switchLanguage()"
+                                />
+                                <label for="french" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.FRENCH'"></label><br />
+                            </div>
+                            <div class="radio-button-option">
+                                <input
+                                    type="radio"
+                                    id="english"
+                                    name="defaultLanguage"
+                                    value="english"
+                                    formControlName="defaultLanguage"
+                                    (input)="languageService.switchLanguage()"
+                                />
+                                <label for="english" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.ENGLISH'"></label><br />
+                            </div>
                         </div>
                     </div>
                     <div class="victory-music-section">
@@ -72,9 +75,7 @@
                                 {{ music.value }}
                             </option>
                         </select>
-                        <br /><br />
                     </div>
-                    <button class="password-section" [translate]="'SETTINGS-PAGE.PASSWORD'"></button>
 
                     <input
                         class="save-button button"
@@ -83,9 +84,12 @@
                         (click)="sendData()"
                         [disabled]="!changed"
                     />
+                    <button class="password-section" [translate]="'SETTINGS-PAGE.PASSWORD'"></button>
                 </div>
+                
             </form>
-        </div>
+           
+            <app-historic></app-historic>
         <div class="footer"></div>
     </div>
     <app-menu></app-menu>

@@ -53,6 +53,7 @@ import { ForgotPasswordPageComponent } from './pages/forgot-password-page/forgot
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
+import { HistoricComponent } from './components/historic/historic.component';
 
 /**
  * Main module that is used in main.ts.
@@ -114,6 +115,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         VirtualPlayerComponent,
         ThemedPopUpComponent,
         HintShowerComponent,
+        HistoricComponent,
     ],
     imports: [
         AppMaterialModule,

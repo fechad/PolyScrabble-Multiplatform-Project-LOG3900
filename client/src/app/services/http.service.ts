@@ -6,7 +6,8 @@ import {
     FORBIDDEN_MESSAGE,
     GONE_RESSOURCE_MESSAGE,
     UNREACHABLE_SERVER_MESSAGE,
-    UNREACHABLE_SERVER_STATUS_CDOE,
+    // eslint-disable-next-line prettier/prettier
+    UNREACHABLE_SERVER_STATUS_CDOE
 } from '@app/constants/http-constants';
 import { PlayerGameStats } from '@app/constants/player-stats';
 import { Game } from '@app/interfaces/game';

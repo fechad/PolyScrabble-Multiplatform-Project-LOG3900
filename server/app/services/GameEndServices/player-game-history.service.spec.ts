@@ -3,15 +3,22 @@
 import { DEFAULT_USER_SETTINGS } from '@app/constants/default-user-settings';
 import { PlayerGameStats } from '@app/interfaces/client-exchange/player-stats';
 import { Account } from '@app/interfaces/firestoreDB/account';
+import { DatabaseService } from '@app/services/database.service';
 import { expect } from 'chai';
 import { firestore } from 'firebase-admin';
+import Sinon from 'sinon';
 import { PlayerGameHistoryService } from './player-game-history.service';
 
 describe('PlayerGameHistoryService tests', () => {
     let historyService: PlayerGameHistoryService;
     let playerAccount: Account;
+    const databaseService: DatabaseService = new DatabaseService();
     beforeEach(() => {
-        historyService = new PlayerGameHistoryService({} as any);
+        // eslint-disable-next-line import/no-named-as-default-member
+        Sinon.stub(databaseService, 'getSubCollection').callsFake(async () => {
+            return [];
+        });
+        historyService = new PlayerGameHistoryService(databaseService);
         playerAccount = {
             username: 'WickedTester',
             email: 'test@test.test',
@@ -60,6 +67,7 @@ describe('PlayerGameHistoryService tests', () => {
                     won: true,
                 },
             ],
+            logs: [],
         };
         expect(gamesStats).to.be.deep.equal(expected);
     });

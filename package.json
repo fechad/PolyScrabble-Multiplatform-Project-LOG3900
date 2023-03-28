@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "nvm": "^0.0.4"
   }
 }
