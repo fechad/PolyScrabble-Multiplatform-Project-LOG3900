@@ -5,7 +5,7 @@ export const santaEnglishQuotes: Quotes = {
     extremeScore:
         'My oh my, you must have some elf magic up your sleeve to come up with that word! You are truly a champion of the holiday spirit! 🔮',
     angryAnnouncement: 'You are truly a Scrabble master, my friend! Keep up the great work and may your words be merry and bright! ✨',
-    cheatAnnouncement: 'Only naughty boys cheat...',
+    specialAnnouncement: 'Only naughty boys cheat...',
 };
 
 export const santaFrenchQuotes: Quotes = {
@@ -14,5 +14,5 @@ export const santaFrenchQuotes: Quotes = {
     extremeScore:
         "Oh là là, vous devez avoir un peu de magie de lutins pour avoir trouvé ce mot ! Vous êtes vraiment un champion de l'esprit des fêtes ! 🔮",
     angryAnnouncement: 'Vous êtes vraiment un maître du Scrabble festif, vous scintillez de mille-feux mon ami! ✨',
-    cheatAnnouncement: 'Seuls les mauvais garçons triches...',
+    specialAnnouncement: 'Seuls les mauvais garçons triches...',
 };
