@@ -205,7 +205,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     private findWinner(winnerArray: Player[]) {
         if (!winnerArray || winnerArray.length === 0) return;
         if (winnerArray.length <= 1) {
-            this.winnerPseudo = winnerArray[0].pseudo;
+            this.winnerPseudo = winnerArray[0].clientAccountInfo.username;
         }
         this.numberOfWinner = winnerArray.length;
         if (this.getPlayerInfo(true, 'pseudo') === this.winnerPseudo || this.numberOfWinner === 2) this.launchConfetti();
