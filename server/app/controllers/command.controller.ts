@@ -1,6 +1,6 @@
 import { Command } from '@app/classes/command/command';
-import { CommandVerbs } from '@app/classes/command/command-verbs';
-import { COMMAND_STARTING_SYMBOL, INVALID_ERROR_MESSAGE } from '@app/classes/command/constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
+import { COMMAND_STARTING_SYMBOL, INVALID_ERROR_MESSAGE } from '@app/constants/command-constants';
 import { ExchangeLettersCommand } from '@app/classes/command/exchange-command';
 import { HelpCommand } from '@app/classes/command/help-command';
 import { HintCommand } from '@app/classes/command/hint-command';

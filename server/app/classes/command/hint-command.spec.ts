@@ -2,6 +2,7 @@ import { HintCommand } from '@app/classes/command/hint-command';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
+import { SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { CommandResult } from '@app/interfaces/command-result';
 import { UserPlacement } from '@app/interfaces/user-placement';
@@ -9,8 +10,7 @@ import { ChatMessageService } from '@app/services/chat.message';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
-import { CommandVerbs } from './command-verbs';
-import { SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from './constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 
 describe('HintCommand', () => {
     const name = 'David';

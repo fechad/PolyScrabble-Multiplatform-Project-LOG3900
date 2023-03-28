@@ -30,11 +30,8 @@ export class PlacementFinder {
 
     private findPlacements(availableLetters: string) {
         const scoreInterval = SCORE_INTERVALS.any;
-        if (!this.centerNode.content) {
-            const stream = new NodeStream(this.centerNode, PlacementDirections.Horizontal, MAXIMUM_PLACEMENT_LENGTH);
-            this.findDirectionalPlacement(stream, scoreInterval, PlacementDirections.Horizontal, availableLetters);
-            return;
-        }
+        if (!this.centerNode.content) return this.firstWordPlacement(availableLetters, scoreInterval);
+
         for (let i = 0; i < MAX_COLUMN_INDEX * DEFAULT_COLUMN_COUNT; i++) {
             let node = this.tools.manipulator.askNodeByIndex(i);
             if (node === undefined) return;
@@ -48,6 +45,11 @@ export class PlacementFinder {
         }
     }
 
+    private firstWordPlacement(availableLetters: string, scoreInterval: ScoreInterval) {
+        const stream = new NodeStream(this.centerNode, PlacementDirections.Horizontal, MAXIMUM_PLACEMENT_LENGTH);
+        this.findDirectionalPlacement(stream, scoreInterval, PlacementDirections.Horizontal, availableLetters);
+    }
+
     private isStreamConnected(stream: NodeStream, directionStream: PlacementDirections): boolean {
         const mainFlow: BoardNode[] | undefined = stream.getFlows(directionStream)?.at(0);
         const otherFlows: BoardNode[][] | undefined = stream.getFlows(DirectionHandler.reversePlacementDirection(directionStream));
@@ -55,12 +57,10 @@ export class PlacementFinder {
         if (!mainFlow) return false;
         // first placement logic
         if (
-            !(
-                this.centerNode.content !== null ||
-                mainFlow.some((node: BoardNode) => {
-                    return node.index === CENTRAL_NODE_INDEX;
-                })
-            )
+            this.centerNode.content === null &&
+            mainFlow.every((node: BoardNode) => {
+                return node.index !== CENTRAL_NODE_INDEX;
+            })
         )
             return true;
         return !(this.centerNode.content && mainFlow.every((node) => !node.content) && (!otherFlows || !otherFlows[0]));

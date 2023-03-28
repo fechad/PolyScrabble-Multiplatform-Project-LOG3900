@@ -1,5 +1,5 @@
-import { BoardMessage } from '@app/classes/board-model/board-message';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
+import { BoardMessage } from '@app/interfaces/board-message';
 export class SuccessMessageBuilder {
     static elaborateSuccessMessage(letters: string[], row: string, column: number, direction?: string, points?: number): BoardMessage {
         const answer: BoardMessage = {

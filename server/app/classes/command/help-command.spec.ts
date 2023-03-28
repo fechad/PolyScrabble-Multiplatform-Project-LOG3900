@@ -1,9 +1,9 @@
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { SYNTAX_ERROR_MESSAGE } from '@app/constants/command-constants';
 import { ChatMessageService } from '@app/services/chat.message';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { SYNTAX_ERROR_MESSAGE } from './constants';
 import { HelpCommand } from './help-command';
 
 describe('HelpCommand', () => {

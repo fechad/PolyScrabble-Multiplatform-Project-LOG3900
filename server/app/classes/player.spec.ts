@@ -3,7 +3,7 @@ import { Rack } from '@app/classes/rack';
 import { CommandResult } from '@app/interfaces/command-result';
 import { expect } from 'chai';
 import { describe } from 'mocha';
-import { CommandVerbs } from './command/command-verbs';
+import { CommandVerbs } from '@app/enums/command-verbs';
 
 describe('Player tests', () => {
     const socketID = 'socketID1';

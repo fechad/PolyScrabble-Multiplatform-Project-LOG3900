@@ -1,12 +1,12 @@
-import { CommandVerbs } from '@app/classes/command/command-verbs';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { SYNTAX_ERROR_MESSAGE } from '@app/constants/command-constants';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ChatMessageService } from '@app/services/chat.message';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
-import { SYNTAX_ERROR_MESSAGE } from './constants';
 import { LetterBankCommand } from './letter-bank-command';
 
 describe('LetterBankCommand', () => {

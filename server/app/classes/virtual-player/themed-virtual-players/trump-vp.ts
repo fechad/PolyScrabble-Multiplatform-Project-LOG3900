@@ -2,7 +2,6 @@ import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { SCALES, TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
-import { GameLevel } from '@app/enums/game-level';
 import { Language } from '@app/enums/language';
 import { trumpEnglishQuotes, trumpFrenchQuotes } from '@app/enums/themed-quotes/trump-quotes';
 
@@ -16,10 +15,9 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        desiredLevel: string = GameLevel.Beginner,
         language: Language = Language.French,
     ) {
-        super(pseudo, isCreator, boardManipulator, letterBank, desiredLevel, SCALES.beginner, language);
+        super(pseudo, isCreator, boardManipulator, letterBank, SCALES.beginner, language);
         this.setQuotes(trumpFrenchQuotes, trumpEnglishQuotes);
         this.hasCheated = false;
         this.angryTurnsLeft = 0;

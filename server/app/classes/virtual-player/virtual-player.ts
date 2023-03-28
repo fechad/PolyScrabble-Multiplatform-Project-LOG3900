@@ -11,7 +11,6 @@ import { RACK_CAPACITY } from '@app/constants/constants';
 import { DEFAULT_BOT_ACCOUNT } from '@app/constants/default-user-settings';
 import { BIG_SCORE, DEFAULT_MAX_GAP, EXTREME_SCORE, SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
-import { GameLevel } from '@app/enums/game-level';
 import { Language } from '@app/enums/language';
 import { DEFAULT_ENGLISH_QUOTES, DEFAULT_FRENCH_QUOTES, Quotes } from '@app/enums/themed-quotes/quotes';
 import { AdaptiveScale } from '@app/interfaces/adaptive-scale';
@@ -38,14 +37,13 @@ export class VirtualPlayer extends Player implements Observable {
         isCreator: boolean,
         boardManipulator: BoardManipulator,
         letterBank: LetterBank,
-        desiredLevel: string = GameLevel.Beginner,
         scale: AdaptiveScale = SCALES.default,
         language: Language = Language.French,
     ) {
         super('', pseudo, isCreator, DEFAULT_BOT_ACCOUNT);
         this.observers = [];
         this.language = language;
-        this.basis = { level: desiredLevel, actions: [], scoreIntervals: [] };
+        this.basis = { actions: [], scoreIntervals: [] };
         const baseTools: VirtualTools = {
             translator: new IndexationTranslator(),
             manipulator: boardManipulator,
@@ -59,10 +57,6 @@ export class VirtualPlayer extends Player implements Observable {
         this.maxGap = DEFAULT_MAX_GAP;
         this.intervalComputer = new IntervalComputer(scale);
         this.setQuotes();
-    }
-
-    get level(): string {
-        return this.basis.level;
     }
     get greeting(): string {
         return this.quotes.greeting;

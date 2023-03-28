@@ -4,7 +4,6 @@ import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Rack } from '@app/classes/rack';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
-import { GameLevel } from '@app/enums/game-level';
 import { PlacementDirections } from '@app/enums/placement-directions';
 import { UserPlacement } from '@app/interfaces/user-placement';
 import { assert, expect } from 'chai';
@@ -24,13 +23,10 @@ describe('VirtualPlayer tests', () => {
         letterBank = new LetterBank();
         manipulator = new BoardManipulator(letterBank.produceValueMap());
         rack = new Rack(randomLetters);
-        virtualPlayer = new VirtualPlayer('Botnet', false, manipulator, letterBank, 'débutant');
+        virtualPlayer = new VirtualPlayer('Botnet', false, manipulator, letterBank);
         virtualPlayer.rack = rack;
         virtualPlayerPrivateAccess = virtualPlayer as any;
         virtualPlayerPrivateAccess.possiblePlacements = possiblePlacements;
-    });
-    it('should return the correct level', () => {
-        expect(virtualPlayer.level).to.equals('débutant');
     });
     it('should call chooseAction methods with the right action', async () => {
         const playTurnSpy = sinon.spy(virtualPlayer as any, 'chooseAction');
@@ -90,15 +86,6 @@ describe('VirtualPlayer tests', () => {
             expect(virtualPlayerPrivateAccess.placeLettersAction()).to.equal(
                 `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`,
             );
-        });
-    });
-
-    describe('Expert tests', () => {
-        it('should call placeLetterActionExpert if the basisLevel is expert', () => {
-            virtualPlayerPrivateAccess.basis.level = GameLevel.Expert;
-            const placeLettersActionExpertSpy = sinon.spy(virtualPlayerPrivateAccess, 'placeLettersAction');
-            virtualPlayerPrivateAccess.chooseAction();
-            assert(placeLettersActionExpertSpy.called, 'did not call placeLettersAction on chooseAction when gameLevel was expert');
         });
     });
 });

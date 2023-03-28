@@ -1,6 +1,4 @@
-import { BoardMessage } from '@app/classes/board-model/board-message';
 import { BotCommunicationManager } from '@app/classes/bot-communication-manager';
-import { Goal } from '@app/classes/goals/goal';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
@@ -8,6 +6,8 @@ import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/constants/constants';
 import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
+import { BoardMessage } from '@app/interfaces/board-message';
+import { Goal } from '@app/interfaces/goal';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';

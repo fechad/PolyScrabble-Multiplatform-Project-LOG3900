@@ -7,6 +7,7 @@ export const DEFAULT_WEIGHTS = [50, 50];
 export const DEFAULT_DISTRIBUTION_SIZE = 10;
 export const MAX_GAP_SANTA = -10;
 export const MAXIMUM_PLACEMENT_LENGTH = 7;
+export const MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR = 2;
 export const BIG_SCORE = 30;
 export const EXTREME_SCORE = 50;
 export const INVALID = -1;
@@ -34,6 +35,12 @@ const SERENA_SCALE: AdaptiveScale = {
     max: 20,
     lowerScale: 0.2,
     upperScale: 0.2,
+};
+const MOZART_SCALE: AdaptiveScale = {
+    min: 4,
+    max: 12,
+    lowerScale: 0.15,
+    upperScale: 0.25,
 };
 const SANTA_SCALE: AdaptiveScale = {
     min: 2,
@@ -63,6 +70,7 @@ export const SCALES = {
     expert: EXPERT_SCALE,
     serena: SERENA_SCALE,
     santa: SANTA_SCALE,
+    mozart: MOZART_SCALE,
     defaultTrump: TRUMP_DEFAULT_SCALE,
     angryTrump: TRUMP_ANGRY_SCALE,
 };

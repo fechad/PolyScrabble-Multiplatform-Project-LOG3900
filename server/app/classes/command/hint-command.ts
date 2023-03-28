@@ -1,11 +1,11 @@
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
+import { HINT_COMMAND_LENGTH, SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ChatMessageService } from '@app/services/chat.message';
 import { Command } from './command';
-import { CommandVerbs } from './command-verbs';
-import { HINT_COMMAND_LENGTH, SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from './constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 const HINTS_NUMBERS = 5;
 export class HintCommand extends Command {
     private readonly commandParameters: string[];

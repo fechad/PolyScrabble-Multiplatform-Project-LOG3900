@@ -1,16 +1,16 @@
 import { Command } from '@app/classes/command/command';
+import { Player } from '@app/classes/player';
+import { Room } from '@app/classes/room-model/room';
 import {
     ALMOST_EMPTY_BANK_ERROR,
     ECHANGER_COMMAND_LENGTH,
     MINIMUM_BANK_LETTERS_FOR_EXCHANGE,
     SYNTAX_ERROR_MESSAGE,
     WAIT_TURN_ERROR,
-} from '@app/classes/command/constants';
-import { Player } from '@app/classes/player';
-import { Room } from '@app/classes/room-model/room';
+} from '@app/constants/command-constants';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ChatMessageService } from '@app/services/chat.message';
-import { CommandVerbs } from './command-verbs';
+import { CommandVerbs } from '@app/enums/command-verbs';
 
 const lettersIndex = 1;
 export class ExchangeLettersCommand extends Command {

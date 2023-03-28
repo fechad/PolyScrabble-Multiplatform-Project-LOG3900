@@ -2,7 +2,7 @@
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable dot-notation */ // we want to access private attribute to test them
-import { CommandVerbs } from '@app/classes/command/command-verbs';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
