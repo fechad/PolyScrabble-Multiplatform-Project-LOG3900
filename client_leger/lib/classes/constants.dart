@@ -6,7 +6,11 @@ const List<String> virtualPlayers = <String>[
   'Jojo',
 ];
 const List<String> difficulty = <String>['Débutant', 'Expert', 'Adaptatif'];
-const List<String> gameType = <String>['Privée', 'Publique', 'Publique avec mot de passe'];
+const List<String> gameType = <String>[
+  'Privée',
+  'Publique',
+  'Publique avec mot de passe'
+];
 const List<String> time = <String>[
   '30',
   '60',
@@ -19,11 +23,7 @@ const List<String> time = <String>[
   '270',
   '300'
 ];
-const List<Map<String, String>> music = [
-  {'We are the champions' : 'WeAreTheChamps.mp3'},
-{'Never gonna give you up':'RickRoll.mp3'},
-  {'I am better': 'Better.mp3'}
-];
+const List<String> music = ['WeAreTheChamps.mp3', 'RickRoll.mp3', 'Better.mp3'];
 
 final UserSettings DEFAULT_USER_SETTINGS = UserSettings(
     avatarUrl:
@@ -159,5 +159,3 @@ final Map<String, Account> JVS = {
   "Trump": TRUMP,
   "Einstein": EINSTEIN,
 };
-
-

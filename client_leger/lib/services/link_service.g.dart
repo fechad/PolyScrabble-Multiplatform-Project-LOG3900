@@ -72,6 +72,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<String> get currentBackground {
+    _$valueAtom.reportRead();
+    return super.currentBackground;
+  }
+
+  @override
   set value(ObservableList<Tile> rack) {
     _$valueAtom.reportWrite(rack, super.tempRack, () {
       super.tempRack = rack;
@@ -80,6 +86,28 @@ mixin _$LinkService on _LinkService, Store {
 
   late final _$_LinkServiceActionController =
       ActionController(name: '_LinkService');
+
+  @override
+  void setCurrentBackground(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setCurrentBackground');
+    try {
+      return super.setCurrentBackground(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void switchBackground(newBackground) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.switchBackground');
+    try {
+      return super.switchBackground(newBackground);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void changeTurn() {

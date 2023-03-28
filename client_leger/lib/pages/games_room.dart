@@ -1,17 +1,12 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/pages/waiting_page.dart';
 import 'package:flutter/material.dart';
-
 import '../classes/game.dart';
 import '../components/game_avail_card.dart';
 import '../components/sidebar.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../services/link_service.dart';
 import 'game_page.dart';
-
-const List<String> virtualPlayers = <String>['One', 'Two', 'Three', 'Four'];
-const List<String> difficulty = <String>['Novice', 'Expert'];
-const List<String> time = <String>['0', '1'];
 
 class GamesRoomPage extends StatefulWidget {
   const GamesRoomPage({super.key});
@@ -57,17 +52,10 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
               linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
               Navigator.push(context, MaterialPageRoute(builder: ((context) {
                 return WaitingPage(
+                    roomName: gameService.room.roomInfo.name,
                     timer: gameService.gameData.timerPerTurn,
-                    isExpertLevel: gameService.gameData.isExpertLevel,
+                    botsLevel: gameService.room.botsLevel!,
                     players: gameService.room.players);
-              })))
-            });
-
-    socketService.on(
-        "gameStarted",
-        (data) => {
-              Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                return GamePageWidget();
               })))
             });
 
@@ -136,10 +124,11 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                       itemBuilder: (_, index) {
                         return GameCard(
                           //TODO : get difficulty and not gameType
-                          difficulty: availableRooms[index].roomInfo.gameType,
+                          difficulty: availableRooms[index].botsLevel!,
                           time: availableRooms[index].roomInfo.timerPerTurn,
                           password: availableRooms[index].roomInfo.password,
                           roomName: availableRooms[index].roomInfo.name,
+                          isObserver: false,
                         );
                       })),
             ])),

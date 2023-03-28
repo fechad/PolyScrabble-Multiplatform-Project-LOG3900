@@ -6,6 +6,7 @@ class Racks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        color: Colors.transparent,
         padding: EdgeInsets.only(left: 7.5, right: 5),
         child: Column(children: [
           SizedBox(height: 16),

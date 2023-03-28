@@ -18,6 +18,7 @@ export class RoomService {
     getRoomsPublic(): Room[] {
         const publicUnavailableRoom = this.roomsUnavailable.filter((room) => !room.isSolo && room.roomInfo.isPublic);
         const publicAvailableRoom = this.roomsAvailable.filter((room) => !room.isSolo && room.roomInfo.isPublic);
+
         return publicUnavailableRoom.concat(publicAvailableRoom);
     }
 

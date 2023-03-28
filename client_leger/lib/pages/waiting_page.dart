@@ -19,27 +19,31 @@ import 'chat_page.dart';
 class WaitingPage extends StatefulWidget {
   const WaitingPage(
       {super.key,
+        required this.roomName,
       required this.timer,
-      required this.isExpertLevel,
+      required this.botsLevel,
       required this.players});
+  final String roomName;
   final String timer;
-  final bool isExpertLevel;
+  final String botsLevel;
   final List<Player> players;
   @override
   _WaitingPageState createState() => _WaitingPageState(
-      timer: timer, isExpertLevel: isExpertLevel, players: players);
+      roomName: roomName, timer: timer, botsLevel: botsLevel, players: players);
 }
 
 class _WaitingPageState extends State<WaitingPage> {
   _WaitingPageState(
-      {required this.timer,
-      required this.isExpertLevel,
+      {required this.roomName,
+        required this.timer,
+      required this.botsLevel,
       required this.players});
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController textController = TextEditingController();
   final ScrollController _controller = ScrollController();
+  final String roomName;
   final String timer;
-  final bool isExpertLevel;
+  final String botsLevel;
   final List<Player> players;
   Room myRoom = gameService.room;
   bool isWriting = false;
@@ -53,6 +57,7 @@ class _WaitingPageState extends State<WaitingPage> {
     messages = chatService.getRoomChannel().messages;
     connect();
     gameService.configureBaseSocketFeatures();
+    linkService.setCurrentOpenedChat(gameService.room.roomInfo.name);
     linkService.popChannel(chatService.getRoomChannel().name);
     Timer(
         Duration(milliseconds: 0),
@@ -107,7 +112,6 @@ class _WaitingPageState extends State<WaitingPage> {
               linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
             });
 
-    //by default games are private
     socketService.on(
         "playerFound",
         (data) => {
@@ -195,6 +199,24 @@ class _WaitingPageState extends State<WaitingPage> {
                     if (noPlayers <= 1) canStart = false,
                   })
             });
+
+    socketService.on(
+        "gameStarted",
+            (data) => {
+          Navigator.push(context, MaterialPageRoute(builder: ((context) {
+            return const GamePageWidget();
+          })))
+        });
+
+    socketService.on("roomCreatorLeft", (data) => {
+      socketService.send("leaveRoomOther", gameService.room.roomInfo.name),
+
+      gameService.reinitializeRoom(),
+    Navigator.push(context,
+    MaterialPageRoute(builder: ((context) {
+    return MyHomePage(title: 'PolyScrabble');
+    })))
+    });
   }
 
   void _scrollDown() {
@@ -230,12 +252,7 @@ class _WaitingPageState extends State<WaitingPage> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            isExpertLevel
-                                ? Text("🤖 Expert",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ))
-                                : Text("🤖 Débutant",
+                            Text("🤖 $botsLevel",
                                     style: TextStyle(
                                       fontSize: 14,
                                     )),
@@ -375,9 +392,8 @@ class _WaitingPageState extends State<WaitingPage> {
     if (textController.text.trim().isEmpty) return;
     textController.clear();
 
-    //TODO : time should not be sent from client
     ChatMessage msg = ChatMessage(
-        channelName: myRoom.roomInfo.name,
+        channelName: gameService.room.roomInfo.name,
         sender: authenticator.getCurrentUser().username,
         system: false,
         time: DateFormat('HH:mm:ss').format(DateTime.now()),

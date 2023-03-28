@@ -3,25 +3,18 @@ import 'package:client_leger/components/racks.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../services/link_service.dart';
-
 class ObjectiveBox extends StatefulWidget {
   const ObjectiveBox({super.key});
-
 
   @override
   ObjectiveBoxState createState() => ObjectiveBoxState();
 }
 
-
 class ObjectiveBoxState extends State<ObjectiveBox> {
-
-
   @override
   void initState() {
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -33,17 +26,12 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
     return Container(
       width: 340,
       height: 425,
+      color: Colors.transparent,
       child: DefaultTabController(
         length: 2,
         child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(2),
-              border: Border.all(
-                color: Color.fromRGBO(0, 0, 0, 0.2),
-                width: 1,
-              ),
-            ),
-        child: Scaffold(
+            child: Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(30),
             child: Container(
@@ -59,7 +47,7 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
                         indicatorColor: Colors.green,
                         labelStyle: GoogleFonts.nunito(
                           textStyle: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                           ),
                         ),
                         tabs: [
@@ -75,10 +63,13 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
           ),
           body: Container(
             width: MediaQuery.of(context).size.width,
+            color: Color(0x00000000),
             child: TabBarView(
               children: [
                 Objectives(),
-                Row(mainAxisAlignment: MainAxisAlignment.center ,children:[Racks()]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Racks()]),
               ],
             ),
           ),

@@ -129,15 +129,13 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
         const SizedBox(
           width: 40,
         ),
-        //TODO : put number of observers
-        const Text("10",
-            style: TextStyle(
+        Text("${gameService.room.observers!.length}",
+            style: const TextStyle(
               fontSize: 20,
             )),
         const Icon(Icons.remove_red_eye_rounded, size: 40)
       ]),
       const SizedBox(height: 10),
-      // TODO: Check if sizedbox is better
       Container(
           width: MediaQuery.of(context).size.width * 0.25,
           height: MediaQuery.of(context).size.height * 0.125,

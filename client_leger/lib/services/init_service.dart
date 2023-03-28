@@ -2,6 +2,7 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
 import '../classes/game.dart';
 import '../config/environment.dart';
+import '../config/flutter_flow/flutter_flow_util.dart';
 import '../main.dart';
 import 'link_service.dart';
 
@@ -64,7 +65,13 @@ void connect() {
           creatorName: authenticator.currentUser.username,
           isPublic: false, //by default games are private
           password: ''),
-      isBankUsable: false);
+      isBankUsable: false,
+      observers: [],
+      placementsData: [],
+      startDate: DateFormat('HH:mm:ss').format(DateTime.now()),
+      fillerNamesUsed: [],
+      botsLevel: '',
+      bots: []);
   gameService.player = Player(
       socketId: socketService.getSocketID() ?? 'id',
       points: 0,
