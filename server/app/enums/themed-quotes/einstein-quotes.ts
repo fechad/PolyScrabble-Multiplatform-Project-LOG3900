@@ -5,7 +5,7 @@ export const einsteinEnglishQuotes: Quotes = {
     bigScore: 'Behold the human genius! 😚',
     extremeScore: "After extending Newton's law, I have now extended your anus! 😤 ",
     angryAnnouncement: 'YOU? BEAT ME? I WILL SWALLOW YOU LIKE A BLACK HOLE 👺',
-    cheatAnnouncement: 'I DO NOT NEED TO CHEAT',
+    specialAnnouncement: 'I DO NOT NEED TO CHEAT',
 };
 
 export const einsteinFrenchQuotes: Quotes = {
@@ -13,5 +13,5 @@ export const einsteinFrenchQuotes: Quotes = {
     bigScore: 'Contemplez le génie humain ! 😚',
     extremeScore: "Après avoir étendu la loi de Newton, j'ai maintenant étendu votre conception d'un bon coup ! 😤 ",
     angryAnnouncement: "VOUS ? ME BATTRE ? La connaissance, c'est comme la confiture, moins on en a, plus on l'étale. 🧐",
-    cheatAnnouncement: "JE N'AI PAS BESOIN DE TRICHER",
+    specialAnnouncement: "JE N'AI PAS BESOIN DE TRICHER",
 };

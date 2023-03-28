@@ -114,7 +114,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     showHint() {
-        if (this.playerService.player.isItsTurn) this.hintService.showHint();
+        if (this.playerService.player.isItsTurn && this.hintService.nbHints !== 0) this.hintService.showHint();
     }
 
     isYourTurn() {

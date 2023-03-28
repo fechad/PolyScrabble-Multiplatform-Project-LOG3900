@@ -25,7 +25,7 @@ export class VirtualPlayerAdaptative extends VirtualPlayer {
 
     protected override placeLettersAction(specialFilter: (placement: UserPlacement) => boolean = () => false): string {
         if (this.playedSpecial) {
-            this.sendMessage(this.quotes.cheatAnnouncement, TOGGLE_PREFIX + this.pseudo);
+            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
             this.playedSpecial = false;
         }
 
@@ -56,6 +56,6 @@ export class VirtualPlayerAdaptative extends VirtualPlayer {
 
     // eslint-disable-next-line no-unused-vars
     protected sendSpecialQuote(placement: UserPlacement) {
-        this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
+        this.sendMessage(this.quotes.specialAnnouncement, TOGGLE_PREFIX + this.pseudo);
     }
 }

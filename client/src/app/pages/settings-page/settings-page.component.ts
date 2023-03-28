@@ -135,6 +135,7 @@ export class SettingsPageComponent implements OnInit {
         if (!response) return;
 
         this.playerService.account.userSettings.avatarUrl = response.url;
+        this.settingsForm.value.avatarUrl = this.playerService.account.userSettings.avatarUrl;
     }
 
     private async updateUserInfo() {
