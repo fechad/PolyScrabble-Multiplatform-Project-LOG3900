@@ -21,8 +21,9 @@ class ChatCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => WaitingPage(
+                    roomName: gameService.room.roomInfo.name,
                     timer: gameService.gameData.timerPerTurn,
-                    isExpertLevel: gameService.gameData.isExpertLevel,
+                    botsLevel: gameService.room.botsLevel!,
                     players: gameService.room.players),
               ));
         } else {

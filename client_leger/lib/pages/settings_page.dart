@@ -102,26 +102,26 @@ class _SettingsPageState extends State<SettingsPage> {
                   Stack(
                     children: [
                       authenticator.currentUser.userSettings.avatarUrl
-                          .contains('/data/')
+                              .contains('/data/')
                           ? Container(
-                        width: 78,
-                        height: 78,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: FileImage(File(selectedUrl))
-                              as ImageProvider,
-                              fit: BoxFit.fill,
-                            ),
-                            shape: BoxShape.circle),
-                      )
+                              width: 78,
+                              height: 78,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: FileImage(File(selectedUrl))
+                                        as ImageProvider,
+                                    fit: BoxFit.fill,
+                                  ),
+                                  shape: BoxShape.circle),
+                            )
                           : CircleAvatar(
-                        // TODO: Insérer l'url de l'avatar du joueur
-                        backgroundImage: NetworkImage(
-                            '${authenticator.currentUser.userSettings.avatarUrl.isNotEmpty ? authenticator.currentUser.userSettings.avatarUrl : 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large'}'),
-                        radius: 50,
-                      ),
+                              // TODO: Insérer l'url de l'avatar du joueur
+                              backgroundImage: NetworkImage(
+                                  '${authenticator.currentUser.userSettings.avatarUrl.isNotEmpty ? authenticator.currentUser.userSettings.avatarUrl : 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large'}'),
+                              radius: 50,
+                            ),
                       Positioned(
-                        // draw a red marble
+                          // draw a red marble
                           top: 0.0,
                           left: 40.0,
                           child: MaterialButton(
@@ -131,171 +131,177 @@ class _SettingsPageState extends State<SettingsPage> {
                                   builder: (context) {
                                     return StatefulBuilder(
                                         builder: ((context, setDialogState) {
-                                          return AlertDialog(
-                                            title: const Text(
-                                              'Choisissez votre avatar',
-                                              style: TextStyle(fontSize: 24),
-                                            ),
-                                            content: Container(
-                                                height: 800,
-                                                width: 600,
-                                                child: Column(
-                                                  children: [
-                                                    tookPicture
-                                                        ? Container(
-                                                      width: 150,
-                                                      height: 150,
-                                                      decoration: BoxDecoration(
-                                                          image:
-                                                          DecorationImage(
-                                                            image: FileImage(File(
-                                                                selectedUrl))
-                                                            as ImageProvider,
-                                                            fit: BoxFit.fill,
-                                                          ),
-                                                          shape:
-                                                          BoxShape.circle),
-                                                    )
-                                                        : CircleAvatar(
-                                                      // TODO: Insérer l'url de l'avatar du joueur
-                                                      backgroundImage:
-                                                      NetworkImage(
-                                                          selectedUrl),
-                                                      radius: 78,
-                                                    ),
-                                                    GridView.builder(
-                                                        shrinkWrap: true,
-                                                        gridDelegate:
+                                      return AlertDialog(
+                                        title: const Text(
+                                          'Choisissez votre avatar',
+                                          style: TextStyle(fontSize: 24),
+                                        ),
+                                        content: Container(
+                                            height: 800,
+                                            width: 600,
+                                            child: Column(
+                                              children: [
+                                                tookPicture
+                                                    ? Container(
+                                                        width: 150,
+                                                        height: 150,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: FileImage(
+                                                                          File(
+                                                                              selectedUrl))
+                                                                      as ImageProvider,
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                ),
+                                                                shape: BoxShape
+                                                                    .circle),
+                                                      )
+                                                    : CircleAvatar(
+                                                        // TODO: Insérer l'url de l'avatar du joueur
+                                                        backgroundImage:
+                                                            NetworkImage(
+                                                                selectedUrl),
+                                                        radius: 78,
+                                                      ),
+                                                GridView.builder(
+                                                    shrinkWrap: true,
+                                                    gridDelegate:
                                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                                             crossAxisCount: 5,
                                                             mainAxisSpacing: 10,
-                                                            crossAxisSpacing: 30,
-                                                            mainAxisExtent: 130),
-                                                        itemCount:
+                                                            crossAxisSpacing:
+                                                                30,
+                                                            mainAxisExtent:
+                                                                130),
+                                                    itemCount:
                                                         predefinedAvatarsUrl
                                                             .length,
-                                                        itemBuilder: (_, index) {
-                                                          return predefinedAvatarsUrl[
-                                                          index] ==
+                                                    itemBuilder: (_, index) {
+                                                      return predefinedAvatarsUrl[
+                                                                  index] ==
                                                               'custom'
-                                                              ? GestureDetector(
-                                                            onTap: () {},
-                                                            child: Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                              decoration:
-                                                              const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color:
-                                                                Colors.grey,
-                                                              ),
-                                                              child: IconButton(
-                                                                icon:
-                                                                const Icon(
-                                                                  Icons
-                                                                      .download,
+                                                          ? GestureDetector(
+                                                              onTap: () {},
+                                                              child: Container(
+                                                                width: 30,
+                                                                height: 30,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
                                                                   color: Colors
-                                                                      .black,
+                                                                      .grey,
                                                                 ),
-                                                                onPressed:
-                                                                    () async {
-                                                                  // Take the Picture in a try / catch block. If anything goes wrong,
-                                                                  // catch the error.
-                                                                  try {
-                                                                    // Ensure that the camera is initialized.
-                                                                    await _initializeControllerFuture;
+                                                                child:
+                                                                    IconButton(
+                                                                  icon:
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .download,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    // Take the Picture in a try / catch block. If anything goes wrong,
+                                                                    // catch the error.
+                                                                    try {
+                                                                      // Ensure that the camera is initialized.
+                                                                      await _initializeControllerFuture;
 
-                                                                    // Attempt to take a picture and then get the location
-                                                                    // where the image file is saved.
+                                                                      // Attempt to take a picture and then get the location
+                                                                      // where the image file is saved.
 
-                                                                    final image =
-                                                                    await _picker.pickImage(
-                                                                        source:
-                                                                        ImageSource.camera);
-                                                                    setState(
+                                                                      final image =
+                                                                          await _picker.pickImage(
+                                                                              source: ImageSource.camera);
+                                                                      setState(
+                                                                          () {
+                                                                        setDialogState(
                                                                             () {
-                                                                          setDialogState(
-                                                                                  () {
-                                                                                selectedUrl =
-                                                                                    image!.path;
-                                                                                tookPicture =
-                                                                                true;
-                                                                              });
+                                                                          selectedUrl =
+                                                                              image!.path;
+                                                                          tookPicture =
+                                                                              true;
                                                                         });
-                                                                  } catch (e) {
-                                                                    // If an error occurs, log the error to the console.
-                                                                    print(e);
-                                                                  }
-                                                                },
+                                                                      });
+                                                                    } catch (e) {
+                                                                      // If an error occurs, log the error to the console.
+                                                                      print(e);
+                                                                    }
+                                                                  },
+                                                                ),
                                                               ),
-                                                            ),
-                                                          )
-                                                              : GestureDetector(
+                                                            )
+                                                          : GestureDetector(
                                                               onTap: () {
                                                                 setDialogState(
-                                                                        () {
-                                                                      selectedUrl =
+                                                                    () {
+                                                                  selectedUrl =
                                                                       predefinedAvatarsUrl[
-                                                                      index];
-                                                                    });
+                                                                          index];
+                                                                });
                                                               },
-                                                              child: CircleAvatar(
+                                                              child:
+                                                                  CircleAvatar(
                                                                 // TODO: Insérer l'url de l'avatar du joueur
                                                                 backgroundImage:
-                                                                NetworkImage(
-                                                                    predefinedAvatarsUrl[
-                                                                    index]),
+                                                                    NetworkImage(
+                                                                        predefinedAvatarsUrl[
+                                                                            index]),
                                                                 radius: 5,
                                                               ));
-                                                        }),
-                                                  ],
-                                                )),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => {
-                                                  setState(() {
-                                                    selectedUrl = authenticator
-                                                        .currentUser
-                                                        .userSettings
-                                                        .avatarUrl;
-                                                    takingPicture = false;
-                                                    tookPicture = false;
-                                                    Navigator.pop(context);
-                                                  })
-                                                },
-                                                style: TextButton.styleFrom(
-                                                    foregroundColor: Colors.red),
-                                                child: const Text('Annuler',
-                                                    style: TextStyle(fontSize: 20)),
-                                              ),
-                                              TextButton(
-                                                onPressed: () => {
-                                                  setState(() {
-                                                    print(authenticator.currentUser
-                                                        .userSettings.avatarUrl);
-                                                    authenticator
-                                                        .currentUser
-                                                        .userSettings
-                                                        .avatarUrl = selectedUrl;
-                                                    print(authenticator.currentUser
-                                                        .userSettings.avatarUrl);
-                                                    valuesChanged = true;
-                                                    Navigator.pop(context);
-                                                    tookPicture = false;
-                                                  })
-                                                },
-                                                style: TextButton.styleFrom(
-                                                    foregroundColor:
+                                                    }),
+                                              ],
+                                            )),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => {
+                                              setState(() {
+                                                selectedUrl = authenticator
+                                                    .currentUser
+                                                    .userSettings
+                                                    .avatarUrl;
+                                                takingPicture = false;
+                                                tookPicture = false;
+                                                Navigator.pop(context);
+                                              })
+                                            },
+                                            style: TextButton.styleFrom(
+                                                foregroundColor: Colors.red),
+                                            child: const Text('Annuler',
+                                                style: TextStyle(fontSize: 20)),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => {
+                                              setState(() {
+                                                print(authenticator.currentUser
+                                                    .userSettings.avatarUrl);
+                                                authenticator
+                                                    .currentUser
+                                                    .userSettings
+                                                    .avatarUrl = selectedUrl;
+                                                print(authenticator.currentUser
+                                                    .userSettings.avatarUrl);
+                                                valuesChanged = true;
+                                                Navigator.pop(context);
+                                                tookPicture = false;
+                                              })
+                                            },
+                                            style: TextButton.styleFrom(
+                                                foregroundColor:
                                                     Palette.mainColor),
-                                                child: const Text(
-                                                  'Sauvegarder',
-                                                  style: TextStyle(fontSize: 20),
-                                                ),
-                                              )
-                                            ],
-                                          );
-                                        }));
+                                            child: const Text(
+                                              'Sauvegarder',
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    }));
                                   })
                             },
                             color: Colors.grey,
@@ -401,12 +407,11 @@ class _SettingsPageState extends State<SettingsPage> {
                             });
                           },
                           value: victoryMusic,
-                          items:
-                          music.map<DropdownMenuItem<String>>((Map<String, String> value) {
-                            print(victoryMusic);
+                          items: music
+                              .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
-                              value: value.keys.first,
-                              child: Text(value.keys.first),
+                              value: value,
+                              child: Text(value),
                             );
                           }).toList(),
                         ),
@@ -447,14 +452,15 @@ class _SettingsPageState extends State<SettingsPage> {
                                         decoration: const InputDecoration(
                                           hintText: '',
                                           labelText:
-                                          'Confirmez votre nouveau mot de passe',
+                                              'Confirmez votre nouveau mot de passe',
                                         ),
                                       ),
                                       const SizedBox(
                                         height: 50,
                                       ),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
                                           TextButton(
                                             onPressed: () => {
@@ -478,7 +484,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             },
                                             style: TextButton.styleFrom(
                                                 foregroundColor:
-                                                Palette.mainColor),
+                                                    Palette.mainColor),
                                             child: const Text(
                                               'Sauvegarder',
                                               style: TextStyle(fontSize: 14),
@@ -507,50 +513,57 @@ class _SettingsPageState extends State<SettingsPage> {
                         onPressed: !valuesChanged
                             ? null
                             : () => {
-                          setState(() {
-                            final newSettings = UserSettings(
-                                avatarUrl: selectedUrl,
-                                defaultLanguage:
-                                language.toString().split('.')[1],
-                                defaultTheme:
-                                theme.toString().split('.')[1],
-                                victoryMusic: victoryMusic);
-                            httpService
-                                .updateUserSettings(
-                                authenticator.currentUser.email,
-                                newSettings)
-                                .then((response) {
-                              if (response.statusCode == 500) return;
-                              final account = Account.fromJson(
-                                  jsonDecode(response.body));
-                              authenticator.currentUser = account;
-                              setState(() {
-                                valuesChanged = false;
-                              });
-                            }).catchError((error) => {print(error)});
-                          })
-                        },
+                                  setState(() {
+                                    final newSettings = UserSettings(
+                                        avatarUrl: selectedUrl,
+                                        defaultLanguage:
+                                            language.toString().split('.')[1],
+                                        defaultTheme:
+                                            theme.toString().split('.')[1],
+                                        victoryMusic: victoryMusic);
+                                    httpService
+                                        .updateUserSettings(
+                                            authenticator.currentUser.email,
+                                            newSettings)
+                                        .then((response) {
+                                      if (response.statusCode == 500) return;
+                                      final account = Account.fromJson(
+                                          jsonDecode(response.body));
+                                      authenticator.currentUser = account;
+                                      setState(() {
+                                        valuesChanged = false;
+                                      });
+                                    }).catchError((error) => {print(error)});
+                                  })
+                                },
                         style: ButtonStyle(backgroundColor:
-                        MaterialStateProperty.resolveWith<Color>(
+                            MaterialStateProperty.resolveWith<Color>(
                                 (Set<MaterialState> states) {
-                              if (valuesChanged)
-                                return Palette.mainColor;
-                              else
-                                return Colors.grey;
-                            })),
+                          if (valuesChanged)
+                            return Palette.mainColor;
+                          else
+                            return Colors.grey;
+                        })),
                         child: const Text('Sauvegarder'),
                       ),
                     ],
                   ),
                   Stats(),
-                  SizedBox(height: 72,),
-                  Text("Historiques", style: GoogleFonts.nunito(
-                    textStyle: const TextStyle(
-                        fontSize: 32, fontWeight: FontWeight.bold),
-                  )),
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 72,
+                  ),
+                  Text("Historiques",
+                      style: GoogleFonts.nunito(
+                        textStyle: const TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.bold),
+                      )),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Historics(),
-                  SizedBox(height: 64,)
+                  SizedBox(
+                    height: 64,
+                  )
                 ],
               )),
         )

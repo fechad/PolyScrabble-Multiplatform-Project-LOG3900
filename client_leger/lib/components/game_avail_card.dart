@@ -15,19 +15,22 @@ class GameCard extends StatefulWidget {
       required this.difficulty,
       required this.time,
       required this.password,
-      required this.roomName});
+      required this.roomName,
+      required this.isObserver});
 
   final String difficulty;
   final String time;
   final String password;
   final String roomName;
+  final bool isObserver;
 
   @override
   _GameCardState createState() => _GameCardState(
       difficulty: difficulty,
       time: time,
       password: password,
-      roomName: roomName);
+      roomName: roomName,
+      isObserver: isObserver);
 }
 
 class _GameCardState extends State<GameCard> {
@@ -35,11 +38,13 @@ class _GameCardState extends State<GameCard> {
       {required this.difficulty,
       required this.time,
       required this.password,
-      required this.roomName});
+      required this.roomName,
+      required this.isObserver});
   final String difficulty;
   final String time;
   final String password;
   final String roomName;
+  final bool isObserver;
   final Player player = Player(
     socketId: homeSocketService.getSocketID()!,
     isCreator: false,
@@ -49,10 +54,12 @@ class _GameCardState extends State<GameCard> {
   );
   TextEditingController _pswdController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late String btnText;
 
   @override
   void initState() {
     super.initState();
+    btnText = isObserver ? 'Observer' : 'Joindre';
   }
 
   void buttonChange() {
@@ -130,7 +137,7 @@ class _GameCardState extends State<GameCard> {
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
                     Avatar(url: 'https://picsum.photos/seed/540/600'),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(100, 0, 16, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(80, 0, 16, 0),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Palette.mainColor,
@@ -138,14 +145,19 @@ class _GameCardState extends State<GameCard> {
                             textStyle: const TextStyle(fontSize: 20),
                           ),
                           child: this.password != ''
-                              ? const Text('Joindre 🔑')
-                              : const Text('Joindre'),
+                              ?  Text('${btnText} 🔑')
+                              :  Text(btnText),
                           onPressed: linkService.getJoinButtonPressed()
                               ? null
                               : () {
+                                  print('value btn ${linkService.getJoinButtonPressed()}');
                                   if (password.isEmpty) {
-                                    sendJoinRequest();
-                                    buttonChange();
+                                    if (isObserver) {
+                                      sendObserveRequest();
+                                    } else {
+                                      sendJoinRequest();
+                                      buttonChange();
+                                    }
                                   } else {
                                     showDialog(
                                         barrierDismissible: false,
@@ -231,10 +243,19 @@ class _GameCardState extends State<GameCard> {
     );
   }
 
+  sendObserveRequest() {
+    homeSocketService.send('observeRoomRequest', {
+      "roomName": roomName,
+      "observer": RoomObserver(socketId: socketService.getSocketID(),
+          username: authenticator.getCurrentUser().username),
+      "password": password
+    });
+
+  }
+
   sendJoinRequest() {
     homeSocketService.send('joinRoomRequest', {
       "roomName": roomName,
-      //TODO : isItsTurn?? should be determined by server??
       "player": player,
       "password": password
     });

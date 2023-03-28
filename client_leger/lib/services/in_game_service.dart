@@ -4,6 +4,7 @@ import 'package:client_leger/services/multiplayer_game_service.dart';
 
 import '../classes/command.dart';
 import '../classes/game.dart';
+import '../pages/home_page.dart';
 
 class InGameService extends MultiplayerGameService {
   final String msgEvent = 'message';
@@ -29,11 +30,26 @@ class InGameService extends MultiplayerGameService {
               scorePlayer = Player.fromJson(sender),
               for (Player p in gameService.room.players)
                 {
-                  if (p.clientAccountInfo.username == scorePlayer.clientAccountInfo.username)
+                  if (p.clientAccountInfo.username ==
+                      scorePlayer.clientAccountInfo.username)
                     {p.points = scorePlayer.points}
                 }
             });
-
+    socketService.on(
+        "toggleAngryBotAvatar",
+        (botName) => {
+              print('AngryBot'),
+              if (gameService.room.players
+                  .firstWhere((Player player) =>
+                      player.clientAccountInfo.username == botName)
+                  .toString()
+                  .isNotEmpty)
+                {
+                  // TODO: this.toggleAvatar(bot.clientAccountInfo),
+                  // TODO: this.toggleBotMusic(bot.clientAccountInfo),
+                  backgroundService.switchToAngry(),
+                }
+            });
     socketService.on(
         "lettersBankCountUpdated",
         (count) => {
@@ -92,16 +108,17 @@ class InGameService extends MultiplayerGameService {
 
   findWinner(List<Player> winnerArray) {
     if (winnerArray.isEmpty) return;
-    if (winnerArray.length == 1) winnerPseudo = winnerArray[0].clientAccountInfo.username;
+    if (winnerArray.length == 1)
+      winnerPseudo = winnerArray[0].clientAccountInfo.username;
     for (Player p in gameService.room.players) {
-      if (p.clientAccountInfo.username == winnerArray[0].clientAccountInfo.username) {
+      if (p.clientAccountInfo.username ==
+          winnerArray[0].clientAccountInfo.username) {
         Player firstWinner = p;
-      }
-      else return;
+      } else
+        return;
     }
     //TODO play firstWinner 's victory music from settings
   }
-
 
   getPlayer(String pseudo) {
     for (player in gameService.room.players) {

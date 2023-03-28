@@ -76,6 +76,9 @@ abstract class _LinkService with Store {
   @observable
   ObservableList<Widget> rows = ObservableList<Widget>.of([]);
 
+  @observable
+  Observable<String> currentBackground = Observable<String>('');
+
   List<Placement> placementStack = [];
 
   bool getIsInAGame() {
@@ -120,6 +123,20 @@ abstract class _LinkService with Store {
 
   int getLetterBankCount() {
     return letterBankCount.value;
+  }
+
+  String getCurrentBackground() {
+    return currentBackground.value;
+  }
+
+  @action
+  setCurrentBackground(String value) {
+    currentBackground.value = value;
+  }
+
+  @action
+  switchBackground(String newBackground) {
+    currentBackground.value = newBackground;
   }
 
   @action
@@ -216,15 +233,14 @@ abstract class _LinkService with Store {
           break;
         }
       }
-    }
-      else {
-        for (Tile letter in tempRack) {
-           if (letter.letter == tile.letter.toUpperCase()) {
-           tempRack.remove(letter);
-           break;
+    } else {
+      for (Tile letter in tempRack) {
+        if (letter.letter == tile.letter.toUpperCase()) {
+          tempRack.remove(letter);
+          break;
         }
       }
-      }
+    }
   }
 
   @action

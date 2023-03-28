@@ -24,8 +24,7 @@ class Player {
   Rack? rack;
 
   Player(
-      {
-      required this.socketId,
+      {required this.socketId,
       required this.points,
       required this.isCreator,
       required this.isItsTurn,
@@ -45,8 +44,8 @@ class Player {
         'points': points,
         'isCreator': isCreator,
         'isItsTurn': isItsTurn,
-        'clientAccountInfo' : clientAccountInfo,
-        'rack' : rack,
+        'clientAccountInfo': clientAccountInfo,
+        'rack': rack,
       };
 }
 
@@ -103,19 +102,39 @@ class RoomInfo {
 class Room {
   int elapsedTime;
   List<Player> players;
+  List<RoomObserver>? observers;
+  List<PlacementData>? placementsData;
+  String? startDate;
+  List<String>? fillerNamesUsed;
+  String? botsLevel;
+  List<Player>? bots;
   RoomInfo roomInfo;
   bool? isBankUsable;
 
   Room(
       {required this.elapsedTime,
       required this.players,
+      required this.observers,
+      required this.placementsData,
+      required this.startDate,
+      required this.fillerNamesUsed,
+      required this.botsLevel,
+      required this.bots,
       required this.roomInfo,
       required this.isBankUsable});
 
-  Room.fromJson(dynamic json, jsonPlayers, jsonRoomInfo)
+  Room.fromJson(dynamic json, jsonPlayers, jsonRoomInfo,
+      [jsonObservers, jsonPlacements, jsonFillers, jsonBots])
       : elapsedTime = json['elapsedTime'],
         players = jsonPlayers,
-        roomInfo = jsonRoomInfo;
+        observers = jsonObservers,
+        placementsData = jsonPlacements,
+        startDate = json['startDate'],
+        fillerNamesUsed = jsonFillers,
+        botsLevel = json['botsLevel'],
+        bots = jsonBots,
+        roomInfo = jsonRoomInfo,
+        isBankUsable = json['isBankUsable'];
 
   Map<String, dynamic> toJson() => {
         'elapsedTime': elapsedTime,
@@ -185,10 +204,10 @@ class Account {
   String email;
   UserSettings userSettings;
   ProgressInfo progressInfo;
-  Map<String, int>? highScores;
-  List<String> badges;
-  List<String> bestGames;
-  List<String> gamesPlayed;
+  Map<String, dynamic>? highScores;
+  List<dynamic> badges;
+  List<dynamic> bestGames;
+  List<dynamic> gamesPlayed;
   int gamesWon;
 
   Account(
@@ -207,7 +226,7 @@ class Account {
         email = json['email'],
         userSettings = UserSettings.fromJson(json['userSettings']),
         progressInfo = ProgressInfo.fromJson(json['progressInfo']),
-        highScores = Map<String, int>.from(json['highScores']),
+        highScores = Map<String, dynamic>.from(json['highScores']),
         badges = json['badges']
             .toString()
             .replaceAll('[', '')
@@ -236,7 +255,6 @@ class Account {
         'gamesPlayed': gamesPlayed,
         'gamesWon': gamesWon,
       };
-
 }
 
 class GameHeader {
@@ -337,9 +355,9 @@ class Rack {
         indexLetterToReplace = json['indexLetterToReplace'];
 
   Map<String, dynamic> toJson() => {
-    'letters': letters,
-    'indexLetterToReplace': indexLetterToReplace,
-  };
+        'letters': letters,
+        'indexLetterToReplace': indexLetterToReplace,
+      };
 }
 
 class Goal {
@@ -350,8 +368,13 @@ class Goal {
   bool isPublic;
   List<Player> players;
 
-  Goal({required this.title, required this.description, required this.reward,
-        required this.reached, required this.isPublic, required this.players});
+  Goal(
+      {required this.title,
+      required this.description,
+      required this.reward,
+      required this.reached,
+      required this.isPublic,
+      required this.players});
 
   Goal.fromJson(dynamic json, jsonPlayers)
       : title = json['title'],
@@ -362,12 +385,27 @@ class Goal {
         players = jsonPlayers;
 
   Map<String, dynamic> toJson() => {
-    'title': title,
-    'description': description,
-    'reward' : reward,
-    'reached' : reached,
-    'isPublic' : isPublic,
-    'players' : players,
-  };
+        'title': title,
+        'description': description,
+        'reward': reward,
+        'reached': reached,
+        'isPublic': isPublic,
+        'players': players,
+      };
 }
 
+class RoomObserver {
+  String socketId;
+  String username;
+
+  RoomObserver({required this.socketId, required this.username});
+
+  RoomObserver.fromJson(dynamic json)
+      : socketId = json['socketId'],
+        username = json['username'];
+
+  Map<String, dynamic> toJson() => {
+        'socketId': socketId,
+        'username': username,
+      };
+}

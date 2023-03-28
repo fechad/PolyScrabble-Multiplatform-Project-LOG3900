@@ -21,7 +21,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   final _formKey = GlobalKey<FormState>();
   String difficultyValue = 'Débutant';
   String timeValue = '60';
-  bool gameIsPublic = false;
+  bool gameIsPublic = true;
   String gameTypeValue = 'Publique';
   final TextEditingController _gamePasswordController = TextEditingController();
   bool _passwordVisible = false;
@@ -31,6 +31,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     super.initState();
     gameService.gameData.timerPerTurn = timeValue;
     gameService.gameData.isExpertLevel = false;
+    gameService.room.botsLevel = difficultyValue.toLowerCase();
+    gameService.room.roomInfo.isPublic = gameIsPublic;
   }
 
   @override dispose(){
@@ -282,14 +284,15 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   checkFormValues() {
     if (difficultyValue == null || timeValue == null) return 'Erreur';
-    gameService.joinRoomMultiplayer(gameIsPublic, _gamePasswordController.text);
+    gameService.joinRoomMultiplayer(gameIsPublic, _gamePasswordController.text, difficultyValue);
     Navigator.push(context,
         MaterialPageRoute(builder: ((context) {
           return WaitingPage(
+              roomName: gameService.room.roomInfo.name,
               timer:
               gameService.gameData.timerPerTurn,
-              isExpertLevel:
-              gameService.gameData.isExpertLevel,
+              botsLevel:
+              gameService.room.botsLevel!,
               players: gameService.room.players);
         })));
   }

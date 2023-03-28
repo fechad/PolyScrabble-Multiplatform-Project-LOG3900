@@ -32,6 +32,7 @@ export class SocketChannelService extends SocketHandlerService {
             this.sendToEveryone(SocketEvent.AvailableChannels, this.discussionChannelService.availableChannels);
             return;
         }
+
         this.sendToEveryoneInRoom(channelName, SocketEvent.RoomChannelUpdated, addedChannel);
     }
 

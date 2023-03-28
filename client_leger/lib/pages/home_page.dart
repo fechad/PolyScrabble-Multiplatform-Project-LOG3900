@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/themed_page.dart';
+import 'package:client_leger/services/background_image_service.dart';
 import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ import '../services/init_service.dart';
 import 'menu_page.dart';
 
 final chatService = ChatService();
+final backgroundService = BackgroundService();
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -49,8 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   verifyInfo() {
-
-    authenticator.setUser(authenticator.currentUser.email);
+    if (authenticator.loggedInEmail.isNotEmpty)
+      authenticator.setUser(authenticator.currentUser.email);
+    backgroundService.setBackground('');
     authenticator.setStats(authenticator.currentUser.email);
   }
 

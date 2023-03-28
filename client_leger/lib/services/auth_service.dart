@@ -16,15 +16,16 @@ class AuthService {
   late FirebaseAuth firebase;
   bool accountSet = false;
   late Account currentUser;
+  String loggedInEmail = '';
   late Stats stats;
   final bool isProduction = bool.fromEnvironment('dart.vm.product');
-
 
   AuthService();
 
   AuthService._create() {
     initializeApp().then((value) =>
         {firebase = FirebaseAuth.instanceFor(app: app), setDefaultUser()});
+    //TODO change setDefaultUser to setUser
   }
 
   static Future<AuthService> create() async {
@@ -83,7 +84,6 @@ class AuthService {
 
       setStats(credential.user!.email!);
       setUser(credential.user!.email!);
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw ('No user found for that email.');
@@ -120,7 +120,9 @@ class AuthService {
 
   Future<void> setUser(String email) async {
     // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-    await httpService.getUserInfo(email).then((value) => {
+    print(email);
+    await httpService.getUserInfo(email.toLowerCase()).then((value) => {
+          print(value),
           currentUser = Account(
             username: '${jsonDecode(value.body)['username']}',
             email: '${jsonDecode(value.body)['email']}',
@@ -129,11 +131,12 @@ class AuthService {
             progressInfo:
                 ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
             highScores: jsonDecode(value.body)['highScores'],
-            badges: [],
-            gamesWon: 0,
-            gamesPlayed: [],
-            bestGames: [],
+            badges: jsonDecode(value.body)['badges'],
+            gamesWon: jsonDecode(value.body)['gamesWon'],
+            gamesPlayed: jsonDecode(value.body)['gamesPlayed'],
+            bestGames: jsonDecode(value.body)['bestGames'],
           ),
+          print(currentUser.userSettings.victoryMusic)
         });
   }
 
@@ -143,19 +146,25 @@ class AuthService {
     List<PlayedGame> playedGames = [];
     List<Log> logs = [];
     await httpService.getStatsInfo(email).then((value) => {
-      playedGamesJson = jsonDecode(value.body)['playedGames'],
-      playedGames = playedGamesJson.map((gameJson) => PlayedGame.fromJson(gameJson)).toList(),
-      logsJson = jsonDecode(value.body)['logs'],
-      logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
-      stats = Stats(
-        playedGamesCount: int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
-        gamesWonCount: int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
-        averagePointsByGame: double.parse('${jsonDecode(value.body)['averagePointsByGame']}'),
-        averageGameDuration: '${jsonDecode(value.body)['averageGameDuration']}',
-        playedGames: playedGames,
-        logs: logs,
-      ),
-    });
+          playedGamesJson = jsonDecode(value.body)['playedGames'],
+          playedGames = playedGamesJson
+              .map((gameJson) => PlayedGame.fromJson(gameJson))
+              .toList(),
+          logsJson = jsonDecode(value.body)['logs'],
+          logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
+          stats = Stats(
+            playedGamesCount:
+                int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
+            gamesWonCount:
+                int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
+            averagePointsByGame: double.parse(
+                '${jsonDecode(value.body)['averagePointsByGame']}'),
+            averageGameDuration:
+                '${jsonDecode(value.body)['averageGameDuration']}',
+            playedGames: playedGames,
+            logs: logs,
+          ),
+        });
   }
 
   void setDefaultUser() {

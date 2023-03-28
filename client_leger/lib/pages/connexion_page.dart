@@ -190,26 +190,13 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20.0),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // Validate returns true if the form is valid, or false otherwise.
                                 if (_formKey.currentState!.validate()) {
-                                  //loginUser(textController.text);
-                                  authenticator
-                                      .signInUser(emailController.text,
-                                          passwordController.text)
-                                      .then((value) => Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  //authenticator.setValidate();
-                                                  MyHomePage(
-                                                      title: 'PolyScrabble'))))
-                                      .catchError((error) => ScaffoldMessenger
-                                              .of(context)
-                                          .showSnackBar(SnackBar(
-                                              backgroundColor: Colors.redAccent,
-                                              duration:
-                                                  Duration(milliseconds: 1000),
-                                              content: Text('Error: $error'))));
+                                  // Navigator.of(context).push(MaterialPageRoute(
+                                  //     builder: (context) =>
+                                  //         //authenticator.setValidate();
+                                  //         MyHomePage(title: 'PolyScrabble')));
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -217,8 +204,10 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                               Duration(milliseconds: 1000),
                                           content: Text(
                                               'Vérification de la connexion ...')));
-                                  Timer(const Duration(milliseconds: 1000),
-                                      (() => {}));
+                                  loginUser();
+
+                                  // Timer(const Duration(milliseconds: 1000),
+                                  //     (() => {}));
                                 }
                               },
                               style: ButtonStyle(
@@ -296,16 +285,16 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
     );
   }
 
-  void loginUser(String username) {
-    if (username.isEmpty) return;
+  Future<void> loginUser() async {
     //textController.clear();
-
-    httpService.loginUser(username).then((value) => value.statusCode == 200
-        ? navigate()
-        : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.red[300],
-            duration: const Duration(milliseconds: 1000),
-            content: const Text('Erreur de connexion: nom déjà pris'))));
+    await authenticator
+        .signInUser(emailController.text, passwordController.text)
+        .then((value) => navigate())
+        .catchError((error) => ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                backgroundColor: Colors.redAccent,
+                duration: Duration(milliseconds: 1000),
+                content: Text('Error: $error'))));
 
     setState(() {
       isWriting = false;

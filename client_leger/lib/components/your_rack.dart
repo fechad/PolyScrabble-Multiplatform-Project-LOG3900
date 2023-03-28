@@ -1,13 +1,9 @@
 import 'package:client_leger/components/tile.dart';
-import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
-import 'package:client_leger/services/init_service.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
-import '../pages/home_page.dart';
 
 typedef IntCallback = void Function(int i);
 
@@ -33,17 +29,17 @@ class _YourRackState extends State<YourRack> {
 
   _YourRackState({required this.tileChange});
 
-
   @override
   void initState() {
     super.initState();
-    socketService.on('drawRack', (letters) =>
-    {
-      setState(() {
-        linkService.resetRack();
-        linkService.getRack();
-      }),
-    });
+    socketService.on(
+        'drawRack',
+        (letters) => {
+              setState(() {
+                linkService.resetRack();
+                linkService.getRack();
+              }),
+            });
   }
 
   @override
@@ -53,7 +49,7 @@ class _YourRackState extends State<YourRack> {
         height: 60,
         width: 352,
         decoration: BoxDecoration(
-          color: Color(0xAAA17360),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: Color(0x44000000),
@@ -65,9 +61,7 @@ class _YourRackState extends State<YourRack> {
               tileChange(notification.data);
               return true;
             },
-                child: Observer(
-                    builder: (context) =>
-                        Row(children: linkService.getRack()))
-            ));
+            child: Observer(
+                builder: (context) => Row(children: linkService.getRack()))));
   }
 }

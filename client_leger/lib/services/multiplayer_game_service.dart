@@ -6,6 +6,7 @@ import 'package:client_leger/services/solo_game_service.dart';
 import '../classes/constants.dart';
 import '../classes/game.dart';
 import '../components/chat_model.dart';
+import '../config/flutter_flow/flutter_flow_util.dart';
 import '../main.dart';
 import '../pages/connexion_page.dart';
 import '../pages/home_page.dart';
@@ -13,6 +14,7 @@ import 'link_service.dart';
 
 class MultiplayerGameService extends SoloGameService {
   List<Room> availableRooms = [];
+  List<Room> allPublicRooms = [];
   List<ChatModel> availableChannels = [];
   List<Account> opponentsInfo = [];
   List<Goal> goals = [];
@@ -30,7 +32,13 @@ class MultiplayerGameService extends SoloGameService {
             creatorName: authenticator.currentUser.username,
             isPublic: false, //by default games are private
             password: ''),
-        isBankUsable: false);
+        isBankUsable: false,
+        observers: [],
+        placementsData: [],
+        startDate: DateFormat('HH:mm:ss').format(DateTime.now()),
+        fillerNamesUsed: [],
+        botsLevel: '',
+        bots: []);
     player = Player(
         socketId: socketService.getSocketID() ?? 'id',
         points: 0,
@@ -56,6 +64,7 @@ class MultiplayerGameService extends SoloGameService {
 
   configureSocketFeatures() {
     socketService.send("availableRooms");
+    socketService.send("publicRooms");
     socketService.send("getDiscussionChannels");
 
     socketService.on(
@@ -76,7 +85,7 @@ class MultiplayerGameService extends SoloGameService {
               await getOpponentsInfo(),
               socketService.send("createChatChannel", {
                 "channel": room.roomInfo.name,
-                "username": authenticator.currentUser.username,
+                "username": authenticator.getCurrentUser(),
                 'isRoomChannel': true,
               })
             });
@@ -131,7 +140,8 @@ class MultiplayerGameService extends SoloGameService {
     );
   }
 
-  setRoomInfoMultiplayer(bool isPublic, String pswd) {
+  setRoomInfoMultiplayer(bool isPublic, String pswd, String difficulty) {
+    room.botsLevel = difficulty.toLowerCase();
     room.roomInfo.timerPerTurn = gameData.timerPerTurn;
     room.roomInfo.dictionary = gameData.dictionary;
     room.roomInfo.gameType = 'classic'; //TODO get variable for game type
@@ -143,9 +153,9 @@ class MultiplayerGameService extends SoloGameService {
     }
   }
 
-  joinRoomMultiplayer(bool isPublic, String pswd) {
+  joinRoomMultiplayer(bool isPublic, String pswd, String difficulty) {
     String pseudo = gameData.pseudo;
-    setRoomInfoMultiplayer(isPublic, pswd);
+    setRoomInfoMultiplayer(isPublic, pswd, difficulty);
     setPlayerInfo(pseudo);
     onProcess = true;
     socketService.send("createRoom", room);

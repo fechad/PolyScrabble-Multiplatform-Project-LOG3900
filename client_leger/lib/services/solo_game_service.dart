@@ -1,6 +1,7 @@
 import 'package:client_leger/main.dart';
 
 import '../classes/game.dart';
+import '../config/flutter_flow/flutter_flow_util.dart';
 import 'link_service.dart';
 
 class SoloGameService {
@@ -20,9 +21,15 @@ class SoloGameService {
             dictionary: 'dictionnaire par défaut',
             maxPlayers: 4,
             creatorName: authenticator.currentUser.username,
-            isPublic: true,
+            isPublic: false, //by default games are private
             password: ''),
-        isBankUsable: false);
+        isBankUsable: false,
+        observers: [],
+        placementsData: [],
+        startDate: DateFormat('HH:mm:ss').format(DateTime.now()),
+        fillerNamesUsed: [],
+        botsLevel: '',
+        bots: []);
 
     player = Player(
         socketId: socketService.getSocketID() ?? 'id',
@@ -42,7 +49,8 @@ class SoloGameService {
             });
   }
 
-  setRoomInfo(String pseudo) {
+  setRoomInfo(String pseudo, String difficulty) {
+    room.botsLevel = difficulty;
     room.roomInfo.timerPerTurn = gameService.gameData.timerPerTurn;
     room.roomInfo.dictionary = gameService.gameData.dictionary;
     room.roomInfo.isSolo = true;
@@ -57,7 +65,7 @@ class SoloGameService {
 
   joinRoom(String botName, String desiredLevel) {
     String pseudo = gameService.gameData.pseudo;
-    setRoomInfo(pseudo);
+    setRoomInfo(pseudo, desiredLevel);
     setPlayerInfo(pseudo);
     onProcess = true;
     socketService.send("createSoloRoom",
@@ -70,6 +78,8 @@ class SoloGameService {
     RoomInfo roomInfo = RoomInfo.fromJson(data['roomInfo']);
 
     Room ourRoom = Room.fromJson(data, players, roomInfo);
+
+    ourRoom.observers = decodeObservers(data['observers']);
 
     return ourRoom;
   }
@@ -85,5 +95,13 @@ class SoloGameService {
   Player decodePlayer(dynamic data) {
     Player res = Player.fromJson(data);
     return res;
+  }
+
+  List<RoomObserver> decodeObservers(dynamic data) {
+    List<RoomObserver> observers = [];
+    for (var o in data) {
+      observers.add(RoomObserver.fromJson(o));
+    }
+    return observers;
   }
 }
