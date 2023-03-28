@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:client_leger/classes/game.dart';
+import 'package:client_leger/classes/game_stats.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +16,9 @@ class AuthService {
   late FirebaseAuth firebase;
   bool accountSet = false;
   late Account currentUser;
+  late Stats stats;
   final bool isProduction = bool.fromEnvironment('dart.vm.product');
+
 
   AuthService();
 
@@ -56,6 +59,7 @@ class AuthService {
         email: emailAddress,
         password: password,
       );
+      setStats(credential.user!.email!);
       setUser(credential.user!.email!);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
@@ -76,7 +80,10 @@ class AuthService {
     try {
       final credential = await firebase.signInWithEmailAndPassword(
           email: emailAddress, password: password);
+
+      setStats(credential.user!.email!);
       setUser(credential.user!.email!);
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw ('No user found for that email.');
@@ -128,6 +135,27 @@ class AuthService {
             bestGames: [],
           ),
         });
+  }
+
+  Future<void> setStats(String email) async {
+    late List<dynamic> playedGamesJson;
+    late List<dynamic> logsJson;
+    List<PlayedGame> playedGames = [];
+    List<Log> logs = [];
+    await httpService.getStatsInfo(email).then((value) => {
+      playedGamesJson = jsonDecode(value.body)['playedGames'],
+      playedGames = playedGamesJson.map((gameJson) => PlayedGame.fromJson(gameJson)).toList(),
+      logsJson = jsonDecode(value.body)['logs'],
+      logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
+      stats = Stats(
+        playedGamesCount: int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
+        gamesWonCount: int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
+        averagePointsByGame: double.parse('${jsonDecode(value.body)['averagePointsByGame']}'),
+        averageGameDuration: '${jsonDecode(value.body)['averageGameDuration']}',
+        playedGames: playedGames,
+        logs: logs,
+      ),
+    });
   }
 
   void setDefaultUser() {

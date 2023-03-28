@@ -19,10 +19,10 @@ const List<String> time = <String>[
   '270',
   '300'
 ];
-const List<String> music = <String>[
-  'WeAreTheChamps.mp3',
-  'RickRoll.mp3',
-  'Better.mp3'
+const List<Map<String, String>> music = [
+  {'We are the champions' : 'WeAreTheChamps.mp3'},
+{'Never gonna give you up':'RickRoll.mp3'},
+  {'I am better': 'Better.mp3'}
 ];
 
 final UserSettings DEFAULT_USER_SETTINGS = UserSettings(
