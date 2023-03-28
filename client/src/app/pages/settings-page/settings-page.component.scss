@@ -5,14 +5,22 @@
 .page-options {
     display: flex;
     flex-direction: column;
+    width: 30vw;
+    min-width: 600px;
+    min-height: 400px;
+    align-items: center;
+    justify-content: space-between;
+    height: 25vw;
 
     .section-title {
         font-size: 24px;
         padding-right: 10%;
+        min-width: 300px;
     }
 
     .radio-button-option {
         padding-right: 5%;
+        width: 50%;
     }
     .avatar-section {
         display: flex;
@@ -49,9 +57,9 @@
     }
     .theme-section,
     .language-section {
-        display: inline-flex;
-        align-items: baseline;
-        min-width: 400px;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
     }
 
     .theme-section div label {
@@ -67,40 +75,23 @@
     }
 
     .victory-music-section {
-        //display: inline;
-        min-width: 400px;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
         #music {
-            width: 15%;
+            width: 30%;
+            height: 32px;
         }
     }
-    .password-section {
+
+    .radio-displayer {
         display: flex;
-        justify-content: center;
-        width: 200px;
-        height: 50px;
-        align-items: center;
-        color: white;
-        font-size: 16px;
-        background: #a8bbff;
-        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-        border-radius: 8px;
-        border-style: none;
-        border-color: rgb(178, 178, 178);
-
-        &:hover {
-            cursor: pointer;
-            background: #899ad7;
-        }
-
-        &:active {
-            cursor: pointer;
-            background: #9dace0;
-            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
-        }
+        width: 30%;
+        min-width: 240px;
     }
 
     .save-button {
-        position: absolute;
+        position: fixed;
         bottom: 100px;
         right: 100px;
         align-items: center;
@@ -118,5 +109,34 @@
             cursor: not-allowed;
             background: #cccccc;
         }
+    }
+    label{
+        font-size: 20px;
+    }
+}
+
+.password-section {
+    display: flex;
+    justify-content: center;
+    width: 200px;
+    height: 50px;
+    align-items: center;
+    color: white;
+    font-size: 16px;
+    background: #a8bbff;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    border-style: none;
+    border-color: rgb(178, 178, 178);
+
+    &:hover {
+        cursor: pointer;
+        background: #899ad7;
+    }
+
+    &:active {
+        cursor: pointer;
+        background: #9dace0;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
     }
 }

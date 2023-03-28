@@ -1,3 +1,7 @@
+export interface Log {
+    time: string;
+    message: string;
+}
 export interface PlayerGameSummary {
     won: boolean;
     score: number;
@@ -10,4 +14,5 @@ export interface PlayerGameStats {
     averagePointsByGame: number;
     averageGameDuration: string;
     playedGames: PlayerGameSummary[];
+    logs: Log[];
 }

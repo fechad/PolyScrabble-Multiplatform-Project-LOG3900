@@ -155,6 +155,12 @@ export class DatabaseService {
         const data = document.data();
         return data as T;
     }
+    async getSubCollection<T>(collection: string, docId: string, subcollection: string): Promise<T[]> {
+        const ref = this.db.collection(collection).doc(docId).collection(subcollection);
+        const snapshot = await ref.get();
+        const data = snapshot.docs.map((doc) => doc.data()) as T[];
+        return data;
+    }
 
     async getAllDocumentsFromCollection<T>(collection: string): Promise<T[]> {
         const entries: T[] = [];

@@ -19,6 +19,9 @@ import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
+
+import confetti from 'canvas-confetti';
+
 const END_GAME_WIDTH = '400px';
 const BASE_AVATAR_PATH = 'assets/images/avatars/';
 @Component({
@@ -80,6 +83,13 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     ngOnInit() {
         this.connectSocket();
         this.remainingTime = 0;
+    }
+
+    launchConfetti() {
+        confetti({
+            particleCount: 200,
+            spread: 200,
+        });
     }
 
     getPlayer(pseudo: string): Player | undefined {
@@ -163,7 +173,6 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             this.setPlayersTurnToFalse();
             this.findWinner(winnerArray);
-            this.showEndGameDialog();
         });
 
         this.socketService.on(SocketEvent.UpdatePlayerScore, (player: Player) => {
@@ -199,6 +208,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.winnerPseudo = winnerArray[0].pseudo;
         }
         this.numberOfWinner = winnerArray.length;
+        if (this.getPlayerInfo(true, 'pseudo') === this.winnerPseudo || this.numberOfWinner === 2) this.launchConfetti();
+        else this.showEndGameDialog();
         const firstWinner = this.room.players.find((player) => player.pseudo === winnerArray[0].pseudo);
         if (!firstWinner) return;
         this.audioService.playWinnerMusic(firstWinner?.clientAccountInfo.userSettings.victoryMusic as string);

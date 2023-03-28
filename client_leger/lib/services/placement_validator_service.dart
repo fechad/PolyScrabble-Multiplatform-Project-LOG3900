@@ -8,12 +8,15 @@ class PlacementValidatorService {
   bool isHorizontal = false;
   bool secondPlacement = false;
   List<int> firstLetterPosition = [];
+  List<Map<String, String>> tiles = [];
 
   String letters = '';
 
   PlacementValidatorService(GameCommandService gameCommandService);
 
   addLetter(String letter, int x, int y) {
+    Map<String, String> superLetter = {letter: x.toString() + '-' + y.toString()};
+    tiles.add(superLetter);
     if (firstLetterPosition.isEmpty) {
       firstLetterPosition.addAll([x, y]);
       validPlacement = true;

@@ -5,6 +5,7 @@ import { PlayerGameStats, PlayerGameSummary } from '@app/interfaces/client-excha
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Game } from '@app/interfaces/firestoreDB/game';
 import { GameHeader } from '@app/interfaces/firestoreDB/game-header';
+import { Log } from '@app/interfaces/firestoreDB/log';
 import { DatabaseService } from '@app/services/database.service';
 import { firestore } from 'firebase-admin';
 import { Service } from 'typedi';
@@ -77,13 +78,20 @@ export class PlayerGameHistoryService {
             duration: this.secondsToTimeString(game.endDateTime.seconds - game.gameID.seconds),
             won: game.won,
         }));
+        let logs = await this.databaseService.getSubCollection<Log>('logs', 'userActions', player.email);
+        logs.forEach((entry) => {
+            if (!(entry.time instanceof firestore.Timestamp)) return;
+            entry.time = (entry.time as firestore.Timestamp).toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' });
+        });
 
+        if (!logs) logs = [];
         return {
             playedGamesCount,
             gamesWonCount,
             averagePointsByGame,
             averageGameDuration: this.secondsToTimeString(averageGameDuration),
             playedGames,
+            logs,
         };
     }
     private secondsToTimeString(secondsCount: number) {
