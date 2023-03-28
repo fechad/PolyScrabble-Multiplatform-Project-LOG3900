@@ -49,7 +49,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   verifyInfo() {
+
     authenticator.setUser(authenticator.currentUser.email);
+    authenticator.setStats(authenticator.currentUser.email);
   }
 
   @override

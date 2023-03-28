@@ -124,6 +124,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: MediaQuery.of(context).size.height,
         width: 70,
         child: AnimatedBuilder(
           animation: _animationController,
