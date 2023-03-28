@@ -6,6 +6,7 @@ import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { EinsteinVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/einstein-vp';
+import { MozartVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/mozart-vp';
 import { SantaVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/santa-vp';
 import { SerenaVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/serena-vp';
 import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
@@ -14,6 +15,7 @@ import { VirtualPlayerAdaptative } from '@app/classes/virtual-player/virtual-pla
 import { VirtualPlayerBeginner } from '@app/classes/virtual-player/virtual-player-beginner';
 import { VirtualPlayerExpert } from '@app/classes/virtual-player/virtual-player-expert';
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
+import { INVALID } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
 import { BoardMessage } from '@app/interfaces/board-message';
 import { Goal } from '@app/interfaces/goal';
@@ -75,6 +77,9 @@ export class GameManager {
             case GameLevel.Einstein:
                 return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
 
+            case GameLevel.Mozart:
+                return new MozartVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
+
             case GameLevel.Serena:
                 return new SerenaVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
 
@@ -101,10 +106,12 @@ export class GameManager {
         for (const player of players) {
             player.isItsTurn = false;
         }
-
         if (players.length <= 1) return;
+        let playerIndex = Math.floor(Math.random() * players.length);
 
-        const playerIndex = Math.floor(Math.random() * players.length);
+        const mozartIndex = players.findIndex((player) => player instanceof MozartVirtualPlayer);
+        if (mozartIndex !== INVALID) playerIndex = mozartIndex;
+
         if (!players[playerIndex]) return;
         players[playerIndex].isItsTurn = true;
     }

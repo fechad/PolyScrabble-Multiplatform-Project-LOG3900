@@ -2,12 +2,14 @@
 
 import { Randomiser } from '@app/classes/randomiser';
 import { AdaptiveScale } from '@app/interfaces/adaptive-scale';
+export const PLACEHOLDER_LETTERS_ALREADY_PLACED = '@';
+export const PLACEHOLDER_NEW_WORD_PLACED = '%';
 export const DEFAULT_DISTRIBUTION_ARRAY = [50, 100];
 export const DEFAULT_WEIGHTS = [50, 50];
 export const DEFAULT_DISTRIBUTION_SIZE = 10;
+export const MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR = 2;
 export const MAX_GAP_SANTA = -10;
 export const MAXIMUM_PLACEMENT_LENGTH = 7;
-export const MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR = 2;
 export const BIG_SCORE = 30;
 export const EXTREME_SCORE = 50;
 export const INVALID = -1;

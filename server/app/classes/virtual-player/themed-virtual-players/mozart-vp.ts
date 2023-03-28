@@ -1,7 +1,13 @@
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayerAdaptative } from '@app/classes/virtual-player/virtual-player-adaptative';
-import { MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR, SCALES } from '@app/constants/virtual-player-constants';
+import {
+    MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR,
+    PLACEHOLDER_LETTERS_ALREADY_PLACED,
+    PLACEHOLDER_NEW_WORD_PLACED,
+    SCALES,
+    TOGGLE_PREFIX,
+} from '@app/constants/virtual-player-constants';
 import { Language } from '@app/enums/language';
 import { mozartEnglishQuotes, mozartFrenchQuotes } from '@app/enums/themed-quotes/mozart-qutoes';
 import { UserPlacement } from '@app/interfaces/user-placement';
@@ -24,31 +30,12 @@ export class MozartVirtualPlayer extends VirtualPlayerAdaptative {
         return super.placeLettersAction(specialFilter);
     }
 
-    /* protected override placeLettersAction(): string {
-        this.possiblePlacements = this.tools.finder.getPlacement(this.rack.getLetters());
-        if (this.possiblePlacements.length === 0) return this.switchLettersAction();
-
-        const scoreInterval = this.intervalComputer.scoreInterval;
-
-        let filtered: UserPlacement[];
-        let completingWord: UserPlacement[] = this.possiblePlacements.filter(placement => this.isWordExtension(placement.letters, placement.newWord));
-        const options = completingWord.length > 0 ? completingWord : this.possiblePlacements;
-        
-        let offset = 0;
-        do {
-            filtered = options.filter(
-                (placement) => placement.points >= scoreInterval.min - offset && placement.points <= scoreInterval.max + offset,
-            );
-            offset++;
-        } while (filtered.length === 0);
-        const placement = filtered[Math.floor(Math.random() * filtered.length)];
-
-        if (completingWord.length > 0) this.sendSpecialQuote(placement);
-
-        return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
+    protected sendSpecialQuote(placement: UserPlacement) {
+        let quote = this.quotes.specialAnnouncement;
+        let lettersAlready = placement.newWord;
+        [...placement.letters].forEach((letter) => (lettersAlready = lettersAlready.replace(letter, '')));
+        quote = quote.replace(PLACEHOLDER_LETTERS_ALREADY_PLACED, lettersAlready);
+        quote = quote.replace(PLACEHOLDER_NEW_WORD_PLACED, placement.newWord);
+        this.sendMessage(quote, TOGGLE_PREFIX + this.pseudo);
     }
-
-    private isWordExtension(letters: string, word: string) {
-        return !this.centerNode.content || word.length - letters.length >= MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR;
-    }*/
 }
