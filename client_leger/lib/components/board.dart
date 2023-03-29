@@ -3,6 +3,7 @@ import 'package:client_leger/components/tile.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
 import '../services/link_service.dart';
 
 typedef StringCallback = void Function(String);
@@ -108,10 +109,10 @@ class _BoardState extends State<Board> {
   _configureSocket() {
     socketService.on(
         "drawBoard",
-            (data) => {
-          placementData = PlacementData.fromJson(data),
-          serverPlacement(placementData)
-        });
+        (data) => {
+              placementData = PlacementData.fromJson(data),
+              serverPlacement(placementData)
+            });
   }
 
   void constructBoard() {
@@ -138,7 +139,6 @@ class _BoardState extends State<Board> {
   void addPlacement(int x, int y, String value, String letter, color) {
     Container newSquare = Container(
         decoration: BoxDecoration(
-          color: Color(0xFFFFEBCE),
           border: Border.all(
             color: const Color(0xFFFFFFFF),
             width: 1,
@@ -158,9 +158,13 @@ class _BoardState extends State<Board> {
             child: Stack(
               children: [
                 Center(
-                    child: Text(letter, style: const TextStyle(fontSize: 24))),
+                    child: Text(letter,
+                        style: const TextStyle(
+                            fontSize: 24, color: Colors.black))),
                 Positioned(
-                  child: Text(value, style: const TextStyle(fontSize: 10)),
+                  child: Text(value,
+                      style:
+                          const TextStyle(fontSize: 10, color: Colors.black)),
                   bottom: 4.0,
                   right: 4.0,
                 )
@@ -176,8 +180,14 @@ class _BoardState extends State<Board> {
     int x = placement.column - 1;
     List<String> letters = placement.word.toUpperCase().split('');
 
-    addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
-        Color(0xFFFFEBCE));
+    addPlacement(
+        x,
+        y,
+        getTileScore(letters[0]).toString(),
+        letters[0],
+        themeManager.themeMode == ThemeMode.light
+            ? Color.fromARGB(255, 255, 235, 206)
+            : Color.fromARGB(255, 64, 64, 64));
     letters.removeAt(0);
 
     if (letters.isEmpty) return;
@@ -188,8 +198,14 @@ class _BoardState extends State<Board> {
         final square = (linkService.getRows()[y] as Row).children[x];
 
         if (square.runtimeType.toString().contains('DragTarget')) {
-          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
-              Color(0xFFFFEBCE));
+          addPlacement(
+              x,
+              y,
+              getTileScore(letters[0]).toString(),
+              letters[0],
+              themeManager.themeMode == ThemeMode.light
+                  ? Color.fromARGB(255, 255, 235, 206)
+                  : Color.fromARGB(255, 64, 64, 64));
           letters.removeAt(0);
         }
         if (letters.isEmpty) break;
@@ -201,8 +217,14 @@ class _BoardState extends State<Board> {
         final square = (linkService.getRows()[y] as Row).children[x];
 
         if (square.runtimeType.toString().contains('DragTarget')) {
-          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
-              Color(0xFFFFEBCE));
+          addPlacement(
+              x,
+              y,
+              getTileScore(letters[0]).toString(),
+              letters[0],
+              themeManager.themeMode == ThemeMode.light
+                  ? Color.fromARGB(255, 255, 235, 206)
+                  : Color.fromARGB(255, 64, 64, 64));
           letters.removeAt(0);
         }
         if (letters.isEmpty) break;
@@ -221,98 +243,116 @@ class _BoardState extends State<Board> {
           barrierDismissible: false,
           context: context,
           builder: (context) {
-            return
-              Container(
-                width: 200,
-                height: 200,
-                child:
-                AlertDialog(
-                    title: Text("Choisissez la lettre: ",
-                        style: TextStyle(fontSize: 24,)),
-                    content: SizedBox(
-                        width: 400,
-                        height: 370,
-                        child:
-                        GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 5,
-                                mainAxisSpacing: 30,
-                                crossAxisSpacing: 30,
-                                mainAxisExtent: 80),
-                            itemCount: 26,
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
-                            itemBuilder: (context, index) {
-                              return
-                                Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child:
-                                    SizedBox(
-                                        height: 50,
-                                        width: 50,
-                                        child:
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
+            return Container(
+              width: 200,
+              height: 200,
+              child: AlertDialog(
+                  title: Text("Choisissez la lettre: ",
+                      style: TextStyle(
+                        fontSize: 24,
+                      )),
+                  content: SizedBox(
+                      width: 400,
+                      height: 370,
+                      child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5,
+                                  mainAxisSpacing: 30,
+                                  crossAxisSpacing: 30,
+                                  mainAxisExtent: 80),
+                          itemCount: 26,
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                          itemBuilder: (context, index) {
+                            return Padding(
+                                padding: EdgeInsets.only(bottom: 20),
+                                child: SizedBox(
+                                    height: 50,
+                                    width: 50,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        backgroundColor: Color(0xFFFFEBCE),
+                                        side: BorderSide(
+                                            color: Colors.black,
+                                            width: 1.0,
+                                            style: BorderStyle.solid),
+                                      ),
+                                      onPressed: () {
+                                        letter =
+                                            String.fromCharCode(index + 65);
+                                        Container square = Container(
+                                            decoration: BoxDecoration(
+                                              color: color,
+                                              border: Border.all(
+                                                color: const Color(0xFFFFFFFF),
+                                                width: 1,
+                                              ),
                                             ),
-                                            backgroundColor: Color(0xFFFFEBCE),
-                                            side: BorderSide(color: Colors.black, width: 1.0, style: BorderStyle.solid),
-                                          ),
-                                          onPressed: () {
-                                            letter = String.fromCharCode(index+65);
-                                            Container square = Container(
+                                            child: Container(
                                                 decoration: BoxDecoration(
-                                                  color: color,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color:
+                                                      const Color(0xFFFFEBCE),
                                                   border: Border.all(
-                                                    color: const Color(0xFFFFFFFF),
+                                                    color:
+                                                        const Color(0xAA000000),
                                                     width: 1,
                                                   ),
                                                 ),
-                                                child: Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(10),
-                                                      color: const Color(0xFFFFEBCE),
-                                                      border: Border.all(
-                                                        color: const Color(0xAA000000),
-                                                        width: 1,
-                                                      ),
-                                                    ),
-                                                    width: 43,
-                                                    height: 43,
-                                                    child: Stack(
-                                                      children: [
-                                                        Center(
-                                                            child: Text(
-                                                                letter!, style: const TextStyle(fontSize: 24))),
-                                                        Positioned(
-                                                          child: Text(value!, style: const TextStyle(fontSize: 10)),
-                                                          bottom: 4.0,
-                                                          right: 4.0,
-                                                        )
-                                                      ],
-                                                    )));
-                                            Navigator.pop(context);
+                                                width: 43,
+                                                height: 43,
+                                                child: Stack(
+                                                  children: [
+                                                    Center(
+                                                        child: Text(letter!,
+                                                            style: const TextStyle(
+                                                                fontSize: 24,
+                                                                color: Colors
+                                                                    .black))),
+                                                    Positioned(
+                                                      child: Text(value!,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 10,
+                                                                  color: Colors
+                                                                      .black)),
+                                                      bottom: 4.0,
+                                                      right: 4.0,
+                                                    )
+                                                  ],
+                                                )));
+                                        Navigator.pop(context);
 
-                                            setState(() {
-                                              linkService.setRows(x, y, square);
-                                              linkService.removeLetter(Tile(letter: letter!, index: index!));
-                                              String confirmedLetters = placementValidator.letters.toLowerCase().replaceFirst('*', letter!);
-                                              placementValidator.letters = confirmedLetters;
-                                              alertGamePage(placementValidator.letters);
-                                            });
-                                          },
-                                          child: Text("${String.fromCharCode(index+65)}",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                              )),
-                                        )));
-                            }))),
-              );
-          }
-      );
-    }
-    else {
+                                        setState(() {
+                                          linkService.setRows(x, y, square);
+                                          linkService.removeLetter(Tile(
+                                              letter: letter!, index: index!));
+                                          String confirmedLetters =
+                                              placementValidator.letters
+                                                  .toLowerCase()
+                                                  .replaceFirst('*', letter!);
+                                          placementValidator.letters =
+                                              confirmedLetters;
+                                          alertGamePage(
+                                              placementValidator.letters);
+                                        });
+                                      },
+                                      child: Text(
+                                          "${String.fromCharCode(index + 65)}",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                          )),
+                                    )));
+                          }))),
+            );
+          });
+    } else {
       Container square = Container(
           decoration: BoxDecoration(
             color: color,
@@ -335,10 +375,13 @@ class _BoardState extends State<Board> {
               child: Stack(
                 children: [
                   Center(
-                      child: Text(
-                          letter!, style: const TextStyle(fontSize: 24))),
+                      child: Text(letter!,
+                          style: const TextStyle(
+                              fontSize: 24, color: Colors.black))),
                   Positioned(
-                    child: Text(value!, style: const TextStyle(fontSize: 10)),
+                    child: Text(value!,
+                        style:
+                            const TextStyle(fontSize: 10, color: Colors.black)),
                     bottom: 4.0,
                     right: 4.0,
                   )
@@ -347,7 +390,8 @@ class _BoardState extends State<Board> {
 
       setState(() {
         linkService.setRows(x, y, square);
-        linkService.removeLetter(Tile(letter: letter!.toLowerCase(), index: index!));
+        linkService
+            .removeLetter(Tile(letter: letter!.toLowerCase(), index: index!));
         alertGamePage(placementValidator.letters);
       });
     }
@@ -363,8 +407,12 @@ class _BoardState extends State<Board> {
               width: 45,
               decoration: BoxDecoration(
                 color: candidateData.isEmpty
-                    ? Color(0xFFE8A1A1)
-                    : Color(0xCCCCB89B),
+                    ? themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 232, 161, 161)
+                        : Color.fromARGB(255, 255, 100, 100)
+                    : themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 255, 235, 206)
+                        : Color.fromARGB(255, 64, 64, 64),
                 border: Border.all(
                   color: Color(0xFFFFFFFF),
                   width: 0.5,
@@ -372,14 +420,21 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Mot x3',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Mot x3',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
-            placeTile(x, y, data["value"], data["letter"], data['index'],
-                Color(0xFFE8A1A1));
+            placeTile(
+                x,
+                y,
+                data["value"],
+                data["letter"],
+                data['index'],
+                themeManager.themeMode == ThemeMode.light
+                    ? Color.fromARGB(255, 232, 161, 161)
+                    : Color.fromARGB(255, 255, 100, 100));
           });
         },
       );
@@ -392,8 +447,12 @@ class _BoardState extends State<Board> {
               width: 45,
               decoration: BoxDecoration(
                 color: candidateData.isEmpty
-                    ? Color(0xFFFFC7C7)
-                    : Color(0xCCCCB89B),
+                    ? themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 255, 199, 199)
+                        : Color.fromARGB(255, 255, 131, 131)
+                    : themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 255, 235, 206)
+                        : Color.fromARGB(255, 64, 64, 64),
                 border: Border.all(
                   color: Color(0xFFFFFFFF),
                   width: 0.5,
@@ -401,14 +460,21 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Mot x2',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Mot x2',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
-            placeTile(x, y, data["value"], data["letter"], data['index'],
-                Color(0xFFFFC7C7));
+            placeTile(
+                x,
+                y,
+                data["value"],
+                data["letter"],
+                data['index'],
+                themeManager.themeMode == ThemeMode.light
+                    ? Color.fromARGB(255, 255, 199, 199)
+                    : Color.fromARGB(255, 255, 131, 131));
           });
         },
       );
@@ -421,8 +487,12 @@ class _BoardState extends State<Board> {
               width: 45,
               decoration: BoxDecoration(
                 color: candidateData.isEmpty
-                    ? Color(0xFFA8BBFF)
-                    : Color(0xCCCCB89B),
+                    ? themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 168, 187, 255)
+                        : Color.fromARGB(255, 111, 138, 237)
+                    : themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 255, 235, 206)
+                        : Color.fromARGB(255, 64, 64, 64),
                 border: Border.all(
                   color: Color(0xFFFFFFFF),
                   width: 0.5,
@@ -430,14 +500,21 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Lettre x3',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Lettre x3',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
-            placeTile(x, y, data["value"], data["letter"], data['index'],
-                Color(0xFFA8BBFF));
+            placeTile(
+                x,
+                y,
+                data["value"],
+                data["letter"],
+                data['index'],
+                themeManager.themeMode == ThemeMode.light
+                    ? Color.fromARGB(255, 168, 187, 255)
+                    : Color.fromARGB(255, 111, 138, 237));
           });
         },
       );
@@ -450,8 +527,12 @@ class _BoardState extends State<Board> {
               width: 45,
               decoration: BoxDecoration(
                 color: candidateData.isEmpty
-                    ? Color(0xFFBBBECA)
-                    : Color(0xCCCCB89B),
+                    ? themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 187, 190, 202)
+                        : Color.fromARGB(255, 189, 192, 255)
+                    : themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 255, 235, 206)
+                        : Color.fromARGB(255, 64, 64, 64),
                 border: Border.all(
                   color: Color(0xFFFFFFFF),
                   width: 0.5,
@@ -459,14 +540,21 @@ class _BoardState extends State<Board> {
               ),
               child: Center(
                   child: Text(
-                    'Lettre x2',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
-                  )));
+                'Lettre x2',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              )));
         },
         onAccept: (data) {
           setState(() {
-            placeTile(x, y, data["value"], data["letter"], data['index'],
-                Color(0xFFBBBECA));
+            placeTile(
+                x,
+                y,
+                data["value"],
+                data["letter"],
+                data['index'],
+                themeManager.themeMode == ThemeMode.light
+                    ? Color.fromARGB(255, 187, 190, 202)
+                    : Color.fromARGB(255, 189, 192, 255));
           });
         },
       );
@@ -478,8 +566,13 @@ class _BoardState extends State<Board> {
             height: 45,
             width: 45,
             decoration: BoxDecoration(
-              color:
-              candidateData.isEmpty ? Color(0xFFFFEBCE) : Color(0xCCCCB89B),
+              color: candidateData.isEmpty
+                  ? themeManager.themeMode == ThemeMode.light
+                      ? Color.fromARGB(255, 255, 235, 206)
+                      : Color.fromARGB(255, 64, 64, 64)
+                  : themeManager.themeMode == ThemeMode.light
+                      ? Color.fromARGB(255, 255, 235, 206)
+                      : Color.fromARGB(255, 64, 64, 64),
               border: Border.all(
                 color: Color(0xFFFFFFFF),
                 width: 0.5,
@@ -489,8 +582,15 @@ class _BoardState extends State<Board> {
         },
         onAccept: (data) {
           setState(() {
-            placeTile(x, y, data["value"], data["letter"], data['index'],
-                Color(0xFFFFEBCE));
+            placeTile(
+                x,
+                y,
+                data["value"],
+                data["letter"],
+                data['index'],
+                themeManager.themeMode == ThemeMode.light
+                    ? Color.fromARGB(255, 255, 235, 206)
+                    : Color.fromARGB(255, 64, 64, 64));
           });
         },
       );

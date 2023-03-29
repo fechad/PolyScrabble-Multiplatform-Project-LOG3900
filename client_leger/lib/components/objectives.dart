@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../classes/game.dart';
+import '../main.dart';
 import '../services/link_service.dart';
 
 class Objectives extends StatefulWidget {
@@ -93,10 +94,16 @@ class ObjectivesState extends State<Objectives> {
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
                                   decoration: BoxDecoration(
-                                    color: Color(0x227DAF6B),
+                                    color: themeManager.themeMode ==
+                                            ThemeMode.light
+                                        ? Color(0x227DAF6B)
+                                        : Color.fromARGB(57, 121, 101, 220),
                                     borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
-                                      color: Color(0xFF7DAF6B),
+                                      color: themeManager.themeMode ==
+                                              ThemeMode.light
+                                          ? Color.fromARGB(255, 125, 175, 107)
+                                          : Color.fromARGB(255, 121, 101, 220),
                                       width: 2,
                                     ),
                                   ),
@@ -118,7 +125,13 @@ class ObjectivesState extends State<Objectives> {
                                                       fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: Color(0xFF7DAF6B)),
+                                                      color: themeManager
+                                                                  .themeMode ==
+                                                              ThemeMode.light
+                                                          ? Color.fromARGB(255,
+                                                              125, 175, 107)
+                                                          : Color.fromARGB(255,
+                                                              121, 101, 220)),
                                                 ))),
                                         Container(
                                             width: 50,
@@ -129,9 +142,8 @@ class ObjectivesState extends State<Objectives> {
                                                   ? '+${gameService.goals[index].reward}'
                                                   : 'x2',
                                               style: GoogleFonts.nunito(
-                                                textStyle: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Color(0xFF000000)),
+                                                textStyle:
+                                                    TextStyle(fontSize: 20),
                                               ),
                                               textAlign: TextAlign.end,
                                             )),
@@ -149,7 +161,10 @@ class ObjectivesState extends State<Objectives> {
                                   child: Container(
                                       height: 40,
                                       width: 270,
-                                      color: Colors.white,
+                                      color: themeManager.themeMode ==
+                                              ThemeMode.light
+                                          ? Colors.white
+                                          : Color.fromARGB(255, 53, 53, 52),
                                       padding: EdgeInsets.only(
                                           left: 8, right: 8, top: 10),
                                       child: Row(children: [
@@ -161,9 +176,8 @@ class ObjectivesState extends State<Objectives> {
                                             child: Text(
                                                 gameService.goals[index].title,
                                                 style: GoogleFonts.nunito(
-                                                  textStyle: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Color(0xFF000000)),
+                                                  textStyle:
+                                                      TextStyle(fontSize: 18),
                                                 ))),
                                         Container(
                                             width: 50,
@@ -174,9 +188,8 @@ class ObjectivesState extends State<Objectives> {
                                                   ? '+${gameService.goals[index].reward}'
                                                   : 'x2',
                                               style: GoogleFonts.nunito(
-                                                textStyle: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Color(0xFF000000)),
+                                                textStyle:
+                                                    TextStyle(fontSize: 20),
                                               ),
                                               textAlign: TextAlign.end,
                                             )),

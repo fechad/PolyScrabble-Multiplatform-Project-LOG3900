@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../main.dart';
 
 class SenderMessage extends StatelessWidget {
   final String txt;
@@ -38,7 +39,9 @@ class SenderMessage extends StatelessWidget {
                     width: 756.3,
                     padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
                     decoration: BoxDecoration(
-                      color: Color(0xFF7DAF6B),
+                      color: themeManager.themeMode == ThemeMode.light
+                          ? Color.fromARGB(255, 125, 175, 107)
+                          : Color.fromARGB(255, 121, 101, 220),
                       borderRadius: BorderRadius.circular(8),
                     ),
 

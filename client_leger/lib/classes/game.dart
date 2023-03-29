@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../pages/chat_page.dart';
 
 class GameData {
@@ -170,11 +172,11 @@ class UserSettings {
 }
 
 class ProgressInfo {
-  int totalXP;
-  int currentLevel;
-  int currentLevelXp;
-  int xpForNextLevel;
-  int victoriesCount;
+  int? totalXP;
+  int? currentLevel;
+  int? currentLevelXp;
+  int? xpForNextLevel;
+  int? victoriesCount;
 
   ProgressInfo(
       {required this.totalXP,
@@ -184,11 +186,11 @@ class ProgressInfo {
       required this.victoriesCount});
 
   ProgressInfo.fromJson(dynamic json)
-      : totalXP = json['totalXP'],
-        currentLevel = json['currentLevel'],
-        currentLevelXp = json['currentLevelXp'],
-        xpForNextLevel = json['xpForNextLevel'],
-        victoriesCount = json['victoriesCount'];
+      : totalXP = json?['totalXP'],
+        currentLevel = json?['currentLevel'],
+        currentLevelXp = json?['currentLevelXp'],
+        xpForNextLevel = json?['xpForNextLevel'],
+        victoriesCount = json?['victoriesCount'];
 
   Map<String, dynamic> toJson() => {
         'totalXP': totalXP,
@@ -244,17 +246,17 @@ class Account {
             .split(','),
         gamesWon = json['gamesWon'];
 
-  Map<String, dynamic> toJson() => {
+  String toJson() => {
         'username': username,
         'email': email,
-        'userSettings': userSettings,
-        'progressInfo': progressInfo,
-        'highScores': highScores,
-        'badges': badges,
-        'bestGames': bestGames,
-        'gamesPlayed': gamesPlayed,
+        'userSettings': userSettings.toJson(),
+        'progressInfo': progressInfo.toJson(),
+        'highScores': jsonEncode(highScores),
+        'badges': jsonEncode(badges),
+        'bestGames': jsonEncode(bestGames),
+        'gamesPlayed': jsonEncode(gamesPlayed),
         'gamesWon': gamesWon,
-      };
+      }.toString();
 }
 
 class GameHeader {

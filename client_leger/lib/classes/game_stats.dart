@@ -6,25 +6,22 @@ class Stats {
   List<PlayedGame> playedGames;
   List<Log> logs;
 
-  Stats(
-      {required this.playedGamesCount,
-        required this.gamesWonCount,
-        required this.averagePointsByGame,
-        required this.averageGameDuration,
-        required this.playedGames,
-        required this.logs,
-        });
-
-
+  Stats({
+    required this.playedGamesCount,
+    required this.gamesWonCount,
+    required this.averagePointsByGame,
+    required this.averageGameDuration,
+    required this.playedGames,
+    required this.logs,
+  });
 
   Map<String, dynamic> toJson() => {
-    'playedGamesCount': playedGamesCount,
-    'gamesWonCount': gamesWonCount,
-    'averagePointsByGame': averagePointsByGame,
-    'averageGameDuration': averageGameDuration,
-    'playedGames': playedGames,
-  };
-
+        'playedGamesCount': playedGamesCount,
+        'gamesWonCount': gamesWonCount,
+        'averagePointsByGame': averagePointsByGame,
+        'averageGameDuration': averageGameDuration,
+        'playedGames': playedGames,
+      };
 }
 
 class PlayedGame {
@@ -33,12 +30,12 @@ class PlayedGame {
   String startDateTime;
   String duration;
 
-  PlayedGame(
-      {required this.won,
-        required this.score,
-        required this.startDateTime,
-        required this.duration,
-      });
+  PlayedGame({
+    required this.won,
+    required this.score,
+    required this.startDateTime,
+    required this.duration,
+  });
 
   factory PlayedGame.fromJson(Map<String, dynamic> json) {
     return PlayedGame(
@@ -50,21 +47,17 @@ class PlayedGame {
   }
 
   Map<String, dynamic> toJson() => {
-    'won': won,
-    'score': score,
-    'startDateTime': startDateTime,
-    'duration': duration,
-  };
-
+        'won': won,
+        'score': score,
+        'startDateTime': startDateTime,
+        'duration': duration,
+      };
 }
 
 class Log {
   String time;
   String message;
-  Log({
-    required this.time,
-    required this.message
-  });
+  Log({required this.time, required this.message});
 
   factory Log.fromJson(Map<String, dynamic> json) {
     return Log(

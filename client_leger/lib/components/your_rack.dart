@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../main.dart';
+
 typedef IntCallback = void Function(int i);
 
 class YourRack extends StatefulWidget {
@@ -49,7 +51,9 @@ class _YourRackState extends State<YourRack> {
         height: 60,
         width: 352,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: themeManager.themeMode == ThemeMode.light
+              ? Colors.white
+              : Color.fromARGB(255, 53, 53, 52),
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: Color(0x44000000),

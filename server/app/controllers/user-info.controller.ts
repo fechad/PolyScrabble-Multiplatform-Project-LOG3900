@@ -32,6 +32,7 @@ export class UserInfoController {
         return clientAccountInfo;
     }
     private reduceClientAccountInfo(clientAccount: ClientAccountInfo): Account {
+        // console.log('reducing: ', clientAccount);
         return {
             username: clientAccount.username,
             email: clientAccount.email,
@@ -49,7 +50,7 @@ export class UserInfoController {
         this.router.get('/:email', async (req: Request, res: Response) => {
             try {
                 await this.databaseService.getDocumentByID('accounts', req.params.email).then((data: Account) => {
-                    res.json(this.buildClientAccountInfo(data));
+                    res.json(data);
                 });
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);

@@ -1,12 +1,12 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/pages/waiting_page.dart';
 import 'package:flutter/material.dart';
+
 import '../classes/constants.dart';
 import '../components/sidebar.dart';
-import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../main.dart';
 import '../services/link_service.dart';
-
 
 class MultiplayerPage extends StatefulWidget {
   const MultiplayerPage({super.key});
@@ -35,7 +35,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     gameService.room.roomInfo.isPublic = gameIsPublic;
   }
 
-  @override dispose(){
+  @override
+  dispose() {
     super.dispose();
   }
 
@@ -44,7 +45,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: scaffoldKey,
-      backgroundColor: Colors.white,
       drawer: const ChatDrawer(),
       body: Stack(
         children: <Widget>[
@@ -100,11 +100,10 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
-                                  color: Colors.black,
-                                  fontFamily: 'Nunito',
-                                  fontSize: 24,
-                                  decoration: TextDecoration.underline,
-                                ),
+                                      fontFamily: 'Nunito',
+                                      fontSize: 24,
+                                      decoration: TextDecoration.underline,
+                                    ),
                               ),
                             ),
                             SizedBox(
@@ -116,9 +115,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                 value: difficultyValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
-                                style:
-                                const TextStyle(color: Colors.black),
-                                decoration: InputDecoration(labelText: "Difficulté du joueur virtuel"),
+                                decoration: InputDecoration(
+                                    labelText: "Difficulté du joueur virtuel"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -128,12 +126,12 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                               ),
                             ),
                             SizedBox(
@@ -145,125 +143,124 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                 value: timeValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
-                                style:
-                                const TextStyle(color: Colors.black),
-                                decoration: InputDecoration(labelText: "Temps par tour (en secondes)"),
+                                decoration: InputDecoration(
+                                    labelText: "Temps par tour (en secondes)"),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
                                     timeValue = value!;
-                                    gameService.gameData.timerPerTurn = timeValue;
+                                    gameService.gameData.timerPerTurn =
+                                        timeValue;
                                   });
                                 },
                                 items: time.map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                               ),
                             ),
                             SizedBox(height: 16),
                             SizedBox(
                               width: 280,
-                              child: Column (
-                              children: [
-                              DropdownButtonFormField<String>(
-                                value: gameTypeValue,
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                                elevation: 16,
-                                style:
-                                const TextStyle(color: Colors.black),
-                                decoration: InputDecoration(labelText: "Type de partie"),
-                                onChanged: (String? value) {
-                                  setState(() {
-                                    gameTypeValue = value!;
-                                    gameIsPublic = gameType.indexOf(value!) > 0 ? true : false;
-                                  });
-                                },
-                                items: gameType.map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                              ),
+                              child: Column(children: [
+                                DropdownButtonFormField<String>(
+                                  value: gameTypeValue,
+                                  icon: const Icon(Icons.keyboard_arrow_down),
+                                  elevation: 16,
+                                  decoration: InputDecoration(
+                                      labelText: "Type de partie"),
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      gameTypeValue = value!;
+                                      gameIsPublic =
+                                          gameType.indexOf(value!) > 0
+                                              ? true
+                                              : false;
+                                    });
+                                  },
+                                  items: gameType.map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
                                 SizedBox(height: 5),
                                 gameType.indexOf(gameTypeValue) == 2
                                     ? TextFormField(
-                                  focusNode: _focusNode,
-                                  keyboardType: TextInputType.text,
-                                  autofocus: true,
-                                  controller: _gamePasswordController,
-                                  obscureText:
-                                  !_passwordVisible, //This will obscure text dynamically
-                                  decoration: InputDecoration(
-                                    hintText: 'Entrez un mot de passe',
-                                    contentPadding:
-                                    const EdgeInsets.symmetric(
-                                        vertical: 0.0,
-                                        horizontal: 10.0),
-                                    enabledBorder:
-                                    const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 1,
-                                          color: Colors.black),
-                                    ),
-                                    focusedBorder:
-                                    const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 1,
-                                          color: Colors.black),
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _passwordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        // Update the state i.e. toogle the state of passwordVisible variable
-                                        setState(() {
-                                          _passwordVisible =
-                                          !_passwordVisible;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                )
+                                        focusNode: _focusNode,
+                                        keyboardType: TextInputType.text,
+                                        autofocus: true,
+                                        controller: _gamePasswordController,
+                                        obscureText:
+                                            !_passwordVisible, //This will obscure text dynamically
+                                        decoration: InputDecoration(
+                                          hintText: 'Entrez un mot de passe',
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 0.0,
+                                                  horizontal: 10.0),
+                                          enabledBorder:
+                                              const OutlineInputBorder(
+                                            borderSide: BorderSide(width: 1),
+                                          ),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                width: 1, color: Colors.black),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              _passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                            ),
+                                            onPressed: () {
+                                              // Update the state i.e. toogle the state of passwordVisible variable
+                                              setState(() {
+                                                _passwordVisible =
+                                                    !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      )
                                     : SizedBox(height: 50),
                               ]),
                             ),
                             Padding(
                               padding:
-                              const EdgeInsets.symmetric(vertical: 25.0),
+                                  const EdgeInsets.symmetric(vertical: 25.0),
                               child: ElevatedButton(
                                 onPressed: () {
                                   checkFormValues();
                                 },
                                 style: ButtonStyle(
                                     shape: MaterialStatePropertyAll<
-                                        RoundedRectangleBorder>(
+                                            RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
                                             borderRadius:
-                                            BorderRadius.circular(8))),
+                                                BorderRadius.circular(8))),
                                     minimumSize: MaterialStateProperty.all(
                                         const Size(300, 50)),
-                                    backgroundColor:
-                                    const MaterialStatePropertyAll<Color>(
-                                        Palette.mainColor)),
+                                    backgroundColor: MaterialStatePropertyAll<
+                                        Color>(themeManager.themeMode ==
+                                            ThemeMode.light
+                                        ? Color.fromARGB(255, 125, 175, 107)
+                                        : Color.fromARGB(255, 121, 101, 220))),
                                 child: Text(
                                   'Créer la partie',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
-                                    color: Colors.white,
-                                    fontFamily: 'Nunito',
-                                    fontSize: 24,
-                                  ),
+                                        color: Colors.white,
+                                        fontFamily: 'Nunito',
+                                        fontSize: 24,
+                                      ),
                                 ),
                               ),
                             ),
@@ -284,19 +281,14 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   checkFormValues() {
     if (difficultyValue == null || timeValue == null) return 'Erreur';
-    gameService.joinRoomMultiplayer(gameIsPublic, _gamePasswordController.text, difficultyValue);
-    Navigator.push(context,
-        MaterialPageRoute(builder: ((context) {
-          return WaitingPage(
-              roomName: gameService.room.roomInfo.name,
-              timer:
-              gameService.gameData.timerPerTurn,
-              botsLevel:
-              gameService.room.botsLevel!,
-              players: gameService.room.players);
-        })));
+    gameService.joinRoomMultiplayer(
+        gameIsPublic, _gamePasswordController.text, difficultyValue);
+    Navigator.push(context, MaterialPageRoute(builder: ((context) {
+      return WaitingPage(
+          roomName: gameService.room.roomInfo.name,
+          timer: gameService.gameData.timerPerTurn,
+          botsLevel: gameService.room.botsLevel!,
+          players: gameService.room.players);
+    })));
   }
-
-
 }
-

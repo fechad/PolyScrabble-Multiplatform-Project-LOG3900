@@ -98,6 +98,33 @@ export class ForgotPasswordPageComponent {
     focusInput(inputElement: HTMLInputElement) {
         inputElement.focus();
     }
+
+    /*
+
+this.authService
+            .signIn(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
+            .then(async (userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const loginResult = await lastValueFrom(this.httpService.loginUser(user?.email!));
+                // eslint-disable-next-line no-console
+                console.log(loginResult);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.playerService.player.pseudo = (loginResult as any).username;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.playerService.player.email = (loginResult as any).email;
+                await this.playerService.setUserInfo();
+                this.router.navigate(['/main']);
+            })
+            .catch((error) => {
+                const errorCode: string = error.code;
+                if (errorCode) {
+                    const errorMessage = error.message;
+                    this.loginError = errorMessage;
+                }
+            });
+    */
     async submitConnection() {
         this.authService
             .signIn(this.loginForm.controls.email.value, this.loginForm.controls.temporaryPassword.value)
@@ -112,7 +139,10 @@ export class ForgotPasswordPageComponent {
                         // eslint-disable-next-line no-console
                         console.log(loginResult);
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        this.playerService.player.pseudo = (loginResult as any).username;
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         this.playerService.player.email = (loginResult as any).email;
+                        await this.playerService.setUserInfo();
                         this.router.navigate(['/main']);
                     })
                     .catch(() => {

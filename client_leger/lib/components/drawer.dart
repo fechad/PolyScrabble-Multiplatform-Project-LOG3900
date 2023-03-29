@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 
-import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_widgets.dart';
+import '../main.dart';
 import '../pages/home_page.dart';
 import '../services/link_service.dart';
 import 'chat_card.dart';
@@ -32,20 +32,21 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
   _configure() {
     socketService.on(
       "availableChannels",
-          (channels) => {
-        if (mounted) {
-          setState(() {
-            gameService.availableChannels = [];
-            for (var channel in channels) {
-              gameService.availableChannels.add(
-                  chatService.decodeModel(channel));
-            }
-            if (gameService.room.roomInfo.name != '') {
-              chatService.getDiscussionChannelByName(
-                  gameService.room.roomInfo.name);
-            }
-          }),
-        }
+      (channels) => {
+        if (mounted)
+          {
+            setState(() {
+              gameService.availableChannels = [];
+              for (var channel in channels) {
+                gameService.availableChannels
+                    .add(chatService.decodeModel(channel));
+              }
+              if (gameService.room.roomInfo.name != '') {
+                chatService
+                    .getDiscussionChannelByName(gameService.room.roomInfo.name);
+              }
+            }),
+          }
       },
     );
   }
@@ -82,16 +83,20 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                       setState(() {
                         isSearching = txt.isNotEmpty;
 
-                        if (txt.isEmpty) chatService.discussionChannels = gameService.availableChannels;
+                        if (txt.isEmpty)
+                          chatService.discussionChannels =
+                              gameService.availableChannels;
                         if (textController.text.isNotEmpty) {
-                          chatService.discussionChannels = [chatService.discussionChannels[0]];
-                          for (ChatModel channel in gameService.availableChannels) {
+                          chatService.discussionChannels = [
+                            chatService.discussionChannels[0]
+                          ];
+                          for (ChatModel channel
+                              in gameService.availableChannels) {
                             if (channel.name.startsWith(textController.text)) {
                               chatService.discussionChannels.add(channel);
                             }
                           }
                         }
-
                       });
                     },
                     onSubmitted: submitMsg,
@@ -176,77 +181,75 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                     return Container(
                       child: AlertDialog(
                         title: Text("Création d'un canal"),
-                        content:
-                        Container(
+                        content: Container(
                             height: 55,
                             width: 350,
                             child: Form(
-                            key: _formKey,
-                            child: Column(
-                            children: [
-                            TextFormField(
-                              controller: _channelNameController,
-                              decoration:
-                          const InputDecoration(
-                            hintText:
-                            'Veuillez entrer le nom du canal',
-                          ),
-                          validator: (value) {
-                            for (ChatModel channel in chatService.getDiscussions()){
-                              if (channel.name.toLowerCase().trim().replaceAll(' ', '') == value?.toLowerCase().trim().replaceAll(' ', '')) return 'Un canal a déjà ce nom';
-                            }
+                                key: _formKey,
+                                child: Column(children: [
+                                  TextFormField(
+                                    controller: _channelNameController,
+                                    decoration: const InputDecoration(
+                                      hintText:
+                                          'Veuillez entrer le nom du canal',
+                                    ),
+                                    validator: (value) {
+                                      for (ChatModel channel
+                                          in chatService.getDiscussions()) {
+                                        if (channel.name
+                                                .toLowerCase()
+                                                .trim()
+                                                .replaceAll(' ', '') ==
+                                            value
+                                                ?.toLowerCase()
+                                                .trim()
+                                                .replaceAll(' ', ''))
+                                          return 'Un canal a déjà ce nom';
+                                      }
 
-                            if (value!.isEmpty) {
-                              return 'Le nom ne peut être vide';
-                            }
-                            if (value.toLowerCase().trim().startsWith('room')) {
-                              return "Le nom ne peut commencer par 'room'";
-                            }
-                            return null;
-                          },
-                          ),
-                            ]))
-                        ),
+                                      if (value!.isEmpty) {
+                                        return 'Le nom ne peut être vide';
+                                      }
+                                      if (value
+                                          .toLowerCase()
+                                          .trim()
+                                          .startsWith('room')) {
+                                        return "Le nom ne peut commencer par 'room'";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ]))),
                         actions: [
                           ElevatedButton(
                               child: Text('Annuler'),
-                              style: ElevatedButton
-                                  .styleFrom(
-                                backgroundColor:
-                                Colors.red,
-                                textStyle:
-                                const TextStyle(
-                                    fontSize: 15),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                textStyle: const TextStyle(fontSize: 15),
                               ),
                               onPressed: () => {
-                                _channelNameController
-                                    .clear(),
-                                Navigator.pop(
-                                    context),
-                              }),
+                                    _channelNameController.clear(),
+                                    Navigator.pop(context),
+                                  }),
                           ElevatedButton(
-                            child: Text('Créer'),
-                            style:
-                            ElevatedButton.styleFrom(
-                              backgroundColor:
-                              Palette.mainColor,
-                              textStyle: const TextStyle(
-                                  fontSize: 15),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                setState(() {
-                                  chatService.addDiscussion(
-                                      _channelNameController.text);
-                                  Navigator
-                                .pop(
-                                    context);
-                                _channelNameController
-                                    .clear();
-                    });
-                              }
-                            }
-                          ),
+                              child: Text('Créer'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    themeManager.themeMode == ThemeMode.light
+                                        ? Color.fromARGB(255, 125, 175, 107)
+                                        : Color.fromARGB(255, 121, 101, 220),
+                                textStyle: const TextStyle(fontSize: 15),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    chatService.addDiscussion(
+                                        _channelNameController.text);
+                                    Navigator.pop(context);
+                                    _channelNameController.clear();
+                                  });
+                                }
+                              }),
                         ],
                       ),
                     );
@@ -257,7 +260,9 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
             options: FFButtonOptions(
               width: 240,
               height: 50,
-              color: Color(0xFF7DAF6B),
+              color: themeManager.themeMode == ThemeMode.light
+                  ? Color.fromARGB(255, 125, 175, 107)
+                  : Color.fromARGB(255, 121, 101, 220),
               textStyle: TextStyle(
                 fontFamily: 'Poppins',
                 color: Colors.white,

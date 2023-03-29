@@ -8,8 +8,6 @@ import '../components/sidebar.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../main.dart';
 import '../services/link_service.dart';
-import 'game_page.dart';
-
 
 class ObserverPage extends StatefulWidget {
   const ObserverPage({super.key});
@@ -28,48 +26,43 @@ class ObserverPageState extends State<ObserverPage> {
     super.initState();
     connect();
     gameService.configureSocketFeatures();
-
   }
 
   connect() {
     socketService.on(
       "updatePublicRooms",
-          (rooms) => {
+      (rooms) => {
         gameService.allPublicRooms = [],
-            if (mounted) {
-              setState(() {
-                for (var r in rooms)
-                {
-                  gameService.allPublicRooms.add(gameService.decodeModel(r));
-                  publicRooms = gameService.allPublicRooms;
-                }
-              }),
-            }
+        if (mounted)
+          {
+            setState(() {
+              for (var r in rooms) {
+                gameService.allPublicRooms.add(gameService.decodeModel(r));
+                publicRooms = gameService.allPublicRooms;
+              }
+            }),
+          }
       },
     );
 
     socketService.on(
       "observerAccepted",
-          (room) => {
-            gameService.room = gameService.decodeModel(room),
-            socketService.send("joinChatChannel", {
-              'name': gameService.room.roomInfo.name,
-              'user': authenticator.getCurrentUser().username,
-              'isRoomChannel': true,
-            }),
-
-          Navigator.push(context, MaterialPageRoute(
-          builder: ((context) {
+      (room) => {
+        gameService.room = gameService.decodeModel(room),
+        socketService.send("joinChatChannel", {
+          'name': gameService.room.roomInfo.name,
+          'user': authenticator.getCurrentUser().username,
+          'isRoomChannel': true,
+        }),
+        Navigator.push(context, MaterialPageRoute(builder: ((context) {
           return WaitingPage(
               roomName: gameService.room.roomInfo.name,
-              timer:
-              gameService.room.roomInfo.timerPerTurn.toString(),
+              timer: gameService.room.roomInfo.timerPerTurn.toString(),
               botsLevel: gameService.room.botsLevel!,
-          players: gameService.room.players);
-          }))),
+              players: gameService.room.players);
+        }))),
       },
     );
-
   }
 
   @override
@@ -81,52 +74,50 @@ class ObserverPageState extends State<ObserverPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: Colors.white,
         drawer: const ChatDrawer(),
         body: Stack(children: <Widget>[
           SingleChildScrollView(
             child: Center(
                 child: Column(children: [
-                  SizedBox(height: 40),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Image.asset(
-                      "assets/images/scrabble_hero.png",
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  Text(
-                    'Parties Disponibles',
-                    style: FlutterFlowTheme.of(context).bodyText1.override(
-                      color: Colors.black,
+              SizedBox(height: 40),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Image.asset(
+                  "assets/images/scrabble_hero.png",
+                ),
+              ),
+              SizedBox(height: 30),
+              Text(
+                'Parties Disponibles',
+                style: FlutterFlowTheme.of(context).bodyText1.override(
                       fontFamily: 'Nunito',
                       fontSize: 24,
                       decoration: TextDecoration.underline,
                     ),
-                  ),
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                      height: MediaQuery.of(context).size.height * 0.90,
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      child: GridView.builder(
-                          padding: const EdgeInsets.all(20),
-                          shrinkWrap: true,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 30,
-                              crossAxisSpacing: 30,
-                              mainAxisExtent: 130),
-                          itemCount: publicRooms.length,
-                          itemBuilder: (_, index) {
-                            return GameCard(
-                              difficulty: publicRooms[index].botsLevel!,
-                              time: publicRooms[index].roomInfo.timerPerTurn,
-                              password: publicRooms[index].roomInfo.password,
-                              roomName: publicRooms[index].roomInfo.name,
-                              isObserver: true,
-                            );
-                          })),
-                ])),
+              ),
+              Container(
+                  padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                  height: MediaQuery.of(context).size.height * 0.90,
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: GridView.builder(
+                      padding: const EdgeInsets.all(20),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 30,
+                          crossAxisSpacing: 30,
+                          mainAxisExtent: 130),
+                      itemCount: publicRooms.length,
+                      itemBuilder: (_, index) {
+                        return GameCard(
+                          difficulty: publicRooms[index].botsLevel!,
+                          time: publicRooms[index].roomInfo.timerPerTurn,
+                          password: publicRooms[index].roomInfo.password,
+                          roomName: publicRooms[index].roomInfo.name,
+                          isObserver: true,
+                        );
+                      })),
+            ])),
           ),
           CollapsingNavigationDrawer(),
         ]));

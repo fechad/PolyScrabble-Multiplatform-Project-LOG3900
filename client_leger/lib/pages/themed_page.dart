@@ -23,10 +23,12 @@ class _ThemedPageState extends State<ThemedPage> {
   List<int> difficulty = [2, 1, 2, 3, 5];
   List<String> names = ["Mozart", "Santa", "Serena", "Trump", "Einstein"];
   String path = "assets/images/avatars/";
-  final hasBeatenSanta = authenticator.currentUser.badges
-      .firstWhere((badge) => badge.toString().contains('id: Santa'))
-      .toString()
-      .isNotEmpty;
+  final hasBeatenSanta = authenticator.currentUser.badges[0] == ""
+      ? false
+      : authenticator.currentUser.badges
+          .firstWhere((badge) => badge.toString().contains('id: Santa'))
+          .toString()
+          .isNotEmpty;
 
   Future<void> _showMyDialog(
       BuildContext context, String name, int difficulty, int time) async {
