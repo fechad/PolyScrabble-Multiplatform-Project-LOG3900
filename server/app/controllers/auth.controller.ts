@@ -70,7 +70,7 @@ export class AuthController {
                     bestGames: [],
                     gamesPlayed: [],
                     gamesWon: 0,
-                    totalXP: 0,
+                    totalXP: 200,
                     highScores: {},
                 };
                 await this.databaseService
