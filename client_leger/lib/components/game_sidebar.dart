@@ -2,15 +2,20 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../main.dart';
+import '../services/link_service.dart';
+
 
 class GameSidebar extends StatefulWidget {
+  GameSidebar({super.key, required this.isObserver});
+  final bool isObserver;
   @override
-  _GameSidebar createState() => _GameSidebar();
+  _GameSidebarState createState() => _GameSidebarState(isObserver: isObserver);
 }
 
-class _GameSidebar extends State<GameSidebar> {
+class _GameSidebarState extends State<GameSidebar> {
+  _GameSidebarState({required this.isObserver});
+  bool isObserver;
   final globalKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -26,6 +31,7 @@ class _GameSidebar extends State<GameSidebar> {
           child: Column(
             children: <Widget>[
               SizedBox(height: 25),
+              isObserver ? Container() :
               IconButton(
                 icon: const Icon(Icons.lightbulb_outline_rounded,
                     size: 50, color: Color(0xFFF5C610)),
@@ -50,7 +56,20 @@ class _GameSidebar extends State<GameSidebar> {
                 },
               ),
               SizedBox(height: 435),
+              isObserver ?
               IconButton(
+                icon:
+                const Icon(Icons.logout, size: 50, color: Colors.red),
+                onPressed: () {
+                  gameService.reinitializeRoom();
+                  leaveGame();
+                  linkService.setIsInAGame(false);
+                  Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                  return const MyHomePage(title: 'PolyScrabble');
+                  })));
+                },
+              )
+              : IconButton(
                 icon:
                     const Icon(Icons.flag_rounded, size: 50, color: Colors.red),
                 onPressed: () {
@@ -107,5 +126,9 @@ class _GameSidebar extends State<GameSidebar> {
         ),
       ),
     );
+  }
+
+  leaveGame() {
+    socketService.send("leaveGame");
   }
 }

@@ -23,7 +23,6 @@ class _StatsState extends State<Stats> {
   @override
   void initState() {
     super.initState();
-    print(authenticator.stats.gamesWonCount);
   }
 
 

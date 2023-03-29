@@ -41,9 +41,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     socketService.on(
         "playerTurnChanged",
         (currentPlayerTurnPseudo) => {
-              inGameService.player.isItsTurn = inGameService
-                      .player.clientAccountInfo.username
-                      .compareTo(currentPlayerTurnPseudo) ==
+              inGameService.player.isItsTurn = inGameService.player.clientAccountInfo!.username
+                    .compareTo(currentPlayerTurnPseudo) ==
                   0,
               linkService.setTurn(inGameService.player.isItsTurn),
               widget.resetLetters(),
@@ -159,7 +158,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                     width: 5,
                                     color: currentPlayer ==
                                             gameService.room.players[index]
-                                                .clientAccountInfo.username
+                                                .clientAccountInfo!.username
                                         ? themeManager.themeMode ==
                                                 ThemeMode.light
                                             ? Color.fromARGB(255, 125, 175, 107)

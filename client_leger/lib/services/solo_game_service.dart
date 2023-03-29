@@ -21,7 +21,7 @@ class SoloGameService {
             dictionary: 'dictionnaire par défaut',
             maxPlayers: 4,
             creatorName: authenticator.currentUser.username,
-            isPublic: false, //by default games are private
+            isPublic: true,
             password: ''),
         isBankUsable: false,
         observers: [],

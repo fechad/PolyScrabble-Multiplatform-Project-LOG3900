@@ -122,7 +122,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                       itemCount: availableRooms.length,
                       itemBuilder: (_, index) {
                         return GameCard(
-                          //TODO : get difficulty and not gameType
+                          players: availableRooms[index].players,
                           difficulty: availableRooms[index].botsLevel!,
                           time: availableRooms[index].roomInfo.timerPerTurn,
                           password: availableRooms[index].roomInfo.password,

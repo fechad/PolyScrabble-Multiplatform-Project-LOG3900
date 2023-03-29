@@ -49,6 +49,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   String serverMsg = '';
   List<String> hints = [];
   bool observing = false;
+  late Player p;
 
   @override
   void initState() {
@@ -56,12 +57,10 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     inGameService.configure();
     linkService.setIsInAGame(true);
     _configure();
-
     for (RoomObserver observer in gameService.room.observers!) {
       if (observer.username == authenticator.getCurrentUser().username)
         observing = true;
     }
-    print('am observer $observing');
   }
 
   _configure() {
@@ -102,64 +101,79 @@ class _GamePageWidgetState extends State<GamePageWidget> {
 
     socketService.on(
         'hint',
-        (data) => {
-              hints =
-                  Message.fromJson(data).text.replaceAll("_", "-").split(' '),
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Container(
-                      width: 200,
-                      height: 200,
-                      child: AlertDialog(
-                          title: Text("Choisissez un indice à prévisualiser: ",
-                              style: TextStyle(
-                                fontSize: 24,
-                              )),
-                          content: SizedBox(
-                              width: 400,
-                              height: 370,
-                              child: ListView.builder(
-                                  itemCount: int.parse(hints[hints.length - 1]),
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                        padding: EdgeInsets.only(bottom: 20),
-                                        child: SizedBox(
-                                            height: 50,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    themeManager.themeMode ==
-                                                            ThemeMode.light
-                                                        ? Colors.white
+            (data) => {
+          hints =
+              Message.fromJson(data).text.replaceAll("_", "-").split(' '),
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Container(
+                  width: 200,
+                  height: 200,
+                  child: AlertDialog(
+                      title: Text("Choisissez un indice à prévisualiser: ",
+                          style: TextStyle(
+                            fontSize: 24,
+                          )),
+                      content: SizedBox(
+                          width: 400,
+                          height: 370,
+                          child: ListView.builder(
+                              itemCount: int.parse(hints[hints.length - 1]),
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child: SizedBox(
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: themeManager.themeMode ==
+                                                    ThemeMode.light
+                                                    ? Colors.white
                                                         : Color.fromARGB(
-                                                            255, 53, 53, 52),
-                                                shadowColor: Colors.black,
-                                                elevation: 5,
-                                                side: BorderSide(
-                                                    color: Colors.grey,
-                                                    width: 1.0,
-                                                    style: BorderStyle.solid),
-                                              ),
-                                              onPressed: () {
-                                                lettersPlaced =
-                                                    hints[index].split("-")[1];
-                                                serverPlacement(
-                                                    hints[index].split("-")[0],
-                                                    hints[index].split("-")[1]);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                  "${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  )),
-                                            )));
-                                  }))),
-                    );
-                  })
-            });
+                                                    255, 53, 53, 52),
+                                                  shadowColor: Colors.black,
+                                            elevation: 5,
+                                            side: BorderSide(
+                                                color: Colors.grey,
+                                                width: 1.0,
+                                                style: BorderStyle.solid),
+                                          ),
+                                          onPressed: () {
+                                            lettersPlaced =
+                                            hints[index].split("-")[1];
+                                            serverPlacement(
+                                                hints[index].split("-")[0],
+                                                hints[index].split("-")[1]);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                              "${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                              )),
+                                        )));
+                              }))),
+                );
+              })
+        });
+
+    socketService.on("playersRackUpdated", (data) =>
+    {
+        for (var playerInfo in data) {
+          p = gameService.decodePlayer(playerInfo['player']),
+          gameService.playersRack.add(PlayerRack(player: p, rackLetters: playerInfo['rackLetters']))
+      },
+
+      updateLetters(),
+      });
+
+    socketService.on("observersUpdated", (roomObservers) => {
+        gameService.room.observers = gameService.decodeObservers(roomObservers),
+    });
+
   }
 
   int getTileScore(String letter) {
@@ -308,7 +322,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             });
         },
         body: Row(children: [
-          observing ? CollapsingNavigationDrawer() : GameSidebar(),
+          GameSidebar(isObserver: observing),
           Column(children: [
             Container(
               width: screenWidth * 0.65,
@@ -337,48 +351,12 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                     );
                   }
                 }),
-            Observer(
-              builder: (context) => Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: linkService.currentBackground.value.isNotEmpty
-                        ? DecorationImage(
-                            image:
-                                AssetImage(linkService.getCurrentBackground()),
-                            fit: BoxFit.cover,
-                          )
-                        : null),
-                padding: EdgeInsets.fromLTRB(12, 10, 12, 12),
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    ObjectiveBox(),
-                    SizedBox(height: 32),
-                    observing
-                        ? SizedBox(
-                            height: 50,
-                            width: 120,
-                            child: ElevatedButton(
-                              onPressed: () => {
-                                gameService.reinitializeRoom(),
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: ((context) {
-                                  return const MyHomePage(
-                                      title: 'PolyScrabble');
-                                }))),
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll<Color>(
-                                          Color(0xFFFF4C4C))),
-                              child: Text('Quitter',
-                                  style: TextStyle(fontSize: 24)),
-                            ))
-                        : YourRack(tileChange: tileChange)
-                  ],
-                ),
-              ),
-            ),
+            SizedBox(height: 10),
+            ObjectiveBox(updateLetters: updateLetters, isObserver: observing),
+            SizedBox(height: 32),
+            observing ?
+            Container()
+                : YourRack(tileChange: tileChange),
             SizedBox(height: 16),
             if (letterIndexesToExchange.length != 0 && lettersPlaced == '')
               Row(
@@ -488,5 +466,11 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     linkService.cancelPlacements();
     boardController.rebuild();
     linkService.resetRack();
+  }
+
+  updateLetters() {
+    setState(() {
+      gameService.playersRack;
+    });
   }
 }

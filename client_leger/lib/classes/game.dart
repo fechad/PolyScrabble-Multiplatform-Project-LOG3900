@@ -22,7 +22,7 @@ class Player {
   int points;
   bool isCreator;
   bool isItsTurn;
-  Account clientAccountInfo;
+  Account? clientAccountInfo;
   Rack? rack;
 
   Player(
@@ -30,7 +30,7 @@ class Player {
       required this.points,
       required this.isCreator,
       required this.isItsTurn,
-      required this.clientAccountInfo,
+        this.clientAccountInfo,
       this.rack});
 
   Player.fromJson(dynamic json)
@@ -183,7 +183,7 @@ class ProgressInfo {
       required this.currentLevel,
       required this.currentLevelXp,
       required this.xpForNextLevel,
-      required this.victoriesCount});
+       required this.victoriesCount});
 
   ProgressInfo.fromJson(dynamic json)
       : totalXP = json?['totalXP'],
@@ -411,3 +411,21 @@ class RoomObserver {
         'username': username,
       };
 }
+
+class PlayerRack {
+  Player player;
+  String rackLetters;
+
+  PlayerRack({required this.player, required this.rackLetters});
+
+  PlayerRack.fromJson(dynamic json)
+      : player = json['player'],
+        rackLetters = json['rackLetters'];
+
+  Map<String, dynamic> toJson() => {
+    'player': player,
+    'rackLetters': rackLetters,
+  };
+
+}
+

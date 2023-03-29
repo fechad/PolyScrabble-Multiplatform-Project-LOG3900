@@ -176,6 +176,17 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  void setButtonPressed(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setButtonPressed');
+    try {
+      return super.setButtonPressed(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setTurn(value) {
     final _$actionInfo = _$_LinkServiceActionController.startAction(
         name: '_LinkService.setTurn');

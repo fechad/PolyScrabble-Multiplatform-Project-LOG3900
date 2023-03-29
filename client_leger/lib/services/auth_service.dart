@@ -26,7 +26,7 @@ class AuthService {
 
   AuthService._create() {
     initializeApp().then((value) =>
-        {firebase = FirebaseAuth.instanceFor(app: app), setDefaultUser()});
+    {firebase = FirebaseAuth.instanceFor(app: app), setDefaultUser()});
     //TODO change setDefaultUser to setUser
   }
 
@@ -123,59 +123,59 @@ class AuthService {
     print(email);
     bool darkMode = false;
     await httpService.getUserInfo(email.toLowerCase()).then((value) => {
-          print(value.body),
-          currentUser = Account(
-            username: '${jsonDecode(value.body)['username']}',
-            email: '${jsonDecode(value.body)['email']}',
-            userSettings:
-                UserSettings.fromJson(jsonDecode(value.body)['userSettings']),
-            progressInfo:
-                ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
-            highScores: {
-              "classic": jsonDecode(value.body)['highScores']
-                  .toString()
-                  .replaceAll("\ ", '')
-                  .replaceAll('[', '')
-                  .replaceAll(']', '')
-                  .split(','),
-              "theme": jsonDecode(value.body)['highScores']
-                  .toString()
-                  .replaceAll("\ ", '')
-                  .replaceAll('[', '')
-                  .replaceAll(']', '')
-                  .split(',')
-            },
-            badges: jsonDecode(value.body)['badges']
-                .toString()
-                .replaceAll("\ ", '')
-                .replaceAll('[', '')
-                .replaceAll(']', '')
-                .split(','),
-            gamesWon: jsonDecode(value.body)['gamesWon'],
-            gamesPlayed: jsonDecode(value.body)['gamesPlayed']
-                .toString()
-                .replaceAll("\ ", '')
-                .replaceAll('[', '')
-                .replaceAll(']', '')
-                .split(','),
-            bestGames: jsonDecode(value.body)['bestGames']
-                .toString()
-                .replaceAll("\ ", '')
-                .replaceAll('[', '')
-                .replaceAll(']', '')
-                .split(','),
-          ),
-          loggedInEmail = currentUser.email,
-          darkMode = authenticator.currentUser.userSettings.defaultTheme
-              .contains('dark'),
-          print(currentUser.userSettings.victoryMusic),
-          print('theme mode'),
-          print(authenticator.currentUser.userSettings.defaultTheme),
-          print('is dark mode?'),
-          print(darkMode),
-          themeManager.setThemeMode(darkMode),
-          setStats(email)
-        });
+      print(value.body),
+      currentUser = Account(
+        username: '${jsonDecode(value.body)['username']}',
+        email: '${jsonDecode(value.body)['email']}',
+        userSettings:
+        UserSettings.fromJson(jsonDecode(value.body)['userSettings']),
+        progressInfo:
+        ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
+        highScores: {
+          "classic": jsonDecode(value.body)['highScores']
+              .toString()
+              .replaceAll("\ ", '')
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .split(','),
+          "theme": jsonDecode(value.body)['highScores']
+              .toString()
+              .replaceAll("\ ", '')
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .split(',')
+        },
+        badges: jsonDecode(value.body)['badges']
+            .toString()
+            .replaceAll("\ ", '')
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
+        gamesWon: jsonDecode(value.body)['gamesWon'],
+        gamesPlayed: jsonDecode(value.body)['gamesPlayed']
+            .toString()
+            .replaceAll("\ ", '')
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
+        bestGames: jsonDecode(value.body)['bestGames']
+            .toString()
+            .replaceAll("\ ", '')
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .split(','),
+      ),
+      loggedInEmail = currentUser.email,
+      darkMode = authenticator.currentUser.userSettings.defaultTheme
+          .contains('dark'),
+      print(currentUser.userSettings.victoryMusic),
+      print('theme mode'),
+      print(authenticator.currentUser.userSettings.defaultTheme),
+      print('is dark mode?'),
+      print(darkMode),
+      themeManager.setThemeMode(darkMode),
+      setStats(email)
+    });
   }
 
   Future<void> setStats(String email) async {
@@ -185,34 +185,34 @@ class AuthService {
     List<PlayedGame> playedGames = [];
     List<Log> logs = [];
     await httpService.getStatsInfo(email.toLowerCase()).then((value) => {
-          if (value.statusCode != 404)
-            {
-              print(jsonDecode(value.body)),
-              playedGamesJson = jsonDecode(value.body)['playedGames']
-                  .toString()
-                  .replaceAll('[', '')
-                  .replaceAll(']', '')
-                  .split(','),
-              playedGames = playedGamesJson
-                  .map((gameJson) => PlayedGame.fromJson(gameJson))
-                  .toList(),
-              logsJson = jsonDecode(value.body)['logs'],
-              logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
-              stats = Stats(
-                playedGamesCount:
-                    int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
-                gamesWonCount:
-                    int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
-                averagePointsByGame: double.parse(
-                    '${jsonDecode(value.body)['averagePointsByGame']}'),
-                averageGameDuration:
-                    '${jsonDecode(value.body)['averageGameDuration']}',
-                playedGames: playedGames,
-                logs: logs,
-              ),
-            },
-          set = true
-        });
+      if (value.statusCode != 404)
+        {
+          print(jsonDecode(value.body)),
+          playedGamesJson = jsonDecode(value.body)['playedGames']
+              .toString()
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .split(','),
+          playedGames = playedGamesJson
+              .map((gameJson) => PlayedGame.fromJson(gameJson))
+              .toList(),
+          logsJson = jsonDecode(value.body)['logs'],
+          logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
+          stats = Stats(
+            playedGamesCount:
+            int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
+            gamesWonCount:
+            int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
+            averagePointsByGame: double.parse(
+                '${jsonDecode(value.body)['averagePointsByGame']}'),
+            averageGameDuration:
+            '${jsonDecode(value.body)['averageGameDuration']}',
+            playedGames: playedGames,
+            logs: logs,
+          ),
+        },
+      set = true
+    });
   }
 
   void setDefaultUser() {

@@ -9,7 +9,7 @@ import '../pages/home_page.dart';
 class InGameService extends MultiplayerGameService {
   final String msgEvent = 'message';
   late Player receivedPlayer;
-  int bankCount = 88;
+  int bankCount = 102;
   List<Player> players = gameService.room.players;
   late String hints;
   late String winnerPseudo = '';
@@ -30,18 +30,16 @@ class InGameService extends MultiplayerGameService {
               scorePlayer = Player.fromJson(sender),
               for (Player p in gameService.room.players)
                 {
-                  if (p.clientAccountInfo.username ==
-                      scorePlayer.clientAccountInfo.username)
+                  if (p.clientAccountInfo!.username == scorePlayer.clientAccountInfo!.username)
                     {p.points = scorePlayer.points}
                 }
             });
     socketService.on(
         "toggleAngryBotAvatar",
         (botName) => {
-              print('AngryBot'),
               if (gameService.room.players
                   .firstWhere((Player player) =>
-                      player.clientAccountInfo.username == botName)
+                      player.clientAccountInfo!.username == botName)
                   .toString()
                   .isNotEmpty)
                 {
@@ -53,7 +51,6 @@ class InGameService extends MultiplayerGameService {
     socketService.on(
         "lettersBankCountUpdated",
         (count) => {
-              //TODO update bank count
               bankCount = count,
               if (bankCount < 7) gameService.room.isBankUsable = false
             });
@@ -108,11 +105,9 @@ class InGameService extends MultiplayerGameService {
 
   findWinner(List<Player> winnerArray) {
     if (winnerArray.isEmpty) return;
-    if (winnerArray.length == 1)
-      winnerPseudo = winnerArray[0].clientAccountInfo.username;
+    if (winnerArray.length == 1) winnerPseudo = winnerArray[0].clientAccountInfo!.username;
     for (Player p in gameService.room.players) {
-      if (p.clientAccountInfo.username ==
-          winnerArray[0].clientAccountInfo.username) {
+      if (p.clientAccountInfo!.username == winnerArray[0].clientAccountInfo!.username) {
         Player firstWinner = p;
       } else
         return;
@@ -122,7 +117,7 @@ class InGameService extends MultiplayerGameService {
 
   getPlayer(String pseudo) {
     for (player in gameService.room.players) {
-      if (pseudo == player.clientAccountInfo.username) return player;
+      if (pseudo == player.clientAccountInfo!.username) return player;
     }
     return null;
   }

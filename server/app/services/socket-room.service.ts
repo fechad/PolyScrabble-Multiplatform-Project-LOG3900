@@ -100,14 +100,11 @@ export class SocketRoomService extends SocketHandlerService {
         if (!observeRoomForm) return;
         const roomName = observeRoomForm.roomName;
         const serverRoom = this.roomService.getRoom(roomName);
-        if (!serverRoom || !serverRoom.canAddObserver(observeRoomForm.observer.username, observeRoomForm.password)) return;
-
-        serverRoom.addObserver(observeRoomForm.observer);
-
+        if (!serverRoom || !serverRoom.canAddObserver(observeRoomForm)) return;
+        serverRoom.addObserver(observeRoomForm);
         this.socketJoin(socket, roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
-
         this.socketEmit(socket, SocketEvent.ObserverAccepted, serverRoom);
         this.sendToEveryoneInRoom(roomName, SocketEvent.ObserversUpdated, serverRoom.observers);
     }

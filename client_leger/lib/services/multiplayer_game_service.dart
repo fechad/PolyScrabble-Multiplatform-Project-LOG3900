@@ -18,6 +18,7 @@ class MultiplayerGameService extends SoloGameService {
   List<ChatModel> availableChannels = [];
   List<Account> opponentsInfo = [];
   List<Goal> goals = [];
+  List<PlayerRack> playersRack = [];
 
   MultiplayerGameService({required super.gameData}) {
     room = Room(
@@ -52,10 +53,10 @@ class MultiplayerGameService extends SoloGameService {
     await Future.delayed(Duration(seconds: 1));
 
     for (Player p in gameService.room.players) {
-      if (JVS.containsKey(p.clientAccountInfo.username))
-        opponentsInfo.add(JVS[p.clientAccountInfo.username]!);
+      if (JVS.containsKey(p.clientAccountInfo!.username))
+        opponentsInfo.add(JVS[p.clientAccountInfo!.username]!);
       else {
-        final res = await httpService.getOpponentInfo(p.clientAccountInfo.username);
+        final res = await httpService.getOpponentInfo(p.clientAccountInfo!.username);
         opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
       }
     }

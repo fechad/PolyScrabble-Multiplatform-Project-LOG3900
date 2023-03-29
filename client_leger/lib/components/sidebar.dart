@@ -68,6 +68,9 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             message: message['message'])),
                   }),
               if (chatService
+            .getDiscussionChannelByName(chatName)
+            .messages
+            .length > 2 && chatService
                       .getDiscussionChannelByName(chatName)
                       .messages[chatService
                               .getDiscussionChannelByName(chatName)
@@ -77,7 +80,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                       .sender !=
                   authenticator.currentUser.username)
                 {
-                  if (this.mounted)
+                  if (mounted)
                     {
                       if (linkService.getCurrentOpenedChat() != chatName)
                         {
@@ -175,7 +178,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                     return Divider(height: 12.0);
                   },
                   itemBuilder: (context, counter) {
-                    return (counter == 2)
+                    return (counter == 1)
                         ? Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 240),
                             child: CollapsingListTile(
@@ -246,21 +249,16 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                       linkService.newMessageChange();
                                   }
                                   // TODO : put function here depending on what we click on
-                                  else if (counter == 1) {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: ((context) {
-                                      return LeaderBoardPage();
-                                    })));
+                              else if (counter == 2) {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: ((context) {
+                                          return SettingsPage();
+                                        })));
                                   } else if (counter == 3) {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: ((context) {
-                                      return SettingsPage();
-                                    })));
-                                  } else if (counter == 4) {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: ((context) {
-                                      return ConnexionPageWidget();
-                                    })));
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: ((context) {
+                                          return ConnexionPageWidget();
+                                        })));
                                   }
                                 },
                                 isSelected:
