@@ -76,10 +76,6 @@ export class AuthController {
                 await this.databaseService
                     .addAccount(account)
                     .then(async () => {
-                        await this.databaseService.log('userActions', req.body.email, {
-                            message: 'accountCreated/CréationDuCompte',
-                            time: firestore.Timestamp.now(),
-                        });
                         res.status(StatusCodes.CREATED).send();
                     })
                     .catch((error) => res.status(StatusCodes.CONFLICT).send(error.message));

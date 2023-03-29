@@ -12,6 +12,7 @@ import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
 import { RoomObserver } from '@app/interfaces/room-observer';
+import { firestore } from 'firebase-admin';
 import { GameManager } from './game-manager';
 const MULTIPLAYER_MIN_PLAYERS = 4;
 
@@ -33,7 +34,7 @@ export class Room {
     observers: RoomObserver[];
     roomInfo: RoomInfo;
     bots: VirtualPlayer[];
-    startDate: Date;
+    startDate: firestore.Timestamp;
     botCommunicationManager: BotCommunicationManager;
     fillerNamesUsed: string[];
     botsLevel: GameLevel;
@@ -46,7 +47,7 @@ export class Room {
         this.observers = [];
         this.placementsData = [];
         this.elapsedTime = 0;
-        this.startDate = new Date();
+        this.startDate = firestore.Timestamp.now();
         this.fillerNamesUsed = [];
         this.botsLevel = clientRoom ? clientRoom.botsLevel : GameLevel.Adaptive;
         this.bots = [];
@@ -121,7 +122,7 @@ export class Room {
 
         if (this.isFirstGame && this.players.length !== 0) {
             this.isFirstGame = false;
-            this.startDate = new Date();
+            this.startDate = firestore.Timestamp.now();
         }
     }
 

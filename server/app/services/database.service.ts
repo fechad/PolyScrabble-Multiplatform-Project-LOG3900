@@ -155,10 +155,10 @@ export class DatabaseService {
         const data = document.data();
         return data as T;
     }
-    async getSubCollection<T>(collection: string, docId: string, subcollection: string): Promise<T[]> {
-        const ref = this.db.collection(collection).doc(docId).collection(subcollection);
-        const snapshot = await ref.get();
-        const data = snapshot.docs.map((doc) => doc.data()) as T[];
+    async getUserLogs(userID: string): Promise<Log[]> {
+        const ref = this.db.collection('logs').doc('userActions').collection(userID);
+        const snapshot = await ref.orderBy('time', 'desc').get();
+        const data = snapshot.docs.map((doc) => doc.data() as Log);
         return data;
     }
 

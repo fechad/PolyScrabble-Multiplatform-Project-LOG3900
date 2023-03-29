@@ -15,7 +15,7 @@ describe('PlayerGameHistoryService tests', () => {
     const databaseService: DatabaseService = new DatabaseService();
     beforeEach(() => {
         // eslint-disable-next-line import/no-named-as-default-member
-        Sinon.stub(databaseService, 'getSubCollection').callsFake(async () => {
+        Sinon.stub(databaseService, 'getUserLogs').callsFake(async () => {
             return [];
         });
         historyService = new PlayerGameHistoryService(databaseService);
@@ -55,13 +55,13 @@ describe('PlayerGameHistoryService tests', () => {
             playedGamesCount: 2,
             playedGames: [
                 {
-                    score: 100,
+                    score: 200,
                     duration: '5s',
                     startDateTime: firestore.Timestamp.fromMillis(0).toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' }),
                     won: true,
                 },
                 {
-                    score: 200,
+                    score: 100,
                     duration: '5s',
                     startDateTime: firestore.Timestamp.fromMillis(0).toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' }),
                     won: true,
