@@ -11,6 +11,7 @@ import 'avatar.dart';
 class GameCard extends StatefulWidget {
   GameCard(
       {super.key,
+        required this.players,
       required this.difficulty,
       required this.time,
       required this.password,
@@ -22,6 +23,7 @@ class GameCard extends StatefulWidget {
   final String password;
   final String roomName;
   final bool isObserver;
+  final List<Player> players;
 
   @override
   _GameCardState createState() => _GameCardState(
@@ -29,7 +31,8 @@ class GameCard extends StatefulWidget {
       time: time,
       password: password,
       roomName: roomName,
-      isObserver: isObserver);
+      isObserver: isObserver,
+      players: players);
 }
 
 class _GameCardState extends State<GameCard> {
@@ -38,7 +41,8 @@ class _GameCardState extends State<GameCard> {
       required this.time,
       required this.password,
       required this.roomName,
-      required this.isObserver});
+      required this.isObserver,
+      required this.players});
   final String difficulty;
   final String time;
   final String password;
@@ -55,11 +59,14 @@ class _GameCardState extends State<GameCard> {
   TextEditingController _pswdController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late String btnText;
+  final List<Player> players;
+
 
   @override
   void initState() {
     super.initState();
     btnText = isObserver ? 'Observer' : 'Joindre';
+    isObserver ? linkService.setButtonPressed(false) : null;
   }
 
   void buttonChange() {
@@ -132,10 +139,18 @@ class _GameCardState extends State<GameCard> {
                 padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                 child: Row(
                   children: [
-                    Avatar(url: 'https://picsum.photos/seed/540/600'),
-                    Avatar(url: 'https://picsum.photos/seed/540/600'),
-                    Avatar(url: 'https://picsum.photos/seed/540/600'),
-                    Avatar(url: 'https://picsum.photos/seed/540/600'),
+                    Container (
+                        height: 50,
+                        width: 200,
+                        child:
+                        ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: players.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Avatar(
+                                  url: players[index].clientAccountInfo!.userSettings.avatarUrl);
+                            })
+                    ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(80, 0, 16, 0),
                       child: ElevatedButton(
@@ -153,8 +168,6 @@ class _GameCardState extends State<GameCard> {
                           onPressed: linkService.getJoinButtonPressed()
                               ? null
                               : () {
-                                  print(
-                                      'value btn ${linkService.getJoinButtonPressed()}');
                                   if (password.isEmpty) {
                                     if (isObserver) {
                                       sendObserveRequest();
@@ -234,7 +247,11 @@ class _GameCardState extends State<GameCard> {
                                                   onPressed: () {
                                                     if (_pswdController.text ==
                                                         password) {
-                                                      sendJoinRequest();
+                                                      if (isObserver) {
+                                                        sendObserveRequest();
+                                                      } else {
+                                                        sendJoinRequest();
+                                                      }
                                                     }
                                                   },
                                                 ),

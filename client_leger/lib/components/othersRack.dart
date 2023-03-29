@@ -1,8 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../classes/game.dart';
+import '../main.dart';
 
-class OthersRack extends StatelessWidget {
+class OthersRack extends StatefulWidget {
+  const OthersRack(
+      {super.key,
+        required this.player,
+        required this.playerInfo,
+      required this.isObserver,
+        required this.updateLetters});
+  final List<PlayerRack> playerInfo;
+  final Player player;
+  final bool isObserver;
+  final VoidCallback updateLetters;
+
+  @override
+  OthersRackState createState() => OthersRackState(isObserver: isObserver, player: player, playerInfo: playerInfo);
+}
+
+class OthersRackState extends State<OthersRack> {
+  OthersRackState(
+  {required this.isObserver, required this.player, required this.playerInfo});
+  final List<PlayerRack> playerInfo;
+  final Player player;
+  late PlayerRack rightPlayer =
+  PlayerRack(player:
+  Player(socketId: '',
+      points: 0,
+      isCreator: false,
+      isItsTurn: false,
+      clientAccountInfo: authenticator.getCurrentUser()),
+      rackLetters: '');
+  final bool isObserver;
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (PlayerRack p in playerInfo) {
+      if (p.player.clientAccountInfo!.username == player.clientAccountInfo!.username){
+        rightPlayer = p;
+      }
+    }
+  }
 
 
   @override
@@ -21,7 +63,7 @@ class OthersRack extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-           Text('Anna Guo', style: GoogleFonts.nunito(
+           Text(player.clientAccountInfo!.username, style: GoogleFonts.nunito(
              textStyle: TextStyle(
                fontSize: 18,
              ),
@@ -34,153 +76,36 @@ class OthersRack extends StatelessWidget {
               child: Row(
                   children: [
                     Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'A',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'N',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'N',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'A',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'G',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'U',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color(0xFFFFEBCE),
-                          border: Border.all(
-                            color: Color(0x11000000),
-                            width: 1,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(left:2.5, right: 2.5),
-                        width: 35,
-                        height: 35,
-                        child: Center(
-                            child: Text(
-                                'O',
-                                style: TextStyle(
-                                    fontSize: 24
-                                )
-                            ))
-                    ),
-
-
-
-
-
-
-
-
+                        height: 40,
+                        width: 300,
+                    child:
+                    ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: rightPlayer.rackLetters.length,
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context, index) {
+                          return
+                            Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Color(0xFFFFEBCE),
+                                  border: Border.all(
+                                    color: Color(0x11000000),
+                                    width: 1,
+                                  ),
+                                ),
+                                margin: EdgeInsets.only(left:2.5, right: 2.5),
+                                width: 35,
+                                height: 35,
+                                child: Center(
+                                    child: Text( isObserver ?
+                                        rightPlayer.rackLetters[index].toUpperCase() : '',
+                                        style: TextStyle(
+                                            fontSize: 24
+                                        )
+                                    ))
+                            );
+                        })),
                   ]
               )
           )

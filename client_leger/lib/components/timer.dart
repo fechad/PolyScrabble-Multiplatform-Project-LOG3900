@@ -53,7 +53,7 @@ class _TimerWidgetState extends State<TimerWidget> {
             timerFormat = Duration(seconds: seconds).toString().substring(2, 7);
             timer.cancel();
             if (linkService.getMyTurn()) inGameService.changePlayerTurn();
-            Timer(const Duration(milliseconds: 500), (() => setTimer()));
+            setTimer();
           });
         } else {
           setState(() {

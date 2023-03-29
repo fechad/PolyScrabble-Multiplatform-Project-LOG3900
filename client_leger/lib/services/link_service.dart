@@ -71,7 +71,7 @@ abstract class _LinkService with Store {
   ObservableList<String> channelWithNewMessages = ObservableList.of([]);
 
   @observable
-  Observable<int> letterBankCount = Observable(0);
+  Observable<int> letterBankCount = Observable(102);
 
   @observable
   ObservableList<Widget> rows = ObservableList<Widget>.of([]);
@@ -222,6 +222,12 @@ abstract class _LinkService with Store {
   setLetterBankCount(int newValue) {
     letterBankCount.value = newValue;
   }
+
+  @action
+  setButtonPressed(bool newValue) {
+    joinButtonPressed.value = newValue;
+  }
+
 
   @action
   removeLetter(Tile tile) {

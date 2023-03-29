@@ -113,6 +113,11 @@ class _BoardState extends State<Board> {
               placementData = PlacementData.fromJson(data),
               serverPlacement(placementData)
             });
+    if (gameService.room.placementsData != null) {
+      for (var placement in gameService.room.placementsData!) {
+        serverPlacement(PlacementData(word: placement.word, row: placement.row, column: placement.column, direction: placement.direction, ));
+      }
+    }
   }
 
   void constructBoard() {

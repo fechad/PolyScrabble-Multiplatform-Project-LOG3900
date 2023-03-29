@@ -4,15 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
+import '../services/link_service.dart';
+
 
 class ObjectiveBox extends StatefulWidget {
-  const ObjectiveBox({super.key});
+   ObjectiveBox({super.key, required this.isObserver, required this.updateLetters});
+   bool isObserver;
+   final VoidCallback updateLetters;
 
   @override
-  ObjectiveBoxState createState() => ObjectiveBoxState();
+  ObjectiveBoxState createState() => ObjectiveBoxState(isObserver: isObserver);
 }
 
 class ObjectiveBoxState extends State<ObjectiveBox> {
+  ObjectiveBoxState({required this.isObserver});
+  bool isObserver;
+
   @override
   void initState() {
     super.initState();
@@ -74,14 +81,18 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
             child: TabBarView(
               children: [
                 Objectives(),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Racks()]),
+                Row(mainAxisAlignment: MainAxisAlignment.center ,children:[Racks(isObserver: isObserver, updateLetters: updateLetters,)]),
               ],
             ),
           ),
         )),
       ),
     );
+  }
+
+  updateLetters () {
+    setState(() {
+      gameService.playersRack;
+    });
   }
 }

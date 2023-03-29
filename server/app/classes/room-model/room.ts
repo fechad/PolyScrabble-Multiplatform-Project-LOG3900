@@ -8,6 +8,7 @@ import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
 import { BoardMessage } from '@app/interfaces/board-message';
 import { Goal } from '@app/interfaces/goal';
+import { ObserveRoomForm } from '@app/interfaces/observe-room-form';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { RoomInfo } from '@app/interfaces/room-info';
@@ -126,9 +127,9 @@ export class Room {
         }
     }
 
-    addObserver(observer: RoomObserver) {
-        if (!this.canAddObserver(observer.username)) return;
-        this.observers.push(observer);
+    addObserver(observerForm: ObserveRoomForm) {
+        if (!this.canAddObserver(observerForm)) return;
+        this.observers.push(observerForm.observer);
     }
 
     canAddPlayer(password?: string): boolean {
@@ -137,9 +138,9 @@ export class Room {
         return false;
     }
 
-    canAddObserver(username: string, password?: string): boolean {
-        if (this.getObserverByName(username)) return false;
-        if (this.roomInfo.isPublic && this.isSamePassword(password)) return true;
+    canAddObserver(observerForm: ObserveRoomForm): boolean {
+        if (this.getObserverByName(observerForm.observer.username)) return false;
+        if (this.roomInfo.isPublic && this.isSamePassword(observerForm.password)) return true;
         return false;
     }
 

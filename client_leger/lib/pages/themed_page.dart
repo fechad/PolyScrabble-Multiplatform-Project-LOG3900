@@ -32,8 +32,6 @@ class _ThemedPageState extends State<ThemedPage> {
 
   Future<void> _showMyDialog(
       BuildContext context, String name, int difficulty, int time) async {
-    print('badges');
-    print(hasBeatenSanta);
 
     backgroundService.setBackground(name);
     if (hasBeatenSanta || name == "Santa")
