@@ -50,7 +50,7 @@ export class UserInfoController {
         this.router.get('/:email', async (req: Request, res: Response) => {
             try {
                 await this.databaseService.getDocumentByID('accounts', req.params.email).then((data: Account) => {
-                    res.json(data);
+                    res.json(this.buildClientAccountInfo(data));
                 });
             } catch (error) {
                 res.status(StatusCodes.NOT_FOUND).send(error.message);
