@@ -142,8 +142,7 @@ export class SocketHandlerService {
             playerResults.push(result);
         });
         const game: Game = {
-            startDatetime: firestore.Timestamp.fromDate(room.startDate),
-            period: this.dateService.convertToString(this.dateService.getGameDuration(room.startDate, new Date())),
+            startDatetime: room.startDate,
             results: playerResults,
             gameType: room.roomInfo.gameType,
             endDatetime: firestore.Timestamp.now(),

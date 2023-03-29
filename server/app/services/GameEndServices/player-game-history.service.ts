@@ -5,7 +5,6 @@ import { PlayerGameStats, PlayerGameSummary } from '@app/interfaces/client-excha
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Game } from '@app/interfaces/firestoreDB/game';
 import { GameHeader } from '@app/interfaces/firestoreDB/game-header';
-import { Log } from '@app/interfaces/firestoreDB/log';
 import { DatabaseService } from '@app/services/database.service';
 import { firestore } from 'firebase-admin';
 import { Service } from 'typedi';
@@ -61,7 +60,7 @@ export class PlayerGameHistoryService {
             return accumulator + game.score;
         }, 0);
 
-        const averagePointsByGame = playedGamesCount > 0 ? totalPoints / playedGamesCount : 0;
+        const averagePointsByGame = Math.round(playedGamesCount > 0 ? totalPoints / playedGamesCount : 0);
 
         // Calculate the total duration of all played games
         const totalDuration = player.gamesPlayed.reduce((acc, game) => {
@@ -71,13 +70,13 @@ export class PlayerGameHistoryService {
         // Calculate the average duration of all played games
         const averageGameDuration = playedGamesCount > 0 ? totalDuration / playedGamesCount : 0;
 
-        const playedGames: PlayerGameSummary[] = player.gamesPlayed.map((game) => ({
+        const playedGames: PlayerGameSummary[] = player.gamesPlayed.reverse().map((game) => ({
             score: game.score,
             startDateTime: game.gameID.toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' }),
             duration: this.secondsToTimeString(game.endDateTime.seconds - game.gameID.seconds),
             won: game.won,
         }));
-        let logs = await this.databaseService.getSubCollection<Log>('logs', 'userActions', player.email);
+        let logs = await this.databaseService.getUserLogs(player.email);
         logs.forEach((entry) => {
             if (!(entry.time instanceof firestore.Timestamp)) return;
             entry.time = (entry.time as firestore.Timestamp).toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' });
