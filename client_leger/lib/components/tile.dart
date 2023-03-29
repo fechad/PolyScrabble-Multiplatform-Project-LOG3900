@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../config/colors.dart';
 import '../main.dart';
 import '../pages/game_page.dart';
 
@@ -46,19 +45,20 @@ class Tile extends StatefulWidget {
   bool wantToExchange = false;
   final RebuildController? rebuildController;
 
-  Tile({super.key,
-    required this.letter,
-    required this.index,
-    this.rebuildController});
-
+  Tile(
+      {super.key,
+      required this.letter,
+      required this.index,
+      this.rebuildController});
 
   @override
-  _TileState createState() => _TileState(letter: letter, index: index, rebuildController : rebuildController);
+  _TileState createState() => _TileState(
+      letter: letter, index: index, rebuildController: rebuildController);
 }
 
-
 class _TileState extends State<Tile> {
-  _TileState({required this.letter, required this.index, this.rebuildController});
+  _TileState(
+      {required this.letter, required this.index, this.rebuildController});
   final String letter;
   final int index;
   bool wantToExchange = false;
@@ -84,7 +84,9 @@ class _TileState extends State<Tile> {
               wantToExchange = !wantToExchange;
               linkService.setWantToExchange(true);
               if (wantToExchange) {
-                borderColor = Color.fromARGB(170, 22, 235, 82);
+                borderColor = themeManager.themeMode == ThemeMode.light
+                    ? Color.fromARGB(255, 125, 175, 107)
+                    : Color.fromARGB(255, 121, 101, 220);
                 print(borderColor);
                 TileNotification(index).dispatch(context);
               } else {
@@ -111,11 +113,13 @@ class _TileState extends State<Tile> {
                 child: Stack(
                   children: [
                     Center(
-                        child:
-                            Text(letter, style: const TextStyle(fontSize: 24))),
+                        child: Text(letter,
+                            style: const TextStyle(
+                                fontSize: 24, color: Colors.black))),
                     Positioned(
-                      child:
-                          Text('$value', style: const TextStyle(fontSize: 10)),
+                      child: Text('$value',
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.black)),
                       bottom: 4.0,
                       right: 4.0,
                     )
@@ -176,10 +180,12 @@ class _TileState extends State<Tile> {
                       children: [
                         Center(
                             child: Text(letter,
-                                style: const TextStyle(fontSize: 24))),
+                                style: const TextStyle(
+                                    fontSize: 24, color: Colors.black))),
                         Positioned(
                           child: Text('$value',
-                              style: const TextStyle(fontSize: 10)),
+                              style: const TextStyle(
+                                  fontSize: 10, color: Colors.black)),
                           bottom: 4.0,
                           right: 4.0,
                         )

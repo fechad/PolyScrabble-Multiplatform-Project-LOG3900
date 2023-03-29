@@ -124,7 +124,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height,
+        height: MediaQuery.of(context).size.height,
         width: 70,
         child: AnimatedBuilder(
           animation: _animationController,
@@ -137,7 +137,9 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
       elevation: 80.0,
       child: Container(
         width: 70,
-        color: Palette.darkColor.shade600,
+        color: themeManager.themeMode == ThemeMode.light
+            ? Palette.darkColor.shade600
+            : Color.fromARGB(255, 88, 73, 161),
         child: OverflowBox(
           maxWidth: 80,
           child: Column(
@@ -155,14 +157,14 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                 notifiable: false,
               ),
               CollapsingListTile(
-                title: 'Home', icon: Icons.home,
+                title: 'Home',
+                icon: Icons.home,
                 animationController: _animationController,
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: ((context) {
                     return MyHomePage(title: 'PolyScrabble');
                   })));
-
                 },
                 notifiable: false,
               ),
@@ -183,10 +185,12 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                 });
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: ((context) {
-                                      return ObserverPage();
-                                    })));
+                                  return ObserverPage();
+                                })));
                               },
-                              isSelected: linkService.getCurrentSelectedIndex() == counter,
+                              isSelected:
+                                  linkService.getCurrentSelectedIndex() ==
+                                      counter,
                               title: navigationItems[counter].title,
                               icon: navigationItems[counter].icon,
                               notifiable: navigationItems[counter].notifiable,
@@ -198,7 +202,8 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                   CollapsingListTile(
                                     onTap: () {
                                       setState(() {
-                                        linkService.setCurrentSelectedIndex(counter);
+                                        linkService
+                                            .setCurrentSelectedIndex(counter);
                                         if (counter == 0) {
                                           Scaffold.of(context).openDrawer();
                                           if (linkService
@@ -211,7 +216,9 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                         }
                                       });
                                     },
-                                    isSelected: linkService.getCurrentSelectedIndex() == counter,
+                                    isSelected:
+                                        linkService.getCurrentSelectedIndex() ==
+                                            counter,
                                     title: navigationItems[counter].title,
                                     icon: navigationItems[counter].icon,
                                     notifiable:
@@ -230,7 +237,8 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             : CollapsingListTile(
                                 onTap: () {
                                   setState(() {
-                                    linkService.setCurrentSelectedIndex(counter);
+                                    linkService
+                                        .setCurrentSelectedIndex(counter);
                                   });
                                   if (counter == 0) {
                                     Scaffold.of(context).openDrawer();
@@ -239,23 +247,25 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                   }
                                   // TODO : put function here depending on what we click on
                                   else if (counter == 1) {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: ((context) {
-                                          return LeaderBoardPage();
-                                        })));
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return LeaderBoardPage();
+                                    })));
                                   } else if (counter == 3) {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: ((context) {
-                                          return SettingsPage();
-                                        })));
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return SettingsPage();
+                                    })));
                                   } else if (counter == 4) {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: ((context) {
-                                          return ConnexionPageWidget();
-                                        })));
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return ConnexionPageWidget();
+                                    })));
                                   }
                                 },
-                                isSelected: linkService.getCurrentSelectedIndex() == counter,
+                                isSelected:
+                                    linkService.getCurrentSelectedIndex() ==
+                                        counter,
                                 title: navigationItems[counter].title,
                                 icon: navigationItems[counter].icon,
                                 notifiable: navigationItems[counter].notifiable,

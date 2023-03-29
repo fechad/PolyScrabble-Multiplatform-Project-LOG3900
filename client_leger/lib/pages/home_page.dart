@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 
 import '../components/sidebar.dart';
 import '../components/user_resume.dart';
-import '../config/colors.dart';
 import '../services/init_service.dart';
 import 'menu_page.dart';
 
@@ -51,10 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   verifyInfo() {
-    if (authenticator.loggedInEmail.isNotEmpty)
+    if (authenticator.loggedInEmail.isNotEmpty) {
       authenticator.setUser(authenticator.currentUser.email);
+      //authenticator.setStats(authenticator.currentUser.email);
+    }
     backgroundService.setBackground('');
-    authenticator.setStats(authenticator.currentUser.email);
   }
 
   @override
@@ -65,10 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    verifyInfo();
+    // verifyInfo();
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
       drawer: Drawer(
         child: ChatDrawer(),
         // other drawer controller properties here
@@ -107,7 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(height: 60),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
+                    backgroundColor: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
@@ -120,7 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(height: 15),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
+                    backgroundColor: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),

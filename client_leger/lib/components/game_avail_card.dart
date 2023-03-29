@@ -4,7 +4,6 @@ import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/game.dart';
-import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../services/init_service.dart';
 import 'avatar.dart';
@@ -50,7 +49,8 @@ class _GameCardState extends State<GameCard> {
     isCreator: false,
     points: 0,
     isItsTurn: false,
-    clientAccountInfo: authenticator.getCurrentUser(), rack: Rack(letters: '', indexLetterToReplace: []),
+    clientAccountInfo: authenticator.getCurrentUser(),
+    rack: Rack(letters: '', indexLetterToReplace: []),
   );
   TextEditingController _pswdController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -88,30 +88,30 @@ class _GameCardState extends State<GameCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                  child: Text(
-                    roomName,
-                    style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Nunito',
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
+            Column(children: [
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+                child: Text(
+                  roomName,
+                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                        fontFamily: 'Nunito',
+                        fontSize: 20,
+                      ),
+                  textAlign: TextAlign.start,
                 ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(25, 0, 0, 0),
-              child: Text(
-                "🤖 $difficulty",
-                style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Nunito',
-                      fontSize: 20,
-                    ),
-                textAlign: TextAlign.start,
               ),
-            )]),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(25, 0, 0, 0),
+                child: Text(
+                  "🤖 $difficulty",
+                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                        fontFamily: 'Nunito',
+                        fontSize: 20,
+                      ),
+                  textAlign: TextAlign.start,
+                ),
+              )
+            ]),
             Spacer(),
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
@@ -140,17 +140,21 @@ class _GameCardState extends State<GameCard> {
                       padding: EdgeInsetsDirectional.fromSTEB(80, 0, 16, 0),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Palette.mainColor,
+                            backgroundColor:
+                                themeManager.themeMode == ThemeMode.light
+                                    ? Color.fromARGB(255, 125, 175, 107)
+                                    : Color.fromARGB(255, 121, 101, 220),
                             minimumSize: Size(45, 35),
                             textStyle: const TextStyle(fontSize: 20),
                           ),
                           child: this.password != ''
-                              ?  Text('${btnText} 🔑')
-                              :  Text(btnText),
+                              ? Text('${btnText} 🔑')
+                              : Text(btnText),
                           onPressed: linkService.getJoinButtonPressed()
                               ? null
                               : () {
-                                  print('value btn ${linkService.getJoinButtonPressed()}');
+                                  print(
+                                      'value btn ${linkService.getJoinButtonPressed()}');
                                   if (password.isEmpty) {
                                     if (isObserver) {
                                       sendObserveRequest();
@@ -165,34 +169,37 @@ class _GameCardState extends State<GameCard> {
                                         builder: (context) {
                                           return Container(
                                             child: AlertDialog(
-                                              title: Text("Mot de passe requis"),
-                                              content:  Container(
-                                              height: 55,
-                                              width: 350,
-                                              child: Form(
-                                              key: _formKey,
-                                              child: Column(
-                                              children: [
-                                              TextFormField(
-                                                controller: _pswdController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  hintText:
-                                                      'Veuillez entrer le mot de passe',
-                                                ),
-                                                obscureText: true,
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Mot de passe requis';
-                                                  }
-                                                  if (value == password) {
-                                                    _pswdController.text =
-                                                        value;
-                                                  } else
-                                                    return 'Mot de passe invalide';
-                                                },
-                                              ),
-                                          ]))),
+                                              title:
+                                                  Text("Mot de passe requis"),
+                                              content: Container(
+                                                  height: 55,
+                                                  width: 350,
+                                                  child: Form(
+                                                      key: _formKey,
+                                                      child: Column(children: [
+                                                        TextFormField(
+                                                          controller:
+                                                              _pswdController,
+                                                          decoration:
+                                                              const InputDecoration(
+                                                            hintText:
+                                                                'Veuillez entrer le mot de passe',
+                                                          ),
+                                                          obscureText: true,
+                                                          validator: (value) {
+                                                            if (value!
+                                                                .isEmpty) {
+                                                              return 'Mot de passe requis';
+                                                            }
+                                                            if (value ==
+                                                                password) {
+                                                              _pswdController
+                                                                  .text = value;
+                                                            } else
+                                                              return 'Mot de passe invalide';
+                                                          },
+                                                        ),
+                                                      ]))),
                                               actions: [
                                                 ElevatedButton(
                                                     child: Text('Quitter'),
@@ -214,8 +221,13 @@ class _GameCardState extends State<GameCard> {
                                                   child: Text('Joindre'),
                                                   style:
                                                       ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Palette.mainColor,
+                                                    backgroundColor: themeManager
+                                                                .themeMode ==
+                                                            ThemeMode.light
+                                                        ? Color.fromARGB(
+                                                            255, 125, 175, 107)
+                                                        : Color.fromARGB(
+                                                            255, 121, 101, 220),
                                                     textStyle: const TextStyle(
                                                         fontSize: 20),
                                                   ),
@@ -246,19 +258,16 @@ class _GameCardState extends State<GameCard> {
   sendObserveRequest() {
     homeSocketService.send('observeRoomRequest', {
       "roomName": roomName,
-      "observer": RoomObserver(socketId: socketService.getSocketID(),
+      "observer": RoomObserver(
+          socketId: socketService.getSocketID(),
           username: authenticator.getCurrentUser().username),
       "password": password
     });
-
   }
 
   sendJoinRequest() {
-    homeSocketService.send('joinRoomRequest', {
-      "roomName": roomName,
-      "player": player,
-      "password": password
-    });
+    homeSocketService.send('joinRoomRequest',
+        {"roomName": roomName, "player": player, "password": password});
 
     if (password.isNotEmpty) {
       homeSocketService.send("joinChatChannel", {

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../classes/constants.dart';
 import '../classes/game.dart';
 import '../components/sidebar.dart';
-import '../config/colors.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../services/link_service.dart';
 import '../services/solo_game_service.dart';
@@ -51,7 +50,6 @@ class _SoloPageState extends State<SoloPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
       drawer: const ChatDrawer(),
       body: Stack(children: <Widget>[
         Container(
@@ -107,7 +105,6 @@ class _SoloPageState extends State<SoloPage> {
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
-                                      color: Colors.black,
                                       fontFamily: 'Nunito',
                                       fontSize: 24,
                                       decoration: TextDecoration.underline,
@@ -123,7 +120,6 @@ class _SoloPageState extends State<SoloPage> {
                                 value: virtualValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
-                                style: const TextStyle(color: Colors.black),
                                 decoration: InputDecoration(
                                     labelText: "Nom du joueur virtuel"),
                                 onChanged: (String? value) {
@@ -152,7 +148,6 @@ class _SoloPageState extends State<SoloPage> {
                                 value: difficultyValue,
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
-                                style: const TextStyle(color: Colors.black),
                                 decoration: InputDecoration(
                                     labelText: "Difficulté du joueur virtuel"),
                                 onChanged: (String? value) {
@@ -179,7 +174,6 @@ class _SoloPageState extends State<SoloPage> {
                                 value: timeValue.toString(),
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
-                                style: const TextStyle(color: Colors.black),
                                 decoration: InputDecoration(
                                     labelText: "Temps par tour (en secondes)"),
                                 onChanged: (String? value) {
@@ -187,7 +181,8 @@ class _SoloPageState extends State<SoloPage> {
                                   setState(() {
                                     timeValue = value!;
                                     gameService.gameData.timerPerTurn = value;
-                                    gameService.room.roomInfo.timerPerTurn = value;
+                                    gameService.room.roomInfo.timerPerTurn =
+                                        value;
                                   });
                                 },
                                 items: time.map<DropdownMenuItem<String>>(
@@ -214,9 +209,11 @@ class _SoloPageState extends State<SoloPage> {
                                                 BorderRadius.circular(8))),
                                     minimumSize: MaterialStateProperty.all(
                                         const Size(300, 50)),
-                                    backgroundColor:
-                                        const MaterialStatePropertyAll<Color>(
-                                            Palette.mainColor)),
+                                    backgroundColor: MaterialStatePropertyAll<
+                                        Color>(themeManager.themeMode ==
+                                            ThemeMode.light
+                                        ? Color.fromARGB(255, 125, 175, 107)
+                                        : Color.fromARGB(255, 121, 101, 220))),
                                 child: Text(
                                   'Créer la partie',
                                   style: FlutterFlowTheme.of(context)

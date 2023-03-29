@@ -7,7 +7,7 @@ import {
     GONE_RESSOURCE_MESSAGE,
     UNREACHABLE_SERVER_MESSAGE,
     // eslint-disable-next-line prettier/prettier
-    UNREACHABLE_SERVER_STATUS_CDOE
+    UNREACHABLE_SERVER_STATUS_CDOE,
 } from '@app/constants/http-constants';
 import { PlayerGameStats } from '@app/constants/player-stats';
 import { Game } from '@app/interfaces/game';
@@ -66,6 +66,7 @@ export class HttpService {
     }
     updateUserSettings(userEmail: string, newClientAccountInfo: ClientAccountInfo): Observable<ClientAccountInfo> {
         this.clearError();
+
         return this.http.patch<ClientAccountInfo>(`${this.baseUrl}/${this.userInfoUrl}/${userEmail}`, newClientAccountInfo);
     }
     getUsernames() {

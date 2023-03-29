@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/game.dart';
-import '../config/colors.dart';
+import '../main.dart';
 import '../pages/game_page.dart';
 import '../services/link_service.dart';
 import 'avatar.dart';
@@ -41,7 +41,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     socketService.on(
         "playerTurnChanged",
         (currentPlayerTurnPseudo) => {
-              inGameService.player.isItsTurn = inGameService.player.clientAccountInfo.username
+              inGameService.player.isItsTurn = inGameService
+                      .player.clientAccountInfo.username
                       .compareTo(currentPlayerTurnPseudo) ==
                   0,
               linkService.setTurn(inGameService.player.isItsTurn),
@@ -50,7 +51,6 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
             });
-
 
     socketService.on(
         "timeUpdated",
@@ -104,7 +104,6 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
         const Icon(Icons.filter_none, size: 32),
         Text(' ${linkService.getLetterBankCount()}',
             style: const TextStyle(
-              color: Colors.black,
               fontFamily: 'Nunito',
               fontSize: 24,
             )),
@@ -114,7 +113,9 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
         Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.black,
+              color: themeManager.themeMode == ThemeMode.light
+                  ? Colors.black
+                  : Colors.white,
               width: 2,
             ),
           ),
@@ -123,8 +124,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               height: 40,
               child: Center(
                   child: Text("$timerFormat",
-                      style:
-                          const TextStyle(fontSize: 24, color: Colors.black)))),
+                      style: const TextStyle(fontSize: 24)))),
         ),
         const SizedBox(
           width: 40,
@@ -158,9 +158,12 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                     strokeAlign: StrokeAlign.center,
                                     width: 5,
                                     color: currentPlayer ==
-                                            gameService
-                                                .room.players[index].clientAccountInfo.username
-                                        ? Palette.mainColor
+                                            gameService.room.players[index]
+                                                .clientAccountInfo.username
+                                        ? themeManager.themeMode ==
+                                                ThemeMode.light
+                                            ? Color.fromARGB(255, 125, 175, 107)
+                                            : Color.fromARGB(255, 121, 101, 220)
                                         : Colors.transparent)),
                             child: Avatar(
                                 url: widget.opponentsInfo[index].userSettings
@@ -168,8 +171,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                           ),
                           const SizedBox(height: 10),
                           Text('${gameService.room.players[index].points}',
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.black)),
+                              style: const TextStyle(fontSize: 14)),
                           const SizedBox(width: 70),
                         ]);
                   }
@@ -179,7 +181,9 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               )),
               IconButton(
-                  color: Palette.mainColor,
+                  color: themeManager.themeMode == ThemeMode.light
+                      ? Color.fromARGB(255, 125, 175, 107)
+                      : Color.fromARGB(255, 121, 101, 220),
                   disabledColor: Colors.grey,
                   icon: const Icon(
                     Icons.double_arrow_rounded,

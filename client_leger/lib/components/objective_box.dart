@@ -3,6 +3,8 @@ import 'package:client_leger/components/racks.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../main.dart';
+
 class ObjectiveBox extends StatefulWidget {
   const ObjectiveBox({super.key});
 
@@ -41,10 +43,15 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
                   children: [
                     Expanded(
                       child: TabBar(
-                        labelColor: Colors.green,
+                        labelColor: themeManager.themeMode == ThemeMode.light
+                            ? Color.fromARGB(255, 125, 175, 107)
+                            : Color.fromARGB(255, 121, 101, 220),
                         unselectedLabelColor: Colors.grey,
                         indicatorSize: TabBarIndicatorSize.label,
-                        indicatorColor: Colors.green,
+                        indicatorColor:
+                            themeManager.themeMode == ThemeMode.light
+                                ? Color.fromARGB(255, 125, 175, 107)
+                                : Color.fromARGB(255, 121, 101, 220),
                         labelStyle: GoogleFonts.nunito(
                           textStyle: TextStyle(
                             fontSize: 20,

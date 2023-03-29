@@ -129,7 +129,12 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                                             height: 50,
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
+                                                backgroundColor:
+                                                    themeManager.themeMode ==
+                                                            ThemeMode.light
+                                                        ? Colors.white
+                                                        : Color.fromARGB(
+                                                            255, 53, 53, 52),
                                                 shadowColor: Colors.black,
                                                 elevation: 5,
                                                 side: BorderSide(
@@ -148,7 +153,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                                               child: Text(
                                                   "${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
                                                   style: TextStyle(
-                                                    color: Colors.black,
                                                     fontSize: 18,
                                                   )),
                                             )));
@@ -292,7 +296,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
     return Scaffold(
-        backgroundColor: Color.fromRGBO(249, 255, 246, 1),
         drawer: ChatDrawer(),
         endDrawer: UserResume(),
         onDrawerChanged: (isOpen) {
@@ -463,8 +466,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Palette.mainColor,
-                        disabledBackgroundColor: Colors.grey),
+                        backgroundColor:
+                            themeManager.themeMode == ThemeMode.light
+                                ? Color.fromARGB(255, 125, 175, 107)
+                                : Color.fromARGB(255, 121, 101, 220),
+                        disabledBackgroundColor:
+                            themeManager.themeMode == ThemeMode.light
+                                ? Colors.grey
+                                : Color.fromARGB(255, 64, 38, 117)),
                     child: Text('Confirmer le placement'),
                   )
                 ],

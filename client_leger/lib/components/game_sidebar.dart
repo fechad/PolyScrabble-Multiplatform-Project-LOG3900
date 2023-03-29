@@ -3,7 +3,7 @@ import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../config/colors.dart';
+import '../main.dart';
 
 class GameSidebar extends StatefulWidget {
   @override
@@ -18,7 +18,9 @@ class _GameSidebar extends State<GameSidebar> {
     return Material(
       child: Container(
         width: 70,
-        color: Color.fromRGBO(249, 255, 246, 1),
+        color: themeManager.themeMode == ThemeMode.light
+            ? Color.fromRGBO(249, 255, 246, 1)
+            : Color.fromARGB(255, 62, 62, 62),
         child: OverflowBox(
           maxWidth: 80,
           child: Column(
@@ -38,8 +40,11 @@ class _GameSidebar extends State<GameSidebar> {
               ),
               SizedBox(height: 100),
               IconButton(
-                icon:
-                    const Icon(Icons.chat, size: 50, color: Palette.mainColor),
+                icon: Icon(Icons.chat,
+                    size: 50,
+                    color: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220)),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -65,7 +70,10 @@ class _GameSidebar extends State<GameSidebar> {
                                         color: Colors.black,
                                       )),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
+                                    backgroundColor: themeManager.themeMode ==
+                                            ThemeMode.light
+                                        ? Color.fromARGB(255, 125, 175, 107)
+                                        : Color.fromARGB(255, 121, 101, 220),
                                     textStyle: const TextStyle(fontSize: 20),
                                   ),
                                   onPressed: () => {

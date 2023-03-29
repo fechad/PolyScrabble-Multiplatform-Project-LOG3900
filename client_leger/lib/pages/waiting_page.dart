@@ -11,7 +11,6 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import '../classes/game.dart';
 import '../components/avatar.dart';
 import '../components/sidebar.dart';
-import '../config/colors.dart';
 import '../services/init_service.dart';
 import '../services/link_service.dart';
 import 'chat_page.dart';
@@ -19,7 +18,7 @@ import 'chat_page.dart';
 class WaitingPage extends StatefulWidget {
   const WaitingPage(
       {super.key,
-        required this.roomName,
+      required this.roomName,
       required this.timer,
       required this.botsLevel,
       required this.players});
@@ -35,7 +34,7 @@ class WaitingPage extends StatefulWidget {
 class _WaitingPageState extends State<WaitingPage> {
   _WaitingPageState(
       {required this.roomName,
-        required this.timer,
+      required this.timer,
       required this.botsLevel,
       required this.players});
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -69,39 +68,44 @@ class _WaitingPageState extends State<WaitingPage> {
     socket.on(
         'channelMessage',
         (data) => {
-          if (mounted){
-              setState((() => {
-                    if ((data as List<dynamic>)[0]['channelName'] ==
-                        chatService.getRoomChannel().name)
-                      {
-                        messages = [],
-                        if (linkService.getCurrentOpenedChat() !=
-                            gameService.room.roomInfo.name) {
-                          linkService
-                              .pushNewChannel(gameService.room.roomInfo.name),
-                          if (messages.isNotEmpty &&
-                              messages[messages.length - 1].sender !=
-                                  authenticator.currentUser.username)
-                            {
-                              FlutterRingtonePlayer.play(
-                                android: AndroidSounds.notification,
-                                ios: IosSounds.receivedMessage,
-                                looping: false, // Android only - API >= 28
-                                volume: 0.5, // Android only - API >= 28
-                                asAlarm: false, // Android only - all APIs
-                              ),
-                            },},
-                        (data as List<dynamic>).forEach((message) => {
-                              messages.add(ChatMessage(
-                                  channelName: message['channelName'],
-                                  system: message['system'],
-                                  sender: message['sender'],
-                                  time: message['time'],
-                                  message: message['message'])),
-                            }),
-                        _scrollDown()
-                      }
-                  })), }
+              if (mounted)
+                {
+                  setState((() => {
+                        if ((data as List<dynamic>)[0]['channelName'] ==
+                            chatService.getRoomChannel().name)
+                          {
+                            messages = [],
+                            if (linkService.getCurrentOpenedChat() !=
+                                gameService.room.roomInfo.name)
+                              {
+                                linkService.pushNewChannel(
+                                    gameService.room.roomInfo.name),
+                                if (messages.isNotEmpty &&
+                                    messages[messages.length - 1].sender !=
+                                        authenticator.currentUser.username)
+                                  {
+                                    FlutterRingtonePlayer.play(
+                                      android: AndroidSounds.notification,
+                                      ios: IosSounds.receivedMessage,
+                                      looping:
+                                          false, // Android only - API >= 28
+                                      volume: 0.5, // Android only - API >= 28
+                                      asAlarm: false, // Android only - all APIs
+                                    ),
+                                  },
+                              },
+                            (data as List<dynamic>).forEach((message) => {
+                                  messages.add(ChatMessage(
+                                      channelName: message['channelName'],
+                                      system: message['system'],
+                                      sender: message['sender'],
+                                      time: message['time'],
+                                      message: message['message'])),
+                                }),
+                            _scrollDown()
+                          }
+                      })),
+                }
             });
 
     socketService.on(
@@ -133,18 +137,18 @@ class _WaitingPageState extends State<WaitingPage> {
                                       .room
                                       .players[
                                           gameService.room.players.length - 1]
-                                      .clientAccountInfo.username),
+                                      .clientAccountInfo
+                                      .username),
                                   Navigator.pop(context)
                                 },
                             child: Text("Non"),
-                            style: ElevatedButton
-                        .styleFrom(
-                    backgroundColor:
-                    Palette.mainColor,
-                    textStyle:
-                    const TextStyle(
-                    fontSize: 20),
-                    )),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  themeManager.themeMode == ThemeMode.light
+                                      ? Color.fromARGB(255, 125, 175, 107)
+                                      : Color.fromARGB(255, 121, 101, 220),
+                              textStyle: const TextStyle(fontSize: 20),
+                            )),
                         ElevatedButton(
                             onPressed: () => {
                                   Navigator.pop(context),
@@ -152,19 +156,16 @@ class _WaitingPageState extends State<WaitingPage> {
                                       .room
                                       .players[
                                           gameService.room.players.length - 1]
-                                      .clientAccountInfo.username),
+                                      .clientAccountInfo
+                                      .username),
                                   noPlayers++,
                                   if (noPlayers > 1) canStart = true,
                                 },
                             child: Text("Oui"),
-                        style: ElevatedButton
-                            .styleFrom(
-                          backgroundColor:
-                          Colors.red,
-                          textStyle:
-                          const TextStyle(
-                              fontSize: 20),
-                        ))
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              textStyle: const TextStyle(fontSize: 20),
+                            ))
                       ],
                     );
                   })
@@ -202,21 +203,22 @@ class _WaitingPageState extends State<WaitingPage> {
 
     socketService.on(
         "gameStarted",
-            (data) => {
-          Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return const GamePageWidget();
-          })))
-        });
+        (data) => {
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const GamePageWidget();
+              })))
+            });
 
-    socketService.on("roomCreatorLeft", (data) => {
-      socketService.send("leaveRoomOther", gameService.room.roomInfo.name),
-
-      gameService.reinitializeRoom(),
-    Navigator.push(context,
-    MaterialPageRoute(builder: ((context) {
-    return MyHomePage(title: 'PolyScrabble');
-    })))
-    });
+    socketService.on(
+        "roomCreatorLeft",
+        (data) => {
+              socketService.send(
+                  "leaveRoomOther", gameService.room.roomInfo.name),
+              gameService.reinitializeRoom(),
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return MyHomePage(title: 'PolyScrabble');
+              })))
+            });
   }
 
   void _scrollDown() {
@@ -233,7 +235,6 @@ class _WaitingPageState extends State<WaitingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
       drawer: ChatDrawer(),
       body: Row(children: <Widget>[
         CollapsingNavigationDrawer(),
@@ -253,9 +254,9 @@ class _WaitingPageState extends State<WaitingPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("🤖 $botsLevel",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    )),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                )),
                             SizedBox(height: 8),
                             Text("🕓 ${this.timer}",
                                 style: TextStyle(
@@ -305,7 +306,10 @@ class _WaitingPageState extends State<WaitingPage> {
                             SizedBox(width: 30),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Palette.mainColor,
+                                  backgroundColor:
+                                      themeManager.themeMode == ThemeMode.light
+                                          ? Color.fromARGB(255, 125, 175, 107)
+                                          : Color.fromARGB(255, 121, 101, 220),
                                   minimumSize: Size(50, 40),
                                   textStyle: const TextStyle(fontSize: 20),
                                 ),
@@ -381,7 +385,10 @@ class _WaitingPageState extends State<WaitingPage> {
                     onPressed: textController.text.trim().isNotEmpty
                         ? () => {submitMsg(textController.text)}
                         : null,
-                    icon: const Icon(Icons.send),
+                    icon: Icon(Icons.send,
+                        color: themeManager.themeMode == ThemeMode.light
+                            ? Color.fromARGB(255, 125, 175, 107)
+                            : Color.fromARGB(255, 121, 101, 220)),
                   ))
             ],
           ),

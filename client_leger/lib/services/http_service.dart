@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 import '../classes/game.dart';
@@ -56,10 +58,39 @@ class HttpService {
   }
 
   Future<http.Response> updateUserSettings(
-      String userEmail, UserSettings newSettings) {
+      String userEmail, Account clientAccountInfo) {
     //this.clearError();
+    print('info json');
+    print(clientAccountInfo.toJson());
+    final Map<String, dynamic> body = {
+      'username': clientAccountInfo.username,
+      'email': clientAccountInfo.email,
+      'userSettings': {
+        'avatarUrl': clientAccountInfo.userSettings.avatarUrl,
+        'defaultLanguage': clientAccountInfo.userSettings.defaultLanguage,
+        'defaultTheme': clientAccountInfo.userSettings.defaultTheme,
+        'victoryMusic': clientAccountInfo.userSettings.victoryMusic,
+      },
+      'progressInfo': {
+        'totalXP': clientAccountInfo.progressInfo.totalXP,
+        'currentLevel': clientAccountInfo.progressInfo.currentLevel,
+        'currentLevelXp': clientAccountInfo.progressInfo.currentLevelXp,
+        'xpForNextLevel': clientAccountInfo.progressInfo.xpForNextLevel,
+        'victoriesCount': clientAccountInfo.progressInfo.victoriesCount
+      },
+      'totalXP': clientAccountInfo.progressInfo.totalXP,
+      'highScores': clientAccountInfo.highScores,
+      'badges': clientAccountInfo.badges,
+      'bestGames': clientAccountInfo.bestGames,
+      'gamesPlayed': clientAccountInfo.gamesPlayed,
+      'gamesWon': clientAccountInfo.gamesWon,
+    };
+    print(body);
     return http.patch(Uri.parse('${url}/api/${userInfoUrl}/${userEmail}'),
-        body: newSettings.toJson());
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(body));
   }
 
   Future<http.Response> getOpponentInfo(String username) {

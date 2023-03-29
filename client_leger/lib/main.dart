@@ -1,39 +1,58 @@
 import 'package:camera/camera.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/services/auth_service.dart';
+import 'package:client_leger/theme/theme_constants.dart';
+import 'package:client_leger/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 
 AuthService authenticator = AuthService();
+ThemeManager themeManager = ThemeManager();
+
 late List<CameraDescription> cameras;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
 
   authenticator = await AuthService.create();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  static const bool isProduction = bool.fromEnvironment('dart.vm.product');
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  static const bool isProduction = bool.fromEnvironment('dart.vm.product');
+
+  @override
+  void initState() {
+    themeManager.addListener(themeListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    themeManager.removeListener(themeListener);
+    super.dispose();
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-        ),
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: themeManager.themeMode,
         home: ConnexionPageWidget()
         //MyHomePage(title: 'PolyScrabble')
         );

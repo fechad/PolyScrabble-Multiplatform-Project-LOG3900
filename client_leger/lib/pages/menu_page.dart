@@ -5,7 +5,7 @@ import 'package:client_leger/pages/solo_page.dart';
 import 'package:flutter/material.dart';
 
 import '../components/sidebar.dart';
-import '../config/colors.dart';
+import '../main.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -37,7 +37,6 @@ class _MenuPageState extends State<MenuPage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
       drawer: const ChatDrawer(),
       body: Stack(children: <Widget>[
         Container(
@@ -63,7 +62,9 @@ class _MenuPageState extends State<MenuPage> {
                 SizedBox(height: 60),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
+                    backgroundColor: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
@@ -78,7 +79,9 @@ class _MenuPageState extends State<MenuPage> {
                 SizedBox(height: 15),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
+                    backgroundColor: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
@@ -93,7 +96,9 @@ class _MenuPageState extends State<MenuPage> {
                 SizedBox(height: 15),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Palette.mainColor,
+                    backgroundColor: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),

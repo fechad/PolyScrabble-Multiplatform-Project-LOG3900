@@ -201,8 +201,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                                       const Icon(
                                                                     Icons
                                                                         .download,
-                                                                    color: Colors
-                                                                        .black,
+                                                                    // color: Colors
+                                                                    //     .black,
                                                                   ),
                                                                   onPressed:
                                                                       () async {
@@ -292,8 +292,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                               })
                                             },
                                             style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    Palette.mainColor),
+                                                foregroundColor: themeManager
+                                                            .themeMode ==
+                                                        ThemeMode.light
+                                                    ? Color.fromARGB(
+                                                        255, 125, 175, 107)
+                                                    : Color.fromARGB(
+                                                        255, 121, 101, 220)),
                                             child: const Text(
                                               'Sauvegarder',
                                               style: TextStyle(fontSize: 20),
@@ -326,6 +331,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         onChanged: (TheColor? value) {
                           setState(() {
                             theme = value!;
+                            themeManager.switchThemeMode();
                             valuesChanged = true;
                           });
                         },
@@ -337,6 +343,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         onChanged: (TheColor? value) {
                           setState(() {
                             theme = value!;
+                            themeManager.switchThemeMode();
                             valuesChanged = true;
                           });
                         },
@@ -393,7 +400,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           icon: const Icon(Icons.keyboard_arrow_down),
                           elevation: 16,
-                          style: const TextStyle(color: Colors.black),
                           underline: Container(
                             height: 1,
                             color: Colors.black,
@@ -483,8 +489,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                               })
                                             },
                                             style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    Palette.mainColor),
+                                                foregroundColor: themeManager
+                                                            .themeMode ==
+                                                        ThemeMode.light
+                                                    ? Color.fromARGB(
+                                                        255, 125, 175, 107)
+                                                    : Color.fromARGB(
+                                                        255, 121, 101, 220)),
                                             child: const Text(
                                               'Sauvegarder',
                                               style: TextStyle(fontSize: 14),
@@ -514,19 +525,30 @@ class _SettingsPageState extends State<SettingsPage> {
                             ? null
                             : () => {
                                   setState(() {
-                                    final newSettings = UserSettings(
-                                        avatarUrl: selectedUrl,
-                                        defaultLanguage:
-                                            language.toString().split('.')[1],
-                                        defaultTheme:
-                                            theme.toString().split('.')[1],
-                                        victoryMusic: victoryMusic);
+                                    authenticator.currentUser.userSettings =
+                                        UserSettings(
+                                            avatarUrl: selectedUrl,
+                                            defaultLanguage: language
+                                                .toString()
+                                                .split('.')[1],
+                                            defaultTheme:
+                                                theme.toString().split('.')[1],
+                                            victoryMusic: victoryMusic);
+                                    print('account info');
+                                    print(authenticator.currentUser.toJson());
+                                    print('progress info');
+                                    print(authenticator.currentUser.progressInfo
+                                        .toJson());
                                     httpService
                                         .updateUserSettings(
                                             authenticator.currentUser.email,
-                                            newSettings)
+                                            authenticator.currentUser)
                                         .then((response) {
-                                      if (response.statusCode == 500) return;
+                                      if (response.statusCode == 500) {
+                                        return;
+                                      } else if (response.statusCode == 404) {
+                                        return;
+                                      }
                                       final account = Account.fromJson(
                                           jsonDecode(response.body));
                                       authenticator.currentUser = account;
@@ -540,9 +562,13 @@ class _SettingsPageState extends State<SettingsPage> {
                             MaterialStateProperty.resolveWith<Color>(
                                 (Set<MaterialState> states) {
                           if (valuesChanged)
-                            return Palette.mainColor;
+                            return themeManager.themeMode == ThemeMode.light
+                                ? Color.fromARGB(255, 125, 175, 107)
+                                : Color.fromARGB(255, 121, 101, 220);
                           else
-                            return Colors.grey;
+                            return themeManager.themeMode == ThemeMode.light
+                                ? Colors.grey
+                                : Color.fromARGB(255, 70, 38, 117);
                         })),
                         child: const Text('Sauvegarder'),
                       ),

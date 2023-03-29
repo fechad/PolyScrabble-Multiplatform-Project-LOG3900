@@ -85,7 +85,6 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: Colors.white,
         drawer: const ChatDrawer(),
         body: Stack(children: <Widget>[
           SingleChildScrollView(

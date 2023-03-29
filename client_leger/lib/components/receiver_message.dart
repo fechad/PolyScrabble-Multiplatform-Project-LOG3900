@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../main.dart';
 
 class OtherMessage extends StatelessWidget {
   final String txt;
@@ -50,7 +51,9 @@ class OtherMessage extends StatelessWidget {
                   width: 756.3,
                   padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
                   decoration: BoxDecoration(
-                    color: Color(0xFFE6E6E6),
+                    color: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 230, 230, 230)
+                        : Color.fromARGB(255, 87, 89, 87),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
