@@ -4,7 +4,6 @@ import 'package:client_leger/classes/command.dart';
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/game_header.dart';
 import 'package:client_leger/components/objective_box.dart';
-import 'package:client_leger/components/sidebar.dart';
 import 'package:client_leger/components/your_rack.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/services/link_service.dart';
@@ -22,7 +21,6 @@ import '../components/user_resume.dart';
 import '../config/colors.dart';
 import '../services/game_command_service.dart';
 import '../services/in_game_service.dart';
-import 'home_page.dart';
 
 final linkService = LinkService();
 final gameCommandService = GameCommandService();
@@ -101,79 +99,84 @@ class _GamePageWidgetState extends State<GamePageWidget> {
 
     socketService.on(
         'hint',
-            (data) => {
-          hints =
-              Message.fromJson(data).text.replaceAll("_", "-").split(' '),
-          showDialog(
-              context: context,
-              builder: (context) {
-                return Container(
-                  width: 200,
-                  height: 200,
-                  child: AlertDialog(
-                      title: Text("Choisissez un indice à prévisualiser: ",
-                          style: TextStyle(
-                            fontSize: 24,
-                          )),
-                      content: SizedBox(
-                          width: 400,
-                          height: 370,
-                          child: ListView.builder(
-                              itemCount: int.parse(hints[hints.length - 1]),
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: SizedBox(
-                                        height: 50,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: themeManager.themeMode ==
-                                                    ThemeMode.light
-                                                    ? Colors.white
+        (data) => {
+              hints =
+                  Message.fromJson(data).text.replaceAll("_", "-").split(' '),
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      width: 200,
+                      height: 200,
+                      child: AlertDialog(
+                          title: Text("Choisissez un indice à prévisualiser: ",
+                              style: TextStyle(
+                                fontSize: 24,
+                              )),
+                          content: SizedBox(
+                              width: 400,
+                              height: 370,
+                              child: ListView.builder(
+                                  itemCount: int.parse(hints[hints.length - 1]),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                        padding: EdgeInsets.only(bottom: 20),
+                                        child: SizedBox(
+                                            height: 50,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    themeManager.themeMode ==
+                                                            ThemeMode.light
+                                                        ? Colors.white
                                                         : Color.fromARGB(
-                                                    255, 53, 53, 52),
-                                                  shadowColor: Colors.black,
-                                            elevation: 5,
-                                            side: BorderSide(
-                                                color: Colors.grey,
-                                                width: 1.0,
-                                                style: BorderStyle.solid),
-                                          ),
-                                          onPressed: () {
-                                            lettersPlaced =
-                                            hints[index].split("-")[1];
-                                            serverPlacement(
-                                                hints[index].split("-")[0],
-                                                hints[index].split("-")[1]);
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                              "${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                              )),
-                                        )));
-                              }))),
-                );
-              })
-        });
+                                                            255, 53, 53, 52),
+                                                shadowColor: Colors.black,
+                                                elevation: 5,
+                                                side: BorderSide(
+                                                    color: Colors.grey,
+                                                    width: 1.0,
+                                                    style: BorderStyle.solid),
+                                              ),
+                                              onPressed: () {
+                                                lettersPlaced =
+                                                    hints[index].split("-")[1];
+                                                serverPlacement(
+                                                    hints[index].split("-")[0],
+                                                    hints[index].split("-")[1]);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                  "${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                  )),
+                                            )));
+                                  }))),
+                    );
+                  })
+            });
 
-    socketService.on("playersRackUpdated", (data) =>
-    {
-        for (var playerInfo in data) {
-          p = gameService.decodePlayer(playerInfo['player']),
-          gameService.playersRack.add(PlayerRack(player: p, rackLetters: playerInfo['rackLetters']))
-      },
+    socketService.on(
+        "playersRackUpdated",
+        (data) => {
+              for (var playerInfo in data)
+                {
+                  p = gameService.decodePlayer(playerInfo['player']),
+                  gameService.playersRack.add(PlayerRack(
+                      player: p, rackLetters: playerInfo['rackLetters']))
+                },
+              updateLetters(),
+            });
 
-      updateLetters(),
-      });
-
-    socketService.on("observersUpdated", (roomObservers) => {
-        gameService.room.observers = gameService.decodeObservers(roomObservers),
-    });
-
+    socketService.on(
+        "observersUpdated",
+        (roomObservers) => {
+              gameService.room.observers =
+                  gameService.decodeObservers(roomObservers),
+            });
   }
 
   int getTileScore(String letter) {
@@ -209,9 +212,13 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             child: Stack(
               children: [
                 Center(
-                    child: Text(letter, style: const TextStyle(fontSize: 24))),
+                    child: Text(letter,
+                        style: const TextStyle(
+                            fontSize: 24, color: Colors.black))),
                 Positioned(
-                  child: Text(value, style: const TextStyle(fontSize: 10)),
+                  child: Text(value,
+                      style:
+                          const TextStyle(fontSize: 10, color: Colors.black)),
                   bottom: 4.0,
                   right: 4.0,
                 )
@@ -336,27 +343,33 @@ class _GamePageWidgetState extends State<GamePageWidget> {
           ]),
           Column(children: [
             SizedBox(height: 10),
-            FutureBuilder(
-                future: gameService.getOpponentsInfo(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return GameHeaderWidget(
-                      opponentsInfo: [],
-                      resetLetters: resetLettersPlaced,
-                    );
-                  } else {
-                    return GameHeaderWidget(
-                      opponentsInfo: gameService.opponentsInfo,
-                      resetLetters: resetLettersPlaced,
-                    );
-                  }
-                }),
+            GameHeaderWidget(
+                opponentsInfo: gameService.room.players,
+                resetLetters: resetLettersPlaced),
             SizedBox(height: 10),
-            ObjectiveBox(updateLetters: updateLetters, isObserver: observing),
-            SizedBox(height: 32),
-            observing ?
-            Container()
-                : YourRack(tileChange: tileChange),
+            Observer(
+              builder: (context) => Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: linkService.currentBackground.value.isNotEmpty
+                        ? DecorationImage(
+                            image:
+                                AssetImage(linkService.getCurrentBackground()),
+                            fit: BoxFit.cover,
+                          )
+                        : null),
+                padding: EdgeInsets.fromLTRB(12, 10, 12, 12),
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    ObjectiveBox(
+                        updateLetters: updateLetters, isObserver: observing),
+                    SizedBox(height: 32),
+                    observing ? Container() : YourRack(tileChange: tileChange),
+                  ],
+                ),
+              ),
+            ),
             SizedBox(height: 16),
             if (letterIndexesToExchange.length != 0 && lettersPlaced == '')
               Row(

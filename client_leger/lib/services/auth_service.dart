@@ -19,15 +19,13 @@ class AuthService {
   late Account currentUser;
   String loggedInEmail = '';
   late Stats stats;
-  bool set = false;
   final bool isProduction = bool.fromEnvironment('dart.vm.product');
 
   AuthService();
 
   AuthService._create() {
     initializeApp().then((value) =>
-    {firebase = FirebaseAuth.instanceFor(app: app), setDefaultUser()});
-    //TODO change setDefaultUser to setUser
+        {firebase = FirebaseAuth.instanceFor(app: app), setDefaultUser()});
   }
 
   static Future<AuthService> create() async {
@@ -45,9 +43,8 @@ class AuthService {
   Future<void> signUpUser(
       String emailAddress, String password, String username) async {
     try {
-      print('fake firebase');
       final res = await createUser(emailAddress, username);
-      print('fake firebase done');
+
       if (res.statusCode == 409) {
         throw ("The account already exists for that email.");
       }
@@ -57,12 +54,12 @@ class AuthService {
       }
     }
     try {
-      print('real firebase');
       final credential = await firebase.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
-      setUser(credential.user!.email!);
+      await setUser(credential.user!.email!);
+      await setStats(credential.user!.email!);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         throw ('This email is not valid');
@@ -82,8 +79,8 @@ class AuthService {
       final credential = await firebase.signInWithEmailAndPassword(
           email: emailAddress, password: password);
 
-      setUser(credential.user!.email!);
-      setStats(credential.user!.email!);
+      await setUser(credential.user!.email!);
+      await setStats(credential.user!.email!);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw ('No user found for that email.');
@@ -113,113 +110,85 @@ class AuthService {
   }
 
   Future<Response> createUser(String email, String username) async {
-    // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-
-    return await httpService.createUser(email, username);
+    return await httpService.createUser(email.toLowerCase(), username);
   }
 
   Future<void> setUser(String email) async {
-    // TODO: demander au serveur les autres infos du user: le serveur vérifie si le user est bel et bien signed in puis renvois les infos
-    print(email);
     bool darkMode = false;
     await httpService.getUserInfo(email.toLowerCase()).then((value) => {
-      print(value.body),
-      currentUser = Account(
-        username: '${jsonDecode(value.body)['username']}',
-        email: '${jsonDecode(value.body)['email']}',
-        userSettings:
-        UserSettings.fromJson(jsonDecode(value.body)['userSettings']),
-        progressInfo:
-        ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
-        highScores: {
-          "classic": jsonDecode(value.body)['highScores']
-              .toString()
-              .replaceAll("\ ", '')
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .split(','),
-          "theme": jsonDecode(value.body)['highScores']
-              .toString()
-              .replaceAll("\ ", '')
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .split(',')
-        },
-        badges: jsonDecode(value.body)['badges']
-            .toString()
-            .replaceAll("\ ", '')
-            .replaceAll('[', '')
-            .replaceAll(']', '')
-            .split(','),
-        gamesWon: jsonDecode(value.body)['gamesWon'],
-        gamesPlayed: jsonDecode(value.body)['gamesPlayed']
-            .toString()
-            .replaceAll("\ ", '')
-            .replaceAll('[', '')
-            .replaceAll(']', '')
-            .split(','),
-        bestGames: jsonDecode(value.body)['bestGames']
-            .toString()
-            .replaceAll("\ ", '')
-            .replaceAll('[', '')
-            .replaceAll(']', '')
-            .split(','),
-      ),
-      loggedInEmail = currentUser.email,
-      darkMode = authenticator.currentUser.userSettings.defaultTheme
-          .contains('dark'),
-      print(currentUser.userSettings.victoryMusic),
-      print('theme mode'),
-      print(authenticator.currentUser.userSettings.defaultTheme),
-      print('is dark mode?'),
-      print(darkMode),
-      themeManager.setThemeMode(darkMode),
-      setStats(email)
-    });
+          currentUser = Account(
+            username: '${jsonDecode(value.body)['username']}',
+            email: '${jsonDecode(value.body)['email']}',
+            userSettings:
+                UserSettings.fromJson(jsonDecode(value.body)['userSettings']),
+            progressInfo:
+                ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
+            highScores: null,
+            badges: jsonDecode(value.body)['badges']
+                .toString()
+                .replaceAll("\ ", '')
+                .replaceAll('[', '')
+                .replaceAll(']', '')
+                .split(','),
+            gamesWon: jsonDecode(value.body)['gamesWon'],
+            gamesPlayed: jsonDecode(value.body)['gamesPlayed']
+                .toString()
+                .replaceAll("\ ", '')
+                .replaceAll('[', '')
+                .replaceAll(']', '')
+                .split(','),
+            bestGames: jsonDecode(value.body)['bestGames']
+                .toString()
+                .replaceAll("\ ", '')
+                .replaceAll('[', '')
+                .replaceAll(']', '')
+                .split(','),
+          ),
+          loggedInEmail = currentUser.email,
+          darkMode = authenticator.currentUser.userSettings.defaultTheme
+              .contains('dark'),
+          themeManager.setThemeMode(darkMode),
+        });
   }
 
   Future<void> setStats(String email) async {
-    if (set) return;
     late List<dynamic> playedGamesJson;
     late List<dynamic> logsJson;
     List<PlayedGame> playedGames = [];
     List<Log> logs = [];
     await httpService.getStatsInfo(email.toLowerCase()).then((value) => {
-      if (value.statusCode != 404)
-        {
-          print(jsonDecode(value.body)),
-          playedGamesJson = jsonDecode(value.body)['playedGames']
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .split(','),
-          playedGames = playedGamesJson
-              .map((gameJson) => PlayedGame.fromJson(gameJson))
-              .toList(),
-          logsJson = jsonDecode(value.body)['logs'],
-          logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
-          stats = Stats(
-            playedGamesCount:
-            int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
-            gamesWonCount:
-            int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
-            averagePointsByGame: double.parse(
-                '${jsonDecode(value.body)['averagePointsByGame']}'),
-            averageGameDuration:
-            '${jsonDecode(value.body)['averageGameDuration']}',
-            playedGames: playedGames,
-            logs: logs,
-          ),
-        },
-      set = true
-    });
+          if (value.statusCode != 404)
+            {
+              playedGamesJson = jsonDecode(value.body)['playedGames'],
+              playedGames =
+                  playedGamesJson.length == 1 && playedGamesJson[0] == ""
+                      ? []
+                      : playedGamesJson
+                          .map((gameJson) => PlayedGame.fromJson(gameJson))
+                          .toList(),
+              logsJson = jsonDecode(value.body)['logs'],
+              logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
+              stats = Stats(
+                playedGamesCount:
+                    int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
+                gamesWonCount:
+                    int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
+                averagePointsByGame: double.parse(
+                    '${jsonDecode(value.body)['averagePointsByGame']}'),
+                averageGameDuration:
+                    '${jsonDecode(value.body)['averageGameDuration']}',
+                playedGames: playedGames,
+                logs: logs,
+              ),
+            },
+        });
   }
 
   void setDefaultUser() {
     if (accountSet) return;
     currentUser = Account(
-      username: 'kurama',
-      email: 'kurama@polyscrabble.ca',
+      username: '',
+      email: '',
       userSettings: DEFAULT_USER_SETTINGS,
       progressInfo: ProgressInfo(
           currentLevel: 0,
@@ -227,7 +196,7 @@ class AuthService {
           currentLevelXp: 100,
           victoriesCount: 0,
           xpForNextLevel: 100),
-      highScores: {},
+      highScores: null,
       badges: [],
       gamesWon: 0,
       gamesPlayed: [],

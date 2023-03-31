@@ -26,8 +26,9 @@ const List<String> time = <String>[
 const List<String> music = ['WeAreTheChamps.mp3', 'RickRoll.mp3', 'Better.mp3'];
 
 final UserSettings DEFAULT_USER_SETTINGS = UserSettings(
-    avatarUrl:
-        'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large',
+    // avatarUrl:
+    //     'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large',
+    avatarUrl: '',
     defaultLanguage: 'french',
     defaultTheme: 'light',
     victoryMusic: 'We are the champions');

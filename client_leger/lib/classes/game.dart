@@ -30,7 +30,7 @@ class Player {
       required this.points,
       required this.isCreator,
       required this.isItsTurn,
-        this.clientAccountInfo,
+      this.clientAccountInfo,
       this.rack});
 
   Player.fromJson(dynamic json)
@@ -131,7 +131,7 @@ class Room {
         players = jsonPlayers,
         observers = jsonObservers,
         placementsData = jsonPlacements,
-        startDate = json['startDate'],
+        startDate = json['startDate'].toString(),
         fillerNamesUsed = jsonFillers,
         botsLevel = json['botsLevel'],
         bots = jsonBots,
@@ -183,7 +183,7 @@ class ProgressInfo {
       required this.currentLevel,
       required this.currentLevelXp,
       required this.xpForNextLevel,
-       required this.victoriesCount});
+      required this.victoriesCount});
 
   ProgressInfo.fromJson(dynamic json)
       : totalXP = json?['totalXP'],
@@ -206,7 +206,7 @@ class Account {
   String email;
   UserSettings userSettings;
   ProgressInfo progressInfo;
-  Map<String, dynamic>? highScores;
+  String? highScores;
   List<dynamic> badges;
   List<dynamic> bestGames;
   List<dynamic> gamesPlayed;
@@ -228,7 +228,7 @@ class Account {
         email = json['email'],
         userSettings = UserSettings.fromJson(json['userSettings']),
         progressInfo = ProgressInfo.fromJson(json['progressInfo']),
-        highScores = Map<String, dynamic>.from(json['highScores']),
+        highScores = json['highScores'].toString(),
         badges = json['badges']
             .toString()
             .replaceAll('[', '')
@@ -246,7 +246,7 @@ class Account {
             .split(','),
         gamesWon = json['gamesWon'];
 
-  String toJson() => {
+  Map toJson() => {
         'username': username,
         'email': email,
         'userSettings': userSettings.toJson(),
@@ -256,7 +256,7 @@ class Account {
         'bestGames': jsonEncode(bestGames),
         'gamesPlayed': jsonEncode(gamesPlayed),
         'gamesWon': gamesWon,
-      }.toString();
+      };
 }
 
 class GameHeader {
@@ -423,9 +423,7 @@ class PlayerRack {
         rackLetters = json['rackLetters'];
 
   Map<String, dynamic> toJson() => {
-    'player': player,
-    'rackLetters': rackLetters,
-  };
-
+        'player': player,
+        'rackLetters': rackLetters,
+      };
 }
-

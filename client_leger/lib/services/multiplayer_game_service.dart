@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/solo_game_service.dart';
 
-import '../classes/constants.dart';
 import '../classes/game.dart';
 import '../components/chat_model.dart';
 import '../config/flutter_flow/flutter_flow_util.dart';
 import '../main.dart';
-import '../pages/connexion_page.dart';
 import '../pages/home_page.dart';
 import 'link_service.dart';
 
@@ -48,20 +44,6 @@ class MultiplayerGameService extends SoloGameService {
         clientAccountInfo: authenticator.getCurrentUser(),
         rack: Rack(letters: '', indexLetterToReplace: []));
   }
-  Future<List<Account>> getOpponentsInfo() async {
-    if (opponentsInfo.isNotEmpty) return opponentsInfo;
-    await Future.delayed(Duration(seconds: 1));
-
-    for (Player p in gameService.room.players) {
-      if (JVS.containsKey(p.clientAccountInfo!.username))
-        opponentsInfo.add(JVS[p.clientAccountInfo!.username]!);
-      else {
-        final res = await httpService.getOpponentInfo(p.clientAccountInfo!.username);
-        opponentsInfo.add(Account.fromJson(jsonDecode(res.body)));
-      }
-    }
-    return opponentsInfo;
-  }
 
   configureSocketFeatures() {
     socketService.send("availableRooms");
@@ -83,7 +65,7 @@ class MultiplayerGameService extends SoloGameService {
         "roomCreated",
         (serverRoom) async => {
               room = decodeModel(serverRoom),
-              await getOpponentsInfo(),
+              //await getOpponentsInfo(),
               socketService.send("createChatChannel", {
                 "channel": room.roomInfo.name,
                 "username": authenticator.getCurrentUser(),
@@ -96,9 +78,7 @@ class MultiplayerGameService extends SoloGameService {
       (channels) => {
         availableChannels = [],
         for (var channel in channels)
-          {
-            availableChannels.add(chatService.decodeModel(channel))
-          },
+          {availableChannels.add(chatService.decodeModel(channel))},
         if (room.roomInfo.name != '')
           {chatService.getDiscussionChannelByName(room.roomInfo.name)}
       },

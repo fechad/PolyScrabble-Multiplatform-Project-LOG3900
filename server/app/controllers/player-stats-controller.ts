@@ -17,8 +17,12 @@ export class PlayerStatsController {
         this.router.get('/:email', async (req: Request, res: Response) => {
             this.gamesHistoryService
                 .getUserGameStats(req.params.email)
-                .then((data: PlayerGameStats) => res.json(data))
-                .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
+                .then((data: PlayerGameStats) => {
+                    res.json(data);
+                })
+                .catch((error) => {
+                    res.status(StatusCodes.NOT_FOUND).send(error.message);
+                });
         });
     }
 }

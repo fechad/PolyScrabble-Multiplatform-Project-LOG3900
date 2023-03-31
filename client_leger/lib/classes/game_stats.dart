@@ -1,18 +1,18 @@
 class Stats {
-  int playedGamesCount;
-  int gamesWonCount;
-  double averagePointsByGame;
-  String averageGameDuration;
-  List<PlayedGame> playedGames;
-  List<Log> logs;
+  int? playedGamesCount;
+  int? gamesWonCount;
+  double? averagePointsByGame;
+  String? averageGameDuration;
+  List<PlayedGame>? playedGames;
+  List<Log>? logs;
 
   Stats({
-    required this.playedGamesCount,
-    required this.gamesWonCount,
-    required this.averagePointsByGame,
-    required this.averageGameDuration,
-    required this.playedGames,
-    required this.logs,
+    this.playedGamesCount,
+    this.gamesWonCount,
+    this.averagePointsByGame,
+    this.averageGameDuration,
+    this.playedGames,
+    this.logs,
   });
 
   Map<String, dynamic> toJson() => {
@@ -25,16 +25,16 @@ class Stats {
 }
 
 class PlayedGame {
-  bool won;
-  int score;
-  String startDateTime;
-  String duration;
+  bool? won;
+  int? score;
+  String? startDateTime;
+  String? duration;
 
   PlayedGame({
-    required this.won,
-    required this.score,
-    required this.startDateTime,
-    required this.duration,
+    this.won,
+    this.score,
+    this.startDateTime,
+    this.duration,
   });
 
   factory PlayedGame.fromJson(Map<String, dynamic> json) {
@@ -55,9 +55,9 @@ class PlayedGame {
 }
 
 class Log {
-  String time;
-  String message;
-  Log({required this.time, required this.message});
+  String? time;
+  String? message;
+  Log({this.time, this.message});
 
   factory Log.fromJson(Map<String, dynamic> json) {
     return Log(
