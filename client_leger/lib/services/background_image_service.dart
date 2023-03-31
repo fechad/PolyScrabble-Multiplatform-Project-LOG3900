@@ -40,7 +40,6 @@ class BackgroundService {
     }
     currentBackground = backgroundList[currentVP][0] as String;
     linkService.setCurrentBackground(currentBackground);
-    print(currentBackground);
   }
 
   switchToAngry() {

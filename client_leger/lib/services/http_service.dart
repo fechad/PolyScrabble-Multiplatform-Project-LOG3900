@@ -59,9 +59,6 @@ class HttpService {
 
   Future<http.Response> updateUserSettings(
       String userEmail, Account clientAccountInfo) {
-    //this.clearError();
-    print('info json');
-    print(clientAccountInfo.toJson());
     final Map<String, dynamic> body = {
       'username': clientAccountInfo.username,
       'email': clientAccountInfo.email,
@@ -85,18 +82,11 @@ class HttpService {
       'gamesPlayed': clientAccountInfo.gamesPlayed,
       'gamesWon': clientAccountInfo.gamesWon,
     };
-    print(body);
+
     return http.patch(Uri.parse('${url}/api/${userInfoUrl}/${userEmail}'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(body));
-  }
-
-  Future<http.Response> getOpponentInfo(String username) {
-    //this.clearError();
-    return http.get(
-      Uri.parse('${url}/api/${userInfoUrl}/${opponentInfoUrl}/${username}'),
-    );
   }
 }

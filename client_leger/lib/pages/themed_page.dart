@@ -25,15 +25,12 @@ class _ThemedPageState extends State<ThemedPage> {
   String path = "assets/images/avatars/";
   final hasBeatenSanta = authenticator.currentUser.badges[0] == ""
       ? false
-      : authenticator.currentUser.badges
-          .firstWhere((badge) => badge.toString().contains('id: Santa'))
-          .toString()
-          .isNotEmpty;
+      : authenticator.currentUser.badges.toString().contains('Santa');
 
   Future<void> _showMyDialog(
       BuildContext context, String name, int difficulty, int time) async {
-
     backgroundService.setBackground(name);
+
     if (hasBeatenSanta || name == "Santa")
       return showDialog<void>(
         context: context,

@@ -218,7 +218,7 @@ export class DatabaseService {
 
         const firstDoc = querySnapshot.docs[0];
 
-        return firstDoc.data() as Account;
+        return firstDoc?.data() as Account;
     }
 
     // All the code underneath is from: https://firebase.google.com/docs/firestore/manage-data/delete-data

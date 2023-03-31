@@ -193,21 +193,13 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                               onPressed: () async {
                                 // Validate returns true if the form is valid, or false otherwise.
                                 if (_formKey.currentState!.validate()) {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) =>
-                                  //         //authenticator.setValidate();
-                                  //         MyHomePage(title: 'PolyScrabble')));
-
+                                  loginUser();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           duration:
                                               Duration(milliseconds: 1000),
                                           content: Text(
                                               'Vérification de la connexion ...')));
-                                  loginUser();
-
-                                  // Timer(const Duration(milliseconds: 1000),
-                                  //     (() => {}));
                                 }
                               },
                               style: ButtonStyle(
@@ -287,15 +279,16 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
 
   Future<void> loginUser() async {
     //textController.clear();
-    await authenticator
-        .signInUser(emailController.text, passwordController.text)
-        .then((value) => navigate())
-        .catchError((error) => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                backgroundColor: Colors.redAccent,
-                duration: Duration(milliseconds: 1000),
-                content: Text('Error: $error'))));
-
+    try {
+      await authenticator.signInUser(
+          emailController.text, passwordController.text);
+      navigate();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.redAccent,
+          duration: Duration(milliseconds: 1000),
+          content: Text('Error: $error')));
+    }
     setState(() {
       isWriting = false;
       usernames;
@@ -304,7 +297,6 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
 
   void navigate() {
     validUsername = true;
-    authenticator.setUser(emailController.text);
     chatService.joinDiscussion('General Chat');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {

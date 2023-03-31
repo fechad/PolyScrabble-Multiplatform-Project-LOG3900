@@ -10,7 +10,7 @@ import '../services/link_service.dart';
 import 'avatar.dart';
 
 class GameHeaderWidget extends StatefulWidget {
-  final List<Account> opponentsInfo;
+  final List<Player> opponentsInfo;
   final VoidCallback resetLetters;
   const GameHeaderWidget(
       {Key? key, required this.resetLetters, required this.opponentsInfo})
@@ -41,8 +41,9 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     socketService.on(
         "playerTurnChanged",
         (currentPlayerTurnPseudo) => {
-              inGameService.player.isItsTurn = inGameService.player.clientAccountInfo!.username
-                    .compareTo(currentPlayerTurnPseudo) ==
+              inGameService.player.isItsTurn = inGameService
+                      .player.clientAccountInfo!.username
+                      .compareTo(currentPlayerTurnPseudo) ==
                   0,
               linkService.setTurn(inGameService.player.isItsTurn),
               widget.resetLetters(),
@@ -165,8 +166,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                             : Color.fromARGB(255, 121, 101, 220)
                                         : Colors.transparent)),
                             child: Avatar(
-                                url: widget.opponentsInfo[index].userSettings
-                                    .avatarUrl),
+                                url: widget.opponentsInfo[index]
+                                    .clientAccountInfo!.userSettings.avatarUrl),
                           ),
                           const SizedBox(height: 10),
                           Text('${gameService.room.players[index].points}',

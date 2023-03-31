@@ -11,10 +11,25 @@ class ChatService {
   List<ChatModel> discussionChannels = [
     ChatModel(name: 'General Chat', activeUsers: [], messages: [])
   ];
-  Account owner = Account(username: '', email: '', userSettings:
-      UserSettings(avatarUrl: '', defaultLanguage: '', defaultTheme: '', victoryMusic: ''), progressInfo:
-      ProgressInfo(totalXP: 0, currentLevel: 0, currentLevelXp: 0, xpForNextLevel: 0, victoriesCount: 0),
-      highScores: {}, badges: [], bestGames: [], gamesPlayed: [], gamesWon: 0);
+  Account owner = Account(
+      username: '',
+      email: '',
+      userSettings: UserSettings(
+          avatarUrl: '',
+          defaultLanguage: '',
+          defaultTheme: '',
+          victoryMusic: ''),
+      progressInfo: ProgressInfo(
+          totalXP: 0,
+          currentLevel: 0,
+          currentLevelXp: 0,
+          xpForNextLevel: 0,
+          victoriesCount: 0),
+      highScores: null,
+      badges: [],
+      bestGames: [],
+      gamesPlayed: [],
+      gamesWon: 0);
   ChatModel _roomChannel = ChatModel(name: '', activeUsers: [], messages: []);
   ChatService() {
     _askForDiscussions();
@@ -47,7 +62,7 @@ class ChatService {
     }
 
     ChatModel discussionChannels = ChatModel.fromJson(data, messages);
-    if (data['name'] != 'General Chat' && !data['name'].startsWith('Room') ) {
+    if (data['name'] != 'General Chat' && !data['name'].startsWith('Room')) {
       owner = Account.fromJson(data['owner']);
     }
     discussionChannels.owner = owner;
@@ -64,8 +79,11 @@ class ChatService {
   }
 
   void addDiscussion(String name) {
-    socket
-        .emit('createChatChannel', {'channel':name, 'username': authenticator.getCurrentUser(), 'isRoomChannel': false});
+    socket.emit('createChatChannel', {
+      'channel': name,
+      'username': authenticator.getCurrentUser(),
+      'isRoomChannel': false
+    });
     joinDiscussion(name);
   }
 
@@ -95,7 +113,7 @@ class ChatService {
   void creatorLeaveDiscussion(String channelName) {
     socket.emit("creatorLeaveChatChannel", {
       'channel': channelName,
-      'isRoomChannel' : false,
+      'isRoomChannel': false,
     });
   }
 

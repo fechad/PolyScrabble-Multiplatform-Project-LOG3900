@@ -278,14 +278,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                           TextButton(
                                             onPressed: () => {
                                               setState(() {
-                                                print(authenticator.currentUser
-                                                    .userSettings.avatarUrl);
                                                 authenticator
                                                     .currentUser
                                                     .userSettings
                                                     .avatarUrl = selectedUrl;
-                                                print(authenticator.currentUser
-                                                    .userSettings.avatarUrl);
+
                                                 valuesChanged = true;
                                                 Navigator.pop(context);
                                                 tookPicture = false;
@@ -534,11 +531,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             defaultTheme:
                                                 theme.toString().split('.')[1],
                                             victoryMusic: victoryMusic);
-                                    print('account info');
-                                    print(authenticator.currentUser.toJson());
-                                    print('progress info');
-                                    print(authenticator.currentUser.progressInfo
-                                        .toJson());
+
                                     httpService
                                         .updateUserSettings(
                                             authenticator.currentUser.email,

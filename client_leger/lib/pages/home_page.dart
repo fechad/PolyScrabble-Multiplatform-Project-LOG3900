@@ -49,14 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  verifyInfo() {
-    if (authenticator.loggedInEmail.isNotEmpty) {
-      authenticator.setUser(authenticator.currentUser.email);
-      //authenticator.setStats(authenticator.currentUser.email);
-    }
-    backgroundService.setBackground('');
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -65,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    // verifyInfo();
+
     return Scaffold(
       key: scaffoldKey,
       drawer: Drawer(
