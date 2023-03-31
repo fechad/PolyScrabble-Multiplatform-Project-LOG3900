@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:client_leger/services/multiplayer_game_service.dart';
@@ -9,10 +10,10 @@ import '../pages/home_page.dart';
 class InGameService extends MultiplayerGameService {
   final String msgEvent = 'message';
   late Player receivedPlayer;
-  int bankCount = 102;
+  int bankCount = 88;
   List<Player> players = gameService.room.players;
   late String hints;
-  late String winnerPseudo = '';
+  String winnerPseudo = '';
 
   InGameService({required super.gameData});
 
@@ -34,35 +35,12 @@ class InGameService extends MultiplayerGameService {
                     {p.points = scorePlayer.points}
                 }
             });
-    socketService.on(
-        "toggleAngryBotAvatar",
-        (botName) => {
-              if (gameService.room.players
-                  .firstWhere((Player player) =>
-                      player.clientAccountInfo!.username == botName)
-                  .toString()
-                  .isNotEmpty)
-                {
-                  // TODO: this.toggleAvatar(bot.clientAccountInfo),
-                  // TODO: this.toggleBotMusic(bot.clientAccountInfo),
-                  backgroundService.switchToAngry(),
-                }
-            });
+
     socketService.on(
         "lettersBankCountUpdated",
         (count) => {
               bankCount = count,
               if (bankCount < 7) gameService.room.isBankUsable = false
-            });
-
-    socketService.on(
-        "gameIsOver",
-        (players) => {
-              gameService.room.roomInfo.isGameOver = true,
-              linkService.setTurn(false),
-              findWinner(decodePlayers(players)),
-
-              //TODO find winner ? see players-infos.components.ts in heavy client
             });
 
     socketService.on(

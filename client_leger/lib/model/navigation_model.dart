@@ -10,6 +10,8 @@ class NavigationModel {
 }
 
 List<NavigationModel> navigationItems = [
+  NavigationModel(title: "User", icon: Icons.person, notifiable: false),
+  NavigationModel(title: "Home", icon: Icons.home, notifiable: false),
   NavigationModel(title: "Chats", icon: Icons.chat, notifiable: true),
   NavigationModel(
       title: "Watch", icon: Icons.remove_red_eye_rounded, notifiable: false),

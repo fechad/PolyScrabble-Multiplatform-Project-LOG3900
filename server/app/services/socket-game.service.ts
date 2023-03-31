@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-import { CommandVerbs } from '@app/enums/command-verbs';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
@@ -13,6 +12,7 @@ import {
     SYSTEM_NAME,
 } from '@app/constants/constants';
 import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';

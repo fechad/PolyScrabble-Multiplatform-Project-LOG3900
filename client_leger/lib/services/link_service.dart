@@ -71,7 +71,7 @@ abstract class _LinkService with Store {
   ObservableList<String> channelWithNewMessages = ObservableList.of([]);
 
   @observable
-  Observable<int> letterBankCount = Observable(102);
+  Observable<int> letterBankCount = Observable(88);
 
   @observable
   ObservableList<Widget> rows = ObservableList<Widget>.of([]);
@@ -104,6 +104,7 @@ abstract class _LinkService with Store {
   List<Widget> getRows() {
     return rows;
   }
+
 
   bool getWantToExchange() {
     return wantToExchange.value;

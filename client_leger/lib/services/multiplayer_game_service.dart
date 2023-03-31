@@ -45,6 +45,7 @@ class MultiplayerGameService extends SoloGameService {
         rack: Rack(letters: '', indexLetterToReplace: []));
   }
 
+
   configureSocketFeatures() {
     socketService.send("availableRooms");
     socketService.send("publicRooms");

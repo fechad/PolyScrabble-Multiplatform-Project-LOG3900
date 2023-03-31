@@ -65,6 +65,10 @@ dependencies:
     flutter_mobx: ^2.0.0
     quiver: ^3.0.0
     image_picker: ^0.8.7
+    assets_audio_player: ^3.0.6
+    shake: ^2.2.0
+    flutter_shake_animated: ^0.0.5
+
 
 dev_dependencies:
     flutter_test:
@@ -91,6 +95,7 @@ flutter:
         - assets/images/
         - assets/images/avatars/
         - assets/images/theme-backgrounds/
+        - assets/audios/
     # To add assets to your application, add an assets section, like this:
     # assets:
     #   - images/a_dot_burr.jpeg

@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_shake_animated/flutter_shake_animated.dart';
+import 'package:shake/shake.dart';
 
 import '../main.dart';
 import '../pages/game_page.dart';
@@ -64,6 +68,29 @@ class _TileState extends State<Tile> {
   bool wantToExchange = false;
   final RebuildController? rebuildController;
   Color borderColor = Colors.black;
+  late ShakeDetector _detector;
+  bool shaking = false;
+  String myLetters = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _detector = ShakeDetector.autoStart(onPhoneShake: () {
+      setState(() {
+        shaking = true;
+        myLetters = '';
+        for (var tile in linkService.tempRack){
+          myLetters += tile.letter;
+        }
+        linkService.updateRack((myLetters.split('')..shuffle()).join().toLowerCase());
+        Timer(const Duration(seconds: 3), (() => setState(() {
+          shaking = false;
+        })));
+      }); // Call setState every time phone shakes.
+    });
+  }
+
 
   int getTileScore() {
     if (letter == ' ' || letter == null || letter == '*') return 0;
@@ -79,7 +106,6 @@ class _TileState extends State<Tile> {
         key: GlobalKey<ScaffoldState>(),
         onDoubleTap: () {
           setState(() {
-            print(borderColor);
             if (linkService.getMyTurn()) {
               wantToExchange = !wantToExchange;
               linkService.setWantToExchange(true);
@@ -87,7 +113,6 @@ class _TileState extends State<Tile> {
                 borderColor = themeManager.themeMode == ThemeMode.light
                     ? Color.fromARGB(255, 125, 175, 107)
                     : Color.fromARGB(255, 121, 101, 220);
-                print(borderColor);
                 TileNotification(index).dispatch(context);
               } else {
                 borderColor = Colors.black;
@@ -114,8 +139,8 @@ class _TileState extends State<Tile> {
                   children: [
                     Center(
                         child: Text(letter,
-                            style: const TextStyle(
-                                fontSize: 24, color: Colors.black))),
+                            style: TextStyle(
+                                fontSize: 24, color: borderColor))),
                     Positioned(
                       child: Text('$value',
                           style: const TextStyle(
@@ -125,7 +150,12 @@ class _TileState extends State<Tile> {
                     )
                   ],
                 ))
-            : Draggable<Map>(
+            : ShakeWidget(
+              duration: const Duration(seconds: 1),
+              autoPlay: shaking,
+              enableWebMouseHover: true,
+              shakeConstant: ShakeCrazyConstant1(),
+              child: Draggable<Map>(
                 data: {
                     'letter': letter,
                     'value': value.toString(),
@@ -134,7 +164,6 @@ class _TileState extends State<Tile> {
                 childWhenDragging: Container(
                   color: Color(0x00000000),
                 ),
-                //maxSimultaneousDrags: linkService.getWantToExchange() ? 0 : 1,
                 feedback: Material(
                     color: Color(0x00000000),
                     child: Container(
@@ -190,6 +219,7 @@ class _TileState extends State<Tile> {
                           right: 4.0,
                         )
                       ],
-                    ))));
+                    )))
+        ));
   }
 }

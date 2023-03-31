@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:client_leger/classes/command.dart';
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/game_header.dart';
@@ -13,7 +12,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
 import '../classes/game.dart';
 import '../components/board.dart';
 import '../components/game_sidebar.dart';
@@ -49,7 +47,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   List<String> hints = [];
   bool observing = false;
   late Player p;
-
   @override
   void initState() {
     super.initState();
@@ -152,7 +149,9 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                                               child: Text(
                                                   "${hints[index].split("-")[1]} ${AppLocalizations.of(context)!.gamePageHintFor} ${hints[index].split("-")[2]} points",
                                                   style: TextStyle(
-                                                    color: Colors.black,
+                                                    color: themeManager.themeMode == ThemeMode.light
+                                                        ? Color.fromARGB(255, 62, 62, 62)
+                                                        : Color.fromRGBO(249, 255, 246, 1),
                                                     fontSize: 18,
                                                   )),
                                             )));
@@ -313,12 +312,15 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async { return false; },
+        child: Scaffold(
         drawer: ChatDrawer(),
         endDrawer: UserResume(),
         onDrawerChanged: (isOpen) {
@@ -339,6 +341,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
               child: RebuildWrapper(
                   controller: boardController,
                   child: Board(
+                    isObserver: observing,
                     alertGamePage: updateLettersPlaced,
                   )),
             )
@@ -363,16 +366,15 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                 padding: EdgeInsets.fromLTRB(12, 10, 12, 12),
                 child: Column(
                   children: [
-                    SizedBox(height: 10),
                     ObjectiveBox(
                         updateLetters: updateLetters, isObserver: observing),
-                    SizedBox(height: 32),
-                    observing ? Container() : YourRack(tileChange: tileChange),
+                    observing
+                        ? Container()
+                        : YourRack(tileChange: tileChange)
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 16),
             if (letterIndexesToExchange.length != 0 && lettersPlaced == '')
               Row(
                 children: [
@@ -472,7 +474,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                 ],
               )
           ])
-        ]));
+        ]))
+    );
   }
 
   resetLettersPlaced() {
@@ -488,4 +491,5 @@ class _GamePageWidgetState extends State<GamePageWidget> {
       gameService.playersRack;
     });
   }
+
 }

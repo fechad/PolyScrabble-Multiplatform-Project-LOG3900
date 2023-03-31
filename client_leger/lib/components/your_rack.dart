@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:client_leger/components/tile.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:shake/shake.dart';
 
 import '../main.dart';
 
@@ -11,7 +14,6 @@ typedef IntCallback = void Function(int i);
 
 class YourRack extends StatefulWidget {
   final IntCallback tileChange;
-  //final RebuildController rackRebuildController;
 
   YourRack({required this.tileChange});
 
@@ -28,6 +30,7 @@ class _YourRackState extends State<YourRack> {
   }
 
   final IntCallback tileChange;
+  late ShakeDetector _detector;
 
   _YourRackState({required this.tileChange});
 
@@ -42,6 +45,11 @@ class _YourRackState extends State<YourRack> {
                 linkService.getRack();
               }),
             });
+
+    _detector = ShakeDetector.autoStart(onPhoneShake: () {
+        Timer(const Duration(seconds: 3), (() => setState(() {
+        })));
+    });
   }
 
   @override

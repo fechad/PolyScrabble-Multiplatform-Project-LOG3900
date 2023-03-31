@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/game.dart';
 import '../main.dart';
 import '../pages/game_page.dart';
+import '../pages/home_page.dart';
 import '../services/link_service.dart';
 import 'avatar.dart';
 
@@ -50,7 +52,22 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               _timer.cancel(),
               currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
+
             });
+
+    socketService.on(
+        "gameIsOver",
+            (players) => {
+          gameService.room.roomInfo.isGameOver = true,
+            currentPlayer = '',
+              _timer.cancel(),
+          linkService.setTurn(false),
+          inGameService.findWinner(gameService.decodePlayers(players)),
+          print('GAME OVER'),
+              //TODO : play music of winner from settings + stop VP music
+           //musicPlayer.loop()
+          //TODO find winner ? see players-infos.components.ts in heavy client
+        });
 
     socketService.on(
         "timeUpdated",
@@ -81,7 +98,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
             timerFormat = Duration(seconds: seconds).toString().substring(2, 7);
             timer.cancel();
             if (linkService.getMyTurn()) inGameService.changePlayerTurn();
-            Timer(const Duration(milliseconds: 500), (() => setTimer()));
+            setTimer();
           });
         } else {
           setState(() {
@@ -138,7 +155,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
       const SizedBox(height: 10),
       Container(
           width: MediaQuery.of(context).size.width * 0.25,
-          height: MediaQuery.of(context).size.height * 0.125,
+          height: MediaQuery.of(context).size.height * 0.11,
           child: Row(
             children: [
               Flexible(
