@@ -6,10 +6,12 @@ export class WordsFinder {
     findFormableChildren(base: string, structure: TrieNode, rackLetters: string[]): string[] {
         const startNode = DICTIONARY_READER.trie.getLastNode(base);
         if (!startNode) return [];
-        return this.iterate(base, structure, startNode, rackLetters);
+        return this.iterate(base, structure, startNode, rackLetters, new Set<number>());
     }
     private findAvailableLetter(nodeValue: string, usedLetters: Set<number>, rackLetters: string[]) {
-        return rackLetters.findIndex((letter, index) => nodeValue === letter && !usedLetters.has(index));
+        const index = rackLetters.findIndex((letter, idx) => nodeValue === letter && !usedLetters.has(idx));
+        if (index !== INVALID) return index;
+        return rackLetters.findIndex((letter, idx) => letter === '*' && !usedLetters.has(idx));
     }
 
     private iterate(
@@ -26,7 +28,7 @@ export class WordsFinder {
                 const letterAlreadyPlaced = structureChild.value === nodeChild.value.toUpperCase() && structureChild.value !== '_';
 
                 if (letterIndex === INVALID && !letterAlreadyPlaced) continue;
-                const canPlaceLetter = rackLetters.includes(nodeChild.value) && !usedLetters.has(letterIndex);
+                const canPlaceLetter = (rackLetters.includes(nodeChild.value) || rackLetters.includes('*')) && !usedLetters.has(letterIndex);
                 if (!canPlaceLetter && !letterAlreadyPlaced) continue;
 
                 const updatedUsedLetters = letterIndex === INVALID ? new Set([...usedLetters]) : new Set([...usedLetters, letterIndex]);
@@ -42,6 +44,7 @@ export class WordsFinder {
         const skipCondition = structure.value !== '_' && structure.value.toLowerCase() !== startNode.value;
         if (skipCondition) return children;
         const newWord = base + startNode.value;
+
         if (startNode.isEndOfWord && structure.isEndOfWord) children.push(newWord);
         const grandChildren = this.iterate(newWord, structure, startNode, rackLetters, usedLetters);
         return grandChildren.concat(children);

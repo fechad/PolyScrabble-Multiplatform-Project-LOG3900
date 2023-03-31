@@ -167,28 +167,28 @@ describe('PlacementFinder tests', () => {
 
     it('should get the added letters to the board from the word', () => {
         // the structure is bon____
-        expect((finder as any).getLettersToPlace(mainFlow, 'boni')).to.be.equals('i');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonjour')).to.be.equals('jour');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonsoir')).to.be.equals('soir');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonzzz')).to.be.equals('zzz');
+        expect((finder as any).getLettersToPlace(mainFlow, 'boni', 'ijoursozzz')).to.be.equals('i');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonjour', 'ijoursozzz')).to.be.equals('jour');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonsoir', 'ijoursozzz')).to.be.equals('soir');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonzzz', 'ijoursozzz')).to.be.equals('zzz');
 
         horizontalNodes[1].undoPlacement();
         horizontalStreamTest = new NodeStream(horizontalNodes[0], PlacementDirections.Horizontal, NODES_COUNT);
         mainFlow = (horizontalStreamTest.getFlows(PlacementDirections.Horizontal) as BoardNode[][])[0];
         expect((finder as any).getBaseFromFlow(mainFlow)).to.be.equals('b');
         // the structure is b_n____
-        expect((finder as any).getLettersToPlace(mainFlow, 'boni')).to.be.equals('oi');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonjour')).to.be.equals('ojour');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonsoir')).to.be.equals('osoir');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonzzz')).to.be.equals('ozzz');
+        expect((finder as any).getLettersToPlace(mainFlow, 'boni', 'ijoursozzz')).to.be.equals('oi');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonjour', 'ijoursozzz')).to.be.equals('ojour');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonsoir', 'ijoursozzz')).to.be.equals('osoir');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonzzz', 'ijoursozzz')).to.be.equals('ozzz');
 
         horizontalNodes[3].setLetter('s');
         horizontalStreamTest = new NodeStream(horizontalNodes[0], PlacementDirections.Horizontal, NODES_COUNT);
         mainFlow = (horizontalStreamTest.getFlows(PlacementDirections.Horizontal) as BoardNode[][])[0];
         expect((finder as any).getBaseFromFlow(mainFlow)).to.be.equals('b');
         // the structure is b_ns___
-        expect((finder as any).getLettersToPlace(mainFlow, 'bons')).to.be.equals('o');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonsoir')).to.be.equals('ooir');
-        expect((finder as any).getLettersToPlace(mainFlow, 'bonszz')).to.be.equals('ozz');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bons', 'ijoursozzz')).to.be.equals('o');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonsoir', 'ijoursozzz')).to.be.equals('ooir');
+        expect((finder as any).getLettersToPlace(mainFlow, 'bonszz', 'ijoursozzz')).to.be.equals('ozz');
     });
 });
