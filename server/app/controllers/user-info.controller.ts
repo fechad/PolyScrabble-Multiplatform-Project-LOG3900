@@ -49,20 +49,27 @@ export class UserInfoController {
         this.router = Router();
         this.router.get('/:email', async (req: Request, res: Response) => {
             try {
-                await this.databaseService.getDocumentByID('accounts', req.params.email).then((data: Account) => {
-                    res.json(this.buildClientAccountInfo(data));
-                });
+                await this.databaseService
+                    .getDocumentByID('accounts', req.params.email)
+                    .then((data: Account) => {
+                        res.json(this.buildClientAccountInfo(data));
+                    })
+                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
             } catch (error) {
-                res.status(StatusCodes.NOT_FOUND).send(error.message);
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }
         });
         this.router.get('/opponentInfo/:username', async (req: Request, res: Response) => {
             try {
-                await this.databaseService.getDocumentByField('accounts', 'username', req.params.username).then((data: Account) => {
-                    res.json(this.buildClientAccountInfo(data));
-                });
+                await this.databaseService
+                    .getDocumentByField('accounts', 'username', req.params.username)
+                    .then((data: Account) => {
+                        if (!data) res.json(StatusCodes.NOT_FOUND).send('No user had that username...');
+                        res.json(this.buildClientAccountInfo(data));
+                    })
+                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
             } catch (error) {
-                res.status(StatusCodes.NOT_FOUND).send(error.message);
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }
         });
         this.router.patch('/:email', async (req: Request, res: Response) => {
@@ -70,10 +77,11 @@ export class UserInfoController {
                 await this.databaseService.updateDocumentByID('accounts', req.params.email, this.reduceClientAccountInfo(req.body));
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
-                    .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)));
+                    .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)))
+                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
                 SocketManager.instance.discussionChannelService.updatePlayerAvatar(req.body.username, req.body.userSettings.avatarUrl);
             } catch (error) {
-                res.status(StatusCodes.NOT_FOUND).send(error.message);
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }
         });
     }

@@ -211,14 +211,14 @@ export class DatabaseService {
         return deleted;
     }
 
-    async getDocumentByField(collection: string, field: string, value: unknown): Promise<Account> {
+    async getDocumentByField(collection: string, field: string, value: unknown): Promise<Account | null> {
         const collectionRef = this.db.collection(collection);
 
         const querySnapshot = await collectionRef.where(field, '==', value).get();
 
         const firstDoc = querySnapshot.docs[0];
-
-        return firstDoc?.data() as Account;
+        if (!firstDoc) return null;
+        return firstDoc.data() as Account;
     }
 
     // All the code underneath is from: https://firebase.google.com/docs/firestore/manage-data/delete-data
