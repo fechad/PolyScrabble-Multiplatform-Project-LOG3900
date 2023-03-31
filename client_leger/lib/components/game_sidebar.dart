@@ -1,9 +1,10 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../classes/game.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
-
 import '../main.dart';
 import '../services/link_service.dart';
 
@@ -18,6 +19,49 @@ class _GameSidebarState extends State<GameSidebar> {
   _GameSidebarState({required this.isObserver});
   bool isObserver;
   final globalKey = GlobalKey<ScaffoldState>();
+  final audioPlayer = AudioPlayer();
+  AudioCache musicPlayer = AudioCache();
+
+  @override
+  void initState() {
+    super.initState();
+    _configure();
+    musicPlayer = AudioCache(fixedPlayer: audioPlayer);
+    if (backgroundService.currentVP != '') {
+      String name = backgroundService.currentVP.replaceFirst(backgroundService.currentVP[0], backgroundService.currentVP[0].toUpperCase());
+      musicPlayer.loop("audios/$name.mp3");
+    }
+  }
+
+  _configure() {
+    socketService.on(
+        "toggleAngryBotAvatar",
+            (botName) => {
+          if (gameService.room.players
+              .firstWhere((Player player) =>
+          player.clientAccountInfo!.username == botName)
+              .toString()
+              .isNotEmpty)
+            {
+              // TODO: this.toggleAvatar(bot.clientAccountInfo),
+              // TODO: this.toggleBotMusic(bot.clientAccountInfo),
+              backgroundService.switchToAngry(),
+            },
+
+          musicPlayer.loop("audios/Better.mp3"),
+        });
+
+    socketService.on("playerTurnChanged", (pseudo) => {
+      setState(() {}),
+    });
+
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    audioPlayer.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +72,18 @@ class _GameSidebarState extends State<GameSidebar> {
             ? Color.fromRGBO(249, 255, 246, 1)
             : Color.fromARGB(255, 62, 62, 62),
         child: OverflowBox(
-          maxWidth: 80,
+          maxWidth: 85,
           child: Column(
             children: <Widget>[
               SizedBox(height: 25),
               isObserver
                   ? Container()
-                  : IconButton(
+                  :
+              IconButton(
+                      disabledColor: Colors.grey,
+                      color: Color(0xFFF5C610),
                       icon: const Icon(Icons.lightbulb_outline_rounded,
-                          size: 50, color: Color(0xFFF5C610)),
-                      //TODO cannot ask for hints if placing or trying to exchange
+                          size: 50),
                       onPressed: linkService.getMyTurn() &&
                               placementValidator.letters.isEmpty &&
                               !linkService.getWantToExchange()
@@ -115,6 +161,8 @@ class _GameSidebarState extends State<GameSidebar> {
                                             const TextStyle(fontSize: 20),
                                       ),
                                       onPressed: () {
+                                        audioPlayer.stop();
+                                        backgroundService.setBackground('');
                                         inGameService.confirmLeaving();
                                         linkService.setIsInAGame(false);
                                         linkService.getRows().clear();

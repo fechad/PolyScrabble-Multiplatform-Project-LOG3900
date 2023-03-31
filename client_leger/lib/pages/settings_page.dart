@@ -553,7 +553,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                             defaultTheme:
                                                 theme.toString().split('.')[1],
                                             victoryMusic: victoryMusic);
-
                                     httpService
                                         .updateUserSettings(
                                             authenticator.currentUser.email,

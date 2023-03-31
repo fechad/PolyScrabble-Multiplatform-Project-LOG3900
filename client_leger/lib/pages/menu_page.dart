@@ -66,7 +66,7 @@ class _MenuPageState extends State<MenuPage> {
                     backgroundColor: themeManager.themeMode == ThemeMode.light
                         ? Color.fromARGB(255, 125, 175, 107)
                         : Color.fromARGB(255, 121, 101, 220),
-                    minimumSize: Size(300, 40),
+                    minimumSize: Size(310, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
                   child:
@@ -84,7 +84,7 @@ class _MenuPageState extends State<MenuPage> {
                     backgroundColor: themeManager.themeMode == ThemeMode.light
                         ? Color.fromARGB(255, 125, 175, 107)
                         : Color.fromARGB(255, 121, 101, 220),
-                    minimumSize: Size(300, 40),
+                    minimumSize: Size(310, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
                   child: Text(
@@ -102,7 +102,7 @@ class _MenuPageState extends State<MenuPage> {
                     backgroundColor: themeManager.themeMode == ThemeMode.light
                         ? Color.fromARGB(255, 125, 175, 107)
                         : Color.fromARGB(255, 121, 101, 220),
-                    minimumSize: Size(300, 40),
+                    minimumSize: Size(310, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
                   child: Text(AppLocalizations.of(context)!.classicButtonJoin),

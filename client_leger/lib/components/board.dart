@@ -10,14 +10,17 @@ typedef StringCallback = void Function(String);
 
 class Board extends StatefulWidget {
   final StringCallback alertGamePage;
+  final bool isObserver;
 
-  Board({Key? key, required this.alertGamePage}) : super(key: key);
+  Board({Key? key, required this.alertGamePage, required this.isObserver}) : super(key: key);
   @override
-  _BoardState createState() => _BoardState(alertGamePage: alertGamePage);
+  _BoardState createState() => _BoardState(isObserver: isObserver, alertGamePage: alertGamePage);
 }
 
 class _BoardState extends State<Board> {
+  _BoardState({required this.isObserver, required this.alertGamePage});
   final StringCallback alertGamePage;
+  final bool isObserver;
   bool dropped = false;
   List<Widget> tiles = [];
   List<Widget> rows = [];
@@ -93,7 +96,6 @@ class _BoardState extends State<Board> {
 
   late PlacementData placementData;
 
-  _BoardState({required this.alertGamePage});
   @override
   void initState() {
     super.initState();
@@ -113,7 +115,8 @@ class _BoardState extends State<Board> {
               placementData = PlacementData.fromJson(data),
               serverPlacement(placementData)
             });
-    if (gameService.room.placementsData != null) {
+
+    if (gameService.room.placementsData != null && isObserver) {
       for (var placement in gameService.room.placementsData!) {
         serverPlacement(PlacementData(word: placement.word, row: placement.row, column: placement.column, direction: placement.direction, ));
       }
@@ -241,7 +244,6 @@ class _BoardState extends State<Board> {
   void placeTile(
       int x, int y, String? value, String? letter, int? index, color) {
     placementValidator.addLetter(letter!.toLowerCase(), x, y);
-
     if (!placementValidator.validPlacement) return;
     if (letter == '*') {
       showDialog(
@@ -362,8 +364,8 @@ class _BoardState extends State<Board> {
           decoration: BoxDecoration(
             color: color,
             border: Border.all(
-              color: const Color(0xFFFFFFFF),
-              width: 1,
+              color: placementValidator.letters.length == 1 ? Colors.red : Colors.white,
+              width: placementValidator.letters.length == 1 ? 2 : 1,
             ),
           ),
           child: Container(

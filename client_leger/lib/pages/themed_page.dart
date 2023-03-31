@@ -24,9 +24,7 @@ class _ThemedPageState extends State<ThemedPage> {
   List<int> difficulty = [2, 1, 2, 3, 5];
   List<String> names = ["Mozart", "Santa", "Serena", "Trump", "Einstein"];
   String path = "assets/images/avatars/";
-  final hasBeatenSanta = authenticator.currentUser.badges[0] == ""
-      ? false
-      : authenticator.currentUser.badges.toString().contains('Santa');
+  final hasBeatenSanta = authenticator.currentUser.badges.isNotEmpty;
 
   Future<void> _showMyDialog(
       BuildContext context, String name, int difficulty, int time) async {

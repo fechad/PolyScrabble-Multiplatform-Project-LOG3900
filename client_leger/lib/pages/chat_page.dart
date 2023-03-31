@@ -40,42 +40,42 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
     connect();
     Timer(
         Duration(milliseconds: 0),
-        () =>
-            {_controller.jumpTo(_controller.position.maxScrollExtent + 300.0)});
+            () =>
+        {_controller.jumpTo(_controller.position.maxScrollExtent + 300.0)});
   }
 
   connect() {
     socket.on(
         'channelMessage',
-        (data) => {
-              if (mounted)
-                {
-                  setState((() => {
-                        messages = [],
-                        (data as List<dynamic>).forEach((message) => {
-                              messages.add(ChatMessage(
-                                  channelName: message['channelName'],
-                                  system: message['system'],
-                                  sender: message['sender'],
-                                  time: message['time'],
-                                  message: message['message'])),
-                            })
-                      }))
-                },
-              if (messages[messages.length - 1].sender !=
-                      authenticator.currentUser.username &&
-                  linkService.currentOpenedChat != chat.name)
-                {
-                  FlutterRingtonePlayer.play(
-                    android: AndroidSounds.notification,
-                    ios: IosSounds.receivedMessage,
-                    looping: false, // Android only - API >= 28
-                    volume: 0.5, // Android only - API >= 28
-                    asAlarm: false, // Android only - all APIs
-                  ),
-                },
-              _scrollDown()
-            });
+            (data) => {
+          if (mounted)
+            {
+              setState((() => {
+                messages = [],
+                (data as List<dynamic>).forEach((message) => {
+                  messages.add(ChatMessage(
+                      channelName: message['channelName'],
+                      system: message['system'],
+                      sender: message['sender'],
+                      time: message['time'],
+                      message: message['message'])),
+                })
+              }))
+            },
+          if (messages[messages.length - 1].sender !=
+              authenticator.currentUser.username &&
+              linkService.currentOpenedChat != chat.name)
+            {
+              FlutterRingtonePlayer.play(
+                android: AndroidSounds.notification,
+                ios: IosSounds.receivedMessage,
+                looping: false, // Android only - API >= 28
+                volume: 0.5, // Android only - API >= 28
+                asAlarm: false, // Android only - all APIs
+              ),
+            },
+          _scrollDown()
+        });
   }
 
   void _scrollDown() {
@@ -98,7 +98,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
         preferredSize: Size.fromHeight(100),
         child: AppBar(
           backgroundColor:
-              themeManager.themeMode == ThemeMode.light ? Colors.white : null,
+          themeManager.themeMode == ThemeMode.light ? Colors.white : null,
           automaticallyImplyLeading: false,
           leading: Align(
             alignment: AlignmentDirectional(0, 0),
@@ -119,106 +119,105 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
               alignment: const AlignmentDirectional(0, 1),
               child: Container(
                 child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text(
                     chat.name,
                     textAlign: TextAlign.center,
                     style: FlutterFlowTheme.of(context).title1.override(
-                          fontFamily: 'Poppins',
-                          fontSize: 40,
-                        ),
+                      fontFamily: 'Poppins',
+                      fontSize: 40,
+                    ),
                   ),
                   SizedBox(width: 50),
                   chat.name != 'General Chat' &&
-                          (chat.activeUsers.contains(
-                                  authenticator.currentUser.username) ||
-                              chat.owner?.username ==
-                                  authenticator.currentUser.username)
+                      (chat.activeUsers.contains(
+                          authenticator.currentUser.username) ||
+                          chat.owner?.username ==
+                              authenticator.currentUser.username)
                       ? SizedBox(
-                          height: 50,
-                          width: 120,
-                          child: ElevatedButton(
-                              child: Text(
-                                  chat.owner?.username ==
-                                          authenticator.currentUser.username
-                                      ? AppLocalizations.of(context)!.delete
-                                      : AppLocalizations.of(context)!.quit,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  )),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              onPressed: () => {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return Container(
-                                            child: AlertDialog(
-                                              title: Text(chat
-                                                          .owner?.username ==
-                                                      authenticator
-                                                          .currentUser.username
-                                                  ? AppLocalizations.of(
-                                                          context)!
-                                                      .leaveChannelTitleCreator
-                                                  : AppLocalizations.of(
-                                                          context)!
-                                                      .leaveChannelTitle),
-                                              content: Text(chat
-                                                          .owner?.username ==
-                                                      authenticator
-                                                          .currentUser.username
-                                                  ? AppLocalizations.of(
-                                                          context)!
-                                                      .leaveChannelBodyCreator
-                                                  : AppLocalizations.of(
-                                                          context)!
-                                                      .leaveChannelBody),
-                                              actions: [
-                                                ElevatedButton(
-                                                    child: Text(
-                                                        AppLocalizations.of(
-                                                                context)!
-                                                            .no,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                        )),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontSize: 20),
-                                                    ),
-                                                    onPressed: () => {
-                                                          Navigator.pop(
-                                                              context),
-                                                        }),
-                                                ElevatedButton(
-                                                  child: Text(
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .yes),
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor: Colors.red,
-                                                    textStyle: const TextStyle(
-                                                        fontSize: 20),
-                                                  ),
-                                                  onPressed: () {
-                                                    leaveChannel();
-                                                    Navigator.pop(context);
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                              ],
+                      height: 50,
+                      width: 120,
+                      child: ElevatedButton(
+                          child: Text(
+                              chat.owner?.username ==
+                                  authenticator.currentUser.username
+                                  ? AppLocalizations.of(context)!.delete
+                                  : AppLocalizations.of(context)!.quit,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              )),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () => {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    child: AlertDialog(
+                                      title: Text(chat
+                                          .owner?.username ==
+                                          authenticator
+                                              .currentUser.username
+                                          ? AppLocalizations.of(
+                                          context)!
+                                          .leaveChannelTitleCreator
+                                          : AppLocalizations.of(
+                                          context)!
+                                          .leaveChannelTitle),
+                                      content: Text(chat
+                                          .owner?.username ==
+                                          authenticator
+                                              .currentUser.username
+                                          ? AppLocalizations.of(
+                                          context)!
+                                          .leaveChannelBodyCreator
+                                          : AppLocalizations.of(
+                                          context)!
+                                          .leaveChannelBody),
+                                      actions: [
+                                        ElevatedButton(
+                                            child: Text(
+                                                AppLocalizations.of(
+                                                    context)!
+                                                    .no,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                )),
+                                            style: ElevatedButton
+                                                .styleFrom(
+                                              backgroundColor:
+                                              Colors.white,
+                                              textStyle:
+                                              const TextStyle(
+                                                  fontSize: 20),
                                             ),
-                                          );
-                                        }),
-                                  }))
+                                            onPressed: () => {
+                                              Navigator.pop(
+                                                  context),
+                                            }),
+                                        ElevatedButton(
+                                          child: Text(
+                                              AppLocalizations.of(
+                                                  context)!
+                                                  .yes),
+                                          style:
+                                          ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            textStyle: const TextStyle(
+                                                fontSize: 20),
+                                          ),
+                                          onPressed: () {
+                                            leaveChannel();
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          }))
                       : Container(),
                 ]),
               )),
@@ -245,12 +244,12 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
       body: Column(children: <Widget>[
         Flexible(
             child: ListView.builder(
-          controller: _controller,
-          itemBuilder: (BuildContext context, int index) => messages[index],
-          itemCount: messages.length,
-          reverse: false,
-          padding: EdgeInsets.all(6.0),
-        )),
+              controller: _controller,
+              itemBuilder: (BuildContext context, int index) => messages[index],
+              itemCount: messages.length,
+              reverse: false,
+              padding: EdgeInsets.all(6.0),
+            )),
         Divider(height: 1.0),
         Container(
           child: _buildComposer(),
@@ -281,14 +280,14 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                   decoration: InputDecoration.collapsed(
                       hintStyle: TextStyle(fontSize: 18),
                       hintText: !chat.activeUsers.contains(
-                                  authenticator.getCurrentUser().username) &&
-                              chat.owner?.username !=
-                                  authenticator.getCurrentUser().username &&
-                              chat.name != 'General Chat'
+                          authenticator.getCurrentUser().username) &&
+                          chat.owner?.username !=
+                              authenticator.getCurrentUser().username &&
+                          chat.name != 'General Chat'
                           ? AppLocalizations.of(context)!
-                              .otherChatPagePlaceHolderJoin
+                          .otherChatPagePlaceHolderJoin
                           : AppLocalizations.of(context)!
-                              .generalPagePlaceholder),
+                          .generalPagePlaceholder),
                 ),
               ),
               Container(
@@ -344,10 +343,10 @@ class ChatMessage extends StatelessWidget {
   String message;
   ChatMessage(
       {required this.channelName,
-      this.sender,
-      required this.system,
-      required this.time,
-      required this.message});
+        this.sender,
+        required this.system,
+        required this.time,
+        required this.message});
 
   ChatMessage.fromJson(dynamic json)
       : channelName = json['channelName'],
@@ -357,12 +356,12 @@ class ChatMessage extends StatelessWidget {
         message = json['message'];
 
   Map<String, dynamic> toJson() => {
-        'channelName': channelName,
-        'sender': sender,
-        'system': system,
-        'time': time,
-        'message': message
-      };
+    'channelName': channelName,
+    'sender': sender,
+    'system': system,
+    'time': time,
+    'message': message
+  };
 
   @override
   Widget build(BuildContext context) {

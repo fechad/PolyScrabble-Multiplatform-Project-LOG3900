@@ -331,11 +331,6 @@ class _WaitingPageState extends State<WaitingPage> {
                                     ? () => {
                                           gameService.requestGameStart(),
                                           linkService.setCurrentOpenedChat(''),
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: ((context) {
-                                            return const GamePageWidget();
-                                          })))
                                         }
                                     : null),
                           ])),

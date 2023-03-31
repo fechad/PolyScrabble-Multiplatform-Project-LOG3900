@@ -34,11 +34,10 @@ class BackgroundService {
 
   setBackground(String bot) {
     currentVP = bot.toLowerCase();
-    if (currentVP.isEmpty) {
+    if (currentVP == '') {
       currentBackground = '';
-      return;
     }
-    currentBackground = backgroundList[currentVP][0] as String;
+    else currentBackground = backgroundList[currentVP][0] as String;
     linkService.setCurrentBackground(currentBackground);
   }
 
@@ -48,5 +47,6 @@ class BackgroundService {
         : backgroundList[currentVP][0];
 
     linkService.switchBackground(currentBackground);
+
   }
 }
