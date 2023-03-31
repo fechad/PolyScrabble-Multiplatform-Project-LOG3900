@@ -94,7 +94,7 @@ export class PlacementFinder {
         const minWordLength = this.findMinLength(mainFlow, otherFlows, placementDirection === PlacementDirections.Horizontal);
 
         for (const word of derivatives) {
-            const lettersToPlace = this.getLettersToPlace(mainFlow, word);
+            const lettersToPlace = this.getLettersToPlace(mainFlow, word, availableLetters);
             if (lettersToPlace.length <= minWordLength) continue;
             const score = nodeStream.shadowPlacementScore(lettersToPlace, placementDirection);
             if (score < scoreInterval.min || score > scoreInterval.max) continue;
@@ -124,7 +124,7 @@ export class PlacementFinder {
         return firstConnectedWord < firstLetterInMainFlow ? firstConnectedWord : firstLetterInMainFlow;
     }
 
-    private getLettersToPlace(mainFlow: BoardNode[], word: string): string {
+    private getLettersToPlace(mainFlow: BoardNode[], word: string, availableLetters: string): string {
         const wordArray = [...word];
         let offset = -1;
         for (const node of mainFlow) {
@@ -133,7 +133,12 @@ export class PlacementFinder {
             wordArray.splice(wordArray.slice(offset).findIndex((letter) => letter === node.content) + offset, 1);
             offset--;
         }
-        return wordArray.join('');
+        const usedLetters: number[] = [];
+        const starsFiltered = wordArray.map((letter) => {
+            usedLetters.push([...availableLetters].findIndex((available, index) => available === letter && !usedLetters.includes(index)));
+            return usedLetters[usedLetters.length - 1] === INVALID ? letter.toUpperCase() : letter;
+        });
+        return starsFiltered.join('');
     }
 
     private getBaseFromFlow(flow: BoardNode[]): string {

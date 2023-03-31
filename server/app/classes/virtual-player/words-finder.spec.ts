@@ -84,8 +84,16 @@ describe('WordsFinder', () => {
     it('should find the complete word needed', () => {
         wordStructureTrie = new WordStructureTrie('');
         wordStructureTrie.insert('_IL__');
-        const formableWords = finder.findFormableChildren('', wordStructureTrie.rootNode, 'o*odgme'.split(''));
+        const formableWords = finder.findFormableChildren('', wordStructureTrie.rootNode, 'odgme'.split(''));
         expect(formableWords).to.include('gilde');
+        expect(formableWords).to.not.include('gild');
+    });
+    it('should find words using the star', () => {
+        wordStructureTrie = new WordStructureTrie('');
+        wordStructureTrie.insert('_IL__');
+        const formableWords = finder.findFormableChildren('', wordStructureTrie.rootNode, 'od*mes'.split(''));
+        expect(formableWords).to.include('gilde');
+        expect(formableWords).to.include('aile');
         expect(formableWords).to.not.include('gild');
     });
 });
