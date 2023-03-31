@@ -60,7 +60,6 @@ class SoloGameService {
   setPlayerInfo(String pseudo) {
     player.isCreator = true;
     player.socketId = socketService.getSocketID()!;
-
     room.players = [player];
   }
 
@@ -68,7 +67,6 @@ class SoloGameService {
     String pseudo = gameService.gameData.pseudo;
     setRoomInfo(pseudo, desiredLevel);
     setPlayerInfo(pseudo);
-
     onProcess = true;
     socketService.send("createSoloRoom",
         {'room': room, 'botName': botName, 'desiredLevel': desiredLevel});

@@ -2,6 +2,7 @@ import 'package:client_leger/components/highscores.dart';
 import 'package:client_leger/components/level.dart';
 import 'package:client_leger/components/outgame_objectives.dart';
 import 'package:client_leger/components/sidebar.dart';
+import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,7 +37,7 @@ class _UserPageState extends State<UserPage> {
               children: [
                 Container(
                     padding: EdgeInsets.all(20),
-                    child: Text("Top G",
+                    child: Text(authenticator.currentUser.username,
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 32, fontWeight: FontWeight.bold),

@@ -8,6 +8,8 @@ import 'package:client_leger/components/stats.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/signup_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -52,10 +54,18 @@ class _SettingsPageState extends State<SettingsPage> {
         authenticator.currentUser.userSettings.defaultTheme.contains('light')
             ? TheColor.light
             : TheColor.dark;
+
     language = authenticator.currentUser.userSettings.defaultLanguage
             .contains('french')
         ? Language.french
         : Language.english;
+    SchedulerBinding.instance.addPostFrameCallback((_) => {
+          languageService.switchLanguage(authenticator
+                  .currentUser.userSettings.defaultLanguage
+                  .contains('french')
+              ? 'fr'
+              : 'en'),
+        });
     getCameras();
   }
 
@@ -94,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 50),
-                  Text('Settings',
+                  Text(AppLocalizations.of(context)!.settingsPageTitle,
                       style: GoogleFonts.nunito(
                         textStyle: const TextStyle(
                             fontSize: 40, fontWeight: FontWeight.bold),
@@ -132,8 +142,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                     return StatefulBuilder(
                                         builder: ((context, setDialogState) {
                                       return AlertDialog(
-                                        title: const Text(
-                                          'Choisissez votre avatar',
+                                        title: Text(
+                                          AppLocalizations.of(context)!
+                                              .settingsPageAvatarTitle,
                                           style: TextStyle(fontSize: 24),
                                         ),
                                         content: Container(
@@ -272,7 +283,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                             },
                                             style: TextButton.styleFrom(
                                                 foregroundColor: Colors.red),
-                                            child: const Text('Annuler',
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .cancel,
                                                 style: TextStyle(fontSize: 20)),
                                           ),
                                           TextButton(
@@ -296,8 +309,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                                         255, 125, 175, 107)
                                                     : Color.fromARGB(
                                                         255, 121, 101, 220)),
-                                            child: const Text(
-                                              'Sauvegarder',
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .save,
                                               style: TextStyle(fontSize: 20),
                                             ),
                                           )
@@ -321,7 +335,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Text('Thème de couleur'),
+                      Text(
+                          AppLocalizations.of(context)!.settingsPageThemeLabel),
                       Radio(
                         value: TheColor.dark,
                         groupValue: theme,
@@ -333,7 +348,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           });
                         },
                       ),
-                      const Text('Sombre'),
+                      Text(AppLocalizations.of(context)!.settingsPageDark),
                       Radio(
                         value: TheColor.light,
                         groupValue: theme,
@@ -345,14 +360,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           });
                         },
                       ),
-                      const Text('Clair')
+                      Text(AppLocalizations.of(context)!.settingsPageLight)
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       const SizedBox(width: 25),
-                      const Text('Language'),
+                      Text(AppLocalizations.of(context)!.languageSectionLabel),
                       const SizedBox(width: 42),
                       Radio(
                         value: Language.french,
@@ -360,22 +375,25 @@ class _SettingsPageState extends State<SettingsPage> {
                         onChanged: (Language? value) {
                           setState(() {
                             language = value!;
+                            languageService.switchLanguage('fr');
                             valuesChanged = true;
                           });
                         },
                       ),
-                      const Text('Français'),
+                      Text(AppLocalizations.of(context)!.languageSectionFrench),
                       Radio(
                         value: Language.english,
                         groupValue: language,
                         onChanged: (Language? value) {
                           setState(() {
                             language = value!;
+                            languageService.switchLanguage('en');
                             valuesChanged = true;
                           });
                         },
                       ),
-                      const Text('English'),
+                      Text(
+                          AppLocalizations.of(context)!.languageSectionEnglish),
                     ],
                   ),
                   Container(
@@ -383,12 +401,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(width: 30),
-                        const Text('Musique de victoire'),
+                        Text(AppLocalizations.of(context)!.musicSectionLabel),
                         const SizedBox(width: 10),
                         DropdownButton<String>(
                           hint: Container(
                             width: 150,
-                            child: const Text(
+                            child: Text(
                               " Choisir de musique",
                               style: TextStyle(
                                   color: Palette.mainColor, fontSize: 16),
@@ -428,7 +446,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                                title: const Text('Changement de mot de passe'),
+                                title: Text('Changement de mot de passe'),
                                 content: Container(
                                     height: 300,
                                     width: 400,
@@ -475,7 +493,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                             },
                                             style: TextButton.styleFrom(
                                                 foregroundColor: Colors.red),
-                                            child: const Text('Annuler',
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .cancel,
                                                 style: TextStyle(fontSize: 14)),
                                           ),
                                           TextButton(
@@ -493,8 +513,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                                         255, 125, 175, 107)
                                                     : Color.fromARGB(
                                                         255, 121, 101, 220)),
-                                            child: const Text(
-                                              'Sauvegarder',
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .save,
                                               style: TextStyle(fontSize: 14),
                                             ),
                                           )
@@ -506,7 +527,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: const ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll<Color>(
                             Color.fromARGB(255, 73, 132, 241))),
-                    child: const Text('Modifier le mot de passe'),
+                    child: Text(
+                        AppLocalizations.of(context)!.settingsPagePassword),
                   ),
                   const SizedBox(
                     height: 100,
@@ -563,7 +585,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ? Colors.grey
                                 : Color.fromARGB(255, 70, 38, 117);
                         })),
-                        child: const Text('Sauvegarder'),
+                        child: Text(AppLocalizations.of(context)!.save),
                       ),
                     ],
                   ),
@@ -571,7 +593,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   SizedBox(
                     height: 72,
                   ),
-                  Text("Historiques",
+                  Text(AppLocalizations.of(context)!.historySectionTitle,
                       style: GoogleFonts.nunito(
                         textStyle: const TextStyle(
                             fontSize: 32, fontWeight: FontWeight.bold),

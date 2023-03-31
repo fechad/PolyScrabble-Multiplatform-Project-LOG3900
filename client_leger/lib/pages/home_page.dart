@@ -6,6 +6,8 @@ import 'package:client_leger/pages/themed_page.dart';
 import 'package:client_leger/services/background_image_service.dart';
 import 'package:client_leger/services/chat_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../components/sidebar.dart';
 import '../components/user_resume.dart';
@@ -41,6 +43,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) => {
+          languageService.switchLanguage(authenticator
+                  .currentUser.userSettings.defaultLanguage
+                  .contains('french')
+              ? 'fr'
+              : 'en'),
+        });
     connect();
   }
 
@@ -89,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 SizedBox(height: 130),
-                Text("Modes de jeu",
+                Text(AppLocalizations.of(context)!.mainTitle,
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 35,
@@ -104,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: const Text('Scrabble Classique'),
+                  child: Text(AppLocalizations.of(context)!.mainButtonClassic),
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const MenuPage()));
@@ -119,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: const Text('Scrabble Thème'),
+                  child: Text(AppLocalizations.of(context)!.mainButtonTheme),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {

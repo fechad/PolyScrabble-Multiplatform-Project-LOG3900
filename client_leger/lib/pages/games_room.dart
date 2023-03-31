@@ -1,6 +1,8 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/pages/waiting_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
+
 import '../classes/game.dart';
 import '../components/game_avail_card.dart';
 import '../components/sidebar.dart';
@@ -99,7 +101,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
               ),
               SizedBox(height: 30),
               Text(
-                'Parties Disponibles',
+                AppLocalizations.of(context)!.classicJoinMultiTitle,
                 style: FlutterFlowTheme.of(context).bodyText1.override(
                       color: Colors.black,
                       fontFamily: 'Nunito',

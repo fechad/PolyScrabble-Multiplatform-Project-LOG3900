@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
@@ -70,7 +71,7 @@ class _LevelState extends State<Level> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("niv.",
+                        Text(AppLocalizations.of(context)!.userPageLevel,
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),

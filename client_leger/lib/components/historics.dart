@@ -1,15 +1,9 @@
-import 'dart:async';
-
 import 'package:client_leger/components/game_cards.dart';
 import 'package:client_leger/components/logs.dart';
-import 'package:client_leger/components/racks.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../pages/game_page.dart';
-import '../services/link_service.dart';
-import 'objectives.dart';
 
 class Historics extends StatefulWidget {
   const Historics({Key? key}) : super(key: key);
@@ -19,13 +13,10 @@ class Historics extends StatefulWidget {
 }
 
 class _HistoricsState extends State<Historics> {
-
-
   @override
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +53,22 @@ class _HistoricsState extends State<Historics> {
                               ),
                             ),
                             tabs: [
-                              Tab(child: Text("Connexions", style: TextStyle(fontSize: 24),), height: 100,),
-                              Tab(child: Text("Parties jouées", style: TextStyle(fontSize: 24),),height: 100,),
+                              Tab(
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .historySectionOne,
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                height: 100,
+                              ),
+                              Tab(
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .historySectionTwo,
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                height: 100,
+                              ),
                             ],
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/themed_jv.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../components/sidebar.dart';
@@ -30,7 +31,6 @@ class _ThemedPageState extends State<ThemedPage> {
   Future<void> _showMyDialog(
       BuildContext context, String name, int difficulty, int time) async {
     backgroundService.setBackground(name);
-
     if (hasBeatenSanta || name == "Santa")
       return showDialog<void>(
         context: context,
@@ -122,7 +122,7 @@ class _ThemedPageState extends State<ThemedPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Joueurs virtuels à thème',
+                AppLocalizations.of(context)!.themeTitle,
                 style: GoogleFonts.nunito(
                   textStyle:
                       TextStyle(fontSize: 32, fontWeight: FontWeight.bold),

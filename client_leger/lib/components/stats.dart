@@ -1,6 +1,7 @@
 import 'package:client_leger/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Stats extends StatefulWidget {
@@ -21,7 +22,7 @@ class _StatsState extends State<Stats> {
     // TODO: implement build
     return Container(
       child: Column(children: [
-        Text("Statistique",
+        Text(AppLocalizations.of(context)!.statisticSectionTitle,
             style: GoogleFonts.nunito(
               textStyle:
                   const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
@@ -39,7 +40,7 @@ class _StatsState extends State<Stats> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Parties jouées",
+                    Text(AppLocalizations.of(context)!.statisticSectionOne,
                         style: GoogleFonts.nunito(
                           textStyle: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.w600),
@@ -58,7 +59,7 @@ class _StatsState extends State<Stats> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Parties gagnées",
+                    Text(AppLocalizations.of(context)!.statisticSectionTwo,
                         style: GoogleFonts.nunito(
                           textStyle: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.w600),
@@ -77,7 +78,7 @@ class _StatsState extends State<Stats> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Score moyen",
+                    Text(AppLocalizations.of(context)!.statisticSectionThree,
                         style: GoogleFonts.nunito(
                           textStyle: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.w600),
@@ -96,7 +97,7 @@ class _StatsState extends State<Stats> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Temp moyen par parties",
+                    Text(AppLocalizations.of(context)!.statisticSectionFour,
                         style: GoogleFonts.nunito(
                           textStyle: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.w600),

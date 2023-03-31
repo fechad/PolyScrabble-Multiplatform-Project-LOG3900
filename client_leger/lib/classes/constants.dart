@@ -5,12 +5,7 @@ const List<String> virtualPlayers = <String>[
   'Lucie',
   'Jojo',
 ];
-const List<String> difficulty = <String>['Débutant', 'Expert', 'Adaptatif'];
-const List<String> gameType = <String>[
-  'Privée',
-  'Publique',
-  'Publique avec mot de passe'
-];
+
 const List<String> time = <String>[
   '30',
   '60',

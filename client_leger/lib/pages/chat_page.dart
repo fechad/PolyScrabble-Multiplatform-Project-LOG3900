@@ -6,6 +6,7 @@ import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../components/chat_model.dart';
@@ -140,8 +141,8 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                               child: Text(
                                   chat.owner?.username ==
                                           authenticator.currentUser.username
-                                      ? 'Supprimer'
-                                      : 'Quitter',
+                                      ? AppLocalizations.of(context)!.delete
+                                      : AppLocalizations.of(context)!.quit,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
@@ -159,17 +160,28 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                                                           .owner?.username ==
                                                       authenticator
                                                           .currentUser.username
-                                                  ? "Supprimer la conversation"
-                                                  : "Quitter la conversation"),
+                                                  ? AppLocalizations.of(
+                                                          context)!
+                                                      .leaveChannelTitleCreator
+                                                  : AppLocalizations.of(
+                                                          context)!
+                                                      .leaveChannelTitle),
                                               content: Text(chat
                                                           .owner?.username ==
                                                       authenticator
                                                           .currentUser.username
-                                                  ? "Êtes-vous sûr de vouloir supprimer la conversation ?"
-                                                  : "Êtes-vous sûr de vouloir quitter la conversation ?"),
+                                                  ? AppLocalizations.of(
+                                                          context)!
+                                                      .leaveChannelBodyCreator
+                                                  : AppLocalizations.of(
+                                                          context)!
+                                                      .leaveChannelBody),
                                               actions: [
                                                 ElevatedButton(
-                                                    child: Text('Non',
+                                                    child: Text(
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .no,
                                                         style: TextStyle(
                                                           color: Colors.black,
                                                         )),
@@ -186,7 +198,10 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                                                               context),
                                                         }),
                                                 ElevatedButton(
-                                                  child: Text('Oui'),
+                                                  child: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .yes),
                                                   style:
                                                       ElevatedButton.styleFrom(
                                                     backgroundColor: Colors.red,
@@ -270,8 +285,10 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                               chat.owner?.username !=
                                   authenticator.getCurrentUser().username &&
                               chat.name != 'General Chat'
-                          ? "Envoyez un premier message pour rejoindre le canal"
-                          : "Aa"),
+                          ? AppLocalizations.of(context)!
+                              .otherChatPagePlaceHolderJoin
+                          : AppLocalizations.of(context)!
+                              .generalPagePlaceholder),
                 ),
               ),
               Container(

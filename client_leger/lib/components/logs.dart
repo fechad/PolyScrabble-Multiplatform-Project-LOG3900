@@ -30,7 +30,10 @@ class _LogsState extends State<Logs> {
     if (BDlogs!.length == 0)
       logs.add(Container(
         margin: EdgeInsets.only(bottom: 8),
-        child: Text("Aucune information pour le moment",
+        child: Text(
+            languageService.currentLanguage.languageCode == 'en'
+                ? "No info at this time"
+                : "Aucune information pour le moment",
             style: GoogleFonts.nunito(
               textStyle:
                   const TextStyle(fontSize: 20, fontStyle: FontStyle.italic),

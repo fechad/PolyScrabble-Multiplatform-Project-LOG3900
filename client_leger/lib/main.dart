@@ -1,12 +1,18 @@
 import 'package:camera/camera.dart';
+import 'package:client_leger/l10n/language_service.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/services/auth_service.dart';
 import 'package:client_leger/theme/theme_constants.dart';
 import 'package:client_leger/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'l10n/l10n.dart';
 
 AuthService authenticator = AuthService();
 ThemeManager themeManager = ThemeManager();
+LanguageService languageService = LanguageService();
 
 late List<CameraDescription> cameras;
 void main() async {
@@ -30,16 +36,24 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     themeManager.addListener(themeListener);
+    languageService.addListener(languageListener);
     super.initState();
   }
 
   @override
   void dispose() {
     themeManager.removeListener(themeListener);
+    languageService.removeListener(languageListener);
     super.dispose();
   }
 
   themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  languageListener() {
     if (mounted) {
       setState(() {});
     }
@@ -52,6 +66,14 @@ class _MyAppState extends State<MyApp> {
         title: 'Flutter Demo',
         theme: lightTheme,
         darkTheme: darkTheme,
+        supportedLocales: L10n.languages,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate
+        ],
+        locale: languageService.currentLanguage,
         themeMode: themeManager.themeMode,
         home: ConnexionPageWidget()
         //MyHomePage(title: 'PolyScrabble')

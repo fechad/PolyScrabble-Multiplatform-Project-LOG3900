@@ -1,6 +1,7 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/pages/waiting_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../classes/constants.dart';
 import '../components/sidebar.dart';
@@ -19,12 +20,22 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   FocusNode _focusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  String difficultyValue = 'Débutant';
+  String difficultyValue = languageService.currentLanguage.languageCode == 'en'
+      ? 'Beginner'
+      : 'Débutant';
   String timeValue = '60';
   bool gameIsPublic = true;
-  String gameTypeValue = 'Publique';
+  String gameTypeValue = languageService.currentLanguage.languageCode == 'en'
+      ? 'Public'
+      : 'Publique';
   final TextEditingController _gamePasswordController = TextEditingController();
   bool _passwordVisible = false;
+  List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
+      ? <String>['Beginner', 'Expert', 'Adaptable']
+      : <String>['Débutant', 'Expert', 'Adaptatif'];
+  List<String> gameType = languageService.currentLanguage.languageCode == 'en'
+      ? <String>['Private', 'Public', 'Public with password']
+      : <String>['Privée', 'Publique', 'Publique avec mot de passe'];
 
   @override
   void initState() {
@@ -96,7 +107,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                             ),
                             Center(
                               child: Text(
-                                'Partie Multijoueur',
+                                AppLocalizations.of(context)!
+                                    .classicCreateMultiTitle,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
@@ -116,7 +128,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
-                                    labelText: "Difficulté du joueur virtuel"),
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateMultiVpDifficultyLabel),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -144,7 +157,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
-                                    labelText: "Temps par tour (en secondes)"),
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateMultiTime),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -171,14 +185,14 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                   icon: const Icon(Icons.keyboard_arrow_down),
                                   elevation: 16,
                                   decoration: InputDecoration(
-                                      labelText: "Type de partie"),
+                                      labelText: AppLocalizations.of(context)!
+                                          .classicCreateMultiGameTypeLabel),
                                   onChanged: (String? value) {
                                     setState(() {
                                       gameTypeValue = value!;
-                                      gameIsPublic =
-                                          gameType.indexOf(value!) > 0
-                                              ? true
-                                              : false;
+                                      gameIsPublic = gameType.indexOf(value) > 0
+                                          ? true
+                                          : false;
                                     });
                                   },
                                   items: gameType.map<DropdownMenuItem<String>>(
@@ -199,7 +213,9 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                         obscureText:
                                             !_passwordVisible, //This will obscure text dynamically
                                         decoration: InputDecoration(
-                                          hintText: 'Entrez un mot de passe',
+                                          hintText:
+                                              AppLocalizations.of(context)!
+                                                  .classicJoinMultiPopupInput,
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                                   vertical: 0.0,
@@ -253,7 +269,8 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                         ? Color.fromARGB(255, 125, 175, 107)
                                         : Color.fromARGB(255, 121, 101, 220))),
                                 child: Text(
-                                  'Créer la partie',
+                                  AppLocalizations.of(context)!
+                                      .createGameButton,
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(

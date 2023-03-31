@@ -1,16 +1,17 @@
 import 'package:client_leger/components/objectives.dart';
 import 'package:client_leger/components/racks.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
 import '../services/link_service.dart';
 
-
 class ObjectiveBox extends StatefulWidget {
-   ObjectiveBox({super.key, required this.isObserver, required this.updateLetters});
-   bool isObserver;
-   final VoidCallback updateLetters;
+  ObjectiveBox(
+      {super.key, required this.isObserver, required this.updateLetters});
+  bool isObserver;
+  final VoidCallback updateLetters;
 
   @override
   ObjectiveBoxState createState() => ObjectiveBoxState(isObserver: isObserver);
@@ -65,8 +66,10 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
                           ),
                         ),
                         tabs: [
-                          Tab(text: 'Objectifs'),
-                          Tab(text: 'Chevalets'),
+                          Tab(
+                              text: AppLocalizations.of(context)!
+                                  .gamePageObjectives),
+                          Tab(text: AppLocalizations.of(context)!.gamePageRack),
                         ],
                       ),
                     ),
@@ -81,7 +84,12 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
             child: TabBarView(
               children: [
                 Objectives(),
-                Row(mainAxisAlignment: MainAxisAlignment.center ,children:[Racks(isObserver: isObserver, updateLetters: updateLetters,)]),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Racks(
+                    isObserver: isObserver,
+                    updateLetters: updateLetters,
+                  )
+                ]),
               ],
             ),
           ),
@@ -90,7 +98,7 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
     );
   }
 
-  updateLetters () {
+  updateLetters() {
     setState(() {
       gameService.playersRack;
     });
