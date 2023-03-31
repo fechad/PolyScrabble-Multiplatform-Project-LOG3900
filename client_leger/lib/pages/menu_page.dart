@@ -3,6 +3,7 @@ import 'package:client_leger/pages/games_room.dart';
 import 'package:client_leger/pages/multiplayer_page.dart';
 import 'package:client_leger/pages/solo_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../components/sidebar.dart';
 import '../main.dart';
@@ -53,7 +54,7 @@ class _MenuPageState extends State<MenuPage> {
                   ),
                 ),
                 SizedBox(height: 130),
-                Text("Classique",
+                Text(AppLocalizations.of(context)!.mainButtonClassic,
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 35,
@@ -68,7 +69,8 @@ class _MenuPageState extends State<MenuPage> {
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: const Text('Jouer une partie solo'),
+                  child:
+                      Text(AppLocalizations.of(context)!.classicButtonSoloGame),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
@@ -85,7 +87,8 @@ class _MenuPageState extends State<MenuPage> {
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: const Text('Créer une partie multijoueur'),
+                  child: Text(
+                      AppLocalizations.of(context)!.classicButtonMultiGame),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
@@ -102,7 +105,7 @@ class _MenuPageState extends State<MenuPage> {
                     minimumSize: Size(300, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: const Text('Joindre une partie multijoueur'),
+                  child: Text(AppLocalizations.of(context)!.classicButtonJoin),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {

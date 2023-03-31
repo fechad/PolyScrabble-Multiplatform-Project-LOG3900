@@ -48,7 +48,9 @@ class _GameCardsState extends State<GameCards> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Durée: " + game.duration!),
+                    Text(languageService.currentLanguage.languageCode == 'en'
+                        ? "Duration: "
+                        : "Durée: " + game.duration!),
                     Text("Score: " + game.score.toString()),
                   ],
                 )
@@ -56,15 +58,19 @@ class _GameCardsState extends State<GameCards> {
             )),
       );
     }
-    if (BDgames!.length == 0)
+    if (BDgames!.length == 0) {
       games.add(Container(
         margin: EdgeInsets.only(bottom: 8),
-        child: Text("Aucune information pour le moment",
+        child: Text(
+            languageService.currentLanguage.languageCode == 'en'
+                ? "No info at this time"
+                : "Aucune information pour le moment",
             style: GoogleFonts.nunito(
               textStyle:
                   const TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
             )),
       ));
+    }
   }
 
   @override

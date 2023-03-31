@@ -2,6 +2,7 @@ import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../classes/game.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
@@ -11,7 +12,7 @@ import 'avatar.dart';
 class GameCard extends StatefulWidget {
   GameCard(
       {super.key,
-        required this.players,
+      required this.players,
       required this.difficulty,
       required this.time,
       required this.password,
@@ -61,11 +62,16 @@ class _GameCardState extends State<GameCard> {
   late String btnText;
   final List<Player> players;
 
-
   @override
   void initState() {
     super.initState();
-    btnText = isObserver ? 'Observer' : 'Joindre';
+    btnText = isObserver
+        ? languageService.currentLanguage.languageCode == 'en'
+            ? 'Observe'
+            : 'Observer'
+        : languageService.currentLanguage.languageCode == 'en'
+            ? 'Join'
+            : 'Joindre';
     isObserver ? linkService.setButtonPressed(false) : null;
   }
 
@@ -139,18 +145,19 @@ class _GameCardState extends State<GameCard> {
                 padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                 child: Row(
                   children: [
-                    Container (
+                    Container(
                         height: 50,
                         width: 200,
-                        child:
-                        ListView.builder(
+                        child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: players.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Avatar(
-                                  url: players[index].clientAccountInfo!.userSettings.avatarUrl);
-                            })
-                    ),
+                                  url: players[index]
+                                      .clientAccountInfo!
+                                      .userSettings
+                                      .avatarUrl);
+                            })),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(80, 0, 16, 0),
                       child: ElevatedButton(
@@ -182,8 +189,9 @@ class _GameCardState extends State<GameCard> {
                                         builder: (context) {
                                           return Container(
                                             child: AlertDialog(
-                                              title:
-                                                  Text("Mot de passe requis"),
+                                              title: Text(AppLocalizations.of(
+                                                      context)!
+                                                  .classicJoinMultiPopupTitle),
                                               content: Container(
                                                   height: 55,
                                                   width: 350,
@@ -194,28 +202,42 @@ class _GameCardState extends State<GameCard> {
                                                           controller:
                                                               _pswdController,
                                                           decoration:
-                                                              const InputDecoration(
-                                                            hintText:
-                                                                'Veuillez entrer le mot de passe',
+                                                              InputDecoration(
+                                                            hintText: AppLocalizations
+                                                                    .of(context)!
+                                                                .classicJoinMultiPopupInput,
                                                           ),
                                                           obscureText: true,
                                                           validator: (value) {
                                                             if (value!
                                                                 .isEmpty) {
-                                                              return 'Mot de passe requis';
+                                                              return languageService
+                                                                          .currentLanguage
+                                                                          .languageCode ==
+                                                                      'en'
+                                                                  ? 'Password required'
+                                                                  : 'Mot de passe requis';
                                                             }
                                                             if (value ==
                                                                 password) {
                                                               _pswdController
                                                                   .text = value;
                                                             } else
-                                                              return 'Mot de passe invalide';
+                                                              return languageService
+                                                                          .currentLanguage
+                                                                          .languageCode ==
+                                                                      'en'
+                                                                  ? 'Wrong password'
+                                                                  : 'Mot de passe invalide';
                                                           },
                                                         ),
                                                       ]))),
                                               actions: [
                                                 ElevatedButton(
-                                                    child: Text('Quitter'),
+                                                    child: Text(
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .quit),
                                                     style: ElevatedButton
                                                         .styleFrom(
                                                       backgroundColor:
@@ -231,7 +253,10 @@ class _GameCardState extends State<GameCard> {
                                                               context),
                                                         }),
                                                 ElevatedButton(
-                                                  child: Text('Joindre'),
+                                                  child: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .join),
                                                   style:
                                                       ElevatedButton.styleFrom(
                                                     backgroundColor: themeManager

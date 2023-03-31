@@ -1,5 +1,6 @@
 import 'package:client_leger/pages/solo_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
@@ -36,7 +37,6 @@ class _ThemedJVState extends State<ThemedJV> {
 
   void startGame() {
     soloGameService.configureBaseSocketFeatures();
-
     gameService.gameData.timerPerTurn = widget.time.toString();
     gameService.room.roomInfo.timerPerTurn = widget.time.toString();
     soloGameService.joinRoom(widget.name, widget.name);
@@ -134,7 +134,7 @@ class _ThemedJVState extends State<ThemedJV> {
                       ),
                       ElevatedButton(
                         onPressed: () => {startGame()},
-                        child: Text('Affronter',
+                        child: Text(AppLocalizations.of(context)!.changeButton,
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   fontSize: 24,

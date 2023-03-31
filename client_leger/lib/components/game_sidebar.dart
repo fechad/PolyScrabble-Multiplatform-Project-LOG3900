@@ -2,6 +2,7 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../main.dart';
 import '../services/link_service.dart';
@@ -80,13 +81,14 @@ class _GameSidebarState extends State<GameSidebar> {
                             builder: (context) {
                               return Container(
                                 child: AlertDialog(
-                                  title: Text(
-                                      "Voulez-vous vraiment abandonner la partie ?"),
-                                  content: Text(
-                                      "Vous ne serez pas dans le tableau des meilleurs scores."),
+                                  title: Text(AppLocalizations.of(context)!
+                                      .leaveGameTitle),
+                                  content: Text(AppLocalizations.of(context)!
+                                      .leaveGameBody),
                                   actions: [
                                     ElevatedButton(
-                                        child: Text('Non',
+                                        child: Text(
+                                            AppLocalizations.of(context)!.no,
                                             style: TextStyle(
                                               color: Colors.black,
                                             )),
@@ -105,7 +107,8 @@ class _GameSidebarState extends State<GameSidebar> {
                                               Navigator.pop(context),
                                             }),
                                     ElevatedButton(
-                                      child: Text('Oui'),
+                                      child: Text(
+                                          AppLocalizations.of(context)!.yes),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
                                         textStyle:

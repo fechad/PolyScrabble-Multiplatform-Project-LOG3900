@@ -11,7 +11,6 @@ import '../model/custom_navigation_drawer.dart';
 import '../pages/chat_page.dart';
 import '../pages/game_page.dart';
 import '../pages/home_page.dart';
-import '../pages/leaderboard_page.dart';
 import '../pages/observer_page.dart';
 import '../services/chat_service.dart';
 import '../services/init_service.dart';
@@ -68,17 +67,19 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             message: message['message'])),
                   }),
               if (chatService
-            .getDiscussionChannelByName(chatName)
-            .messages
-            .length > 2 && chatService
-                      .getDiscussionChannelByName(chatName)
-                      .messages[chatService
-                              .getDiscussionChannelByName(chatName)
-                              .messages
-                              .length -
-                          1]
-                      .sender !=
-                  authenticator.currentUser.username)
+                          .getDiscussionChannelByName(chatName)
+                          .messages
+                          .length >
+                      2 &&
+                  chatService
+                          .getDiscussionChannelByName(chatName)
+                          .messages[chatService
+                                  .getDiscussionChannelByName(chatName)
+                                  .messages
+                                  .length -
+                              1]
+                          .sender !=
+                      authenticator.currentUser.username)
                 {
                   if (mounted)
                     {
@@ -249,16 +250,16 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                       linkService.newMessageChange();
                                   }
                                   // TODO : put function here depending on what we click on
-                              else if (counter == 2) {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: ((context) {
-                                          return SettingsPage();
-                                        })));
+                                  else if (counter == 2) {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return SettingsPage();
+                                    })));
                                   } else if (counter == 3) {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: ((context) {
-                                          return ConnexionPageWidget();
-                                        })));
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return ConnexionPageWidget();
+                                    })));
                                   }
                                 },
                                 isSelected:

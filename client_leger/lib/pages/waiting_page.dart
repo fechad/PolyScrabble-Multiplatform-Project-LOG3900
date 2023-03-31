@@ -6,6 +6,7 @@ import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../classes/game.dart';
@@ -127,9 +128,9 @@ class _WaitingPageState extends State<WaitingPage> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text("Demande d'accès à la partie"),
+                      title: Text(AppLocalizations.of(context)!.accessRequest),
                       content: Text(
-                          "Voulez-vous accepter ${gameService.room.players[gameService.room.players.length - 1].clientAccountInfo!.username} dans la salle de jeu?"),
+                          "${AppLocalizations.of(context)!.accessMessagePartOne} ${gameService.room.players[gameService.room.players.length - 1].clientAccountInfo!.username} ${AppLocalizations.of(context)!.accessMessagePartTwo}"),
                       actions: [
                         ElevatedButton(
                             onPressed: () => {
@@ -137,10 +138,11 @@ class _WaitingPageState extends State<WaitingPage> {
                                       .room
                                       .players[
                                           gameService.room.players.length - 1]
-                                      .clientAccountInfo!.username),
+                                      .clientAccountInfo!
+                                      .username),
                                   Navigator.pop(context)
                                 },
-                            child: Text("Non"),
+                            child: Text(AppLocalizations.of(context)!.no),
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   themeManager.themeMode == ThemeMode.light
@@ -154,11 +156,13 @@ class _WaitingPageState extends State<WaitingPage> {
                                   gameService.acceptPlayer(gameService
                                       .room
                                       .players[
-                                          gameService.room.players.length - 1].clientAccountInfo!.username),
+                                          gameService.room.players.length - 1]
+                                      .clientAccountInfo!
+                                      .username),
                                   noPlayers++,
                                   if (noPlayers > 1) canStart = true,
                                 },
-                            child: Text("Oui"),
+                            child: Text(AppLocalizations.of(context)!.yes),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               textStyle: const TextStyle(fontSize: 20),
@@ -263,18 +267,21 @@ class _WaitingPageState extends State<WaitingPage> {
                   Padding(
                       padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
                       child: Row(children: [
-                        Container (
-                          height: 70,
-                          width: 300,
-                          child:
-                        ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: gameService.room.players.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Avatar(
-                              url: gameService.room.players[index].clientAccountInfo!.userSettings.avatarUrl);
-                        })
-                        )
+                        Container(
+                            height: 70,
+                            width: 300,
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: gameService.room.players.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Avatar(
+                                      url: gameService
+                                          .room
+                                          .players[index]
+                                          .clientAccountInfo!
+                                          .userSettings
+                                          .avatarUrl);
+                                }))
                       ])),
                   linkService.getIsInAGame()
                       ? Padding(
@@ -299,7 +306,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                 minimumSize: Size(50, 40),
                                 textStyle: const TextStyle(fontSize: 20),
                               ),
-                              child: const Text('Quitter'),
+                              child: Text(AppLocalizations.of(context)!.quit),
                               onPressed: () {
                                 gameService.leave();
                                 Navigator.push(context,
@@ -318,7 +325,8 @@ class _WaitingPageState extends State<WaitingPage> {
                                   minimumSize: Size(50, 40),
                                   textStyle: const TextStyle(fontSize: 20),
                                 ),
-                                child: const Text('Démarrer'),
+                                child:
+                                    Text(AppLocalizations.of(context)!.start),
                                 onPressed: canStart
                                     ? () => {
                                           gameService.requestGameStart(),
@@ -381,7 +389,8 @@ class _WaitingPageState extends State<WaitingPage> {
                   onSubmitted: submitMsg,
                   decoration: InputDecoration.collapsed(
                       hintStyle: TextStyle(fontSize: 18),
-                      hintText: "Aa"),
+                      hintText:
+                          AppLocalizations.of(context)!.generalPagePlaceholder),
                 ),
               ),
               Container(

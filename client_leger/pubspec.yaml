@@ -31,6 +31,9 @@ environment:
 dependencies:
     flutter:
         sdk: flutter
+    flutter_localizations:
+        sdk: flutter
+    intl: ^0.17.0
     camera: ^0.10.3+2
     path_provider: ^2.0.13
     path: ^1.8.2
@@ -82,6 +85,7 @@ flutter:
     # The following line ensures that the Material Icons font is
     # included with your application, so that you can use the icons in
     # the material Icons class.
+    generate: true
     uses-material-design: true
     assets:
         - assets/images/

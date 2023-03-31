@@ -11,6 +11,7 @@ import 'package:client_leger/services/multiplayer_game_service.dart';
 import 'package:client_leger/services/placement_validator_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../classes/game.dart';
@@ -109,7 +110,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                       width: 200,
                       height: 200,
                       child: AlertDialog(
-                          title: Text("Choisissez un indice à prévisualiser: ",
+                          title: Text(
+                              AppLocalizations.of(context)!.gamePageHintTitle,
                               style: TextStyle(
                                 fontSize: 24,
                               )),
@@ -148,7 +150,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                                                 Navigator.pop(context);
                                               },
                                               child: Text(
-                                                  "${hints[index].split("-")[1]} pour ${hints[index].split("-")[2]} points",
+                                                  "${hints[index].split("-")[1]} ${AppLocalizations.of(context)!.gamePageHintFor} ${hints[index].split("-")[2]} points",
                                                   style: TextStyle(
                                                     color: Colors.black,
                                                     fontSize: 18,
@@ -385,7 +387,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
-                    child: Text('Annuler'),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                   ),
                   SizedBox(
                     width: 24,
@@ -404,7 +406,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                     style: ButtonStyle(
                         backgroundColor: const MaterialStatePropertyAll<Color>(
                             Palette.mainColor)),
-                    child: Text('Échanger'),
+                    child: Text(AppLocalizations.of(context)!.exchange),
                   )
                 ],
               ),
@@ -424,7 +426,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
-                    child: Text('Annuler'),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                   ),
                   SizedBox(
                     width: 24,
@@ -465,7 +467,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                             themeManager.themeMode == ThemeMode.light
                                 ? Colors.grey
                                 : Color.fromARGB(255, 64, 38, 117)),
-                    child: Text('Confirmer le placement'),
+                    child: Text(AppLocalizations.of(context)!.confirm),
                   )
                 ],
               )

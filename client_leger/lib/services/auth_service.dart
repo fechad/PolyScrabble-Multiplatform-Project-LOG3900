@@ -115,6 +115,7 @@ class AuthService {
 
   Future<void> setUser(String email) async {
     bool darkMode = false;
+    bool isEnglish = false;
     await httpService.getUserInfo(email.toLowerCase()).then((value) => {
           currentUser = Account(
             username: '${jsonDecode(value.body)['username']}',

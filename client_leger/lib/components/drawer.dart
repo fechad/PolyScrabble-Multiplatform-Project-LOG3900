@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_new
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../config/flutter_flow/flutter_flow_widgets.dart';
 import '../main.dart';
@@ -180,7 +181,8 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                   builder: (context) {
                     return Container(
                       child: AlertDialog(
-                        title: Text("Création d'un canal"),
+                        title:
+                            Text(AppLocalizations.of(context)!.createChatTitle),
                         content: Container(
                             height: 55,
                             width: 350,
@@ -189,9 +191,9 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                                 child: Column(children: [
                                   TextFormField(
                                     controller: _channelNameController,
-                                    decoration: const InputDecoration(
-                                      hintText:
-                                          'Veuillez entrer le nom du canal',
+                                    decoration: InputDecoration(
+                                      hintText: AppLocalizations.of(context)!
+                                          .createChatBody,
                                     ),
                                     validator: (value) {
                                       for (ChatModel channel
@@ -204,17 +206,20 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                                                 ?.toLowerCase()
                                                 .trim()
                                                 .replaceAll(' ', ''))
-                                          return 'Un canal a déjà ce nom';
+                                          return AppLocalizations.of(context)!
+                                              .createChatErrorOne;
                                       }
 
                                       if (value!.isEmpty) {
-                                        return 'Le nom ne peut être vide';
+                                        return AppLocalizations.of(context)!
+                                            .createChatErrorTwo;
                                       }
                                       if (value
                                           .toLowerCase()
                                           .trim()
                                           .startsWith('room')) {
-                                        return "Le nom ne peut commencer par 'room'";
+                                        return AppLocalizations.of(context)!
+                                            .createChatErrorThree;
                                       }
                                       return null;
                                     },
@@ -222,7 +227,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                                 ]))),
                         actions: [
                           ElevatedButton(
-                              child: Text('Annuler'),
+                              child: Text(AppLocalizations.of(context)!.cancel),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
                                 textStyle: const TextStyle(fontSize: 15),
@@ -232,7 +237,8 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                                     Navigator.pop(context),
                                   }),
                           ElevatedButton(
-                              child: Text('Créer'),
+                              child: Text(AppLocalizations.of(context)!
+                                  .createChatButton),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     themeManager.themeMode == ThemeMode.light
@@ -256,7 +262,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                   });
               setState(() {});
             },
-            text: 'Nouveau canal',
+            text: AppLocalizations.of(context)!.createChatButton,
             options: FFButtonOptions(
               width: 240,
               height: 50,

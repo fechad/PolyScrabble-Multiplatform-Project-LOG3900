@@ -1,6 +1,7 @@
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../classes/constants.dart';
 import '../classes/game.dart';
@@ -13,7 +14,7 @@ import 'game_page.dart';
 final soloGameService = SoloGameService(
     gameData: GameData(
         pseudo: authenticator.currentUser.username,
-        dictionary: 'dictionnaire par défaut',
+        dictionary: 'français',
         timerPerTurn: '',
         botName: '',
         isExpertLevel: false));
@@ -29,8 +30,13 @@ class _SoloPageState extends State<SoloPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String virtualValue = 'Simon';
-  String difficultyValue = 'Débutant';
+  String difficultyValue = languageService.currentLanguage.languageCode == 'en'
+      ? 'Beginner'
+      : 'Débutant';
   String timeValue = '60';
+  List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
+      ? <String>['Beginner', 'Expert', 'Adaptable']
+      : <String>['Débutant', 'Expert', 'Adaptatif'];
 
   @override
   void initState() {
@@ -101,7 +107,8 @@ class _SoloPageState extends State<SoloPage> {
                             ),
                             Center(
                               child: Text(
-                                'Partie Solo',
+                                AppLocalizations.of(context)!
+                                    .classicCreateSoloTitle,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyText1
                                     .override(
@@ -121,7 +128,8 @@ class _SoloPageState extends State<SoloPage> {
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
-                                    labelText: "Nom du joueur virtuel"),
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateSoloVpName),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -149,7 +157,8 @@ class _SoloPageState extends State<SoloPage> {
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
-                                    labelText: "Difficulté du joueur virtuel"),
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateMultiVpDifficultyLabel),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -175,7 +184,8 @@ class _SoloPageState extends State<SoloPage> {
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
-                                    labelText: "Temps par tour (en secondes)"),
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateSoloTime),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -215,7 +225,8 @@ class _SoloPageState extends State<SoloPage> {
                                         ? Color.fromARGB(255, 125, 175, 107)
                                         : Color.fromARGB(255, 121, 101, 220))),
                                 child: Text(
-                                  'Créer la partie',
+                                  AppLocalizations.of(context)!
+                                      .createGameButton,
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(

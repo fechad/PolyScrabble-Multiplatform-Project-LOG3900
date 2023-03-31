@@ -1,0 +1,386 @@
+{
+	"language": "French",
+	"@language": {
+		"description": "Language montré à l'instant"
+	},
+	"mainTitle": "Mode de jeu",
+	"@mainTitle": {
+		"description": "Titre du mode de jeu"
+	},
+	"mainButtonClassic": "Scrabble Classique",
+	"@mainButtonClassic": {
+		"description": "Texte du boutton"
+	},
+	"mainButtonTheme": "Scrabble à Thème",
+	"@mainButtonTheme": {
+		"description": "Texte du boutton"
+	},
+	"classicButtonSoloGame": "Jouer une partie en solo",
+	"@classicButtonSoloGame": {
+		"description": "Texte du boutton"
+	},
+	"classicButtonMultiGame": "Créer une partie multijoueur",
+	"@classicButtonMultiGame": {
+		"description": "Texte du boutton"
+	},
+	"classicButtonJoin": "Joindre une partie multijoueur",
+	"@classicButtonJoin": {
+		"description": "Texte du boutton"
+	},
+	"classicCreateSoloTitle": "Partie Solo",
+	"@classicCreateSoloTitle": {
+		"description": "Type de partie"
+	},
+	"classicCreateSoloVpName": "Nom du joueur virtuel",
+	"@classicCreateSoloVpName": {
+		"description": "Label"
+	},
+	"classicCreateSoloVpDifficultyLabel": "Difficulté des joueurs virtuels",
+	"@classicCreateSoloVpDifficultyLabel": {
+		"description": "Label"
+	},
+	"classicCreateSoloVpDifficultyOne": "Débutant",
+	"@classicCreateSoloVpDifficultyOne": {
+		"description": "Option"
+	},
+	"classicCreateSoloVpDifficultyTwo": "Expert",
+	"@classicCreateSoloVpDifficultyTwo": {
+		"description": "Option"
+	},
+	"classicCreateSoloVpDifficultyThree": "Adaptatif",
+	"@classicCreateSoloVpDifficultyThree": {
+		"description": "Option"
+	},
+	"classicCreateSoloTime": "Temps par tour",
+	"@classicCreateSoloTime": {
+		"description": "Label"
+	},
+	"classicCreateMultiTitle": "Partie Multijoueur",
+	"@classicCreateMultiTitle": {
+		"description": "Type de partie"
+	},
+	"classicCreateMultiVpDifficultyLabel": "Difficulté des joueurs virtuels",
+	"@classicCreateMultiVpDifficultyLabel": {
+		"description": "Label"
+	},
+	"classicCreateMultiVpDifficultyOne": "Débutant",
+	"@classicCreateMultiVpDifficultyOne": {
+		"description": "Option"
+	},
+	"classicCreateMultiVpDifficultyTwo": "Expert",
+	"@classicCreateMultiVpDifficultyTwo": {
+		"description": "Option"
+	},
+	"classicCreateMultiVpDifficultyThree": "Adaptatif",
+	"@classicCreateMultiVpDifficultyThree": {
+		"description": "Option"
+	},
+	"classicCreateMultiTime": "Temps par tour",
+	"@classicCreateMultiTime": {
+		"description": "Label"
+	},
+	"classicCreateMultiGameTypeLabel": "Type de parties",
+	"@classicCreateMultiGameTypeLabel": {
+		"description": "Label"
+	},
+	"classicCreateMultiGameTypeOne": "Privée",
+	"@classicCreateMultiGameTypeOne": {
+		"description": "Option"
+	},
+	"classicCreateMultiGameTypeTwo": "Publique",
+	"@classicCreateMultiGameTypeTwo": {
+		"description": "Option"
+	},
+	"classicCreateMultiGameTypeThree": "Publique avec mot de passe",
+	"@classicCreateMultiGameTypeThree": {
+		"description": "Option"
+	},
+	"classicJoinMultiTitle": "Parties Observables",
+	"@classicJoinMultiTitle": {
+		"description": "Type de mode"
+	},
+	"classicJoinMultiButton": "Joindre",
+	"@classicJoinMultiButton": {
+		"description": "Texte du boutton"
+	},
+	"classicJoinMultiButtonLock": "Joindre [CLÉ]",
+	"@classicJoinMultiButtonLock": {
+		"description": "Texte du boutton"
+	},
+	"classicJoinMultiPopupTitle": "Partie privée",
+	"@classicJoinMultiPopupTitle": {
+		"description": "Type de partie"
+	},
+	"classicJoinMultiPopupBody": "Veuillez entrer le mot de passe pour joindre la partie.",
+	"@classicJoinMultiPopupBody": {
+		"description": "Label"
+	},
+	"classicJoinMultiPopupInput": "Entrer le mot de passe",
+	"@classicJoinMultiPopupInput": {
+		"description": "Placeholder"
+	},
+	"themeTitle": "Joueurs virtuel à thème",
+	"@themeTitle": {
+		"description": "Type de mode de jeu"
+	},
+	"chatBarGeneral": "Canal général",
+	"@chatBarGeneral": {
+		"description": "description du canal principal"
+	},
+	"generalPageButton": "Nouvelle fenêtre",
+	"@generalPageButton": {
+		"description": "Texte du boutton"
+	},
+	"generalPagePlaceholder": "Entrer un message",
+	"@generalPagePlaceholder": {
+		"description": "Placeholder"
+	},
+    "otherChatPagePlaceHolderJoin": "Envoyez un premier message pour rejoindre le canal",
+    "@otherChatPagePlaceHolderJoin" : {
+        "description": "Placeholder if not joined"
+    },
+	"userPageLevel": "niv",
+	"@userPageLevel": {
+		"description": "Label du niveau"
+	},
+	"userPageVictories": "victoires",
+	"@userPageVictories": {
+		"description": "Label des victoires"
+	},
+	"userPageObjectives": "Objectifs",
+	"@userPageObjectives": {
+		"description": "Label des objectifs"
+	},
+	"userPageToggle": "Afficher complétés",
+	"@userPageToggle": {
+		"description": "Texte du toggle"
+	},
+	"settingsPageTitle": "Paramètres",
+	"@settingsPageTitle": {
+		"description": "Titre de la page settings"
+	},
+    "settingsPageAvatarTitle": "Choisissez votre avatar",
+    "@settingsPageAvatarTitle": {
+        "description": "Titre du modal"
+    },
+	"settingsPageThemeLabel": "Thème de couleur",
+	"@settingsPageThemeLabel": {
+		"description": "Label de theme"
+	},
+	"settingsPageLight": "Clair",
+	"@settingsPageLight": {
+		"description": "Option de theme"
+	},
+	"settingsPageDark": "Sombre",
+	"@settingsPageDark": {
+		"description": "Option de theme"
+	},
+	"languageSectionLabel": "Language",
+	"@languageSectionLabel": {
+		"description": "Label de language"
+	},
+	"languageSectionFrench": "Français",
+	"@languageSectionFrench": {
+		"description": "Option de language"
+	},
+	"languageSectionEnglish": "English",
+	"@languageSectionEnglish": {
+		"description": "Option de language"
+	},
+	"musicSectionLabel": "Musique de victoire:",
+	"@musicSectionLabel": {
+		"description": "Label de musique"
+	},
+	"settingsPagePassword": "Changer le mot de passe",
+	"@settingsPagePassword": {
+		"description": "Text de button"
+	},
+	"save": "Sauvegarder",
+	"@save": {
+		"description": "Text de button"
+	},
+	"edit": "editer",
+	"@edit": {
+		"description": "Text de button"
+	},
+	"gamePageObjectives": "Objectifs",
+	"@gamePageObjectives": {
+		"description": "label de section de tab"
+	},
+	"gamePageRack": "Chevalets",
+	"@gamePageRack": {
+		"description": "Label de section de tab"
+	},
+	"gamePageHintTitle": "Choisissez un indice à prévisualiser",
+	"@gamePageHintTitle": {
+		"description": "Titre de modal"
+	},
+	"gamePageHintFor": "pour",
+	"@gamePageHintFor": {
+		"description": "Mot dans choix d'options"
+	},
+	"leaveGameTitle": "Voulez-vous vraiment abandonner ?",
+	"@leaveGameTitle": {
+		"description": "Titre de modal"
+	},
+	"leaveGameBody": "Vous ne serez pas dans le tableau des meilleurs scores.",
+	"@leaveGameBody": {
+		"description": "Description de modal"
+	},
+	"endGameTitleWinner": "",
+	"@endGameTitleWinner": {
+		"description": "Titre de modal"
+	},
+	"endGameBodyWinner": "",
+	"@endGameBodyWinner": {
+		"description": "Description de modal"
+	},
+	"ok": "Ok",
+	"@ok": {
+		"description": "Text de button"
+	},
+	"createGameButton": "Créer la partie",
+	"@createGameButton": {
+		"description": "Text de button"
+	},
+	"createChatButton": "Créer un canal",
+	"@createChatButton": {
+		"description": "Text de button"
+	},
+	"backButton": "Retour",
+	"@backButton": {
+		"description": "Text de button"
+	},
+	"invalidGame": "Votre mode de jeu est invalide, veuillez revenir en arrière",
+	"@invalidGame": {
+		"description": "Message d'erreur"
+	},
+	"serverNotFound": "Serveur indisponible, veuillez réessayer plus tard",
+	"@serverNotFound": {
+		"description": "Message d'erreur"
+	},
+	"passwordInput": "Mot de passe",
+	"@passwordInput": {
+		"description": "Placeholder"
+	},
+	"start": "Démarer",
+	"@start": {
+		"description": "Text de button"
+	},
+	"quit": "Quitter",
+	"@quit": {
+		"description": "Text de button"
+	},
+    "delete": "Supprimer",
+	"@delete": {
+		"description": "Text de button"
+	},
+	"yes": "Oui",
+	"@yes": {
+		"description": "Text de button"
+	},
+	"no": "Non",
+	"@no": {
+		"description": "Text de button"
+	},
+	"cancel": "Annuler",
+	"@cancel": {
+		"description": "Text de button"
+	},
+    "exchange": "Échanger",
+	"@exchange": {
+		"description": "Text de button"
+	},
+	"confirm": "Confirmer",
+	"@confirm": {
+		"description": "Text de button"
+	},
+	"changeButton": "Affronter",
+	"@changeButton": {
+		"description": "Text de button"
+	},
+	"join": "Joindre",
+	"@join": {
+		"description": "Text de button"
+	},
+    "leaveChannelTitle": "Quitter la conversation",
+    "@leaveChannelTitle": {
+        "description": "Titre du modal"
+    },
+    "leaveChannelBody": "Êtes-vous sûr de vouloir quitter la conversation ?",
+    "@leaveChannelBody": {
+        "description": "Texte du modal"
+    },
+    "leaveChannelTitleCreator": "Supprimer la conversation",
+    "@leaveChannelTitleCreator": {
+        "description": "Titre du modal"
+    },
+    "leaveChannelBodyCreator": "Êtes-vous sûr de vouloir supprimer la conversation ?",
+    "@leaveChannelBodyCreator": {
+        "description": "Texte du modal"
+    },
+    "statisticSectionTitle": "Statistique",
+    "@statisticSectionTitle": {
+        "description": "Titre de la section"
+    },
+    "statisticSectionOne": "Parties jouées",
+    "@statisticSectionOne": {
+        "description": "Titre de la section"
+    },
+    "statisticSectionTwo": "Parties gagnées",
+    "@statisticSectionTwo": {
+        "description": "Titre de la section"
+    },
+    "statisticSectionThree": "Score moyen",
+    "@statisticSectionThree": {
+        "description": "Titre de la section"
+    },
+    "statisticSectionFour": "Temp moyen par parties",
+    "@statisticSectionFour": {
+        "description": "Titre de la section"
+    },
+    "historySectionTitle": "Historiques",
+    "@historySectionTitle": {
+        "description": "Titre de la section"
+    },
+    "historySectionOne": "Connexions",
+    "@historySectionOne": {
+        "description": "Titre de la section"
+    },
+    "historySectionTwo": "Parties jouées",
+    "@historySectionTwo": {
+        "description": "Titre de la section"
+    },
+    "accessRequest": "Demande d'accès à la partie",
+    "@accessRequest": {
+        "description": "Titre du popup"
+    },
+    "accessMessagePartOne": "Voulez-vous accepter",
+    "@accessMessagePartOne": {
+        "description": "Texte du popup"
+    },
+    "accessMessagePartTwo": "dans la salle de jeu?",
+    "@accessMessagePartTwo": {
+        "description": "Texte du popup"
+    },
+    "createChatTitle": "Création d'un canal",
+    "@createChatTitle": {
+        "description": "Titre du popup"
+    },
+    "createChatBody": "Veuillez entrer le nom du canal",
+    "@createChatBody": {
+        "description": "Texte du popup"
+    },
+    "createChatErrorOne": "Un canal a déjà ce nom",
+    "@createChatErrorOne": {
+        "description": "Erreur du popup"
+    },
+    "createChatErrorTwo": "Le nom ne peut être vide",
+    "@createChatErrorTwo": {
+        "description": "Erreur du popup"
+    },
+    "createChatErrorThree": "Le nom ne peut commencer par 'room'",
+    "@createChatErrorThree": {
+        "description": "Erreur du popup"
+    }
+}
