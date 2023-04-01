@@ -42,7 +42,7 @@
             "POPUP": {
                 "TITLE": "Partie privée",
                 "BODY": "Veuillez entrer le mot de passe pour joindre la partie.",
-                "INPUT": "Entrer le mot de passe"
+                "INPUT": "Entrez le mot de passe"
             }
         }
     },
@@ -54,7 +54,8 @@
     },
     "GENERAL-PAGE": {
         "BUTTON": "Nouvelle fenêtre",
-        "PLACEHOLDER": "Entrer un message"
+        "PLACEHOLDER": "Entrez un message",
+        "JOIN-CHANNEL-PLACEHOLDER": "Entrez un message pour rejoindre le canal"
     },
     "USER-PAGE": {
         "LEVEL": "niv",
@@ -99,8 +100,10 @@
         }
     },
     "OTHER": {
-        "CREATE-GAME-BUTTON": "Créer la partie",
-        "CREATE-CHAT-BUTTON": "Créer un canal",
+        "CREATE-GAME-BUTTON": "Créez la partie",
+        "CREATE-CHAT-BUTTON": "Créez un canal",
+        "CREATE-CHAT-TITLE": "Créez un canal",
+        "CREATE-CHAT-LABEL": "Entrez un nom",
         "BACK-BUTTON": "Retour",
         "INVALID-GAME": "Votre mode de jeu est invalide, veuillez revenir en arrière",
         "SERVER-NOT-FOUND": "Serveur indisponible, veuillez réessayer plus tard",

@@ -4,13 +4,13 @@ import { Account } from './account';
 export class DiscussionChannel {
     name: string;
     owner?: Account;
-    activeUsers: number;
+    activeUsers: { socketId: string; username: string }[];
     messages: ChannelMessage[];
 
     constructor(name: string, owner?: Account) {
         this.name = name;
         this.owner = owner;
-        this.activeUsers = 1;
+        this.activeUsers = [];
         this.messages = [];
     }
 }

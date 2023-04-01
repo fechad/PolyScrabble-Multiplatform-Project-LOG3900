@@ -54,7 +54,8 @@
     },
     "GENERAL-PAGE": {
         "BUTTON": "New window",
-        "PLACEHOLDER": "Type a message"
+        "PLACEHOLDER": "Type a message",
+        "JOIN-CHANNEL-PLACEHOLDER": "Type a message to join the channel"
     },
     "USER-PAGE": {
         "LEVEL": "lvl",
@@ -101,6 +102,8 @@
     "OTHER": {
         "CREATE-GAME-BUTTON": "Create game",
         "CREATE-CHAT-BUTTON": "New chat",
+        "CREATE-CHAT-TITLE": "Create a new chat",
+        "CREATE-CHAT-LABEL": "Enter a name",
         "BACK-BUTTON": "Back",
         "INVALID-GAME": "This game mode is invalid, please go back and select another one",
         "SERVER-NOT-FOUND": "Server not available, try again later",

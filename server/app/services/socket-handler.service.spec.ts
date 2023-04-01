@@ -9,9 +9,10 @@ import { assert, expect } from 'chai';
 import * as http from 'http';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
+import { DiscussionChannelService } from './discussion-channel.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -22,6 +23,7 @@ describe('SocketHandler service tests', () => {
     // let getSocketRoomStub: sinon.SinonStub;
     let getPlayerStub: sinon.SinonStub;
     const socketHandlerService = new SocketHandlerService(
+        new DiscussionChannelService(),
         new io.Server(http.createServer(), { cors: { origin: '*', methods: ['GET', 'POST'] } }),
         new ScoresService({} as any),
         new PlayerGameHistoryService({} as any),

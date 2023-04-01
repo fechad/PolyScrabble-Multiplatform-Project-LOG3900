@@ -147,7 +147,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
     mouseHitDetect(mouseEvent: MouseEvent, tileIndexes: Position) {
         if (this.room.roomInfo.isGameOver) {
-            this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
         if (!this.playerService.player.isItsTurn) return;
@@ -224,6 +223,12 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
             const rowNumber = this.boardService.matchRowNumber(placementData.row) as number;
             this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
         });
+
+        this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
+            if (this.playerService.player.pseudo !== currentPlayerTurnPseudo) {
+                this.boardService.removeAllViewLetters();
+            }
+        });
     }
 
     protected onFirstSocketConnection() {
@@ -235,6 +240,7 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
     }
 
     private cancelPlacement() {
+        this.boardService.removeAllViewLetters();
         this.focusHandlerService.currentFocus.next(CurrentFocus.RACK);
     }
 
@@ -245,7 +251,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
     private updateFocus(event: MouseEvent, tileIndexes: Position) {
         event.stopPropagation();
         if (this.room.roomInfo.isGameOver) {
-            this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
         if (!this.playerService.player.isItsTurn) return;
@@ -258,7 +263,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
         setTimeout(() => {
             if (!this.playerService.player.isItsTurn) {
-                this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
                 return;
             }
         }, TURN_UPDATE_DELAY);
@@ -266,7 +270,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
     private handleBadPlacement() {
         setTimeout(() => {
-            this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             if (!this.playerService.player.isItsTurn) return;
             this.socketService.send(SocketEvent.ChangeTurn, this.room.roomInfo.name);
         }, ONE_SECOND_IN_MS);

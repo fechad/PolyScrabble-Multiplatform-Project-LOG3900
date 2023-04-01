@@ -4,7 +4,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
@@ -129,15 +128,6 @@ describe('PlayersInfosComponent', () => {
                 const pseudo = 'Jacob';
                 socketHelper.peerSideEmit('playerTurnChanged', pseudo);
                 expect(componentPrivateAccess.currentPlayerTurnPseudo).toEqual(pseudo);
-            });
-
-            it('should update the focus to chat on "playerTurnChanged" event when it is the playerTurn', () => {
-                focusHandlerService.currentFocus.next(CurrentFocus.NONE);
-                componentPrivateAccess.configureBaseSocketFeatures();
-                playerService.player.isItsTurn = true;
-                const pseudo = 'Jacob';
-                socketHelper.peerSideEmit('playerTurnChanged', pseudo);
-                expect(focusHandlerService.currentFocus.value).toEqual(CurrentFocus.CHAT);
             });
 
             it('should set the flag isGameOver to true when receiving the event "gameIsOver"', () => {

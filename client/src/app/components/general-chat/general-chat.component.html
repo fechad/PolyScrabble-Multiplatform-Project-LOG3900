@@ -1,6 +1,13 @@
 <div class="page mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
     <div class="chat-title">
         <H1 class="bold-title">{{ discussionChannel.name }}</H1>
+        <button
+            *ngIf="canQuitChannel"
+            [disabled]="!isInChannel"
+            (click)="handleLeaveChannel()"
+            class="button cancel-button channel"
+            [translate]="'OTHER.QUIT'"
+        ></button>
     </div>
     <div class="chat">
         <div
@@ -29,12 +36,21 @@
     </div>
     <div class="chat-bar-container">
         <input
-            #inputElement
-            (keyup.enter)="sendChannelMessage(inputElement)"
+            *ngIf="isInChannel"
+            [(ngModel)]="inputValue"
+            (keyup.enter)="sendChannelMessage()"
             class="chat-bar"
             type="text"
             placeholder="{{ 'GENERAL-PAGE.PLACEHOLDER' | translate }}"
         />
-        <i class="fa fa-send fa-2x" [ngClass]="{ enabled: enable, disabled: !enable }" (click)="sendChannelMessage(inputElement)"></i>
+        <input
+            *ngIf="!isInChannel"
+            [(ngModel)]="inputValue"
+            (keyup.enter)="sendChannelMessage()"
+            class="chat-bar error"
+            type="text"
+            placeholder="{{ 'GENERAL-PAGE.JOIN-CHANNEL-PLACEHOLDER' | translate }}"
+        />
+        <i class="fa fa-send fa-2x" [ngClass]="{ enabled: enable, disabled: !enable }" (click)="sendChannelMessage()"></i>
     </div>
 </div>

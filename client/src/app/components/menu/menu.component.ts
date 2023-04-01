@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
+import { ChannelCreationPopupComponent } from '@app/components/channel-creation-popup/channel-creation-popup.component';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
 import { DEFAULT_BOT_IMAGE } from '@app/constants/default-user-settings';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -103,6 +104,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     get isObserver(): boolean {
         return this.playerService.isObserver;
     }
+
     ngOnInit() {
         this.closeChatNewWindow();
         this.connectSocket();
@@ -151,32 +153,19 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.socketService.send(SocketEvent.GetDiscussionChannels);
     }
 
-    createChatChannel(channelName: string) {
-        this.socketService.send(SocketEvent.CreateChatChannel, {
-            channel: channelName,
-            username: {
-                username: this.playerService.player.pseudo,
-                email: '',
-                userSettings: {
-                    avatarUrl: '',
-                    defaultLanguage: '',
-                    defaultTheme: '',
-                    victoryMusic: '',
-                },
-                progressInfo: {
-                    totalXP: 0,
-                    currentLevel: 0,
-                    currentLevelXp: 0,
-                    xpForNextLevel: 0,
-                    victoriesCount: 0,
-                },
-                highScores: {},
-                badges: [],
-                gamesWon: 0,
-                gamesPlayed: [],
-                bestGames: [],
-            },
-            isRoomChannel: false,
+    createChatChannel() {
+        const dialog = this.dialog.open(ChannelCreationPopupComponent, {
+            width: DIALOG_WIDTH,
+            autoFocus: true,
+        });
+
+        dialog.afterClosed().subscribe(async (channelName) => {
+            if (!channelName) return;
+            this.socketService.send(SocketEvent.CreateChatChannel, {
+                channel: channelName,
+                username: this.playerService.reducePLayerInfo(),
+                isRoomChannel: false,
+            });
         });
     }
 
@@ -188,14 +177,6 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         }
 
         this.navigateHome();
-    }
-
-    leaveDiscussionChannel() {
-        if (this.selectedDiscussionChannel.owner?.username === this.playerService.player.pseudo) {
-            this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
-        } else {
-            this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
-        }
     }
 
     handlePlayerFound(data: { room: Room; player: Player }) {
@@ -265,13 +246,9 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     async logOut() {
         this.audioService.stopSound();
         lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
-        if (this.playerService.player.isCreator) {
-            this.socketService.send(SocketEvent.LeaveRoomCreator, this.room.roomInfo.name);
-        } else {
-            this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
-        }
 
-        this.socketService.send(SocketEvent.LeaveChatChannel, { channel: 'General Chat', username: this.playerService.player.pseudo });
+        this.socketService.send(SocketEvent.LogOut);
+
         this.playerService.resetPlayerAndRoomInfo();
         this.router.navigate(['/home']);
     }
@@ -337,6 +314,13 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
             this.playerService.discussionChannelService.availableChannels = channels;
+            if (this.selectedDiscussionChannel.name && !channels.find((channel) => channel.name === this.selectedDiscussionChannel.name)) {
+                if (this.isWaitMultiPage) {
+                    this.showRoomChatChannel();
+                    return;
+                }
+                this.showChatChannel(0);
+            }
         });
 
         this.socketService.on(SocketEvent.RoomChannelUpdated, (roomChannel: DiscussionChannel) => {

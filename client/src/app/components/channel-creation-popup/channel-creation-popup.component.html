@@ -1,0 +1,33 @@
+<h2 mat-dialog-title [translate]="'OTHER.CREATE-CHAT-TITLE'"></h2>
+<hr />
+
+<mat-dialog-content [formGroup]="channelForm">
+    <div class="input-container error-msg">
+        <label
+            #channelNameLabel
+            (click)="focusInput(channelNameInput)"
+            class="simple-label placeholder"
+            [translate]="'OTHER.CREATE-CHAT-LABEL'"
+        ></label>
+        <input
+            #channelNameInput
+            (focus)="setPlaceholderAsLabel(channelNameLabel)"
+            (input)="setPlaceholderAsLabel(channelNameLabel)"
+            (blur)="setLabelAsPlaceholder(channelNameLabel, 'name')"
+            [class.invalid]="isChannelNameInvalid"
+            formControlName="name"
+            name="name"
+            class="simple-input"
+        />
+        <div class="simple-input-error-msg">
+            {{ invalidChannelNameText }}
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions class="popup-actions">
+    <div></div>
+    <div class="popup-buttons-container">
+        <button class="button cancel-button" (click)="closeDialog()" [translate]="'OTHER.NO'"></button>
+        <button class="button" (click)="submitChannel()" [disabled]="!isChannelNameValid" [translate]="'OTHER.YES'"></button>
+    </div>
+</mat-dialog-actions>

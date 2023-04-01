@@ -40,9 +40,9 @@ export class DiscussionChannelService {
         this.availableChannels = this.availableChannels.filter((channel) => channel.name !== name);
     }
 
-    joinChannel(channelName: string, username: string): ChannelMessage | undefined {
+    joinChannel(socketId: string, channelName: string, username: string): ChannelMessage | undefined {
         const channelToJoin = this.getDiscussionChannel(channelName);
-        return channelToJoin?.joinChannel(username);
+        return channelToJoin?.joinChannel(socketId, username);
     }
 
     leaveChannel(channelName: string, username: string): ChannelMessage | undefined {

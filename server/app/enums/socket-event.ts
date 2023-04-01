@@ -16,6 +16,8 @@ export enum SocketEvent {
     CreatorLeaveChatChannel = 'creatorLeaveChatChannel',
     ChatChannelMessage = 'chatChannelMessage',
     GetDiscussionChannels = 'getDiscussionChannels',
+    LogOut = 'logOut',
+
     // TODO: remove the joinRoomSolo and joinRoomSoloBot (they are used in light client)
     JoinRoomSolo = 'joinRoomSolo',
     JoinRoomSoloBot = 'joinRoomSoloBot',

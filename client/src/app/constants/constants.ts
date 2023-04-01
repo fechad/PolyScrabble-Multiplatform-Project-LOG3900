@@ -32,3 +32,6 @@ export const DEFAULT_ROOM_INFO = {
     isPublic: true,
     password: '',
 };
+
+export const DEFAULT_ROOM_NAME = 'Room';
+export const GENERAL_CHAT_NAME = 'General Chat';

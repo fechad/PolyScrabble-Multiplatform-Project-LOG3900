@@ -1,3 +1,4 @@
+import { DiscussionChannel } from '@app/classes/discussion-channel';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
@@ -14,6 +15,7 @@ import { firestore } from 'firebase-admin';
 import * as io from 'socket.io';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
+import { DiscussionChannelService } from './discussion-channel.service';
 import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
@@ -22,6 +24,7 @@ import { ScoresService } from './score.service';
 export class SocketHandlerService {
     commandController: CommandController;
     constructor(
+        public discussionChannelService: DiscussionChannelService,
         public sio: io.Server,
         private scoreService: ScoresService,
         private playerGameHistoryService: PlayerGameHistoryService,
@@ -84,16 +87,33 @@ export class SocketHandlerService {
 
     getSocketRoom(socket: io.Socket): Room | undefined {
         for (const room of socket.rooms) {
-            if (room.startsWith(DEFAULT_ROOM_NAME)) {
+            if (room.toLowerCase().startsWith(DEFAULT_ROOM_NAME.toLowerCase())) {
                 const wantedRoom = this.roomService.getRoom(room);
                 if (!wantedRoom) {
-                    this.socketLeaveRoom(socket, room);
                     continue;
                 }
                 return wantedRoom;
             }
         }
         return;
+    }
+
+    getSocketDiscussionChannels(socket: io.Socket): DiscussionChannel[] {
+        const socketDiscussionChannels = [];
+        for (const channelName of socket.rooms) {
+            const wantedDiscussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);
+            if (!wantedDiscussionChannel) {
+                continue;
+            }
+            socketDiscussionChannels.push(wantedDiscussionChannel);
+        }
+        return socketDiscussionChannels;
+    }
+
+    leaveAllSocketRoom(socket: io.Socket) {
+        for (const roomName of socket.rooms) {
+            socket.leave(roomName);
+        }
     }
 
     displayGameResume(room: Room) {

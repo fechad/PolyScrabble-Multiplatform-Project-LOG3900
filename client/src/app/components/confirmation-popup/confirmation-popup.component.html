@@ -5,6 +5,9 @@
     <p class="popup-body">{{ description.body }}</p>
 </mat-dialog-content>
 <mat-dialog-actions class="popup-actions">
-    <button class="button-yes" mat-dialog-close (click)="handleUserAnswer(false)" [translate]="'OTHER.NO'"></button>
-    <button class="button-no" color="primary" style="background-color: #e86070" (click)="handleUserAnswer(true)" [translate]="'OTHER.YES'"></button>
+    <div></div>
+    <div class="popup-buttons-container">
+        <button class="button cancel-button" (click)="handleUserAnswer(false)" [translate]="'OTHER.NO'"></button>
+        <button class="button" (click)="handleUserAnswer(true)" [translate]="'OTHER.YES'"></button>
+    </div>
 </mat-dialog-actions>

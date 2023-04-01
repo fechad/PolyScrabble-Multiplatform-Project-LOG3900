@@ -43,15 +43,17 @@ export class SocketManager {
         const singleDateService = new DateService();
 
         this.socketHandlerService = new SocketHandlerService(
+            this.discussionChannelService,
             this.sio,
             this.scoresService,
             this.playerGameHistoryService,
-            gamesHistoryService,
+            this.gamesHistoryService,
             this.chatMessageService,
             singleRoomService,
             singleDateService,
         );
         this.socketRoomService = new SocketRoomService(
+            this.discussionChannelService,
             this.sio,
             this.scoresService,
             this.playerGameHistoryService,
@@ -74,8 +76,8 @@ export class SocketManager {
             this.discussionChannelService,
             this.sio,
             this.scoresService,
-            this.gamesHistoryService,
             this.playerGameHistoryService,
+            this.gamesHistoryService,
             this.chatMessageService,
             singleRoomService,
             singleDateService,
@@ -100,9 +102,16 @@ export class SocketManager {
     handleSockets() {
         this.sio.on(SocketEvent.Connection, (socket) => {
             socket.on(SocketEvent.Disconnection, async () => {
-                const username = await this.socketGameService.handleDisconnecting(socket);
-                if (!username) return;
-                this.socketChannelService.handleChannelDisconnecting(socket, username);
+                const userDiscussionChannels = this.socketHandlerService.getSocketDiscussionChannels(socket);
+                await this.socketGameService.handleDisconnecting(socket);
+                this.socketChannelService.handleChannelDisconnecting(socket, userDiscussionChannels);
+            });
+
+            socket.on(SocketEvent.LogOut, async () => {
+                const userDiscussionChannels = this.socketHandlerService.getSocketDiscussionChannels(socket);
+                this.socketGameService.handleLeaveGame(socket);
+                this.socketChannelService.handleChannelDisconnecting(socket, userDiscussionChannels);
+                socket.disconnect();
             });
 
             socket.on(SocketEvent.Reconnect, (playerData: PlayerData) => {
@@ -126,7 +135,7 @@ export class SocketManager {
             });
 
             socket.on(SocketEvent.CreateChatChannel, (data: { channel: string; username: Account; isRoomChannel?: boolean }) => {
-                this.socketChannelService.handleCreateChannel(data.channel, data.username, data.isRoomChannel);
+                this.socketChannelService.handleCreateChannel(socket, data.channel, data.username, data.isRoomChannel);
             });
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -167,7 +176,7 @@ export class SocketManager {
             });
 
             socket.on(SocketEvent.LeaveGame, async () => {
-                await this.socketGameService.handleLeaveGame(socket);
+                this.socketGameService.handleLeaveGame(socket);
             });
 
             socket.on(SocketEvent.SetRoomAvailable, (roomName: string) => {

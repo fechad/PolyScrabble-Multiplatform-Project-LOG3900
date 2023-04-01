@@ -43,7 +43,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         this.gameForm = this.fb.group({
             timerPerTurn: [DEFAULT_TIMER_PER_TURN, [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
             dictionary: [DEFAULT_DICTIONARY_TITLE, Validators.required],
-            level: [GameLevel.Expert, Validators.required],
+            level: [GameLevel.Adaptative, Validators.required],
             roomPassword: [''],
             isPublic: [PUBLIC_GAME_VALUE],
             botName: ['Simon'],
