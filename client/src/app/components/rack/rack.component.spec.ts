@@ -2,6 +2,7 @@
 /* eslint-disable dot-notation */ // We want to set private attribute of the class for multiple tests
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { KeyboardKeys } from '@app/classes/keyboard-keys';
 import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
@@ -9,6 +10,7 @@ import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { TIMER_TEST_DELAY } from '@app/constants/constants';
 import { Direction } from '@app/enums/direction';
 import { SelectionType } from '@app/enums/selection-type';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -38,6 +40,7 @@ describe('RackComponent', () => {
                 { provide: SocketTestHelper, useValue: socketHelper },
                 { provide: FocusHandlerService, useValue: focusHandlerService },
                 { provide: PlayerService, useValue: playerService },
+                { provide: MatDialog, useClass: MatDialogMock },
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();

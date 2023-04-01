@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */ // Many test to be sure that the service work correctly
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to test private method and set some attribute to undefined
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { BoardMessage } from '@app/classes/board-message';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Position } from '@app/classes/position';
@@ -10,6 +11,7 @@ import { BOARD_SCALING_RATIO } from '@app/constants/board-constants';
 import { Direction } from '@app/enums/direction';
 import { SelectionType } from '@app/enums/selection-type';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { BoardService } from './board.service';
 import { CommandInvokerService } from './command-invoker.service';
@@ -42,6 +44,7 @@ describe('BoardService', () => {
             providers: [
                 { provide: SessionStorageService, useValue: sessionStorageService },
                 { provide: CommandInvokerService, useValue: commandInvokerService },
+                { provide: MatDialog, useClass: MatDialogMock },
                 { provide: Rack, useValue: rack },
             ],
         });

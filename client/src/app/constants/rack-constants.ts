@@ -24,3 +24,32 @@ export const DEFAULT_TILE_HEIGHT = DEFAULT_RACK_HEIGHT * HEIGHT_SCALING_RATIO;
 export const ERROR = -1;
 
 export const POINTS: number[] = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 10, 1, 2, 1, 1, 3, 8, 1, 1, 1, 1, 4, 10, 10, 10, 10];
+
+export const LETTER_CHOICES = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+];

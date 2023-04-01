@@ -55,6 +55,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
 import { ThemedPageComponent } from './pages/themed-page/themed-page.component';
 import { HistoricComponent } from './components/historic/historic.component';
 import { ChannelCreationPopupComponent } from './components/channel-creation-popup/channel-creation-popup.component';
+import { TileChoicePopupComponent } from './components/tile-choice-popup/tile-choice-popup.component';
 
 /**
  * Main module that is used in main.ts.
@@ -118,6 +119,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         HintShowerComponent,
         HistoricComponent,
         ChannelCreationPopupComponent,
+        TileChoicePopupComponent,
     ],
     imports: [
         AppMaterialModule,

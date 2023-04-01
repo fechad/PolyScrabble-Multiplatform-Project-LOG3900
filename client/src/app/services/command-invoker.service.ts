@@ -55,6 +55,16 @@ export class CommandInvokerService {
         return PlacementType.Simple;
     }
 
+    get placedLettersAmount(): number {
+        return this.cancelStack.length;
+    }
+
+    get futurePlacementDirection(): string {
+        if (this.isHorizontalPlacement()) return RIGHT_ARROW;
+        if (this.isVerticalPlacement()) return DOWN_ARROW;
+        return ANY_ARROW;
+    }
+
     executeCommand(command: Command) {
         command.execute();
         this.cancelStack.push(command);

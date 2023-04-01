@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { BoardMessage } from '@app/classes/board-message';
 import { PlaceDraggedLetter } from '@app/classes/command/place-dragged-letter';
 import { PlaceLetter } from '@app/classes/command/place-letter';
@@ -8,6 +9,7 @@ import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
 import { Tile } from '@app/classes/tile';
+import { TileChoicePopupComponent } from '@app/components/tile-choice-popup/tile-choice-popup.component';
 import {
     DEFAULT_BOARD_BACKGROUND_COLOR,
     DEFAULT_BOARD_INDEXES_COLOR,
@@ -38,6 +40,7 @@ export class BoardService {
     constructor(
         private sessionStorageService: SessionStorageService,
         private commandInvoker: CommandInvokerService,
+        private dialog: MatDialog,
 
         private readonly rack: Rack,
     ) {
@@ -97,10 +100,8 @@ export class BoardService {
     }
 
     dragEndDetect(tileIndexes: Position) {
-        if (this.commandInvoker.placementType !== PlacementType.DragAndDrop && this.commandInvoker.placementType !== PlacementType.None) return;
-        if (!this.rack.selectedTile) return;
+        if (!this.canEndTileDrag(tileIndexes)) return;
 
-        if (this.isFirstRowOrColumn(tileIndexes)) return;
         this.updateSelectedTileOnMouseHitDetect(tileIndexes);
         if (!this.commandInvoker.selectedTile) return;
 
@@ -109,24 +110,24 @@ export class BoardService {
             return;
         }
 
-        if (this.commandInvoker.isHorizontalPlacement()) {
-            if (this.isDraggingATile) {
-                this.moveLetterInBoard(RIGHT_ARROW);
-                return;
-            }
-            this.placeLetterInBoard(this.rack.selectedTile?.content, true, RIGHT_ARROW);
-            return;
-        } else if (this.commandInvoker.isVerticalPlacement()) {
-            if (this.isDraggingATile) {
-                this.moveLetterInBoard(DOWN_ARROW);
-                return;
-            }
-            this.placeLetterInBoard(this.rack.selectedTile?.content, true, DOWN_ARROW);
+        if (this.commandInvoker.canSelectFirstCaseForPlacement) {
+            if (!this.rack.selectedTile) return;
+            this.placeLetterInBoard(this.rack.selectedTile.content, true, this.commandInvoker.lastPlacement?.arrowDirection || ANY_ARROW);
             return;
         }
 
-        if (this.commandInvoker.canSelectFirstCaseForPlacement) {
-            this.placeLetterInBoard(this.rack.selectedTile?.content, true, this.commandInvoker.lastPlacement?.arrowDirection || ANY_ARROW);
+        if (this.isDraggingATile && this.commandInvoker.placedLettersAmount <= 1) {
+            this.moveLetterInBoard(ANY_ARROW);
+            return;
+        }
+
+        if (this.commandInvoker.isHorizontalPlacement() || this.commandInvoker.isVerticalPlacement()) {
+            if (this.isDraggingATile) {
+                this.moveLetterInBoard(this.commandInvoker.futurePlacementDirection);
+                return;
+            }
+            if (!this.rack.selectedTile) return;
+            this.placeLetterInBoard(this.rack.selectedTile.content, true, this.commandInvoker.futurePlacementDirection);
         }
     }
 
@@ -142,6 +143,7 @@ export class BoardService {
 
         this.commandInvoker.selectedTile.letter = transformedLetter;
         const placementType = this.commandInvoker.placementType;
+
         if (!isDragPlacement && (placementType === PlacementType.Simple || placementType === PlacementType.None)) {
             const placeLetterCommand = new PlaceLetter(
                 this.commandInvoker.selectedTile,
@@ -151,13 +153,9 @@ export class BoardService {
             this.commandInvoker.executeCommand(placeLetterCommand);
             return;
         }
+
         if (placementType !== PlacementType.DragAndDrop && placementType !== PlacementType.None) return;
-        const placeDraggedLetterCommand = new PlaceDraggedLetter(
-            this.commandInvoker.selectedTile,
-            direction || ANY_ARROW,
-            this.commandInvoker.canSelectFirstCaseForPlacement,
-        );
-        this.commandInvoker.executeCommand(placeDraggedLetterCommand);
+        this.handleDraggedPlacement(direction);
     }
 
     moveLetterInBoard(direction: string) {
@@ -171,6 +169,15 @@ export class BoardService {
         if (placementType !== PlacementType.DragAndDrop && placementType !== PlacementType.None) return;
 
         this.removeManipulatedTile();
+        this.handleDraggedPlacement(direction);
+    }
+
+    handleDraggedPlacement(direction?: string) {
+        if (!this.commandInvoker.selectedTile) return;
+        if (this.commandInvoker.selectedTile.letter === '*') {
+            this.handleDraggedStarPlacement(direction);
+            return;
+        }
 
         const placeDraggedLetterCommand = new PlaceDraggedLetter(
             this.commandInvoker.selectedTile,
@@ -178,6 +185,27 @@ export class BoardService {
             this.commandInvoker.canSelectFirstCaseForPlacement,
         );
         this.commandInvoker.executeCommand(placeDraggedLetterCommand);
+    }
+
+    handleDraggedStarPlacement(direction?: string) {
+        const dialogWidth = '450px';
+        const dialog = this.dialog.open(TileChoicePopupComponent, {
+            width: dialogWidth,
+            autoFocus: true,
+        });
+        dialog.afterClosed().subscribe(async (result) => {
+            if (!result) {
+                return;
+            }
+            if (!this.commandInvoker.selectedTile) return;
+            this.commandInvoker.selectedTile.letter = result;
+            const placeDraggedStarCommand = new PlaceDraggedLetter(
+                this.commandInvoker.selectedTile,
+                direction || ANY_ARROW,
+                this.commandInvoker.canSelectFirstCaseForPlacement,
+            );
+            this.commandInvoker.executeCommand(placeDraggedStarCommand);
+        });
     }
 
     removeAllViewLetters() {
@@ -241,6 +269,12 @@ export class BoardService {
         return (
             tile.content !== '' && tile.content !== RIGHT_ARROW && tile.content !== DOWN_ARROW && tile.typeOfSelection !== SelectionType.UNSELECTED
         );
+    }
+
+    private canEndTileDrag(tileIndexes: Position): boolean {
+        if (this.commandInvoker.placementType !== PlacementType.DragAndDrop && this.commandInvoker.placementType !== PlacementType.None) return false;
+        if (this.isFirstRowOrColumn(tileIndexes)) return false;
+        return true;
     }
 
     private canSelectCase(tileIndexes: Position): boolean {
