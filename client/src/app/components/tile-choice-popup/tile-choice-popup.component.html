@@ -1,0 +1,9 @@
+<h2 mat-dialog-title [translate]="'GAME-PAGE.LETTER-CHOICES.TITLE'"></h2>
+<hr />
+
+<mat-dialog-content class="tiles-container">
+    <div *ngFor="let letter of letterChoices" (click)="selectLetter(letter)" class="rack-letter">
+        <div class="tile-content">{{ letter }}</div>
+        <div class="tile-point">0</div>
+    </div>
+</mat-dialog-content>

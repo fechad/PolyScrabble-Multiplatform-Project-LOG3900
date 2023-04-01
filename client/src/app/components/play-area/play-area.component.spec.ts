@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */ // Lot of tests to make sure that the code work correctly
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
@@ -9,6 +10,7 @@ import { Tile } from '@app/classes/tile';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { DEFAULT_ROOM_INFO } from '@app/constants/constants';
 import { PlacementData } from '@app/interfaces/placement-data';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
 import { BoardService } from '@app/services/board.service';
 import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -36,7 +38,7 @@ describe('PlayAreaComponent', () => {
     let focusHandlerService: FocusHandlerService;
     let mouseEvent: MouseEvent;
     let boardService: BoardService;
-
+    let matDialog: MatDialog;
     let playerService: PlayerService;
 
     // let removeAllViewLetterSpy: jasmine.Spy;
@@ -53,7 +55,8 @@ describe('PlayAreaComponent', () => {
         playerService.room.roomInfo = DEFAULT_ROOM_INFO;
         playerService.room.currentPlayerPseudo = '';
 
-        boardService = new BoardService(sessionStorageService, commandInvokerService, new Rack());
+        matDialog = new MatDialogMock() as unknown as MatDialog;
+        boardService = new BoardService(sessionStorageService, commandInvokerService, matDialog, new Rack());
 
         placement = { word: 'bonjour', row: 'h', column: '7', direction: 'h' };
 

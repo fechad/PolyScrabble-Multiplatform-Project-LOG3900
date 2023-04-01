@@ -97,6 +97,9 @@
             "TITLE-WINNER": "",
             "BODY-WINNER": "",
             "OK": "Ok"
+        },
+        "LETTER-CHOICES": {
+            "TITLE": "Choisissez une lettre à placer"
         }
     },
     "OTHER": {

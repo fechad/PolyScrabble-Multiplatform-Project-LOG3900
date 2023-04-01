@@ -1,0 +1,39 @@
+$rackTileBorder: 2px solid rgba(0, 0, 0, 0.3);
+$rackTileColor: #ecba8c;
+$rackTileBoxShadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
+$tileWidth: 40px;
+
+.tiles-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.rack-letter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: $tileWidth;
+    max-width: $tileWidth;
+    min-height: $tileWidth;
+    max-height: $tileWidth;
+    background-color: $rackTileColor;
+    // border: $rackTileBorder;
+    box-shadow: $rackTileBoxShadow;
+    border-radius: 7px;
+    margin: 5px;
+    cursor: pointer;
+    color: black;
+}
+
+.tile-content {
+    position: relative;
+    top: 10px;
+    font-size: 20px;
+}
+
+.tile-point {
+    align-self: end;
+    margin-right: 2px;
+}
