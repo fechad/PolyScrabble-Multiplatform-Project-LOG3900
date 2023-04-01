@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
-import { CurrentFocus } from '@app/classes/current-focus';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { EndGamePopupComponent } from '@app/components/endgame-popup/endgame-popup.component';
@@ -14,7 +13,6 @@ import { InformationalPopupData } from '@app/interfaces/informational-popup-data
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { AudioService } from '@app/services/audio.service';
 import { BackgroundService } from '@app/services/background-image.service';
-import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
@@ -41,7 +39,6 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     constructor(
         protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
-        private focusHandlerService: FocusHandlerService,
         public playerService: PlayerService,
         private dialog: MatDialog,
         private audioService: AudioService,
@@ -152,9 +149,6 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.backgroundService.switchToAngry();
         });
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
-            if (this.playerService.player.isItsTurn) {
-                this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
-            }
             this.currentPlayerTurnPseudo = currentPlayerTurnPseudo;
             this.playerService.player.isItsTurn = this.playerService.player.pseudo === currentPlayerTurnPseudo;
         });
@@ -170,7 +164,6 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
 
         this.socketService.on(SocketEvent.GameIsOver, (winnerArray: Player[]) => {
             this.room.roomInfo.isGameOver = true;
-            this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             this.setPlayersTurnToFalse();
             this.findWinner(winnerArray);
         });

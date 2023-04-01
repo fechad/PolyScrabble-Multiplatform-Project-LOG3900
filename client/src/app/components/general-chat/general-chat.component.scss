@@ -23,6 +23,7 @@ $avatarMinDimension: 60px;
     justify-content: center;
     align-items: center;
     color: var(--basic-font-color);
+    gap: 25px;
 }
 
 .user-chat-container {
@@ -162,6 +163,15 @@ $avatarMinDimension: 60px;
     align-self: center;
     width: 80%;
     height: 100%;
+
+    &.cancel-button {
+        &.channel {
+            width: fit-content;
+            height: fit-content;
+            padding: 10px;
+            font-size: 20px;
+        }
+    }
 }
 
 .chat-container {
@@ -196,6 +206,10 @@ $avatarMinDimension: 60px;
     margin-right: 16px;
     background-color: var(--section-background);
     color: var(--basic-font-color);
+
+    &.error {
+        border: 3px solid red;
+    }
 }
 
 .enabled {

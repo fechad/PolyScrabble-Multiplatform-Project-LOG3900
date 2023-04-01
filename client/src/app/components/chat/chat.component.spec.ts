@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormArray, FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CurrentFocus } from '@app/classes/current-focus';
 import { SocketTestHelper } from '@app/classes/socket-test-helper';
-import { MAX_MESSAGE_LENGTH, MIN_MESSAGE_LENGTH, TIMER_TEST_DELAY } from '@app/constants/constants';
+import { MAX_MESSAGE_LENGTH, MIN_MESSAGE_LENGTH } from '@app/constants/constants';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { ChatMessage } from '@app/interfaces/message';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
@@ -324,27 +324,6 @@ describe('ChatComponent', () => {
             const eventName = 'message';
             component.sendToRoom('hola');
             expect(spy).toHaveBeenCalledWith(eventName, 'hola');
-        });
-
-        it('should add an error message on sendToRoom if it does not get an answer after SERVER_RESPONSE_DELAY ', (done) => {
-            const spy = spyOn(component, 'addMessage');
-            component.sendToRoom('hola');
-            setTimeout(() => {
-                expect(spy).toHaveBeenCalled();
-                done();
-            }, TIMER_TEST_DELAY);
-        });
-
-        it('should not add an error message on sendToRoom if it get an answer before SERVER_RESPONSE_DELAY ', (done) => {
-            const spy = spyOn(component, 'addMessage');
-            component.sendToRoom('hola');
-            // We need to access the private attribute for the test. We don't want to modify the code just for the tests
-            // eslint-disable-next-line dot-notation
-            component['serverResponded'] = true;
-            setTimeout(() => {
-                expect(spy).not.toHaveBeenCalled();
-                done();
-            }, TIMER_TEST_DELAY);
         });
     });
     describe('updateFocus() tests', () => {

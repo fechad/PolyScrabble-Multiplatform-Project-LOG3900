@@ -95,7 +95,6 @@ export class RackComponent extends ComponentCommunicationManager implements OnIn
     updateFocus(event: MouseEvent) {
         event.stopPropagation();
         if (this.room.roomInfo.isGameOver) {
-            this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
         this.focusHandlerService.currentFocus.next(CurrentFocus.RACK);
@@ -103,7 +102,6 @@ export class RackComponent extends ComponentCommunicationManager implements OnIn
 
     mouseHitDetect(event: MouseEvent) {
         if (this.room.roomInfo.isGameOver) {
-            this.focusHandlerService.currentFocus.next(CurrentFocus.CHAT);
             return;
         }
         this.rack.mouseHitDetect(event);

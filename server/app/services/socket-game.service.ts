@@ -20,33 +20,12 @@ import { CommandResult } from '@app/interfaces/command-result';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import * as io from 'socket.io';
-import { ChatMessageService } from './chat.message';
-import { DateService } from './date.service';
-import { DiscussionChannelService } from './discussion-channel.service';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
-import { GamesHistoryService } from './games.history.service';
-import { RoomService } from './room.service';
-import { ScoresService } from './score.service';
 import { SocketHandlerService } from './socket-handler.service';
+import { SocketManager } from './socket-manager.service';
 
 export class SocketGameService extends SocketHandlerService {
-    constructor(
-        public discussionChannelService: DiscussionChannelService,
-        public sio: io.Server,
-        scoreService: ScoresService,
-        playerGameHistoryService: PlayerGameHistoryService,
-        gamesHistoryService: GamesHistoryService,
-        public chatMessageService: ChatMessageService,
-        public roomService: RoomService,
-        public dateService: DateService,
-    ) {
-        super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
-    }
-
     async handleDisconnecting(socket: io.Socket): Promise<string | undefined> {
         const room = this.getSocketRoom(socket);
-        if (!room) return;
-
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(this.handleLeaveGame(socket, room));
@@ -66,6 +45,7 @@ export class SocketGameService extends SocketHandlerService {
             this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
             const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
+
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ObserversUpdated, room.observers);
             this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
             return roomObserver.username;
@@ -73,6 +53,12 @@ export class SocketGameService extends SocketHandlerService {
 
         const player = room.getPlayer(socket.id);
         if (!player) return;
+
+        if (room.elapsedTime <= 0) {
+            this.handleLeaveGameBeforeStart(socket, player, room.roomInfo.name);
+            return;
+        }
+
         this.handlePlayerLeft(socket, room, player);
         return player.pseudo;
     }
@@ -327,6 +313,19 @@ export class SocketGameService extends SocketHandlerService {
     toggleAngryBotAvatar(room: Room, botName: string) {
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ToggleAngryBotAvatar, botName);
     }
+
+    private handleLeaveGameBeforeStart(socket: io.Socket, player: Player, roomName: string) {
+        if (player.isCreator) {
+            SocketManager.instance.socketRoomService.handleLeaveRoomCreator(socket, roomName);
+            SocketManager.instance.socketChannelService.handleLeaveChannelCreator(socket, roomName, true);
+            return;
+        }
+
+        const playerRemovedPseudo = SocketManager.instance.socketRoomService.handleLeaveRoomOther(socket, roomName);
+        if (!playerRemovedPseudo) return;
+        SocketManager.instance.socketChannelService.handleLeaveChannel(socket, roomName, playerRemovedPseudo);
+    }
+
     private updateWantedMessages(room: Room) {
         // eslint-disable-next-line no-unused-vars, no-underscore-dangle
         for (const _wantedMessage of room.botCommunicationManager.wantedMessages) {

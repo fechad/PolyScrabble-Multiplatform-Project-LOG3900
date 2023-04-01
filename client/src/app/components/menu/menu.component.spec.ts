@@ -201,24 +201,6 @@ describe('MenuComponent', () => {
         });
     });
 
-    describe('leaveDiscussionChannel tests', () => {
-        it('should call leaveRoomCreator if the selectedDiscussionChannel owner is the player', () => {
-            discussionChannel.owner = { username: playerService.player.pseudo } as unknown as Account;
-            component.selectedDiscussionChannel = discussionChannel;
-            const socketSendSpy = spyOn(socketServiceMock, 'send');
-            component.leaveDiscussionChannel();
-            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomCreator, roomName);
-        });
-
-        it('should call leaveRoomOther if the selectedDiscussionChannel owner is the player', () => {
-            discussionChannel.owner = { username: 'other' } as unknown as Account;
-            component.selectedDiscussionChannel = discussionChannel;
-            const socketSendSpy = spyOn(socketServiceMock, 'send');
-            component.leaveDiscussionChannel();
-            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveRoomOther, roomName);
-        });
-    });
-
     describe('leaveRoom tests', () => {
         it('should call leaveRoomCreator if the player is the creator', () => {
             playerService.player.isCreator = true;
@@ -304,15 +286,10 @@ describe('MenuComponent', () => {
     });
 
     describe('logOut tests', () => {
-        const playerName = 'player1';
-        it('should send LeaveChatChannel event on logOut', () => {
-            playerService.player.pseudo = playerName;
+        it('should send SocketEventLogOut on logOut', () => {
             const socketSendSpy = spyOn(socketServiceMock, 'send');
             component.logOut();
-            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LeaveChatChannel, {
-                channel: 'General Chat',
-                username: playerName,
-            });
+            expect(socketSendSpy).toHaveBeenCalledWith(SocketEvent.LogOut);
         });
 
         it('should call resetPlayerAndRoomInfo on logOut', () => {

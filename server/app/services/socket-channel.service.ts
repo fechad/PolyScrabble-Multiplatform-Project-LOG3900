@@ -1,33 +1,15 @@
+import { DiscussionChannel } from '@app/classes/discussion-channel';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import * as io from 'socket.io';
-import { ChatMessageService } from './chat.message';
-import { DateService } from './date.service';
-import { DiscussionChannelService } from './discussion-channel.service';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
-import { GamesHistoryService } from './games.history.service';
-import { RoomService } from './room.service';
-import { ScoresService } from './score.service';
 import { SocketHandlerService } from './socket-handler.service';
 
 export class SocketChannelService extends SocketHandlerService {
-    constructor(
-        public discussionChannelService: DiscussionChannelService,
-        public sio: io.Server,
-        scoreService: ScoresService,
-        gamesHistoryService: GamesHistoryService,
-        playerGameHistoryService: PlayerGameHistoryService,
-        public chatMessageService: ChatMessageService,
-        public roomService: RoomService,
-        public dateService: DateService,
-    ) {
-        super(sio, scoreService, playerGameHistoryService, gamesHistoryService, chatMessageService, roomService, dateService);
-    }
-
-    handleCreateChannel(channelName: string, creator: Account, isRoomChannel?: boolean) {
+    handleCreateChannel(socket: io.Socket, channelName: string, creator: Account, isRoomChannel?: boolean) {
         if (!channelName) return;
         const addedChannel = this.discussionChannelService.addChannel(channelName, creator, isRoomChannel);
+        this.handleJoinChannel(socket, channelName, creator.username, isRoomChannel);
         if (!isRoomChannel) {
             this.sendToEveryone(SocketEvent.AvailableChannels, this.discussionChannelService.availableChannels);
             return;
@@ -36,9 +18,9 @@ export class SocketChannelService extends SocketHandlerService {
         this.sendToEveryoneInRoom(channelName, SocketEvent.RoomChannelUpdated, addedChannel);
     }
 
-    handleJoinChannel(socket: io.Socket, channelName: string, username: string, isRoomChannel: boolean) {
+    handleJoinChannel(socket: io.Socket, channelName: string, username: string, isRoomChannel?: boolean) {
         if (!channelName) return;
-        this.discussionChannelService.joinChannel(channelName, username);
+        this.discussionChannelService.joinChannel(socket.id, channelName, username);
         this.socketJoin(socket, channelName);
         if (isRoomChannel) this.socketEmit(socket, SocketEvent.RoomChannelUpdated, this.discussionChannelService.getDiscussionChannel(channelName));
 
@@ -54,9 +36,19 @@ export class SocketChannelService extends SocketHandlerService {
         else this.sendToEveryone(SocketEvent.AvailableChannels, availableChannels);
     }
 
-    handleChannelDisconnecting(socket: io.Socket, username: string) {
-        const userDiscussionChannels = this.discussionChannelService.getPlayerActiveDiscussionChannels(username);
-        for (const discussionChannel of userDiscussionChannels) {
+    handleChannelDisconnecting(socket: io.Socket, userDiscussionChannels?: DiscussionChannel[]) {
+        const discussionChannels = userDiscussionChannels || this.getSocketDiscussionChannels(socket);
+        if (discussionChannels.length <= 0) return;
+
+        let username = '';
+        for (const discussionChannel of discussionChannels) {
+            const wantedUser = discussionChannel.activeUsers.find((user) => user.socketId === socket.id);
+            if (!wantedUser) continue;
+            username = wantedUser.username;
+            break;
+        }
+
+        for (const discussionChannel of discussionChannels) {
             this.handleLeaveChannel(socket, discussionChannel.name, username);
         }
     }

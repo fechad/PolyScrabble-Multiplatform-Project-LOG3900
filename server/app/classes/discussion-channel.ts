@@ -4,7 +4,7 @@ import { Account } from '@app/interfaces/firestoreDB/account';
 export class DiscussionChannel {
     name: string;
     owner?: Account;
-    activeUsers: string[];
+    activeUsers: { username: string; socketId: string }[];
     messages: ChannelMessage[];
 
     private allTimeUsersMessage: Map<string, ChannelMessage[]>;
@@ -18,7 +18,7 @@ export class DiscussionChannel {
     }
 
     userExists(userName: string): boolean {
-        return this.activeUsers.includes(userName);
+        return this.activeUsers.find((user) => user.username === userName) ? true : false;
     }
 
     userSentMessage(userName: string): boolean {
@@ -49,12 +49,12 @@ export class DiscussionChannel {
         this.allTimeUsersMessage.delete(previousUserName);
     }
 
-    joinChannel(username: string): ChannelMessage | undefined {
+    joinChannel(socketId: string, username: string): ChannelMessage | undefined {
         if (this.userExists(username)) {
             return;
         }
 
-        this.activeUsers.push(username);
+        this.activeUsers.push({ socketId, username });
 
         const newMessage = {
             channelName: this.name,
@@ -66,15 +66,17 @@ export class DiscussionChannel {
         return newMessage;
     }
 
-    removeUser(username: string) {
-        const userToRemove = this.activeUsers.find((name: string) => username === name);
-        if (userToRemove) {
-            this.activeUsers.splice(this.activeUsers.indexOf(userToRemove), 1);
-        }
+    removeUser(username: string): string {
+        const userToRemove = this.activeUsers.find((user) => user.username === username);
+        if (!userToRemove) return '';
+        this.activeUsers.splice(this.activeUsers.indexOf(userToRemove), 1);
+        return userToRemove.username;
     }
 
     leaveChannel(username: string) {
-        this.removeUser(username);
+        const userRemoved = this.removeUser(username);
+        if (!userRemoved) return;
+
         const newMessage = {
             channelName: this.name,
             system: true,
