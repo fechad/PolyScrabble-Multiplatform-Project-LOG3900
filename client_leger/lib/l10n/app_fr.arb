@@ -382,5 +382,13 @@
     "createChatErrorThree": "Le nom ne peut commencer par 'room'",
     "@createChatErrorThree": {
         "description": "Erreur du popup"
-    }
+    },
+    "endGame": "Dommage...",
+    "@endGame": {
+            "description": "Titre du popup"
+        },
+    "endGameText": "Très belle partie! Malheureusement, la victoire revient à ",
+        "@endGameText": {
+                "description": "Erreur du popup"
+            }
 }

@@ -47,8 +47,9 @@ class _YourRackState extends State<YourRack> {
             });
 
     _detector = ShakeDetector.autoStart(onPhoneShake: () {
-        Timer(const Duration(seconds: 3), (() => setState(() {
-        })));
+      if (!linkService.getWantToExchange() && placementValidator.letters.isEmpty) {
+        Timer(const Duration(seconds: 3), (() => setState(() {})));
+      }
     });
   }
 

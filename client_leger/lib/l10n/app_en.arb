@@ -94,5 +94,7 @@
     "createChatBody": "Type the name for the chat",
     "createChatErrorOne": "This chat name already exists",
     "createChatErrorTwo": "Chat name cant be empty",
-    "createChatErrorThree": "Chat name cant start with 'room'"
+    "createChatErrorThree": "Chat name cant start with 'room'",
+    "endGame": "Too bad...",
+    "endGameText": "Good game! Unfortunately, the winner is "
 }

@@ -25,6 +25,7 @@ class _GameSidebarState extends State<GameSidebar> {
   @override
   void initState() {
     super.initState();
+    gameService.room.roomInfo.isGameOver = false;
     _configure();
     musicPlayer = AudioCache(fixedPlayer: audioPlayer);
     if (backgroundService.currentVP != '') {
@@ -51,6 +52,21 @@ class _GameSidebarState extends State<GameSidebar> {
           musicPlayer.loop("audios/Better.mp3"),
         });
 
+    socketService.on(
+        "gameIsOver",
+            (players) => {
+          setState(() {
+            gameService.room.roomInfo.isGameOver = true;
+            inGameService.findWinner(gameService.decodePlayers(players));
+            for (Player p in gameService.room.players){
+            if (p.clientAccountInfo!.username == inGameService.winnerPseudo){
+            musicPlayer.loop("audios/${p.clientAccountInfo!.userSettings
+                .victoryMusic}");
+            }
+            }
+          }),
+            });
+
     socketService.on("playerTurnChanged", (pseudo) => {
       setState(() {}),
     });
@@ -76,7 +92,7 @@ class _GameSidebarState extends State<GameSidebar> {
           child: Column(
             children: <Widget>[
               SizedBox(height: 25),
-              isObserver
+              isObserver || (gameService.room.roomInfo.isGameOver != null && gameService.room.roomInfo.isGameOver!)
                   ? Container()
                   :
               IconButton(
@@ -104,11 +120,13 @@ class _GameSidebarState extends State<GameSidebar> {
                 },
               ),
               SizedBox(height: 435),
-              isObserver
+              isObserver || (gameService.room.roomInfo.isGameOver != null && gameService.room.roomInfo.isGameOver!)
                   ? IconButton(
                       icon:
                           const Icon(Icons.logout, size: 50, color: Colors.red),
                       onPressed: () {
+                        audioPlayer.stop();
+                        backgroundService.setBackground('');
                         gameService.reinitializeRoom();
                         leaveGame();
                         linkService.setIsInAGame(false);

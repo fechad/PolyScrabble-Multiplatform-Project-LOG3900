@@ -150,7 +150,6 @@ class ObjectivesState extends State<Objectives> {
                                       ])))
                               : Container(
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                  //padding: EdgeInsets.fromLTRB(0, 0, 0, 12),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
@@ -160,7 +159,7 @@ class ObjectivesState extends State<Objectives> {
                                   ),
                                   child: Container(
                                       height: 40,
-                                      width: 270,
+                                      width: 200,
                                       color: themeManager.themeMode ==
                                               ThemeMode.light
                                           ? Colors.white

@@ -83,15 +83,17 @@ class InGameService extends MultiplayerGameService {
 
   findWinner(List<Player> winnerArray) {
     if (winnerArray.isEmpty) return;
-    if (winnerArray.length == 1) winnerPseudo = winnerArray[0].clientAccountInfo!.username;
-    for (Player p in gameService.room.players) {
-      if (p.clientAccountInfo!.username == winnerArray[0].clientAccountInfo!.username) {
-        Player firstWinner = p;
-      } else
-        return;
+    if (winnerArray.length == 1) {
+      winnerPseudo = winnerArray[0].clientAccountInfo!.username;
+      }
+      for (Player p in gameService.room.players) {
+        if (p.clientAccountInfo!.username == winnerArray[0].clientAccountInfo!.username) {
+          winnerPseudo = p.clientAccountInfo!.username;
+        } else
+          return;
+      }
     }
-    //TODO play firstWinner 's victory music from settings
-  }
+
 
   getPlayer(String pseudo) {
     for (player in gameService.room.players) {

@@ -113,9 +113,11 @@ class _WaitingPageState extends State<WaitingPage> {
         "roomCreated",
         (serverRoom) => {
               gameService.room = gameService.decodeModel(serverRoom),
-              setState(() => gameService.room.roomInfo.name),
-              linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
-            });
+          if(mounted) {
+            setState(() => gameService.room.roomInfo.name),
+            linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
+          }
+        });
 
     socketService.on(
         "playerFound",

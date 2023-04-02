@@ -20,19 +20,17 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   FocusNode _focusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  String difficultyValue = languageService.currentLanguage.languageCode == 'en'
-      ? 'Beginner'
-      : 'Débutant';
+  int difficultyValue = 0;
   String timeValue = '60';
   bool gameIsPublic = true;
+  List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
+      ? <String>['Beginner', 'Expert', 'Adaptable']
+      : <String>['Débutant', 'Expert', 'Adaptatif'];
   String gameTypeValue = languageService.currentLanguage.languageCode == 'en'
       ? 'Public'
       : 'Publique';
   final TextEditingController _gamePasswordController = TextEditingController();
   bool _passwordVisible = false;
-  List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
-      ? <String>['Beginner', 'Expert', 'Adaptable']
-      : <String>['Débutant', 'Expert', 'Adaptatif'];
   List<String> gameType = languageService.currentLanguage.languageCode == 'en'
       ? <String>['Private', 'Public', 'Public with password']
       : <String>['Privée', 'Publique', 'Publique avec mot de passe'];
@@ -42,7 +40,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
     super.initState();
     gameService.gameData.timerPerTurn = timeValue;
     gameService.gameData.isExpertLevel = false;
-    gameService.room.botsLevel = difficultyValue.toLowerCase();
+    gameService.room.botsLevel = 'débutant';
     gameService.room.roomInfo.isPublic = gameIsPublic;
   }
 
@@ -124,17 +122,16 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                             SizedBox(
                               width: 280,
                               child: DropdownButtonFormField<String>(
-                                value: difficultyValue,
+                                value: difficulty[difficultyValue],
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
                                     labelText: AppLocalizations.of(context)!
                                         .classicCreateMultiVpDifficultyLabel),
                                 onChanged: (String? value) {
-                                  // This is called when the user selects an item.
                                   setState(() {
-                                    difficultyValue = value!;
-                                    bool val = value == "Expert" ? true : false;
+                                    difficultyValue = difficulty.indexOf(value!);
+                                    bool val = value == "expert" ? true : false;
                                     gameService.gameData.isExpertLevel = val;
                                   });
                                 },
@@ -298,8 +295,18 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
 
   checkFormValues() {
     if (difficultyValue == null || timeValue == null) return 'Erreur';
+    String level = 'débutant';
+    if (difficultyValue == 0) {
+      level = 'débutant';
+    }
+    else if (difficultyValue == 1) {
+      level = 'expert';
+    }
+    else if (difficultyValue == 2) {
+      level = 'adaptatif';
+    }
     gameService.joinRoomMultiplayer(
-        gameIsPublic, _gamePasswordController.text, difficultyValue);
+        gameIsPublic, _gamePasswordController.text, level);
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return WaitingPage(
           roomName: gameService.room.roomInfo.name,

@@ -68,6 +68,7 @@ dependencies:
     assets_audio_player: ^3.0.6
     shake: ^2.2.0
     flutter_shake_animated: ^0.0.5
+    confetti: ^0.7.0
 
 
 dev_dependencies:

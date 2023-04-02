@@ -247,6 +247,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
       x = int.parse(position[1]) - 1;
     else
       x = int.parse(position.substring(1, 3)) - 1;
+
+    for(int i = 0; i < word.length; i++){
+      if (word[i].codeUnitAt(0) >= 65 && word[i].codeUnitAt(0) <= 90) {
+        word[i].replaceFirst(word[i], '*');
+        //TODO save the letters so on the board it doesnt show as *
+      }
+    }
+
     List<String> letters = word.toUpperCase().split('');
 
     addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
@@ -351,7 +359,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             GameHeaderWidget(
                 opponentsInfo: gameService.room.players,
                 resetLetters: resetLettersPlaced),
-            SizedBox(height: 10),
             Observer(
               builder: (context) => Container(
                 decoration: BoxDecoration(
@@ -363,7 +370,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                             fit: BoxFit.cover,
                           )
                         : null),
-                padding: EdgeInsets.fromLTRB(12, 10, 12, 12),
+                padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
                 child: Column(
                   children: [
                     ObjectiveBox(
