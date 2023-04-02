@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../classes/objective.dart';
+import '../services/objectives_service.dart';
+
 class OutObj extends StatefulWidget {
   @override
   _OutObjState createState() => _OutObjState();
@@ -10,7 +13,25 @@ class OutObj extends StatefulWidget {
 
 class _OutObjState extends State<OutObj> {
   @override
-  void initState() {}
+  List<Objective> objectives = [];
+  ObjectivesService objService = new ObjectivesService();
+  List<Widget> firstColumn = [];
+  List<Widget> secondColumn = [];
+  int center = 0;
+  void initState() {
+    super.initState();
+    objectives = objService.generateObjectives();
+    objectives.forEach((objective) {
+      if(objectives.indexOf(objective) % 2 == 0)
+      firstColumn.add(
+          Achievement(title: objective.name, current: objective.progression, total: objective.target)
+      );
+      else
+        secondColumn.add(
+            Achievement(title: objective.name, current: objective.progression, total: objective.target)
+        );
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,29 +56,11 @@ class _OutObjState extends State<OutObj> {
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Achievement(
-                            title: "Gagner 5 parties", current: 5, total: 5),
-                        Achievement(
-                            title: "Gagner 5 parties", current: 4, total: 5),
-                        Achievement(
-                            title: "Gagner 5 parties", current: 2, total: 5),
-                        Achievement(
-                            title: "Gagner 5 parties", current: 4, total: 5),
-                      ],
+                      children: firstColumn,
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Achievement(
-                            title: "Gagner 5 parties", current: 3, total: 5),
-                        Achievement(
-                            title: "Gagner 5 parties", current: 5, total: 5),
-                        Achievement(
-                            title: "Gagner 5 parties", current: 3, total: 5),
-                        Achievement(
-                            title: "Gagner 5 parties", current: 3, total: 5),
-                      ],
+                      children: secondColumn,
                     ),
                   ],
                 ),

@@ -66,6 +66,7 @@ class SoloGameService {
   joinRoom(String botName, String desiredLevel) {
     String pseudo = gameService.gameData.pseudo;
     setRoomInfo(pseudo, desiredLevel);
+
     setPlayerInfo(pseudo);
     onProcess = true;
     socketService.send("createSoloRoom",

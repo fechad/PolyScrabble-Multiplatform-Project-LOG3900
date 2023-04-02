@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 
 class Achievement extends StatefulWidget {
-  final String title;
-  final int current;
-  final int total;
+  final String? title;
+  final int? current;
+  final int? total;
   const Achievement(
       {required this.title, required this.current, required this.total});
   @override
@@ -38,11 +38,11 @@ class _AchievementState extends State<Achievement> {
           child: Column(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(right: 299),
                     alignment: Alignment.centerLeft,
-                    child: Text(widget.title,
+                    child: Text(widget.title ?? "",
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w700),
@@ -70,7 +70,7 @@ class _AchievementState extends State<Achievement> {
                     color: Color(0xCCCCCCCC)),
                 child: FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    widthFactor: widget.current / widget.total,
+                    widthFactor: widget.current! / (widget.total ?? 1),
                     heightFactor: 1,
                     child: Container(
                       decoration: BoxDecoration(
@@ -118,7 +118,7 @@ class _AchievementState extends State<Achievement> {
             children: [
               Container(
                 alignment: Alignment.centerLeft,
-                child: Text(widget.title,
+                child: Text(widget.title ?? "",
                     style: GoogleFonts.nunito(
                       textStyle:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
@@ -136,7 +136,7 @@ class _AchievementState extends State<Achievement> {
                     color: Color(0xCCCCCCCC)),
                 child: FractionallySizedBox(
                     alignment: Alignment.centerLeft,
-                    widthFactor: widget.current / widget.total,
+                    widthFactor: widget.current! / (widget.total ?? 1),
                     heightFactor: 1,
                     child: Container(
                       decoration: BoxDecoration(

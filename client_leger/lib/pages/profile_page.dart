@@ -1,11 +1,14 @@
+import 'package:client_leger/components/achievement.dart';
 import 'package:client_leger/components/highscores.dart';
 import 'package:client_leger/components/level.dart';
 import 'package:client_leger/components/outgame_objectives.dart';
 import 'package:client_leger/components/sidebar.dart';
 import 'package:client_leger/main.dart';
+import 'package:client_leger/services/objectives_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../classes/objective.dart';
 import '../components/drawer.dart';
 
 class UserPage extends StatefulWidget {
@@ -14,15 +17,19 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+
   @override
   void initState() {
     super.initState();
+
   }
 
   @override
   void dispose() {
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
