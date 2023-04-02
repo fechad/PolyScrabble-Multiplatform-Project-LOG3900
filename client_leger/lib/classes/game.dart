@@ -300,6 +300,13 @@ class GameHeader {
       };
 }
 
+class Letter {
+  String letter;
+  int x;
+  int y;
+  Letter({required this.letter, required this.x, required this.y});
+}
+
 class PlacementData {
   String word;
   String row;

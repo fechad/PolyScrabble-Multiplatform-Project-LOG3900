@@ -445,16 +445,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                         ? () {
                             linkService.cancelPlacements();
                             if (linkService.getMyTurn()) {
-                              final PlacementCommand command = PlacementCommand(
-                                  position:
-                                      '${placementValidator.getRowLetter(placementValidator.firstLetterPosition[1])}${placementValidator.firstLetterPosition[0] + 1}',
-                                  direction: placementValidator.isHorizontal
-                                      ? 'h'
-                                      : 'v',
-                                  letter: placementValidator.letters);
-
-                              gameCommandService
-                                  .constructPlacementCommand(command);
+                              placementValidator.executeCommand();
                               setState(() {
                                 linkService.resetRack();
                                 lettersPlaced = '';

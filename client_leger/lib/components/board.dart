@@ -283,8 +283,6 @@ class _BoardState extends State<Board> {
 
   void placeTile(
       int x, int y, String? value, String? letter, int? index, color) {
-    placementValidator.addLetter(letter!.toLowerCase(), x, y);
-    if (!placementValidator.validPlacement) return;
     if (letter == '*') {
       showDialog(
           barrierDismissible: false,
@@ -331,6 +329,8 @@ class _BoardState extends State<Board> {
                                       onPressed: () {
                                         letter =
                                             String.fromCharCode(index + 65);
+                                        placementValidator.addLetter(letter!, x, y);
+                                        if (!placementValidator.validPlacement) return;
                                         Container square = Container(
                                             decoration: BoxDecoration(
                                               color: color,
@@ -400,6 +400,8 @@ class _BoardState extends State<Board> {
             );
           });
     } else {
+      placementValidator.addLetter(letter!.toLowerCase(), x, y);
+      if (!placementValidator.validPlacement) return;
       Container square = Container(
           decoration: BoxDecoration(
             color: color,
