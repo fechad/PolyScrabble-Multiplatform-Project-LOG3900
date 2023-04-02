@@ -207,7 +207,7 @@ class Account {
   UserSettings userSettings;
   ProgressInfo progressInfo;
   String? highScores;
-  List<dynamic> badges;
+  List<Badge> badges;
   List<dynamic> bestGames;
   List<dynamic> gamesPlayed;
   int gamesWon;
@@ -229,11 +229,8 @@ class Account {
         userSettings = UserSettings.fromJson(json['userSettings']),
         progressInfo = ProgressInfo.fromJson(json['progressInfo']),
         highScores = json['highScores'].toString(),
-        badges = json['badges']
-            .toString()
-            .replaceAll('[', '')
-            .replaceAll(']', '')
-            .split(','),
+        badges = parseBadges(json['badges'].toString()),
+
         bestGames = json['bestGames']
             .toString()
             .replaceAll('[', '')
@@ -246,6 +243,12 @@ class Account {
             .split(','),
         gamesWon = json['gamesWon'];
 
+  static List<Badge> parseBadges(jsonString) {
+    List<dynamic> badgesJson = jsonDecode(jsonString);
+    List<Badge> badges = badgesJson.map((badge) => Badge.fromJson(badge)).toList();
+    return badges;
+  }
+
   Map toJson() => {
         'username': username,
         'email': email,
@@ -257,6 +260,25 @@ class Account {
         'gamesPlayed': jsonEncode(gamesPlayed),
         'gamesWon': gamesWon,
       };
+}
+
+class Badge {
+  String imageURL;
+  String description;
+  String id;
+  Badge({required this.imageURL, required this.description, required this.id});
+  factory Badge.fromJson(Map<String, dynamic> json) {
+    return Badge(
+      imageURL: json['imageURL'],
+      description: json['description'],
+      id: json['id'],
+    );
+  }
+  Map<String, dynamic> toJson() => {
+    'imageURL': imageURL,
+    'description': description,
+    'id': id,
+  };
 }
 
 class GameHeader {

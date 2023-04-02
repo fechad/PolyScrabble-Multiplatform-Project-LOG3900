@@ -116,7 +116,12 @@ class AuthService {
   Future<void> setUser(String email) async {
     bool darkMode = false;
     bool isEnglish = false;
+    late List<dynamic> badgesJson;
+    List<Badge> badges = [];
     await httpService.getUserInfo(email.toLowerCase()).then((value) => {
+      badgesJson = jsonDecode(value.body)['badges'],
+      badges = badgesJson.map((badgeJson) => Badge.fromJson(badgeJson)).toList(),
+      print(badges),
           currentUser = Account(
             username: '${jsonDecode(value.body)['username']}',
             email: '${jsonDecode(value.body)['email']}',
@@ -125,12 +130,7 @@ class AuthService {
             progressInfo:
                 ProgressInfo.fromJson(jsonDecode(value.body)['progressInfo']),
             highScores: null,
-            badges: jsonDecode(value.body)['badges']
-                .toString()
-                .replaceAll("\ ", '')
-                .replaceAll('[', '')
-                .replaceAll(']', '')
-                .split(','),
+            badges: badges,
             gamesWon: jsonDecode(value.body)['gamesWon'],
             gamesPlayed: jsonDecode(value.body)['gamesPlayed']
                 .toString()
@@ -210,7 +210,7 @@ class AuthService {
       averageGameDuration: "0 sec",
       playedGames: [
         PlayedGame(
-            won: false, score: 0, startDateTime: "00:00:00", duration: "0 min")
+            won: false, score: 0, startDateTime: "00:00:00", duration: "0min")
       ],
       logs: [Log(time: "00:00:00", message: "message")],
     );

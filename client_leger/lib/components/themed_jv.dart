@@ -38,8 +38,10 @@ class _ThemedJVState extends State<ThemedJV> {
   void startGame() {
     soloGameService.configureBaseSocketFeatures();
     gameService.gameData.timerPerTurn = widget.time.toString();
+
     gameService.room.roomInfo.timerPerTurn = widget.time.toString();
     soloGameService.joinRoom(widget.name, widget.name);
+
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return GamePageWidget();
     })));
