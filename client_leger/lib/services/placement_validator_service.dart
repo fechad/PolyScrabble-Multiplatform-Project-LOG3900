@@ -1,6 +1,7 @@
 import 'package:client_leger/classes/command.dart';
 import 'package:client_leger/pages/game_page.dart';
 
+import '../classes/game.dart';
 import 'game_command_service.dart';
 
 class PlacementValidatorService {
@@ -8,47 +9,44 @@ class PlacementValidatorService {
   bool isHorizontal = false;
   bool secondPlacement = false;
   List<int> firstLetterPosition = [];
-  List<Map<String, String>> tiles = [];
 
+  List<Letter> lettersDict = [];
   String letters = '';
 
   PlacementValidatorService(GameCommandService gameCommandService);
 
   addLetter(String letter, int x, int y) {
-    Map<String, String> superLetter = {letter: x.toString() + '-' + y.toString()};
-    tiles.add(superLetter);
     if (firstLetterPosition.isEmpty) {
       firstLetterPosition.addAll([x, y]);
       validPlacement = true;
-      letters += letter;
-      return;
+      lettersDict.add(new Letter(letter: letter, x: x, y: y));
     }
-    if (firstLetterPosition[0] == x &&
-        firstLetterPosition[1] != y &&
-        !secondPlacement) {
-      isHorizontal = false;
-      validPlacement = true;
-      secondPlacement = true;
-    } else if (firstLetterPosition[1] == y &&
-        firstLetterPosition[0] != x &&
-        !secondPlacement) {
-      isHorizontal = true;
-      validPlacement = true;
-      secondPlacement = true;
-    } else if (firstLetterPosition[0] == x &&
-        firstLetterPosition[1] != y &&
-        !isHorizontal) {
-      validPlacement = true;
-    } else if (firstLetterPosition[1] == y &&
-        firstLetterPosition[0] != x &&
-        isHorizontal) {
-      validPlacement = true;
-    } else {
-      validPlacement = false;
-      return;
+    else {
+      confirmValidity(letter, x, y);
+      if (!validPlacement) return;
+    };
+    letters += lettersDict.last.letter;
+    validPlacement = true;
+    return;
+  }
+
+  confirmValidity(String letter, int x, int y) {
+    lettersDict.add(new Letter(letter: letter, x: x, y: y));
+    isHorizontal =  lettersDict[0].y == lettersDict[1].y;
+
+    if(isHorizontal) {
+      lettersDict.forEach((letter) {
+        if(letter.y != firstLetterPosition[1]) validPlacement = false;
+      });
+      if (!validPlacement) lettersDict.removeLast();
     }
 
-    letters += letter;
+    else {
+      lettersDict.forEach((letter) {
+        if(letter.x != firstLetterPosition[0]) validPlacement = false;
+      });
+      if (!validPlacement) lettersDict.removeLast();
+    }
   }
 
   cancelPlacement() {
@@ -57,16 +55,27 @@ class PlacementValidatorService {
     secondPlacement = false;
     firstLetterPosition.clear();
     letters = '';
+    lettersDict.clear();
   }
 
-  executeCommand(position) {
+  executeCommand() {
+    print(validPlacement);
     if (validPlacement) {
+
+      if(isHorizontal)lettersDict.sort((a, b) => a.x.compareTo(b.x));
+      else lettersDict.sort((a, b) => a.y.compareTo(b.y));
+
+      letters = '';
+      lettersDict.forEach((elem) { letters += elem.letter;});
+      firstLetterPosition = [lettersDict[0].x, lettersDict[0].y];
+
       PlacementCommand command = PlacementCommand(
-          position: position,
+          position: '${placementValidator.getRowLetter(placementValidator.firstLetterPosition[1])}${placementValidator.firstLetterPosition[0] + 1}',
           direction: isHorizontal ? 'h' : 'v',
-          letter: letters);
+          letter: letters,);
       gameCommandService.constructPlacementCommand(command);
       letters = '';
+      lettersDict.clear();
       firstLetterPosition.clear();
     }
   }
