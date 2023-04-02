@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/components/tile.dart';
 import 'package:client_leger/pages/game_page.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import '../main.dart';
 import '../services/link_service.dart';
 
@@ -95,6 +98,7 @@ class _BoardState extends State<Board> {
   ];
 
   late PlacementData placementData;
+  ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
   @override
   void initState() {
@@ -105,6 +109,7 @@ class _BoardState extends State<Board> {
 
   @override
   void dispose() {
+    _controllerCenter.dispose();
     super.dispose();
   }
 
@@ -115,6 +120,41 @@ class _BoardState extends State<Board> {
               placementData = PlacementData.fromJson(data),
               serverPlacement(placementData)
             });
+
+    socketService.on(
+        "gameIsOver",
+            (data) => {
+            inGameService.findWinner(gameService.decodePlayers(data)),
+            if (inGameService.winnerPseudo == authenticator.getCurrentUser().username){
+              _controllerCenter.play(),
+            }
+            else {
+              showDialog(
+                  barrierDismissible: true,
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(AppLocalizations.of(context)!.endGame),
+                      content: Text(
+                          "${AppLocalizations.of(context)!.endGameText}${inGameService.winnerPseudo}"),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () => {
+                              Navigator.pop(context)
+                            },
+                            child: Text("OK"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                              themeManager.themeMode == ThemeMode.light
+                                  ? Color.fromARGB(255, 125, 175, 107)
+                                  : Color.fromARGB(255, 121, 101, 220),
+                              textStyle: const TextStyle(fontSize: 20),
+                            )),
+                      ],
+                    );
+                  })
+            }
+        });
 
     if (gameService.room.placementsData != null && isObserver) {
       for (var placement in gameService.room.placementsData!) {
@@ -603,12 +643,55 @@ class _BoardState extends State<Board> {
       );
   }
 
+  Path drawStar(Size size) {
+    // Method to convert degree to radians
+    double degToRad(double deg) => deg * (pi / 180.0);
+
+    const numberOfPoints = 5;
+    final halfWidth = size.width / 2;
+    final externalRadius = halfWidth;
+    final internalRadius = halfWidth / 2.5;
+    final degreesPerStep = degToRad(360 / numberOfPoints);
+    final halfDegreesPerStep = degreesPerStep / 2;
+    final path = Path();
+    final fullAngle = degToRad(360);
+    path.moveTo(size.width, halfWidth);
+
+    for (double step = 0; step < fullAngle; step += degreesPerStep) {
+      path.lineTo(halfWidth + externalRadius * cos(step),
+          halfWidth + externalRadius * sin(step));
+      path.lineTo(halfWidth + internalRadius * cos(step + halfDegreesPerStep),
+          halfWidth + internalRadius * sin(step + halfDegreesPerStep));
+    }
+    path.close();
+    return path;
+  }
   //(rows[0] as Row).children[0] to access a children
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
+      children: [
+      Column(
         key: GlobalKey<ScaffoldState>(),
         mainAxisAlignment: MainAxisAlignment.center,
-        children: linkService.getRows());
+        children: linkService.getRows()),
+        Align(
+            alignment: Alignment.center,
+            child: ConfettiWidget(
+              confettiController: _controllerCenter,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              colors: const [
+                Colors.green,
+                Colors.blue,
+                Colors.pink,
+                Colors.orange,
+                Colors.purple
+              ], // manually specify the colors to be used
+              strokeWidth: 1,
+              strokeColor: Colors.white,// define a custom shape/path.
+            )),
+    ]
+    );
   }
 }

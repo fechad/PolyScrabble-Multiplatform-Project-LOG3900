@@ -77,17 +77,21 @@ class _TileState extends State<Tile> {
     super.initState();
 
     _detector = ShakeDetector.autoStart(onPhoneShake: () {
-      setState(() {
-        shaking = true;
-        myLetters = '';
-        for (var tile in linkService.tempRack){
-          myLetters += tile.letter;
-        }
-        linkService.updateRack((myLetters.split('')..shuffle()).join().toLowerCase());
-        Timer(const Duration(seconds: 3), (() => setState(() {
-          shaking = false;
-        })));
-      }); // Call setState every time phone shakes.
+      if (!linkService.getWantToExchange() && placementValidator.letters.isEmpty) {
+        setState(() {
+          shaking = true;
+          myLetters = '';
+          for (var tile in linkService.tempRack) {
+            myLetters += tile.letter;
+          }
+          linkService.updateRack((myLetters.split('')
+            ..shuffle()).join().toLowerCase());
+          Timer(const Duration(seconds: 3), (() =>
+              setState(() {
+                shaking = false;
+              })));
+        });
+      }// Call setState every time phone shakes.
     });
   }
 

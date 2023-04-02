@@ -1,3 +1,4 @@
+import '../main.dart';
 import 'game.dart';
 
 const List<String> virtualPlayers = <String>[

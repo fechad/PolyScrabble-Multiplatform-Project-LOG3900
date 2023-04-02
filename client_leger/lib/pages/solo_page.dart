@@ -30,14 +30,11 @@ class _SoloPageState extends State<SoloPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String virtualValue = 'Simon';
-  String difficultyValue = languageService.currentLanguage.languageCode == 'en'
-      ? 'Beginner'
-      : 'Débutant';
+  int difficultyValue = 0;
   String timeValue = '60';
   List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
       ? <String>['Beginner', 'Expert', 'Adaptable']
       : <String>['Débutant', 'Expert', 'Adaptatif'];
-
   @override
   void initState() {
     super.initState();
@@ -153,7 +150,7 @@ class _SoloPageState extends State<SoloPage> {
                             SizedBox(
                               width: 280,
                               child: DropdownButtonFormField<String>(
-                                value: difficultyValue,
+                                value: difficulty[0],
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
@@ -162,7 +159,7 @@ class _SoloPageState extends State<SoloPage> {
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
-                                    difficultyValue = value!;
+                                    difficultyValue = difficulty.indexOf(value!);
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
@@ -255,7 +252,17 @@ class _SoloPageState extends State<SoloPage> {
   checkFormValues() {
     if (virtualValue == null || difficultyValue == null || timeValue == null)
       return 'Erreur';
-    soloGameService.joinRoom(virtualValue, difficultyValue.toLowerCase());
+    String level = 'débutant';
+    if (difficultyValue == 0) {
+      level = 'débutant';
+    }
+    else if (difficultyValue == 1) {
+      level = 'expert';
+    }
+    else if (difficultyValue == 2) {
+      level = 'adaptatif';
+    }
+    soloGameService.joinRoom(virtualValue, level);
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return GamePageWidget();
     })));

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../classes/game.dart';
 import '../main.dart';
@@ -31,6 +32,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   late int seconds;
   bool alreadyReceived = false;
   String currentPlayer = '';
+  List<Player> winningPlayers = [];
+  List<String> winner = [];
 
   @override
   void initState() {
@@ -58,15 +61,19 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     socketService.on(
         "gameIsOver",
             (players) => {
-          gameService.room.roomInfo.isGameOver = true,
-            currentPlayer = '',
-              _timer.cancel(),
-          linkService.setTurn(false),
-          inGameService.findWinner(gameService.decodePlayers(players)),
-          print('GAME OVER'),
-              //TODO : play music of winner from settings + stop VP music
-           //musicPlayer.loop()
-          //TODO find winner ? see players-infos.components.ts in heavy client
+          setState(() {
+            gameService.room.roomInfo.isGameOver = true;
+            currentPlayer = '';
+            _timer.cancel();
+            linkService.setTurn(false);
+            if (players.length > 1) {
+              //CHECK
+            }
+            else {
+              inGameService.findWinner(gameService.decodePlayers(players));
+              winner.add(inGameService.winnerPseudo);
+            }
+            })
         });
 
     socketService.on(
@@ -118,12 +125,12 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   Widget build(BuildContext context) {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.filter_none, size: 32),
         Text(' ${linkService.getLetterBankCount()}',
             style: const TextStyle(
               fontFamily: 'Nunito',
               fontSize: 24,
             )),
+        const Icon(Icons.filter_none, size: 32),
         const SizedBox(
           width: 85,
         ),
@@ -155,7 +162,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
       const SizedBox(height: 10),
       Container(
           width: MediaQuery.of(context).size.width * 0.25,
-          height: MediaQuery.of(context).size.height * 0.11,
+          height: MediaQuery.of(context).size.height * 0.15,
           child: Row(
             children: [
               Flexible(
@@ -168,6 +175,12 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                     return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          winner.contains(gameService.room.players[index].clientAccountInfo!.username) ?
+                          const FaIcon(FontAwesomeIcons.crown, color: Color.fromRGBO(246, 200, 16, 1), size: 20,)
+                          :
+                          Text('${gameService.room.players[index].clientAccountInfo!.username}',
+                              style: const TextStyle(fontSize: 16)),
+                          const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,

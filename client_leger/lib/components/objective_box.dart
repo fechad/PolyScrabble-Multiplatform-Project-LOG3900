@@ -43,14 +43,20 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
             child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(30),
+            preferredSize: Size.fromHeight(20),
             child: Container(
               width: 300,
               child: SafeArea(
                 child: Column(
                   children: [
                     Expanded(
-                      child: TabBar(
+                      child: !isObserver ?
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Objectives(),
+                      )
+                      :
+                TabBar(
                         labelColor: themeManager.themeMode == ThemeMode.light
                             ? Color.fromARGB(255, 125, 175, 107)
                             : Color.fromARGB(255, 121, 101, 220),
