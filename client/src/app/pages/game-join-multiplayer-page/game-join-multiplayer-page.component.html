@@ -60,7 +60,7 @@
                                     [disabled]="isInRoom || room.roomInfo.gameType !== room.roomInfo.gameType"
                                     [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
                                 >
-                                    {{ joinPopUpText }} <i class="fa fa-lock" aria-hidden="true"></i>
+                                    {{ joinPopUpText }} <i class="fa fa-key" aria-hidden="true"></i>
                                 </button>
                                 <button
                                     *ngIf="room.roomInfo.isPublic && room.roomInfo.password.length === 0"
