@@ -181,6 +181,7 @@ class _GameSidebarState extends State<GameSidebar> {
                                       onPressed: () {
                                         audioPlayer.stop();
                                         backgroundService.setBackground('');
+                                        authenticator.setStats(authenticator.currentUser.email);
                                         inGameService.confirmLeaving();
                                         linkService.setIsInAGame(false);
                                         linkService.getRows().clear();

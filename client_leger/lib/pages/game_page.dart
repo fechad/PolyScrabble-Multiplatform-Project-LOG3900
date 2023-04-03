@@ -187,10 +187,26 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     return POINTS[letter.toLowerCase().codeUnits[0] - A_ASCII];
   }
 
-  void addPlacement(int x, int y, String value, String letter, color) {
-    placementValidator.addLetter(letter.toLowerCase(), x, y);
-    if (!placementValidator.validPlacement) return;
+  void addPlacement(int x, int y, String value, String letter, color, List<String> myAsterisk) {
+    bool isAsterisk = false;
 
+    if (letter == '*') {
+      letter = myAsterisk[0];
+      placementValidator.addLetter(letter, x, y);
+      if (!placementValidator.validPlacement) return;
+      isAsterisk = true;
+      String confirmedLetters =
+      placementValidator.letters
+          .toLowerCase()
+          .replaceFirst('*', letter!);
+      placementValidator.letters =
+          confirmedLetters;
+    }
+
+    else {
+      placementValidator.addLetter(letter.toLowerCase(), x, y);
+      if (!placementValidator.validPlacement) return;
+    }
     Container newSquare = Container(
         decoration: BoxDecoration(
           color: Color(0xFFFFEBCE),
@@ -228,7 +244,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     setState(() {
       linkService.setRows(x, y, newSquare);
       linkService.removeLetter(
-          Tile(letter: letter.toLowerCase(), index: getIndex(letter)));
+          Tile(letter: isAsterisk ? letter : letter.toLowerCase(), index: isAsterisk ? getIndex('*') : getIndex(letter)));
     });
   }
 
@@ -239,6 +255,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   }
 
   void serverPlacement(String position, String word) {
+    List<String> myAsterisk = [];
     int y = (position[0].codeUnitAt(0) - 97);
     int x = -1;
 
@@ -248,17 +265,18 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     else
       x = int.parse(position.substring(1, 3)) - 1;
 
+
     for(int i = 0; i < word.length; i++){
       if (word[i].codeUnitAt(0) >= 65 && word[i].codeUnitAt(0) <= 90) {
-        word[i].replaceFirst(word[i], '*');
-        //TODO save the letters so on the board it doesnt show as *
+        myAsterisk.add(word[i]);
+        word = word.replaceAll(word[i], '*');
       }
     }
 
     List<String> letters = word.toUpperCase().split('');
-
-    addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
-        Color(0xFFFFEBCE));
+    addPlacement(x, y, letters[0] == '*' ? '0':getTileScore(letters[0]).toString(), letters[0],
+        Color(0xFFFFEBCE), myAsterisk);
+    if(letters[0] == '*') myAsterisk.removeAt(0);
     letters.removeAt(0);
 
     if (letters.isEmpty) return;
@@ -269,8 +287,9 @@ class _GamePageWidgetState extends State<GamePageWidget> {
         final square = (linkService.getRows()[y] as Row).children[x];
 
         if (square.runtimeType.toString().contains('DragTarget')) {
-          addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
-              Color(0xFFFFEBCE));
+          addPlacement(x, y, letters[0] == '*' ? '0':getTileScore(letters[0]).toString(), letters[0],
+              Color(0xFFFFEBCE), myAsterisk);
+          if(letters[0] == '*') myAsterisk.removeAt(0);
           letters.removeAt(0);
         }
         if (letters.isEmpty) break;
@@ -283,7 +302,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
 
         if (square.runtimeType.toString().contains('DragTarget')) {
           addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
-              Color(0xFFFFEBCE));
+              Color(0xFFFFEBCE), myAsterisk);
+          if(letters[0] == '*') myAsterisk.removeAt(0);
           letters.removeAt(0);
         }
         if (letters.isEmpty) break;
