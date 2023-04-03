@@ -17,7 +17,15 @@
     margin: 0 4px;
     background-color: #ccc;
     border-radius: 100%;
+    border: solid 2px rgba(0, 0, 0, 0.37);
 }
+
+.pic {
+    aspect-ratio: 1 / 1;
+    height: 100%;
+    border-radius: 100%;
+}
+
 .avatar {
     aspect-ratio: 1 / 1;
     height: 64px;
@@ -129,10 +137,12 @@ H3 {
 }
 .objectives-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
+    margin: 64px 0 0 12px;
+    width: 95%;
 }
 
-.objectives-header H2 {
+.objectives-header h1 {
     margin-left: 5%;
 }
 
@@ -155,7 +165,7 @@ H3 {
     column-gap: 16px;
     row-gap: 16px;
     overflow-y: auto;
-    height: 360px;
+    height: 25vw;
     scrollbar-gutter: stable;
 }
 .objective div {
