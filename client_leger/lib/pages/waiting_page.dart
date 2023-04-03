@@ -113,11 +113,13 @@ class _WaitingPageState extends State<WaitingPage> {
         "roomCreated",
         (serverRoom) => {
               gameService.room = gameService.decodeModel(serverRoom),
-          if(mounted) {
-            setState(() => gameService.room.roomInfo.name),
-            linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
-          }
-        });
+              if (mounted)
+                {
+                  setState(() => gameService.room.roomInfo.name),
+                  linkService
+                      .setCurrentOpenedChat(gameService.room.roomInfo.name),
+                }
+            });
 
     socketService.on(
         "playerFound",
@@ -178,6 +180,7 @@ class _WaitingPageState extends State<WaitingPage> {
         "playerAccepted",
         (serverRoom) => {
               gameService.room = gameService.decodeModel(serverRoom),
+              noPlayers = gameService.room.players.length,
               setState(() => {
                     canStart = true,
                     noPlayers++,
@@ -198,8 +201,11 @@ class _WaitingPageState extends State<WaitingPage> {
     socketService.on(
         "playerLeft",
         (player) => {
-              noPlayers = myRoom.players.length -= 1,
+              noPlayers = gameService.room.players.length -= 1,
               setState(() => {
+                    gameService.room.players.removeWhere((element) =>
+                        element.clientAccountInfo!.username ==
+                        player['clientAccountInfo']['username']),
                     if (noPlayers <= 1) canStart = false,
                   })
             });
