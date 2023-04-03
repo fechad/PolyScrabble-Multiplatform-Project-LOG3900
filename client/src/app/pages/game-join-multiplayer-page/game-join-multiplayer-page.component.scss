@@ -138,9 +138,16 @@ $gameMinWidth: 390px;
     justify-content: end;
 }
 
-.button.popup {
-    width: fit-content;
-    margin: 0px 10px;
+.button {
+    & > .fa {
+        font-size: 30px;
+        margin-left: 10px;
+    }
+
+    &.popup {
+        width: fit-content;
+        margin: 0px 10px;
+    }
 }
 
 .right-icons {
@@ -156,4 +163,12 @@ $gameMinWidth: 390px;
 
 .fa-id-card {
     font-size: 20px;
+}
+
+.information-message-container {
+    margin: 30px;
+
+    & mat-icon {
+        overflow: inherit;
+    }
 }
