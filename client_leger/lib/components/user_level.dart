@@ -1,29 +1,25 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../classes/objective.dart';
 import '../main.dart';
 
-class Level extends StatefulWidget {
+class UserLevel extends StatefulWidget {
   @override
-  _LevelState createState() => _LevelState();
+  _UserLevelState createState() => _UserLevelState();
 }
 
-class _LevelState extends State<Level> {
-  List<Objective> objectives = [];
+class _UserLevelState extends State<UserLevel> {
   List<Widget> badges = [];
   int currentExp = 0;
   int requiredExp = 0;
   double fraction = 0;
-  int level = 0;
   @override
   void initState() {
-    recalculateExp();
+    currentExp = 300;
+    requiredExp = 500;
     fraction = currentExp / requiredExp;
-    authenticator.currentUser.badges.forEach((badge) {
+    for (int i = 0; i < 7; i++) {
       badges.add(Container(
         width: 40,
         height: 40,
@@ -32,53 +28,8 @@ class _LevelState extends State<Level> {
           shape: BoxShape.circle,
           color: Colors.grey,
         ),
-        child: Image.asset(
-          'assets/images/avatars/' +
-              badge.id +
-              'Avatar.png', // replace with your image file name
-        ),
       ));
-    });
-  }
-
-  recalculateExp() {
-    int addedExp = 0;
-    objectives.forEach((objective) {
-      if (objective.progression == objective.target) addedExp += objective.exp!;
-    });
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    final totalXP = authenticator.currentUser.progressInfo.totalXP! + addedExp;
-    level = this.getLevel(totalXP);
-    currentExp = (totalXP - this.getTotalXpForLevel(level)).round() as int;
-    requiredExp = (this.getRemainingNeededXp(totalXP) +
-            totalXP -
-            this.getTotalXpForLevel(level))
-        .round();
-  }
-
-  getTotalXpForLevel(targetLevel) {
-    const base = 200;
-    const ratio = 1.05;
-    return ((base * (1 - pow(ratio, targetLevel))) / (1 - ratio)).floor();
-  }
-
-  getLevel(totalXP) {
-    int left = 1;
-    int right = 100;
-    while (left < right) {
-      final mid = ((left + right) / 2).floor();
-      final seriesSum = getTotalXpForLevel(mid);
-      if (seriesSum > totalXP)
-        right = mid;
-      else
-        left = mid + 1;
     }
-    return left - 1;
-  }
-
-  getRemainingNeededXp(totalXP) {
-    final currentLevel = getLevel(totalXP);
-    return this.getTotalXpForLevel(currentLevel + 1) - totalXP;
   }
 
   @override
@@ -125,7 +76,7 @@ class _LevelState extends State<Level> {
                               textStyle: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             )),
-                        Text(level.toString(),
+                        Text("1",
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   fontSize: 32, fontWeight: FontWeight.bold),

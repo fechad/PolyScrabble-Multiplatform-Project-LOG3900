@@ -78,6 +78,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<Account?> get playerInfoToShow {
+    _$valueAtom.reportRead();
+    return super.playerInfoToShow;
+  }
+
+  @override
   set value(ObservableList<Tile> rack) {
     _$valueAtom.reportWrite(rack, super.tempRack, () {
       super.tempRack = rack;
@@ -93,6 +99,17 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setCurrentBackground');
     try {
       return super.setCurrentBackground(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setPlayerToShow(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setPlayerToShow');
+    try {
+      return super.setPlayerToShow(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }

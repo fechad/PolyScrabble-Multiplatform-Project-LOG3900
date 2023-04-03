@@ -21,6 +21,11 @@ export class PlayerGameHistoryService {
         if (!player) throw new Error('Not an actual player');
         return this.bundlePlayerStats(player);
     }
+    async getUserStatsByUsername(userName: string): Promise<PlayerGameStats | null> {
+        const userNameEmailLink: { email: string } | null = await this.databaseService.getDocumentByID('usedUsernames', userName);
+        if (!userNameEmailLink) return null;
+        return this.getUserGameStats((userNameEmailLink as { email: string }).email);
+    }
     async updatePlayersGameHistories(game: Game) {
         const themedOpponent = this.hadThemedOpponent(game);
         const winnerUsernames = this.getWinners(game);

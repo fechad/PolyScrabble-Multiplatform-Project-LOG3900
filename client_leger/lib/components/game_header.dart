@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,7 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../classes/game.dart';
 import '../main.dart';
 import '../pages/game_page.dart';
-import '../pages/home_page.dart';
 import '../services/link_service.dart';
 import 'avatar.dart';
 
@@ -55,26 +53,24 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               _timer.cancel(),
               currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
-
             });
 
     socketService.on(
         "gameIsOver",
-            (players) => {
-          setState(() {
-            gameService.room.roomInfo.isGameOver = true;
-            currentPlayer = '';
-            _timer.cancel();
-            linkService.setTurn(false);
-            if (players.length > 1) {
-              //CHECK
-            }
-            else {
-              inGameService.findWinner(gameService.decodePlayers(players));
-              winner.add(inGameService.winnerPseudo);
-            }
-            })
-        });
+        (players) => {
+              setState(() {
+                gameService.room.roomInfo.isGameOver = true;
+                currentPlayer = '';
+                _timer.cancel();
+                linkService.setTurn(false);
+                if (players.length > 1) {
+                  //CHECK
+                } else {
+                  inGameService.findWinner(gameService.decodePlayers(players));
+                  winner.add(inGameService.winnerPseudo);
+                }
+              })
+            });
 
     socketService.on(
         "timeUpdated",
@@ -175,11 +171,16 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                     return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          winner.contains(gameService.room.players[index].clientAccountInfo!.username) ?
-                          const FaIcon(FontAwesomeIcons.crown, color: Color.fromRGBO(246, 200, 16, 1), size: 20,)
-                          :
-                          Text('${gameService.room.players[index].clientAccountInfo!.username}',
-                              style: const TextStyle(fontSize: 16)),
+                          winner.contains(gameService.room.players[index]
+                                  .clientAccountInfo!.username)
+                              ? const FaIcon(
+                                  FontAwesomeIcons.crown,
+                                  color: Color.fromRGBO(246, 200, 16, 1),
+                                  size: 20,
+                                )
+                              : Text(
+                                  '${gameService.room.players[index].clientAccountInfo!.username}',
+                                  style: const TextStyle(fontSize: 16)),
                           const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
@@ -196,8 +197,15 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                             : Color.fromARGB(255, 121, 101, 220)
                                         : Colors.transparent)),
                             child: Avatar(
-                                url: widget.opponentsInfo[index]
-                                    .clientAccountInfo!.userSettings.avatarUrl),
+                              url: widget.opponentsInfo[index]
+                                  .clientAccountInfo!.userSettings.avatarUrl,
+                              previewData: widget.opponentsInfo[index]
+                                      .clientAccountInfo!.userSettings.avatarUrl
+                                      .contains("robot-avatar")
+                                  ? null
+                                  : widget
+                                      .opponentsInfo[index].clientAccountInfo,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Text('${gameService.room.players[index].points}',

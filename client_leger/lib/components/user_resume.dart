@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:client_leger/components/highscores.dart';
+import 'package:client_leger/pages/game_page.dart';
+import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../config/colors.dart';
 import '../main.dart';
 import '../pages/profile_page.dart';
 
@@ -18,20 +22,95 @@ class _UserResumeState extends State<UserResume> {
   double fraction = 0;
   @override
   void initState() {
-    currentExp = 300;
-    requiredExp = 500;
-    fraction = currentExp / requiredExp;
-    for (int i = 0; i < 7; i++) {
-      badges.add(Container(
-        width: 36,
-        height: 36,
-        margin: EdgeInsets.only(left: 2.5, right: 2.5),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey,
-        ),
-      ));
+    /*
+      value="{{ progressInfo.totalXP - progressInfo.currentLevelXp }}"
+      max="{{ progressInfo.xpForNextLevel + progressInfo.totalXP - progressInfo.currentLevelXp }}"
+    */
+
+    if (linkService.getPlayerToShow().toString().isNotEmpty) {
+      recalculateXP();
+    } else {
+      currentExp = 500;
+      requiredExp = 500;
     }
+
+    fraction = currentExp / requiredExp;
+
+    if (linkService.getPlayerToShow().badges.isNotEmpty) {
+      for (int i = 0; i < linkService.getPlayerToShow().badges.length; i++) {
+        badges.add(CircleAvatar(
+            radius: 18,
+            backgroundImage: AssetImage(
+                'assets/images/avatars/${linkService.getPlayerToShow().badges[i].id}Avatar.png')));
+        badges.add(SizedBox(
+          width: 5,
+        ));
+        if (i == 5) break;
+      }
+    }
+  }
+
+  recalculateXP() {
+    currentExp = (linkService.getPlayerToShow().progressInfo.totalXP! -
+            this.getTotalXpForLevel(
+                linkService.getPlayerToShow().progressInfo.currentLevel))
+        .round() as int;
+    requiredExp = (this.getRemainingNeededXp(
+            linkService.getPlayerToShow().progressInfo.totalXP!) +
+        linkService.getPlayerToShow().progressInfo.totalXP! -
+        this.getTotalXpForLevel(
+            linkService.getPlayerToShow().progressInfo.currentLevel));
+  }
+
+  getTotalXpForLevel(targetLevel) {
+    const base = 200;
+    const ratio = 1.05;
+    return ((base * (1 - pow(ratio, targetLevel))) / (1 - ratio)).floor();
+  }
+
+  getLevel(totalXP) {
+    int left = 1;
+    int right = 100;
+    while (left < right) {
+      final mid = ((left + right) / 2).floor();
+      final seriesSum = getTotalXpForLevel(mid);
+      if (seriesSum > totalXP)
+        right = mid;
+      else
+        left = mid + 1;
+    }
+    return left - 1;
+  }
+
+  getRemainingNeededXp(totalXP) {
+    final currentLevel = getLevel(totalXP);
+    return this.getTotalXpForLevel(currentLevel + 1) - totalXP;
+  }
+
+  Widget rightImageFormat() {
+    if (linkService
+        .getPlayerToShow()
+        .userSettings
+        .avatarUrl
+        .startsWith("assets"))
+      return Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                      linkService.getPlayerToShow().userSettings.avatarUrl)
+                  as ImageProvider,
+              fit: BoxFit.fill,
+            ),
+            shape: BoxShape.circle),
+      );
+    else
+      return CircleAvatar(
+          radius: 60,
+          backgroundImage: NetworkImage(
+            linkService.getPlayerToShow().userSettings.avatarUrl,
+          ));
   }
 
   @override
@@ -39,16 +118,11 @@ class _UserResumeState extends State<UserResume> {
     return Drawer(
       child: Column(
         children: [
-          Container(
-            margin: EdgeInsets.all(16),
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey,
-            ),
-          ),
-          Text("Top G",
+          rightImageFormat(),
+          Text(
+              linkService.getPlayerToShow().toString().isNotEmpty
+                  ? linkService.getPlayerToShow().username
+                  : 'Top G',
               style: GoogleFonts.nunito(
                 textStyle: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               )),
@@ -56,18 +130,22 @@ class _UserResumeState extends State<UserResume> {
             height: 16,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: badges,
-          ),
-          SizedBox(
-            height: 16,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 10,
+              ),
+              Row(children: badges)
+            ],
           ),
           Container(
               margin: EdgeInsets.only(right: 8, left: 8, top: 32, bottom: 32),
               padding: EdgeInsets.only(left: 16, right: 8),
               height: 90,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: themeManager.themeMode == ThemeMode.light
+                    ? Colors.white
+                    : Color.fromARGB(255, 53, 53, 52),
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: Color(0x66000000),
@@ -88,12 +166,19 @@ class _UserResumeState extends State<UserResume> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("niv.",
+                      Text(AppLocalizations.of(context)!.userPageLevel,
                           style: GoogleFonts.nunito(
                             textStyle: TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.bold),
                           )),
-                      Text("1",
+                      Text(
+                          linkService.getPlayerToShow().toString().isNotEmpty
+                              ? linkService
+                                  .getPlayerToShow()
+                                  .progressInfo
+                                  .currentLevel
+                                  .toString()
+                              : "1",
                           style: GoogleFonts.nunito(
                             textStyle: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold),
@@ -109,7 +194,7 @@ class _UserResumeState extends State<UserResume> {
                       ),
                       Container(
                         margin: EdgeInsets.only(left: 16),
-                        width: 224,
+                        width: 200,
                         height: 10,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(1000),
@@ -121,7 +206,10 @@ class _UserResumeState extends State<UserResume> {
                             child: Container(
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(1000),
-                                  color: Palette.mainColor),
+                                  color:
+                                      themeManager.themeMode == ThemeMode.light
+                                          ? Color.fromARGB(255, 125, 175, 107)
+                                          : Color.fromARGB(255, 121, 101, 220)),
                             )),
                       ),
                       SizedBox(
@@ -146,31 +234,47 @@ class _UserResumeState extends State<UserResume> {
           ),
           HighScores(),
           SizedBox(
+            height: 32,
+          ),
+          // Container(
+          //   child: Text(
+          //       '${languageService.currentLanguage.languageCode == 'en' ? 'High Score : ' : 'Meilleur score: '} ${linkService.getPlayerToShow().highScores}',
+          //       style: GoogleFonts.nunito(
+          //         textStyle: TextStyle(
+          //             fontSize: 20,
+          //             fontWeight: FontWeight.bold),
+          //       )),
+          // ),
+          SizedBox(
             height: 96,
           ),
-          Container(
-              width: 250,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: ((context) {
-                    return UserPage();
-                  })));
-                },
-                style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(
-                        themeManager.themeMode == ThemeMode.light
-                            ? Color.fromARGB(255, 125, 175, 107)
-                            : Color.fromARGB(255, 121, 101, 220))),
-                child: Text("Profil complet",
-                    style: GoogleFonts.nunito(
-                      textStyle: TextStyle(
-                          color: Color(0xFFFFFFFF),
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
-                    )),
-              ))
+          if (gameService.room.toString().isEmpty)
+            Container(
+                width: 250,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: ((context) {
+                      return UserPage();
+                    })));
+                  },
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          themeManager.themeMode == ThemeMode.light
+                              ? Color.fromARGB(255, 125, 175, 107)
+                              : Color.fromARGB(255, 121, 101, 220))),
+                  child: Text(
+                      languageService.currentLanguage.languageCode == 'en'
+                          ? 'Complete profile'
+                          : "Profil complet",
+                      style: GoogleFonts.nunito(
+                        textStyle: TextStyle(
+                            color: Color(0xFFFFFFFF),
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      )),
+                ))
         ],
       ),
     );
