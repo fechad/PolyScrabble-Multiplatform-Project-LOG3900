@@ -1,4 +1,3 @@
-import '../main.dart';
 import 'game.dart';
 
 const List<String> virtualPlayers = <String>[
@@ -44,15 +43,15 @@ List<String> predefinedAvatarsUrl = [
   'custom'
 ];
 
-final Account SANTA = new Account(
+final Account SANTA = Account(
   username: "Santa",
   email: "santa@polyscrabble.ca",
-  userSettings: new UserSettings(
+  userSettings: UserSettings(
       avatarUrl: "assets/images/avatars/SantaAvatar.png",
       defaultLanguage: "fr",
       defaultTheme: "dark",
       victoryMusic: "macarena"),
-  progressInfo: new ProgressInfo(
+  progressInfo: ProgressInfo(
       totalXP: 999,
       currentLevel: 999,
       currentLevelXp: 999,
@@ -65,15 +64,15 @@ final Account SANTA = new Account(
   gamesWon: 999,
 );
 
-final Account MOZART = new Account(
+final Account MOZART = Account(
   username: "Mozart",
   email: "mozart@polyscrabble.ca",
-  userSettings: new UserSettings(
+  userSettings: UserSettings(
       avatarUrl: "assets/images/avatars/MozartAvatar.png",
       defaultLanguage: "fr",
       defaultTheme: "dark",
       victoryMusic: "macarena"),
-  progressInfo: new ProgressInfo(
+  progressInfo: ProgressInfo(
       totalXP: 999,
       currentLevel: 999,
       currentLevelXp: 999,
@@ -86,15 +85,15 @@ final Account MOZART = new Account(
   gamesWon: 999,
 );
 
-final Account SERENA = new Account(
+final Account SERENA = Account(
   username: "Serena",
   email: "serena@polyscrabble.ca",
-  userSettings: new UserSettings(
+  userSettings: UserSettings(
       avatarUrl: "assets/images/avatars/SerenaAvatar.png",
       defaultLanguage: "fr",
       defaultTheme: "dark",
       victoryMusic: "macarena"),
-  progressInfo: new ProgressInfo(
+  progressInfo: ProgressInfo(
       totalXP: 999,
       currentLevel: 999,
       currentLevelXp: 999,
@@ -107,15 +106,15 @@ final Account SERENA = new Account(
   gamesWon: 999,
 );
 
-final Account TRUMP = new Account(
+final Account TRUMP = Account(
   username: "Trump",
   email: "trump@polyscrabble.ca",
-  userSettings: new UserSettings(
+  userSettings: UserSettings(
       avatarUrl: "assets/images/avatars/TrumpAvatar.png",
       defaultLanguage: "fr",
       defaultTheme: "dark",
       victoryMusic: "macarena"),
-  progressInfo: new ProgressInfo(
+  progressInfo: ProgressInfo(
       totalXP: 999,
       currentLevel: 999,
       currentLevelXp: 999,
@@ -128,15 +127,15 @@ final Account TRUMP = new Account(
   gamesWon: 999,
 );
 
-final Account EINSTEIN = new Account(
+final Account EINSTEIN = Account(
   username: "Einstein",
   email: "einstein@polyscrabble.ca",
-  userSettings: new UserSettings(
+  userSettings: UserSettings(
       avatarUrl: "assets/images/avatars/EinsteinAvatar.png",
       defaultLanguage: "fr",
       defaultTheme: "dark",
       victoryMusic: "macarena"),
-  progressInfo: new ProgressInfo(
+  progressInfo: ProgressInfo(
       totalXP: 999,
       currentLevel: 999,
       currentLevelXp: 999,

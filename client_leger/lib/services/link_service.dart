@@ -79,7 +79,14 @@ abstract class _LinkService with Store {
   @observable
   Observable<String> currentBackground = Observable<String>('');
 
+  @observable
+  Observable<Account?> playerInfoToShow = Observable<Account?>(null);
+
   List<Placement> placementStack = [];
+
+  Account getPlayerToShow() {
+    return playerInfoToShow.value!;
+  }
 
   bool getIsInAGame() {
     return isInAGame.value;
@@ -105,7 +112,6 @@ abstract class _LinkService with Store {
     return rows;
   }
 
-
   bool getWantToExchange() {
     return wantToExchange.value;
   }
@@ -128,6 +134,11 @@ abstract class _LinkService with Store {
 
   String getCurrentBackground() {
     return currentBackground.value;
+  }
+
+  @action
+  setPlayerToShow(Account? player) {
+    playerInfoToShow.value = player;
   }
 
   @action
@@ -228,7 +239,6 @@ abstract class _LinkService with Store {
   setButtonPressed(bool newValue) {
     joinButtonPressed.value = newValue;
   }
-
 
   @action
   removeLetter(Tile tile) {

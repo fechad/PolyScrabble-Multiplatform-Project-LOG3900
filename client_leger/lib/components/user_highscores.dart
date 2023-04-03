@@ -1,12 +1,15 @@
+import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HighScores extends StatefulWidget {
+import '../pages/game_page.dart';
+
+class UserHighScores extends StatefulWidget {
   @override
-  _HighScoresState createState() => _HighScoresState();
+  _UserHighScoresState createState() => _UserHighScoresState();
 }
 
-class _HighScoresState extends State<HighScores> {
+class _UserHighScoresState extends State<UserHighScores> {
   @override
   void initState() {}
   @override
@@ -23,7 +26,10 @@ class _HighScoresState extends State<HighScores> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Classique",
+                    Text(
+                        languageService.currentLanguage.languageCode == 'en'
+                            ? 'Classic'
+                            : "Classique",
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
@@ -44,7 +50,10 @@ class _HighScoresState extends State<HighScores> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Mania",
+                    Text(
+                        languageService.currentLanguage.languageCode == 'en'
+                            ? 'Themed'
+                            : "Thème",
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
@@ -61,7 +70,8 @@ class _HighScoresState extends State<HighScores> {
         SizedBox(
           height: 8,
         ),
-        Text("18 victoire(s)",
+        Text(
+            '${linkService.getPlayerToShow().gamesWon} ${languageService.currentLanguage.languageCode == 'en' ? 'victories' : 'victoire(s)'}',
             style: GoogleFonts.nunito(
               textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             )),

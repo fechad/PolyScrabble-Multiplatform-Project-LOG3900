@@ -24,5 +24,15 @@ export class PlayerStatsController {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }
         });
+        this.router.get('/byUserName/:username', async (req: Request, res: Response) => {
+            try {
+                this.gamesHistoryService
+                    .getUserStatsByUsername(req.params.username)
+                    .then((data: PlayerGameStats) => res.json(data))
+                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
+            } catch (error) {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+            }
+        });
     }
 }

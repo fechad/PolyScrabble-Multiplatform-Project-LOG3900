@@ -33,6 +33,11 @@ class HttpService {
     return http.get(Uri.parse('$url/api/stats/$email'));
   }
 
+  //  http://localhost:3000/api/stats/byUsername/Tounsi
+  Future<http.Response> getOtherUserProfileInfo(String username) {
+    return http.get(Uri.parse('$url/api/stats/byUsername/$username'));
+  }
+
   Future<http.Response> createUser(String email, String username) {
     return http.post(Uri.parse('$url/api/$authUrl/user'),
         body: {"email": email, "username": username});
@@ -89,5 +94,4 @@ class HttpService {
         },
         body: jsonEncode(body));
   }
-
 }
