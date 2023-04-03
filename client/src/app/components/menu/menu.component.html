@@ -4,7 +4,7 @@
             <i *ngIf="!isWaitMultiPage" class="fa fa-user" (click)="navigateUserPage()"></i>
             <i *ngIf="!isWaitMultiPage" class="fa fa-home" (click)="navigateHome()"></i>
             <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
-            <button *ngIf="isNewChatWindowOpen" (click)="closeChatNewWindow()" class="icon">Close chat</button>
+            <i *ngIf="isNewChatWindowOpen" class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
             <i *ngIf="!isWaitMultiPage" class="fa fa-trophy" (click)="navigateUserPage()"></i>
             <i *ngIf="!isWaitMultiPage" class="fa fa-eye" (click)="navigateObserveRoomPage()"></i>
         </div>
@@ -32,7 +32,7 @@
                 <span (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in"> chat_bubble </span>
             </div>
             <div [class.icon-background]="backgroundService.currentVP" *ngIf="isNewChatWindowOpen">
-                <button (click)="closeChatNewWindow()" class="icon game-page">Close chat</button>
+                <i class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
             </div>
             <div class="leave-flag" [class.icon-background]="backgroundService.currentVP" *ngIf="!isGameOver && !isObserver">
                 <i class="fa fa-flag" (click)="confirmLeaving()"></i>

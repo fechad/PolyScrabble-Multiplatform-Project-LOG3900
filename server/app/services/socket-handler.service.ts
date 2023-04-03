@@ -2,7 +2,7 @@ import { DiscussionChannel } from '@app/classes/discussion-channel';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { DEFAULT_ROOM_NAME, SYSTEM_NAME } from '@app/constants/constants';
+import { CHAT_WINDOW_SOCKET_CHANNEL, DEFAULT_ROOM_NAME, SYSTEM_NAME } from '@app/constants/constants';
 import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { CommandController } from '@app/controllers/command.controller';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
@@ -13,10 +13,10 @@ import { PlayerData } from '@app/interfaces/player-data';
 import { Score } from '@app/interfaces/score';
 import { firestore } from 'firebase-admin';
 import * as io from 'socket.io';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
 import { DiscussionChannelService } from './discussion-channel.service';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -85,7 +85,13 @@ export class SocketHandlerService {
         this.socketEmit(socket, SocketEvent.Reconnected, { room, player });
     }
 
+    handleChatWindowSocket(socket: io.Socket) {
+        this.socketJoin(socket, CHAT_WINDOW_SOCKET_CHANNEL);
+    }
+
     getSocketRoom(socket: io.Socket): Room | undefined {
+        if (socket.rooms.has(CHAT_WINDOW_SOCKET_CHANNEL)) return;
+
         for (const room of socket.rooms) {
             if (room.toLowerCase().startsWith(DEFAULT_ROOM_NAME.toLowerCase())) {
                 const wantedRoom = this.roomService.getRoom(room);
@@ -99,6 +105,8 @@ export class SocketHandlerService {
     }
 
     getSocketDiscussionChannels(socket: io.Socket): DiscussionChannel[] {
+        if (socket.rooms.has(CHAT_WINDOW_SOCKET_CHANNEL)) return [];
+
         const socketDiscussionChannels = [];
         for (const channelName of socket.rooms) {
             const wantedDiscussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);

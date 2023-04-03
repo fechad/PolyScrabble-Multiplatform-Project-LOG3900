@@ -34,7 +34,7 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
     }
 
     get isInChannel() {
-        return this.discussionChannel.activeUsers.find((user) => user.username === this.playerService.player.pseudo);
+        return this.discussionChannel.activeUsers.find((user) => user.username === this.playerService.player.clientAccountInfo.username);
     }
 
     get canQuitChannel(): boolean {
@@ -49,11 +49,11 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
     }
 
     get isOwner(): boolean {
-        return this.discussionChannel.owner?.username === this.playerService.player.pseudo;
+        return this.discussionChannel.owner?.username === this.playerService.player.clientAccountInfo.username;
     }
 
     isSender(chatMessage: ChannelMessage): boolean {
-        return this.playerService.player.pseudo === chatMessage.sender;
+        return this.playerService.player.clientAccountInfo.username === chatMessage.sender;
     }
 
     ngAfterContentChecked(): void {
@@ -103,13 +103,16 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
         if (this.isOwner) {
             this.socketService.send(SocketEvent.CreatorLeaveChatChannel, {
                 channel: this.discussionChannel.name,
-                username: this.playerService.player.pseudo,
+                username: this.playerService.player.clientAccountInfo.username,
             });
-            this.removeUser(this.playerService.player.pseudo);
+            this.removeUser(this.playerService.player.clientAccountInfo.username);
             return;
         }
-        this.socketService.send(SocketEvent.LeaveChatChannel, { channel: this.discussionChannel.name, username: this.playerService.player.pseudo });
-        this.removeUser(this.playerService.player.pseudo);
+        this.socketService.send(SocketEvent.LeaveChatChannel, {
+            channel: this.discussionChannel.name,
+            username: this.playerService.player.clientAccountInfo.username,
+        });
+        this.removeUser(this.playerService.player.clientAccountInfo.username);
     }
 
     sendChannelMessage() {
@@ -117,15 +120,21 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
         if (this.inputValue.length <= 0 || this.inputValue.replace(/\s/g, '').length <= 0) return;
 
         if (!this.isInChannel) {
-            this.socketService.send(SocketEvent.JoinChatChannel, { name: this.discussionChannel.name, user: this.playerService.player.pseudo });
-            this.discussionChannel.activeUsers.push({ socketId: this.socketService.socket.id, username: this.playerService.player.pseudo });
+            this.socketService.send(SocketEvent.JoinChatChannel, {
+                name: this.discussionChannel.name,
+                user: this.playerService.player.clientAccountInfo.username,
+            });
+            this.discussionChannel.activeUsers.push({
+                socketId: this.socketService.socket.id,
+                username: this.playerService.player.clientAccountInfo.username,
+            });
         }
 
         const channelMessage = {
             system: false,
             message: this.inputValue,
             time: new Date().toLocaleTimeString([], { hour12: false }), // TODO: put it server side
-            sender: this.playerService.player.pseudo,
+            sender: this.playerService.player.clientAccountInfo.username,
             avatarUrl: this.playerService.player.clientAccountInfo.userSettings.avatarUrl,
             channelName: this.discussionChannel.name,
         };

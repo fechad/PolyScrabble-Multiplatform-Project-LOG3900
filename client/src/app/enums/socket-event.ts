@@ -49,6 +49,7 @@ export enum SocketEvent {
     PlayerTurnChanged = 'playerTurnChanged',
     Reconnected = 'reconnected',
     GameIsOver = 'gameIsOver',
+    ChatWindowSocket = 'chatWindowSocket',
 
     // SOCKET-GAME-SERVICE
     GoalsUpdated = 'goalsUpdated',

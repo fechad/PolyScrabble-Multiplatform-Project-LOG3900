@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */ // we want to mock the method argument of socketMock
 export class SocketMock {
     id = '';
-    rooms = [];
+    rooms = new Map();
     leave(roomName: string) {
         return;
     }
