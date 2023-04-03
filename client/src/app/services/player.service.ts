@@ -51,6 +51,15 @@ export class PlayerService {
         };
     }
 
+    setPlayerServiceInfo(playerService: PlayerService) {
+        this.player = playerService.player;
+        this.stats = playerService.stats;
+        this.room = playerService.room;
+        this.isNewChatWindowOpen = playerService.isNewChatWindowOpen;
+        this.discussionChannelService = playerService.discussionChannelService;
+        this.isObserver = playerService.isObserver;
+    }
+
     resetPlayerAndRoomInfo() {
         this.player.resetPlayerInfo();
         this.room.reinitialize();

@@ -4,6 +4,9 @@ import { HttpService } from '@app/services/http.service';
 import { PlayerService } from '@app/services/player.service';
 import { ThemeService } from '@app/services/theme.service';
 
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { TranslateModule } from '@ngx-translate/core';
 import { ChatWindowPageComponent } from './chat-window-page.component';
 
 describe('ChatWindowComponent', () => {
@@ -16,9 +19,9 @@ describe('ChatWindowComponent', () => {
         playerService = new PlayerService();
         themeService = new ThemeService(playerService);
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [HttpClientModule, TranslateModule.forRoot()],
             declarations: [ChatWindowPageComponent],
-            providers: [{ provide: HttpService }, { provide: ThemeService, useValue: themeService }],
+            providers: [{ provide: HttpService }, { provide: ThemeService, useValue: themeService }, { provide: MatDialog, useClass: MatDialogMock }],
         }).compileComponents();
 
         fixture = TestBed.createComponent(ChatWindowPageComponent);

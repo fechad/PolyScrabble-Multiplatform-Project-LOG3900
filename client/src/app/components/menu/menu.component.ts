@@ -75,7 +75,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     get isGameCreator(): boolean {
-        return this.room.roomInfo.creatorName === this.playerService.player.pseudo;
+        return this.room.roomInfo.creatorName === this.playerService.player.clientAccountInfo.username;
     }
 
     get isGameOver(): boolean {
@@ -207,7 +207,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     acceptPlayer(playerName: string) {
         // TODO: remove currentPlayerPseudo. It is obsolete
-        this.room.currentPlayerPseudo = this.playerService.player.pseudo;
+        this.room.currentPlayerPseudo = this.playerService.player.clientAccountInfo.username;
         this.socketService.send(SocketEvent.AcceptPlayer, { roomName: this.room.roomInfo.name, playerName });
     }
 
@@ -245,7 +245,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     async logOut() {
         this.audioService.stopSound();
-        lastValueFrom(this.httpService.logoutUser(this.playerService.player.pseudo));
+        lastValueFrom(this.httpService.logoutUser(this.playerService.player.clientAccountInfo.username));
 
         this.socketService.send(SocketEvent.LogOut);
 
@@ -283,9 +283,15 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     openChatOnNewWindow() {
         try {
             this.ipcRenderer.send('open-chat', {
-                room: this.room,
-                player: this.playerService.player,
-                account: this.playerService.account,
+                playerService: {
+                    player: this.playerService.player,
+                    stats: this.playerService.stats,
+                    room: this.playerService.room,
+                    isNewChatWindowOpen: this.playerService.isNewChatWindowOpen,
+                    discussionChannelService: this.playerService.discussionChannelService,
+                    isObserver: this.playerService.isObserver,
+                },
+                channelToShow: this.selectedDiscussionChannel.name,
             });
             this.closeChat();
             this.playerService.isNewChatWindowOpen = true;
@@ -297,6 +303,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     closeChatNewWindow() {
         try {
             this.ipcRenderer.send('close-chat');
+            this.updateAvailableChannels();
             this.playerService.isNewChatWindowOpen = false;
         } catch (error) {
             return;
@@ -345,7 +352,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
         this.socketService.on(SocketEvent.RoomCreatorLeft, () => {
             this.socketService.send(SocketEvent.LeaveRoomOther, this.room.roomInfo.name);
-            this.router.navigate(['/main']);
+            if (this.isWaitMultiPage) this.router.navigate(['/main']);
         });
 
         this.socketService.on(SocketEvent.ObserversUpdated, (roomObservers: RoomObserver[]) => {
@@ -357,13 +364,16 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         });
 
         if (this.playerService.discussionChannelService.availableChannels.length === 0) {
-            this.socketService.send(SocketEvent.JoinChatChannel, { name: 'General Chat', user: this.playerService.player.pseudo });
+            this.socketService.send(SocketEvent.JoinChatChannel, {
+                name: 'General Chat',
+                user: this.playerService.player.clientAccountInfo.username,
+            });
         }
 
         if (this.isGamePage && this.playerService.discussionChannelService.roomChannel.name === '') {
             this.socketService.send(SocketEvent.JoinChatChannel, {
                 name: this.room.roomInfo.name,
-                user: this.playerService.player.pseudo,
+                user: this.playerService.player.clientAccountInfo.username,
                 isRoomChannel: true,
             });
         } else if (!this.isGamePage && this.playerService.discussionChannelService.roomChannel.name !== '') {

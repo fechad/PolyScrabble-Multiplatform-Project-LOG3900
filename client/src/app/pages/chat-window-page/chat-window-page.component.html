@@ -1,15 +1,17 @@
 <div #menuContainer class="menu-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
     <div class="menu" [class.game-page]="isGamePage">
         <div *ngIf="!isGamePage" class="icons-container">
-            <button (click)="showChatMenu()" class="icon">Chat</button>
+            <div (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
         </div>
 
         <!-- CHAT MENU -->
         <div #chatMenu class="chat-menu">
             <div class="chats-list-container">
                 <div class="search-chat-container">
-                    <input class="simple-input" type="text" />
-                    <button class="search-button">Search</button>
+                    <div class="simple-input-container">
+                        <input class="simple-input" type="text" />
+                        <span class="material-symbols-outlined search-button"> search </span>
+                    </div>
                 </div>
                 <div></div>
                 <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
@@ -22,7 +24,7 @@
                     <hr *ngIf="i === 0" size="1" width="97%" />
                 </div>
             </div>
-            <button (click)="createChatChannel('custom channel')" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
+            <button (click)="createChatChannel()" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
         </div>
     </div>
     <div #chatContainer class="chat-container" [class.game-page]="isGamePage">

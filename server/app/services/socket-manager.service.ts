@@ -7,10 +7,10 @@ import { ObserveRoomForm } from '@app/interfaces/observe-room-form';
 import { PlayerData } from '@app/interfaces/player-data';
 import * as http from 'http';
 import * as io from 'socket.io';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
 import { DiscussionChannelService } from './discussion-channel.service';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -116,6 +116,10 @@ export class SocketManager {
 
             socket.on(SocketEvent.Reconnect, (playerData: PlayerData) => {
                 this.socketHandlerService.handleReconnect(socket, playerData);
+            });
+
+            socket.on(SocketEvent.ChatWindowSocket, () => {
+                this.socketHandlerService.handleChatWindowSocket(socket);
             });
 
             socket.on(SocketEvent.GetPlayerInfos, (roomName: string) => {

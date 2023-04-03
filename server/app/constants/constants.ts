@@ -29,3 +29,5 @@ export const ELABORATE_MAP_SUCCESS_MESSAGE = 'word score map built';
 export const DEFAULT_DICTIONARY_PATH = new DictionariesFileService().convertTitleIntoFilename(DEFAULT_DICTIONARY_TITLE);
 
 export const BANK_ALPHABET_SORTED = 'abcdefghijklmnopqrstuvwxyz*';
+
+export const CHAT_WINDOW_SOCKET_CHANNEL = 'Room Chat Window';

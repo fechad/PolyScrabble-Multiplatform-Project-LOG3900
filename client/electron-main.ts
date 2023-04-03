@@ -41,9 +41,8 @@ app.on('ready', createWindow);
 // https://stackoverflow.com/questions/32780726/how-to-access-dom-elements-in-electron
 // https://stackoverflow.com/questions/55742327/how-to-send-data-between-electron-ipcmain-and-angular-ipcrenderer-asynchronously
 ipcMain.on('open-chat', (event, data) => {
-    store.set('player', data.player);
-    store.set('room', data.room);
-    store.set('account', data.account);
+    store.set('playerService', data.playerService);
+    store.set('channelToShow', data.channelToShow);
     chatWindow = new BrowserWindow({
         parent: gameWindow,
         height: 600,
@@ -75,4 +74,8 @@ ipcMain.on('close-chat', (event) => {
 
 ipcMain.handle('getStoreValue', (event, key) => {
     return store.get(key);
+});
+
+ipcMain.on('log', (event, data) => {
+    console.info(data);
 });

@@ -4,6 +4,7 @@ $chatMenuLeft: 325px;
 $avatarMinDimension: 60px;
 $avatarMaxDimension: 80px;
 $gameChatExtremityContainerWidth: 220px;
+$iconDimension: 48px;
 
 app-general-chat {
     width: 100%;
@@ -32,7 +33,7 @@ app-general-chat {
 
 .material-symbols-outlined.discussion-out {
     font-variation-settings: 'FILL' 1, 'wght' 900, 'GRAD' 0, 'opsz' 48;
-    font-size: 48px;
+    font-size: $iconDimension;
 }
 
 .fa.fa-flag,
@@ -41,6 +42,10 @@ app-general-chat {
     font-size: 43px;
     cursor: pointer;
     margin-bottom: 100px;
+}
+
+.fa.fa-window-restore {
+    font-size: 38px;
 }
 
 .menu-container.show {
@@ -111,7 +116,12 @@ app-general-chat {
 
 .fa {
     color: white;
-    font-size: 48px;
+    font-size: $iconDimension;
+    min-width: $iconDimension;
+    max-width: $iconDimension;
+    min-height: $iconDimension;
+    max-height: $iconDimension;
+    margin: 10px;
     cursor: pointer;
 }
 
