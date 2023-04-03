@@ -8,6 +8,7 @@
         "BUTTON-SOLO-GAME": "Play a solo game",
         "BUTTON-MULTI-GAME": "Create a multiplayer game",
         "BUTTON-JOIN": "Join a multiplayer game",
+        "BUTTON-OBSERVE": "Observe a multiplayer game",
         "CREATE-SOLO": {
             "TITLE": "Solo Game",
             "VP-NAME": "Virtual player name",
@@ -44,7 +45,8 @@
                 "BODY": "Enter the password to join the lobby.",
                 "INPUT": "Type the password"
             }
-        }
+        },
+        "NO-GAME-AVAILABLE": "No game available. You can create one by going in the main page or wait for someone to do it."
     },
     "THEME": {
         "TITLE": "Themed virtual players"

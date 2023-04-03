@@ -96,13 +96,23 @@ app-general-chat {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding-left: 10px;
+
     &.game-page {
         padding: 100% 0;
         height: 100vh;
         padding: 0%;
         box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.25);
         background-color: var(--section-background);
+    }
+
+    & > .fa {
+        font-size: $iconDimension;
+        min-width: $iconDimension;
+        max-width: $iconDimension;
+        min-height: $iconDimension;
+        max-height: $iconDimension;
+        text-align: center;
+        margin: 10px;
     }
 }
 
@@ -116,12 +126,6 @@ app-general-chat {
 
 .fa {
     color: white;
-    font-size: $iconDimension;
-    min-width: $iconDimension;
-    max-width: $iconDimension;
-    min-height: $iconDimension;
-    max-height: $iconDimension;
-    margin: 10px;
     cursor: pointer;
 }
 

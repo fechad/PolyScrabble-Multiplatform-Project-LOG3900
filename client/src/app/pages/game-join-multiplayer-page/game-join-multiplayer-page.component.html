@@ -8,7 +8,12 @@
                 <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
 
-            <div class="column-grid" [class.two]="roomsToShow.length > 1">
+            <div *ngIf="roomsToShow.length <= 0" class="information-message-container">
+                <mat-icon>error_outline</mat-icon>
+                <div class="information-message" [translate]="'CLASSIC.NO-GAME-AVAILABLE'"></div>
+            </div>
+
+            <div *ngIf="roomsToShow.length > 0" class="column-grid" [class.two]="roomsToShow.length > 1">
                 <div *ngFor="let room of roomsToShow">
                     <div class="game">
                         <div class="game-info-container">
@@ -55,7 +60,7 @@
                                     [disabled]="isInRoom || room.roomInfo.gameType !== room.roomInfo.gameType"
                                     [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
                                 >
-                                    {{ joinPopUpText }} [KEY]
+                                    {{ joinPopUpText }} <i class="fa fa-lock" aria-hidden="true"></i>
                                 </button>
                                 <button
                                     *ngIf="room.roomInfo.isPublic && room.roomInfo.password.length === 0"
@@ -73,7 +78,7 @@
                                     [disabled]="isInRoom || room.roomInfo.gameType !== room.roomInfo.gameType"
                                     [translate]="'CLASSIC.JOIN-MULTI.BUTTON-LOCK'"
                                 >
-                                    {{ joinPopUpText }} [ASK]
+                                    {{ joinPopUpText }} <i class="fa fa-user-secret" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>

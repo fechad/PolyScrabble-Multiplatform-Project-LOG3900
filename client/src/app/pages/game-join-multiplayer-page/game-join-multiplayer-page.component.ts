@@ -47,8 +47,15 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         return DEFAULT_BOT_IMAGE;
     }
 
+    get isFrenchLanguage(): boolean {
+        return this.playerService.account.userSettings.defaultLanguage === 'french';
+    }
+
     get joinPopUpText(): string {
-        return this.playerService.isObserver ? 'Observer' : 'Joindre';
+        if (this.isFrenchLanguage) {
+            return this.playerService.isObserver ? 'Observer' : 'Joindre';
+        }
+        return this.playerService.isObserver ? 'Observe' : 'Join';
     }
 
     get roomsToShow(): Room[] {

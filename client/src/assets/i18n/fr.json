@@ -8,6 +8,7 @@
         "BUTTON-SOLO-GAME": "Jouer une partie en solo",
         "BUTTON-MULTI-GAME": "Créer une partie multijoueur",
         "BUTTON-JOIN": "Joindre une partie multijoueur",
+        "BUTTON-OBSERVE": "Observer une partie multijoueur",
         "CREATE-SOLO": {
             "TITLE": "Partie Solo",
             "VP-NAME": "Nom du joueur virtuel",
@@ -44,7 +45,8 @@
                 "BODY": "Veuillez entrer le mot de passe pour joindre la partie.",
                 "INPUT": "Entrez le mot de passe"
             }
-        }
+        },
+        "NO-GAME-AVAILABLE": "Pas de partie disponible. Vous pouvez en créer une en allant à la page principale ou attendre que quelqu'un le fasse."
     },
     "THEME": {
         "TITLE": "Joueurs virtuel à thème"

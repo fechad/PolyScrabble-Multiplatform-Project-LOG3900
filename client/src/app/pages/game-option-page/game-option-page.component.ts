@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { PlayerService } from '@app/services/player.service';
@@ -11,7 +12,12 @@ import { ThemeService } from '@app/services/theme.service';
     styleUrls: ['./game-option-page.component.scss', '../dark-theme.scss'],
 })
 export class GameOptionPageComponent extends PageCommunicationManager implements OnInit {
-    constructor(public playerService: PlayerService, protected socketService: SocketClientService, protected themeService: ThemeService) {
+    constructor(
+        public playerService: PlayerService,
+        protected socketService: SocketClientService,
+        protected themeService: ThemeService,
+        private router: Router,
+    ) {
         super(socketService);
     }
 
@@ -25,6 +31,12 @@ export class GameOptionPageComponent extends PageCommunicationManager implements
 
     setSoloMode(value: boolean) {
         this.playerService.room.roomInfo.isSolo = value;
+    }
+
+    navigateObserveRoomPage() {
+        this.playerService.isObserver = true;
+        this.room.roomInfo.gameType = 'classic';
+        this.router.navigate(['game/multiplayer/join']);
     }
 
     protected configureBaseSocketFeatures(): void {
