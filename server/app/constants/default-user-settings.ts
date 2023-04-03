@@ -3,6 +3,7 @@ import { UserSettings } from '@app/interfaces/firestoreDB/user-settings';
 
 export const DEFAULT_BOT_IMAGE = 'https://cdn0.iconfinder.com/data/icons/robot-avatar/512/Robot_Avatars_25-256.png';
 export const DEFAULT_USER_IMAGE = 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png';
+export const BASE_AVATAR_PATH = 'assets/images/avatars/';
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
     defaultLanguage: 'french',
