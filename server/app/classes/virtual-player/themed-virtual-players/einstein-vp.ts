@@ -10,6 +10,7 @@ import { einsteinEnglishQuotes, einsteinFrenchQuotes } from '@app/enums/themed-q
 const ANGRY_THRESHOLD = 1;
 export class EinsteinVirtualPlayer extends VirtualPlayer {
     angryTurnsLeft: number;
+    needToToggle: boolean;
     constructor(
         pseudo: string,
         isCreator: boolean,
@@ -19,9 +20,14 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
     ) {
         super(pseudo, isCreator, boardManipulator, letterBank, SCALES.default, language);
         this.angryTurnsLeft = 0;
+        this.needToToggle = true;
         this.setQuotes(einsteinFrenchQuotes, einsteinEnglishQuotes);
     }
     override setScoreInterval(gap: number): void {
+        if (this.needToToggle) {
+            this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
+            this.needToToggle = false;
+        }
         if (this.angryTurnsLeft < 1 && gap < ANGRY_THRESHOLD) return this.intervalComputer.setScoreInterval(gap);
 
         if (this.angryTurnsLeft < 1) {
@@ -38,7 +44,7 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         this.intervalComputer.scale = SCALES.default;
         this.intervalComputer.isRuthless = false;
         // TODO: Maybe implement a proper cooldown quote
-        this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
+        this.needToToggle = true;
     }
 
     protected override placeLettersAction(): string {
