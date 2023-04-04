@@ -33,7 +33,7 @@ export class AuthController {
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
                     .then((data) => {
-                        this.databaseService.log('userActions', req.params.email, { message: 'login/connection', time: firestore.Timestamp.now() });
+                        this.databaseService.log('userActions', req.params.email, { message: 'login/connexion', time: firestore.Timestamp.now() });
                         res.json(data);
                     })
                     // eslint-disable-next-line no-console

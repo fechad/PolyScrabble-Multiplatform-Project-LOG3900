@@ -83,6 +83,7 @@ export class PlayerGameHistoryService {
         }));
         let logs = await this.databaseService.getUserLogs(player.email);
         logs.forEach((entry) => {
+            entry.message = player.userSettings.defaultLanguage === 'english' ? entry.message.split('/')[0] : entry.message.split('/')[1];
             if (!(entry.time instanceof firestore.Timestamp)) return;
             entry.time = (entry.time as firestore.Timestamp).toDate().toLocaleString('fr-CA', { timeZone: 'America/Montreal' });
         });
