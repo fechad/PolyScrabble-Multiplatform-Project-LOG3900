@@ -1,3 +1,4 @@
+import { DEFAULT_STATS } from '@app/constants/default-user-settings';
 import { PlayerGameStats } from '@app/interfaces/client-exchange/player-stats';
 import { PlayerGameHistoryService } from '@app/services/GameEndServices/player-game-history.service';
 import { Request, Response, Router } from 'express';
@@ -18,20 +19,26 @@ export class PlayerStatsController {
             try {
                 this.gamesHistoryService
                     .getUserGameStats(req.params.email)
-                    .then((data: PlayerGameStats) => res.json(data))
-                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
+                    .then((data: PlayerGameStats) => {
+                        if (!data) res.status(StatusCodes.NOT_FOUND).send('Not an actual player');
+                        res.json(data);
+                    })
+                    .catch(() => res.json(DEFAULT_STATS));
             } catch (error) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+                res.json(DEFAULT_STATS);
             }
         });
         this.router.get('/byUserName/:username', async (req: Request, res: Response) => {
             try {
                 this.gamesHistoryService
                     .getUserStatsByUsername(req.params.username)
-                    .then((data: PlayerGameStats) => res.json(data))
-                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
+                    .then((data: PlayerGameStats) => {
+                        if (!data) res.status(StatusCodes.NOT_FOUND).send('Not an actual player');
+                        res.json(data);
+                    })
+                    .catch(() => res.json(DEFAULT_STATS));
             } catch (error) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+                res.json(DEFAULT_STATS);
             }
         });
     }

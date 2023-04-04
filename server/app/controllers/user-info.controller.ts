@@ -1,3 +1,4 @@
+import { DefaultAccountGenerator } from '@app/classes/default-acount-generator';
 import { ClientAccountInfo } from '@app/interfaces/client-exchange/client-account-info';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { ProgressInfo } from '@app/interfaces/progress-info';
@@ -65,11 +66,12 @@ export class UserInfoController {
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
                     .then((data: Account) => {
+                        if (!data) res.status(StatusCodes.NOT_FOUND).send('No such account');
                         res.json(this.buildClientAccountInfo(data));
                     })
-                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
+                    .catch(() => res.json(DefaultAccountGenerator.generate()));
             } catch (error) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+                res.json(DefaultAccountGenerator.generate());
             }
         });
         this.router.get('/opponentInfo/:username', async (req: Request, res: Response) => {
@@ -77,12 +79,12 @@ export class UserInfoController {
                 await this.databaseService
                     .getDocumentByField('accounts', 'username', req.params.username)
                     .then((data: Account) => {
-                        if (!data) res.json(StatusCodes.NOT_FOUND).send('No user had that username...');
+                        if (!data) res.status(StatusCodes.NOT_FOUND).send('No such account');
                         res.json(this.buildClientAccountInfo(data));
                     })
-                    .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
+                    .catch(() => res.json(DefaultAccountGenerator.generate()));
             } catch (error) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+                res.json(DefaultAccountGenerator.generate());
             }
         });
         this.router.patch('/:email', async (req: Request, res: Response) => {
