@@ -26,12 +26,10 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final usernameController = TextEditingController();
-  late List<String> usernames;
 
   @override
   void initState() {
     super.initState();
-    httpService.getUsernames().then((names) => {usernames = names});
   }
 
   @override
@@ -126,12 +124,6 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a valid email address';
-                                    }
-                                    if (usernames
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains('"${value.toLowerCase()}"')) {
-                                      return 'The username $value is already taken';
                                     }
                                   },
                                 ),
