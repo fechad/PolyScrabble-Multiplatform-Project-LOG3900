@@ -54,7 +54,7 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         // TODO: add cheat logic
         this.hasCheated = true;
         this.isAngry = true;
-        this.angryTurnsLeft = 2;
+        this.angryTurnsLeft = 3;
         this.sendMessage(this.quotes.specialAnnouncement, TOGGLE_PREFIX + this.pseudo);
     }
     private refreshAngry() {

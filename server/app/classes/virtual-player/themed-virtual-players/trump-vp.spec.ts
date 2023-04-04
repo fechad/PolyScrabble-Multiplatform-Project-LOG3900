@@ -17,7 +17,7 @@ describe('Tump virtual player', () => {
     });
     it('should become angry if gap is equal or over the threshold', () => {
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);
-        expect(trumpVp.angryTurnsLeft).to.equal(1);
+        expect(trumpVp.angryTurnsLeft).to.equal(2);
     });
     it('should not exit angry mode if gap is below threshold but it still has angry turns left', () => {
         trumpVp.angryTurnsLeft = 2;
@@ -27,6 +27,7 @@ describe('Tump virtual player', () => {
     });
     it('should refresh angry turns if the gap is still above the threshold', () => {
         trumpVp.angryTurnsLeft = 2;
+        trumpVp.hasCheated = true;
 
         trumpVp.setScoreInterval(ANGRY_THRESHOLD);
         expect(trumpVp.angryTurnsLeft).to.equal(1);
