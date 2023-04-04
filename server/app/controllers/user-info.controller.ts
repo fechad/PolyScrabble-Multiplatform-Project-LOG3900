@@ -31,18 +31,31 @@ export class UserInfoController {
         };
         return clientAccountInfo;
     }
-    private reduceClientAccountInfo(clientAccount: ClientAccountInfo): Account {
-        // console.log('reducing: ', clientAccount);
+    private async reduceClientAccountInfo(clientAccount: ClientAccountInfo): Promise<Account> {
+        const promiseResult = await this.databaseService.getDocumentByID<Account>('accounts', clientAccount.email);
+        if (!promiseResult)
+            return {
+                username: clientAccount.username,
+                email: clientAccount.email,
+                badges: clientAccount.badges,
+                gamesWon: clientAccount.gamesWon,
+                userSettings: clientAccount.userSettings,
+                totalXP: clientAccount.progressInfo.totalXP,
+                highScores: clientAccount.highScores,
+                gamesPlayed: clientAccount.gamesPlayed,
+                bestGames: clientAccount.bestGames,
+            };
+        const currentData = promiseResult as Account;
         return {
             username: clientAccount.username,
-            email: clientAccount.email,
-            badges: clientAccount.badges,
-            gamesWon: clientAccount.gamesWon,
+            email: currentData.email,
+            badges: currentData.badges,
+            gamesWon: currentData.gamesWon,
             userSettings: clientAccount.userSettings,
-            totalXP: clientAccount.progressInfo.totalXP,
-            highScores: clientAccount.highScores,
-            gamesPlayed: clientAccount.gamesPlayed,
-            bestGames: clientAccount.bestGames,
+            totalXP: currentData.totalXP,
+            highScores: currentData.highScores,
+            gamesPlayed: currentData.gamesPlayed,
+            bestGames: currentData.bestGames,
         };
     }
     private configureRouter() {
@@ -74,7 +87,7 @@ export class UserInfoController {
         });
         this.router.patch('/:email', async (req: Request, res: Response) => {
             try {
-                await this.databaseService.updateDocumentByID('accounts', req.params.email, this.reduceClientAccountInfo(req.body));
+                await this.databaseService.updateDocumentByID('accounts', req.params.email, await this.reduceClientAccountInfo(req.body));
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
                     .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)))
