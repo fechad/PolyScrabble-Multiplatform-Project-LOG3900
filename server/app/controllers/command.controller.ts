@@ -8,6 +8,7 @@ import { SkipTurnCommand } from '@app/classes/command/skip-turn-command';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
+import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { COMMAND_STARTING_SYMBOL, INVALID_ERROR_MESSAGE } from '@app/constants/command-constants';
 import { CommandVerbs } from '@app/enums/command-verbs';
 import { CommandResult } from '@app/interfaces/command-result';
@@ -73,6 +74,10 @@ export class CommandController {
         }
         return text[0] === COMMAND_STARTING_SYMBOL;
     }
+
+    private isSenderRealPlayer() {
+        return this.sender instanceof VirtualPlayer === false;
+    }
     private splitCommand(text: string): string[] {
         const splittedCommand = text.split(' ');
         splittedCommand[0] = splittedCommand[0].substring(1);
@@ -112,12 +117,11 @@ export class CommandController {
     private changeTurn() {
         if (this.chatMessageService.isError) return;
         this.room.changePlayerTurn();
-        this.room.resetTurnPassedCounter();
+        if (this.isSenderRealPlayer() || this.room.isSolo) this.room.resetTurnPassedCounter();
     }
-
     private keepTurn() {
         if (this.chatMessageService.isError) return;
         this.room.elapsedTime = 1;
-        this.room.resetTurnPassedCounter();
+        if (this.isSenderRealPlayer() || this.room.isSolo) this.room.resetTurnPassedCounter();
     }
 }

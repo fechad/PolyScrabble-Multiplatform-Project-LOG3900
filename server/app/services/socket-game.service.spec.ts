@@ -298,8 +298,8 @@ describe('socketGameService service tests', () => {
             roomMock.elapsedTime = 1;
             roomMock.roomInfo.isSolo = false;
             roomMock.players = [firstPlayer, secondPlayer];
-
             sinon.stub(socketGameService.roomService, 'isRoomNameValid').returns(true);
+            sinon.stub(roomMock, 'updateScoreOnPassFinish').callsFake(() => {});
             getRoomStub = sinon.stub(socketGameService.roomService, 'getRoom').returns(roomMock);
             sinon.stub(roomMock, 'changePlayerTurn').callsFake(() => {
                 return;
