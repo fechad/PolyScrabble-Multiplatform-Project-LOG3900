@@ -132,7 +132,9 @@ export class GameManager {
 
     canChangePlayerTurn(players: Player[]): boolean {
         if (players.length <= 1) return false;
-        if (this.turnPassedCounter >= COUNT_PLAYER_TURN) {
+        const realPlayers = players.filter((player: Player) => player instanceof VirtualPlayer === false);
+        const maxPassAllowed = realPlayers.length * COUNT_PLAYER_TURN;
+        if (this.turnPassedCounter >= maxPassAllowed) {
             return false;
         }
         return true;

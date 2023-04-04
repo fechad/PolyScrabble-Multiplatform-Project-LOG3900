@@ -93,6 +93,10 @@ export class Room {
         return this.gameManager.managerLetterBank;
     }
 
+    get realPlayers(): Player[] {
+        return this.players.filter((player: Player) => player instanceof VirtualPlayer === false);
+    }
+
     reset() {
         this.players = [];
         this.observers = [];
@@ -264,7 +268,7 @@ export class Room {
     }
 
     hasARealPlayerLeft(): boolean {
-        return this.players.find((player: Player) => player instanceof VirtualPlayer === false) ? true : false;
+        return this.realPlayers.length >= 1 ? true : false;
     }
 
     computeAverageHumanPoints(): number {

@@ -2,21 +2,21 @@
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We want to spy private methods and use private attributes for some tests
 /* eslint-disable dot-notation */ // we want to access private attribute to test them
-import { CommandVerbs } from '@app/enums/command-verbs';
 import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
 import { COUNT_PLAYER_TURN, SYSTEM_NAME } from '@app/constants/constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
 import { DiscussionChannelService } from './discussion-channel.service';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -199,24 +199,24 @@ describe('Socket-game-stub service tests', () => {
             assert(executeCommandStub.called, 'did not call socketGameService.commandController.executeCommand');
             done();
         });
-        it('should call handleGamePassFinish if the room.turnPassedCounter >= COUNT_PLAYER_TURN', (done) => {
+        it('should call handleGamePassFinish if the room.turnPassedCounter >= roomMock.realPlayers.length * COUNT_PLAYER_TURN', (done) => {
             const spy = sinon.stub(socketGameService as any, 'handleGamePassFinish');
-            roomMock['gameManager'].turnPassedCounter = COUNT_PLAYER_TURN;
+            roomMock['gameManager'].turnPassedCounter = roomMock.realPlayers.length * COUNT_PLAYER_TURN;
             socketGameService.handleMessage(socketMock, 'theMessage');
-            assert(spy.called, 'did not call handleGamePass finish when turnPassedCounter >= COUNT_PLAYER_TURN');
+            assert(spy.called, 'did not call handleGamePass finish when turnPassedCounter >= roomMock.realPlayers.length * 2');
             done();
         });
-        it('should emit playerTurnChanged if the room.turnPassedCounter < COUNT_PLAYER_TURN', (done) => {
-            roomMock['gameManager'].turnPassedCounter = COUNT_PLAYER_TURN - 1;
+        it('should emit playerTurnChanged if the room.turnPassedCounter < realPlayers * COUNT_PLAYER_TURN', (done) => {
+            roomMock['gameManager'].turnPassedCounter = roomMock.realPlayers.length * COUNT_PLAYER_TURN - 1;
             const spy = sinon.spy(roomMock, 'isGameFinished');
             socketGameService.handleMessage(socketMock, 'theMessage');
-            assert(sendEveryoneStub.called, 'Did not emit playerTurn changed when turnPassedCounter < COUNT_PLAYER_TURN');
+            assert(sendEveryoneStub.called, 'Did not emit playerTurn changed when turnPassedCounter < realPlayers * 2');
             assert(getCurrentPlayerStub.called, 'Did not call room.getCurrentPlayerTurn to verify that the player exist');
             assert(spy.called, 'Did not call room.isGameFinished to verify if it should finish the game');
             done();
         });
         it('should handle handleGamePlaceFinish if the room.isGameFinished is true', (done) => {
-            roomMock['gameManager'].turnPassedCounter = COUNT_PLAYER_TURN - 1;
+            roomMock['gameManager'].turnPassedCounter = roomMock.realPlayers.length * COUNT_PLAYER_TURN - 1;
             const spy1 = sinon.stub(roomMock, 'isGameFinished').callsFake(() => {
                 return true;
             });
@@ -228,7 +228,7 @@ describe('Socket-game-stub service tests', () => {
         });
 
         it('should not call handleGamePlaceFinish when room.isGameFinished is true if the chatMessageService isError is true', (done) => {
-            roomMock['gameManager'].turnPassedCounter = COUNT_PLAYER_TURN - 1;
+            roomMock['gameManager'].turnPassedCounter = roomMock.realPlayers.length * COUNT_PLAYER_TURN - 1;
             sinon.stub(socketGameService.chatMessageService, 'restore');
             socketGameService.chatMessageService.isError = true;
             const spy1 = sinon.stub(roomMock, 'isGameFinished').callsFake(() => {

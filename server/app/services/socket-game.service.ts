@@ -80,6 +80,10 @@ export class SocketGameService extends SocketHandlerService {
         this.swapPlayerForBot(room, player);
         this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
+
+        if (room.realPlayers.length <= 1) {
+            this.handleGamePassFinish(room);
+        }
     }
 
     handleGetPlayerInfo(socket: io.Socket, roomName: string) {
@@ -217,7 +221,7 @@ export class SocketGameService extends SocketHandlerService {
             this.chatMessageService.restore();
             return;
         }
-        if (room.turnPassedCounter >= COUNT_PLAYER_TURN) {
+        if (room.turnPassedCounter >= room.realPlayers.length * COUNT_PLAYER_TURN) {
             this.handleGamePassFinish(room);
             return;
         }
@@ -295,7 +299,8 @@ export class SocketGameService extends SocketHandlerService {
     changeTurn(socket: io.Socket, room: Room) {
         if (!room) return;
         room.elapsedTime = 1;
-        room.incrementTurnPassedCounter();
+        const playerPassing = room.getCurrentPlayerTurn();
+        if (playerPassing && playerPassing instanceof VirtualPlayer === false) room.incrementTurnPassedCounter();
         if (!room.canChangePlayerTurn()) {
             this.handleGamePassFinish(room);
             return;

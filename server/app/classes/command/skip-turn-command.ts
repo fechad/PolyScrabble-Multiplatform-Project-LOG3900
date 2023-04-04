@@ -1,6 +1,7 @@
 import { Command } from '@app/classes/command/command';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import { PASSER_COMMAND_LENGTH, SYNTAX_ERROR_MESSAGE, WAIT_TURN_ERROR } from '@app/constants/command-constants';
 import { CommandVerbs } from '@app/enums/command-verbs';
 import { CommandResult } from '@app/interfaces/command-result';
@@ -17,7 +18,7 @@ export class SkipTurnCommand extends Command {
     execute(): CommandResult {
         this.checkForErrors();
         if (this.isPlayerTurn()) {
-            this.room.incrementTurnPassedCounter();
+            if (this.commandSender instanceof VirtualPlayer === false) this.room.incrementTurnPassedCounter();
             this.room.changePlayerTurn();
         }
         return {
