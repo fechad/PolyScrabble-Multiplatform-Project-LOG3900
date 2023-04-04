@@ -57,7 +57,7 @@ class _ForgotPasswordPagePageWidgetState
                 width: MediaQuery.of(context).size.width * 0.35,
                 height: MediaQuery.of(context).size.height * 0.50,
                 decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                  color: const Color(0xFFFFFFFF),
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 4,
@@ -98,9 +98,24 @@ class _ForgotPasswordPagePageWidgetState
                             width: 400,
                             child: TextFormField(
                               controller: emailController,
+                              style: TextStyle(color: Colors.black),
                               decoration: const InputDecoration(
                                 hintText: 'Entrez votre adresse courriel',
                                 labelText: 'Adresse courriel',
+                                hintStyle: TextStyle(
+                                  color: const Color(0xFF101213),
+                                  fontFamily: 'Nunito',
+                                ),
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF101213),
+                                  fontFamily: 'Nunito',
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {

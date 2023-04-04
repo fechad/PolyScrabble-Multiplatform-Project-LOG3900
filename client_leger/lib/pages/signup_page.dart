@@ -63,7 +63,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                     width: MediaQuery.of(context).size.width * 0.35,
                     height: MediaQuery.of(context).size.height * 0.60,
                     decoration: BoxDecoration(
-                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                      color: const Color(0xFFFFFFFF),
                       boxShadow: const [
                         BoxShadow(
                           blurRadius: 4,
@@ -101,9 +101,26 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                 width: 400,
                                 child: TextFormField(
                                   controller: usernameController,
+                                  style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
                                     hintText: 'Choose a username',
                                     labelText: 'username',
+                                    hintStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    labelStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
                                   ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
@@ -123,9 +140,26 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                 width: 400,
                                 child: TextFormField(
                                   controller: emailController,
+                                  style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
                                     hintText: 'Enter your email address',
                                     labelText: 'Email address',
+                                    hintStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    labelStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
                                   ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
@@ -141,9 +175,26 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                 child: TextFormField(
                                   obscureText: true,
                                   controller: passwordController,
+                                  style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
                                     hintText: 'Enter your password',
                                     labelText: 'Password',
+                                    hintStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    labelStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
                                   ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
@@ -160,9 +211,26 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                 child: TextFormField(
                                   obscureText: true,
                                   controller: confirmPasswordController,
+                                  style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
                                     hintText: 'Enter your password',
                                     labelText: 'Confirm Password',
+                                    hintStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    labelStyle: TextStyle(
+                                      color: const Color(0xFF101213),
+                                      fontFamily: 'Nunito',
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.black54),
+                                    ),
                                   ),
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {

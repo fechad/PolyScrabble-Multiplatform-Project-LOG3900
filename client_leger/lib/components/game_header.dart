@@ -199,9 +199,18 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                             child: Avatar(
                               url: widget.opponentsInfo[index]
                                   .clientAccountInfo!.userSettings.avatarUrl,
-                              previewData: widget.opponentsInfo[index]
-                                      .clientAccountInfo!.userSettings.avatarUrl
-                                      .contains("robot-avatar")
+                              previewData: widget
+                                          .opponentsInfo[index]
+                                          .clientAccountInfo!
+                                          .userSettings
+                                          .avatarUrl
+                                          .contains("robot-avatar") ||
+                                      widget
+                                          .opponentsInfo[index]
+                                          .clientAccountInfo!
+                                          .userSettings
+                                          .avatarUrl
+                                          .contains('Avatar.png')
                                   ? null
                                   : widget
                                       .opponentsInfo[index].clientAccountInfo,

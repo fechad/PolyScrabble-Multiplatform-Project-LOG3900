@@ -74,7 +74,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                 width: MediaQuery.of(context).size.width * 0.35,
                 height: MediaQuery.of(context).size.height * 0.50,
                 decoration: BoxDecoration(
-                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                  color: const Color(0xFFFFFFFF),
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 4,
@@ -99,13 +99,11 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                           Center(
                             child: Text(
                               'Connexion',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyText1
-                                  .override(
-                                    color: Colors.black,
-                                    fontFamily: 'Nunito',
-                                    fontSize: 24,
-                                  ),
+                              style: TextStyle(
+                                color: const Color(0xFF101213),
+                                fontFamily: 'Nunito',
+                                fontSize: 24,
+                              ),
                             ),
                           ),
                           SizedBox(
@@ -115,10 +113,26 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                             width: 400,
                             child: TextFormField(
                               controller: emailController,
+                              style: TextStyle(color: Colors.black),
                               decoration: const InputDecoration(
                                 hintText: 'Entrez votre adresse courriel',
                                 labelText: 'Adresse courriel',
+                                hintStyle: TextStyle(
+                                  color: const Color(0xFF101213),
+                                  fontFamily: 'Nunito',
+                                ),
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF101213),
+                                  fontFamily: 'Nunito',
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
                               ),
+
                               // The validator receives the text that the user has entered.
                               validator: (value) {
                                 checkWithAvailableNames(value!);
@@ -133,9 +147,24 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                             child: TextFormField(
                               obscureText: true,
                               controller: passwordController,
+                              style: TextStyle(color: Colors.black),
                               decoration: const InputDecoration(
                                 hintText: 'Entrez votre mot de passe',
                                 labelText: 'Mot de passe',
+                                hintStyle: TextStyle(
+                                  color: const Color(0xFF101213),
+                                  fontFamily: 'Nunito',
+                                ),
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF101213),
+                                  fontFamily: 'Nunito',
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black54),
+                                ),
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
@@ -198,8 +227,12 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                       const SnackBar(
                                           duration:
                                               Duration(milliseconds: 1000),
+                                          backgroundColor: Colors.black,
                                           content: Text(
-                                              'Vérification de la connexion ...')));
+                                            'Vérification de la connexion ...',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )));
                                 }
                               },
                               style: ButtonStyle(
@@ -287,7 +320,8 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.redAccent,
           duration: Duration(milliseconds: 1000),
-          content: Text('Error: $error')));
+          content:
+              Text('Error: $error', style: TextStyle(color: Colors.white))));
     }
     setState(() {
       isWriting = false;

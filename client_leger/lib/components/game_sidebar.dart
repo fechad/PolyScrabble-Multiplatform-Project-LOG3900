@@ -3,8 +3,9 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../classes/game.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+
+import '../classes/game.dart';
 import '../main.dart';
 import '../services/link_service.dart';
 
@@ -29,7 +30,9 @@ class _GameSidebarState extends State<GameSidebar> {
     _configure();
     musicPlayer = AudioCache(fixedPlayer: audioPlayer);
     if (backgroundService.currentVP != '') {
-      String name = backgroundService.currentVP.replaceFirst(backgroundService.currentVP[0], backgroundService.currentVP[0].toUpperCase());
+      String name = backgroundService.currentVP.replaceFirst(
+          backgroundService.currentVP[0],
+          backgroundService.currentVP[0].toUpperCase());
       musicPlayer.loop("audios/$name.mp3");
     }
   }
@@ -37,40 +40,41 @@ class _GameSidebarState extends State<GameSidebar> {
   _configure() {
     socketService.on(
         "toggleAngryBotAvatar",
-            (botName) => {
-          if (gameService.room.players
-              .firstWhere((Player player) =>
-          player.clientAccountInfo!.username == botName)
-              .toString()
-              .isNotEmpty)
-            {
-              // TODO: this.toggleAvatar(bot.clientAccountInfo),
-              // TODO: this.toggleBotMusic(bot.clientAccountInfo),
-              backgroundService.switchToAngry(),
-            },
-
-          musicPlayer.loop("audios/Better.mp3"),
-        });
+        (botName) => {
+              if (gameService.room.players
+                  .firstWhere((Player player) =>
+                      player.clientAccountInfo!.username == botName)
+                  .toString()
+                  .isNotEmpty)
+                {
+                  // TODO: this.toggleAvatar(bot.clientAccountInfo),
+                  // TODO: this.toggleBotMusic(bot.clientAccountInfo),
+                  backgroundService.switchToAngry(),
+                },
+              musicPlayer.loop("audios/Better.mp3"),
+            });
 
     socketService.on(
         "gameIsOver",
-            (players) => {
-          setState(() {
-            gameService.room.roomInfo.isGameOver = true;
-            inGameService.findWinner(gameService.decodePlayers(players));
-            for (Player p in gameService.room.players){
-            if (p.clientAccountInfo!.username == inGameService.winnerPseudo){
-            musicPlayer.loop("audios/${p.clientAccountInfo!.userSettings
-                .victoryMusic}");
-            }
-            }
-          }),
+        (players) => {
+              setState(() {
+                gameService.room.roomInfo.isGameOver = true;
+                inGameService.findWinner(gameService.decodePlayers(players));
+                for (Player p in gameService.room.players) {
+                  if (p.clientAccountInfo!.username ==
+                      inGameService.winnerPseudo) {
+                    musicPlayer.loop(
+                        "audios/${p.clientAccountInfo!.userSettings.victoryMusic}");
+                  }
+                }
+              }),
             });
 
-    socketService.on("playerTurnChanged", (pseudo) => {
-      setState(() {}),
-    });
-
+    socketService.on(
+        "playerTurnChanged",
+        (pseudo) => {
+              setState(() {}),
+            });
   }
 
   @override
@@ -92,14 +96,15 @@ class _GameSidebarState extends State<GameSidebar> {
           child: Column(
             children: <Widget>[
               SizedBox(height: 25),
-              isObserver || (gameService.room.roomInfo.isGameOver != null && gameService.room.roomInfo.isGameOver!)
+              isObserver ||
+                      (gameService.room.roomInfo.isGameOver != null &&
+                          gameService.room.roomInfo.isGameOver!)
                   ? Container()
-                  :
-              IconButton(
+                  : IconButton(
                       disabledColor: Colors.grey,
                       color: Color(0xFFF5C610),
-                      icon: const Icon(Icons.lightbulb_outline_rounded,
-                          size: 50),
+                      icon:
+                          const Icon(Icons.lightbulb_outline_rounded, size: 50),
                       onPressed: linkService.getMyTurn() &&
                               placementValidator.letters.isEmpty &&
                               !linkService.getWantToExchange()
@@ -120,7 +125,9 @@ class _GameSidebarState extends State<GameSidebar> {
                 },
               ),
               SizedBox(height: 435),
-              isObserver || (gameService.room.roomInfo.isGameOver != null && gameService.room.roomInfo.isGameOver!)
+              isObserver ||
+                      (gameService.room.roomInfo.isGameOver != null &&
+                          gameService.room.roomInfo.isGameOver!)
                   ? IconButton(
                       icon:
                           const Icon(Icons.logout, size: 50, color: Colors.red),
@@ -181,7 +188,8 @@ class _GameSidebarState extends State<GameSidebar> {
                                       onPressed: () {
                                         audioPlayer.stop();
                                         backgroundService.setBackground('');
-                                        authenticator.setStats(authenticator.currentUser.email);
+                                        authenticator.setStats(
+                                            authenticator.currentUser.email);
                                         inGameService.confirmLeaving();
                                         linkService.setIsInAGame(false);
                                         linkService.getRows().clear();

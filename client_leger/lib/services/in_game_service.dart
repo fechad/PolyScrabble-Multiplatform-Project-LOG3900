@@ -1,11 +1,9 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:client_leger/services/multiplayer_game_service.dart';
 
 import '../classes/command.dart';
 import '../classes/game.dart';
-import '../pages/home_page.dart';
 
 class InGameService extends MultiplayerGameService {
   final String msgEvent = 'message';
@@ -31,7 +29,8 @@ class InGameService extends MultiplayerGameService {
               scorePlayer = Player.fromJson(sender),
               for (Player p in gameService.room.players)
                 {
-                  if (p.clientAccountInfo!.username == scorePlayer.clientAccountInfo!.username)
+                  if (p.clientAccountInfo!.username ==
+                      scorePlayer.clientAccountInfo!.username)
                     {p.points = scorePlayer.points}
                 }
             });
@@ -85,15 +84,15 @@ class InGameService extends MultiplayerGameService {
     if (winnerArray.isEmpty) return;
     if (winnerArray.length == 1) {
       winnerPseudo = winnerArray[0].clientAccountInfo!.username;
-      }
-      for (Player p in gameService.room.players) {
-        if (p.clientAccountInfo!.username == winnerArray[0].clientAccountInfo!.username) {
-          winnerPseudo = p.clientAccountInfo!.username;
-        } else
-          return;
-      }
     }
-
+    for (Player p in gameService.room.players) {
+      if (p.clientAccountInfo!.username ==
+          winnerArray[0].clientAccountInfo!.username) {
+        winnerPseudo = p.clientAccountInfo!.username;
+      } else
+        return;
+    }
+  }
 
   getPlayer(String pseudo) {
     for (player in gameService.room.players) {
