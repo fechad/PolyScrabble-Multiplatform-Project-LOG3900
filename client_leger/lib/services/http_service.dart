@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import '../classes/game.dart';
 import '../config/environment.dart';
@@ -11,6 +12,7 @@ const String opponentInfoUrl = 'opponentInfo';
 const String avatarUrl = 'images/avatars';
 const String badgeUrl = 'images/badges';
 const String baseUrl = environment;
+const String CLOUD_NAME = 'dejrgre8q';
 String url = getServerURL();
 
 class HttpService {
@@ -93,5 +95,33 @@ class HttpService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(body));
+  }
+
+  Future<http.Response> getCloudinarySignature() {
+    return http
+        .get(Uri.parse('$url/api/images/signature'))
+        .catchError((e) => print(e));
+  }
+
+  Future<http.Response> uploadFile(Map<dynamic, dynamic> data) async {
+    var stream = http.ByteStream(Stream.castFrom(data['file'].openRead()));
+    var length = await data['file'].length();
+
+    var uri =
+        Uri.parse('https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload');
+
+    var request = http.MultipartRequest("POST", uri);
+    var multipartFile = http.MultipartFile('file', stream, length,
+        filename: data['file'].path.split('/').last,
+        contentType: MediaType('image', 'jpeg'));
+    request.files.add(multipartFile);
+    request.fields.addAll(<String, String>{
+      'signature': data['signature'],
+      'timestamp': data['timestamp'],
+      'api_key': data['api_key']
+    });
+
+    final res = await request.send();
+    return http.Response.fromStream(res);
   }
 }

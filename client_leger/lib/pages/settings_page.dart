@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:client_leger/classes/constants.dart';
-import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/components/stats.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/signup_page.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../classes/game.dart';
 import '../components/drawer.dart';
 import '../components/historics.dart';
 import '../components/sidebar.dart';
@@ -89,6 +89,23 @@ class _SettingsPageState extends State<SettingsPage> {
     );
 
     _initializeControllerFuture = _controller.initialize();
+  }
+
+  uploadFile() async {
+    final response = await httpService.getCloudinarySignature();
+    final signature = jsonDecode(response.body);
+
+    var data = new Map<dynamic, dynamic>();
+    data['file'] = File(selectedUrl);
+    data['api_key'] = signature['apiKey'];
+    data['timestamp'] = signature['timestamp'].toString();
+    data['signature'] = signature['signature'];
+
+    final uploadResponse = await httpService.uploadFile(data);
+
+    if (uploadResponse.toString().isEmpty) return;
+
+    selectedUrl = jsonDecode(uploadResponse.body)['url'];
   }
 
   @override
@@ -211,7 +228,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                                   icon:
                                                                       const Icon(
                                                                     Icons
-                                                                        .download,
+                                                                        .camera_alt,
+                                                                    size: 60,
                                                                     // color: Colors
                                                                     //     .black,
                                                                   ),
@@ -542,7 +560,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       ElevatedButton(
                         onPressed: !valuesChanged
                             ? null
-                            : () => {
+                            : () async => {
+                                  if (selectedUrl.contains('/data/'))
+                                    {
+                                      await uploadFile(),
+                                    },
                                   setState(() {
                                     authenticator.currentUser.userSettings =
                                         UserSettings(
@@ -568,6 +590,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                       authenticator.currentUser = account;
                                       setState(() {
                                         valuesChanged = false;
+                                        selectedUrl = authenticator
+                                            .currentUser.userSettings.avatarUrl;
                                       });
                                     }).catchError((error) => {print(error)});
                                   })
