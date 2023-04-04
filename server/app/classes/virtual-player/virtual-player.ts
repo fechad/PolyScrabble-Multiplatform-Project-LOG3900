@@ -8,7 +8,7 @@ import { Player } from '@app/classes/player';
 import { PlacementFinder } from '@app/classes/virtual-placement-logic/placement-finder';
 import { CENTRAL_COLUMN_INDEX, DEFAULT_CENTRAL_ROW } from '@app/constants/board-constants';
 import { RACK_CAPACITY } from '@app/constants/constants';
-import { BASE_AVATAR_PATH, DEFAULT_BOT_ACCOUNT } from '@app/constants/default-user-settings';
+import { BASE_AVATAR_PATH, DEFAULT_BOT_ACCOUNT, DEFAULT_BOT_IMAGE } from '@app/constants/default-user-settings';
 import { THEMED_VP_IDS } from '@app/constants/themed-mode-constants';
 import { BIG_SCORE, DEFAULT_MAX_GAP, EXTREME_SCORE, SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
@@ -44,6 +44,8 @@ export class VirtualPlayer extends Player implements Observable {
         super('', pseudo, isCreator, DEFAULT_BOT_ACCOUNT);
         if (THEMED_VP_IDS.includes(pseudo))
             this.clientAccountInfo.userSettings.avatarUrl = BASE_AVATAR_PATH + this.clientAccountInfo.username + 'Avatar.png';
+        else this.clientAccountInfo.userSettings.avatarUrl = DEFAULT_BOT_IMAGE;
+
         this.observers = [];
         this.language = language;
         this.basis = { actions: [], scoreIntervals: [] };

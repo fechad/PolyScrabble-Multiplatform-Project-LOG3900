@@ -206,7 +206,7 @@ export class SocketGameService extends SocketHandlerService {
             return;
         }
 
-        const executionResult = this.commandController.executeCommand(message, room, commandSender) as CommandResult;
+        const executionResult = this.commandController.executeCommand(message, room, commandSender, socket) as CommandResult;
         if (this.chatMessageService.isError) {
             this.chatMessageService.message.sender = SYSTEM_NAME;
             this.chatMessageService.message.color = MessageSenderColors.SYSTEM;
@@ -314,6 +314,66 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ToggleAngryBotAvatar, botName);
     }
 
+    notifyViewBasedOnCommandResult(report: CommandResult, room: Room, sender: Player, socket: io.Socket) {
+        if (!report || !room || !sender) return;
+        switch (report.commandType) {
+            case CommandVerbs.PLACE:
+                room.addPlacementData(report.commandData as PlacementData);
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.DrawBoard, report.commandData);
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, sender);
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
+                sender.addCommand(report);
+                break;
+            case CommandVerbs.SWITCH:
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
+                    text: report.messageToSender,
+                    sender: SYSTEM_NAME,
+                    color: MessageSenderColors.SYSTEM,
+                });
+                if (!socket) return;
+                socket
+                    .to(room.roomInfo.name)
+                    .emit(SocketEvent.Message, { text: report.messageToOthers, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM });
+                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, report.messageToOthers as string);
+                sender.addCommand(report);
+                break;
+            case CommandVerbs.SKIP:
+                sender.addCommand(report);
+                break;
+            case CommandVerbs.BANK:
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
+                    text: report.messageToSender,
+                    sender: SYSTEM_NAME,
+                    color: MessageSenderColors.SYSTEM,
+                });
+                break;
+            case CommandVerbs.HINT:
+                this.sendToEveryoneInRoom(sender.socketId, 'hint', {
+                    text: report.messageToSender,
+                });
+                break;
+            case CommandVerbs.HELP:
+                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
+                    text: report.messageToSender,
+                    sender: SYSTEM_NAME,
+                    color: MessageSenderColors.SYSTEM,
+                });
+                break;
+        }
+
+        if (report.message) {
+            const systemMessage: ChatMessage = { text: report.message, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
+            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemMessage);
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, systemMessage.text);
+        }
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
+        this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
+    }
+
     private handleLeaveGameBeforeStart(socket: io.Socket, player: Player, roomName: string) {
         if (player.isCreator) {
             SocketManager.instance.socketRoomService.handleLeaveRoomCreator(socket, roomName);
@@ -372,66 +432,6 @@ export class SocketGameService extends SocketHandlerService {
     private isRoomValid(socket: io.Socket): boolean {
         if (!this.getSocketRoom(socket)) return false;
         return true;
-    }
-
-    private notifyViewBasedOnCommandResult(report: CommandResult, room: Room, sender: Player, socket: io.Socket) {
-        if (!report || !room || !sender) return;
-        switch (report.commandType) {
-            case CommandVerbs.PLACE:
-                room.addPlacementData(report.commandData as PlacementData);
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.DrawBoard, report.commandData);
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, sender);
-                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
-                sender.addCommand(report);
-                break;
-            case CommandVerbs.SWITCH:
-                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
-                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
-                    text: report.messageToSender,
-                    sender: SYSTEM_NAME,
-                    color: MessageSenderColors.SYSTEM,
-                });
-                if (!socket) return;
-                socket
-                    .to(room.roomInfo.name)
-                    .emit(SocketEvent.Message, { text: report.messageToOthers, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM });
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, report.messageToOthers as string);
-                sender.addCommand(report);
-                break;
-            case CommandVerbs.SKIP:
-                sender.addCommand(report);
-                break;
-            case CommandVerbs.BANK:
-                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
-                    text: report.messageToSender,
-                    sender: SYSTEM_NAME,
-                    color: MessageSenderColors.SYSTEM,
-                });
-                break;
-            case CommandVerbs.HINT:
-                this.sendToEveryoneInRoom(sender.socketId, 'hint', {
-                    text: report.messageToSender,
-                });
-                break;
-            case CommandVerbs.HELP:
-                this.sendToEveryoneInRoom(sender.socketId, SocketEvent.Message, {
-                    text: report.messageToSender,
-                    sender: SYSTEM_NAME,
-                    color: MessageSenderColors.SYSTEM,
-                });
-                break;
-        }
-
-        if (report.message) {
-            const systemMessage: ChatMessage = { text: report.message, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
-            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemMessage);
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, systemMessage.text);
-        }
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
-        this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
     }
 
     private communicateNewAchievements(roomName: string, goalsReached: ReachedGoal[]) {

@@ -1,6 +1,4 @@
 import { Command } from '@app/classes/command/command';
-import { CommandVerbs } from '@app/enums/command-verbs';
-import { COMMAND_STARTING_SYMBOL, INVALID_ERROR_MESSAGE } from '@app/constants/command-constants';
 import { ExchangeLettersCommand } from '@app/classes/command/exchange-command';
 import { HelpCommand } from '@app/classes/command/help-command';
 import { HintCommand } from '@app/classes/command/hint-command';
@@ -9,8 +7,13 @@ import { PlaceLettersCommand } from '@app/classes/command/place-letters-command'
 import { SkipTurnCommand } from '@app/classes/command/skip-turn-command';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { TrumpVirtualPlayer } from '@app/classes/virtual-player/themed-virtual-players/trump-vp';
+import { COMMAND_STARTING_SYMBOL, INVALID_ERROR_MESSAGE } from '@app/constants/command-constants';
+import { CommandVerbs } from '@app/enums/command-verbs';
 import { CommandResult } from '@app/interfaces/command-result';
 import { ChatMessageService } from '@app/services/chat.message';
+import { SocketManager } from '@app/services/socket-manager.service';
+import * as io from 'socket.io';
 import { Service } from 'typedi';
 
 const commandIndex = 0;
@@ -23,12 +26,18 @@ export class CommandController {
     private sender: Player;
     private splittedCommand: string[];
     constructor(private chatMessageService: ChatMessageService) {}
-    executeCommand(command: string, room: Room, sender: Player): CommandResult | undefined {
+    executeCommand(command: string, room: Room, sender: Player, socket?: io.Socket): CommandResult | undefined {
         this.room = room;
         this.sender = sender;
         this.splittedCommand = this.splitCommand(command);
         switch (this.splittedCommand[commandIndex]) {
             case CommandVerbs.PLACE: {
+                if (socket && (sender as TrumpVirtualPlayer).angryTurnsLeft === 2) {
+                    this.executePlaceCommand(command, true);
+                    SocketManager.instance.socketGameService.notifyViewBasedOnCommandResult(this.executionResult, this.room, sender, socket);
+                    SocketManager.instance.socketGameService.handleNewPlayerTurn(socket, room, sender);
+                    return;
+                }
                 this.executePlaceCommand(command);
                 break;
             }
@@ -69,10 +78,14 @@ export class CommandController {
         splittedCommand[0] = splittedCommand[0].substring(1);
         return splittedCommand;
     }
-    private executePlaceCommand(command: string) {
+    private executePlaceCommand(command: string, isNoSkip?: boolean) {
         this.command = new PlaceLettersCommand(command, this.room, this.sender, this.chatMessageService);
         if (this.chatMessageService.isError) return;
         this.executionResult = this.command.execute();
+        if (isNoSkip) {
+            this.keepTurn();
+            return;
+        }
         this.changeTurn();
     }
     private executeSwitchCommand(command: string) {
@@ -99,6 +112,12 @@ export class CommandController {
     private changeTurn() {
         if (this.chatMessageService.isError) return;
         this.room.changePlayerTurn();
+        this.room.resetTurnPassedCounter();
+    }
+
+    private keepTurn() {
+        if (this.chatMessageService.isError) return;
+        this.room.elapsedTime = 1;
         this.room.resetTurnPassedCounter();
     }
 }
