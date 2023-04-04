@@ -1,4 +1,5 @@
 import { ClientAccountInfo } from '@app/interfaces/client-exchange/client-account-info';
+import { PlayerGameStats } from '@app/interfaces/client-exchange/player-stats';
 import { UserSettings } from '@app/interfaces/firestoreDB/user-settings';
 
 export const DEFAULT_BOT_IMAGE = 'https://cdn0.iconfinder.com/data/icons/robot-avatar/512/Robot_Avatars_25-256.png';
@@ -20,8 +21,8 @@ export const DEFAULT_BOT_SETTINGS: UserSettings = {
 };
 
 export const DEFAULT_ACCOUNT: ClientAccountInfo = {
-    username: 'anna',
-    email: 'anna@polyscrabble.ca',
+    username: 'Guest',
+    email: 'guest',
     userSettings: { ...DEFAULT_USER_SETTINGS },
     highScores: {},
     progressInfo: { totalXP: 0, currentLevel: 0, xpForNextLevel: 200, currentLevelXp: 0, victoriesCount: 0 },
@@ -30,7 +31,14 @@ export const DEFAULT_ACCOUNT: ClientAccountInfo = {
     gamesPlayed: [],
     bestGames: [],
 };
-
+export const DEFAULT_STATS: PlayerGameStats = {
+    playedGamesCount: 12,
+    gamesWonCount: 10,
+    averagePointsByGame: 420,
+    playedGames: [],
+    averageGameDuration: '3min',
+    logs: [],
+};
 export const DEFAULT_BOT_ACCOUNT: ClientAccountInfo = {
     username: 'BOT',
     email: '',

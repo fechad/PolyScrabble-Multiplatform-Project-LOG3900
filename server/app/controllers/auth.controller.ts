@@ -1,3 +1,4 @@
+import { DefaultAccountGenerator } from '@app/classes/default-acount-generator';
 import { DEFAULT_USER_SETTINGS } from '@app/constants/default-user-settings';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Authentificator } from '@app/services/auth.service';
@@ -33,13 +34,14 @@ export class AuthController {
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
                     .then((data) => {
-                        this.databaseService.log('userActions', req.params.email, { message: 'login/connexion', time: firestore.Timestamp.now() });
+                        if (!data) res.status(StatusCodes.NOT_FOUND).send('No such account');
+                        this.databaseService.log('userActions', req.params.email, { message: 'login/connection', time: firestore.Timestamp.now() });
                         res.json(data);
                     })
                     // eslint-disable-next-line no-console
                     .catch((e) => console.log(e));
             } catch (error) {
-                res.status(StatusCodes.NOT_FOUND).send(error.message);
+                res.json(DefaultAccountGenerator.generate());
             }
         });
         this.router.put('/logout', async (req: Request, res: Response) => {
