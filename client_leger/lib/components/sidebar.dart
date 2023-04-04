@@ -11,7 +11,6 @@ import '../model/custom_navigation_drawer.dart';
 import '../pages/chat_page.dart';
 import '../pages/game_page.dart';
 import '../pages/home_page.dart';
-import '../pages/leaderboard_page.dart';
 import '../pages/observer_page.dart';
 import '../services/chat_service.dart';
 import '../services/init_service.dart';
@@ -53,75 +52,77 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
   void _configureSocket() async {
     socket.on(
         'channelMessage',
-            (data) => {
-          chatName = (data as List<dynamic>)[0]['channelName'],
-          chatService.getDiscussionChannelByName(chatName).messages = [],
-          (data).forEach((message) => {
-            chatService
-                .getDiscussionChannelByName(chatName)
-                .messages
-                .add(ChatMessage(
-                channelName: message['channelName'],
-                system: message['system'],
-                sender: message['sender'],
-                time: message['time'],
-                message: message['message'])),
-          }),
-          if (chatService
-              .getDiscussionChannelByName(chatName)
-              .messages
-              .length > 2 && chatService
-              .getDiscussionChannelByName(chatName)
-              .messages[chatService
-              .getDiscussionChannelByName(chatName)
-              .messages
-              .length -
-              1]
-              .sender !=
-              authenticator.currentUser.username)
-            {
-              if (mounted)
+        (data) => {
+              chatName = (data as List<dynamic>)[0]['channelName'],
+              chatService.getDiscussionChannelByName(chatName).messages = [],
+              (data).forEach((message) => {
+                    chatService
+                        .getDiscussionChannelByName(chatName)
+                        .messages
+                        .add(ChatMessage(
+                            channelName: message['channelName'],
+                            system: message['system'],
+                            sender: message['sender'],
+                            time: message['time'],
+                            message: message['message'])),
+                  }),
+              if (chatService
+                          .getDiscussionChannelByName(chatName)
+                          .messages
+                          .length >
+                      2 &&
+                  chatService
+                          .getDiscussionChannelByName(chatName)
+                          .messages[chatService
+                                  .getDiscussionChannelByName(chatName)
+                                  .messages
+                                  .length -
+                              1]
+                          .sender !=
+                      authenticator.currentUser.username)
                 {
-                  if (linkService.getCurrentOpenedChat() != chatName)
+                  if (mounted)
                     {
-                      linkService.pushNewChannel(chatName),
-                      setState(() {
-                        if (!linkService.getNewMessageBoolean())
-                          linkService.newMessageChange();
-                      })
-                    }
-                },
-              FlutterRingtonePlayer.play(
-                android: AndroidSounds.notification,
-                ios: IosSounds.receivedMessage,
-                looping: false, // Android only - API >= 28
-                volume: 0.5, // Android only - API >= 28
-                asAlarm: false, // Android only - all APIs
-              ),
-            }
-        });
+                      if (linkService.getCurrentOpenedChat() != chatName)
+                        {
+                          linkService.pushNewChannel(chatName),
+                          setState(() {
+                            if (!linkService.getNewMessageBoolean())
+                              linkService.newMessageChange();
+                          })
+                        }
+                    },
+                  FlutterRingtonePlayer.play(
+                    android: AndroidSounds.notification,
+                    ios: IosSounds.receivedMessage,
+                    looping: false, // Android only - API >= 28
+                    volume: 0.5, // Android only - API >= 28
+                    asAlarm: false, // Android only - all APIs
+                  ),
+                }
+            });
 
     socket.on(
         'availableChannels',
-            (data) => {
-          socket.emit('joinChatChannel',
-              {'General Chat', authenticator.currentUser.username}),
-          chatService.discussionChannels = [],
-          for (var i in data)
-            {
-              chatService.discussionChannels.add(chatService.decodeModel(i))
-            },
-        });
+        (data) => {
+              socket.emit('joinChatChannel',
+                  {'General Chat', authenticator.currentUser.username}),
+              chatService.discussionChannels = [],
+              for (var i in data)
+                {
+                  chatService.discussionChannels.add(chatService.decodeModel(i))
+                },
+            });
 
     socket.on('addChannel', (data) => {chatService.addDiscussion(data)});
 
     socket.on(
         'deleteChannel',
-            (name) => {
-          // ignore: list_remove_unrelated_type
-          chatService.discussionChannels
-              .remove((channel) => channel.name == name)
-        });
+        (name) => {
+              // ignore: list_remove_unrelated_type
+              chatService.discussionChannels
+                  .remove((channel) => channel.name == name)
+            });
   }
 
   @override
@@ -155,122 +156,118 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                   itemBuilder: (context, counter) {
                     return (counter == 3)
                         ? Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 300),
-                      child: CollapsingListTile(
-                        onTap: () {
-                          setState(() {
-                            linkService.setCurrentSelectedIndex(counter);
-                          });
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: ((context) {
-                                return ObserverPage();
-                              })));
-                        },
-                        isSelected:
-                        linkService.getCurrentSelectedIndex() ==
-                            counter,
-                        title: navigationItems[counter].title,
-                        icon: navigationItems[counter].icon,
-                        notifiable: navigationItems[counter].notifiable,
-                      ),
-                    )
-                        : (counter == 2)
-                        ? Stack(
-                      children: [
-                        CollapsingListTile(
-                          onTap: () {
-                            setState(() {
-                              linkService
-                                  .setCurrentSelectedIndex(counter);
-                              if (counter == 0) {
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 300),
+                            child: CollapsingListTile(
+                              onTap: () {
+                                setState(() {
+                                  linkService.setCurrentSelectedIndex(counter);
+                                });
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: ((context) {
+                                  return ObserverPage();
+                                })));
+                              },
+                              isSelected:
+                                  linkService.getCurrentSelectedIndex() ==
+                                      counter,
+                              title: navigationItems[counter].title,
+                              icon: navigationItems[counter].icon,
+                              notifiable: navigationItems[counter].notifiable,
+                            ),
+                          )
+                        : (counter == 2)
+                            ? Stack(
+                                children: [
+                                  CollapsingListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        linkService
+                                            .setCurrentSelectedIndex(counter);
+                                        if (counter == 0) {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: ((context) {
+                                            return UserPage();
+                                          })));
+                                        } else if (counter == 1) {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: ((context) {
+                                            return MyHomePage(
+                                                title: 'PolyScrabble');
+                                          })));
+                                        } else if (counter == 2) {
+                                          Scaffold.of(context).openDrawer();
+                                          if (linkService
+                                                  .getNewMessageBoolean() &&
+                                              linkService
+                                                      .getChannelWithNewMessages()
+                                                      .length ==
+                                                  0)
+                                            linkService.newMessageChange();
+                                        }
+                                      });
+                                    },
+                                    isSelected:
+                                        linkService.getCurrentSelectedIndex() ==
+                                            counter,
+                                    title: navigationItems[counter].title,
+                                    icon: navigationItems[counter].icon,
+                                    notifiable:
+                                        navigationItems[counter].notifiable,
+                                  ),
+                                  if (linkService.getNewMessageBoolean())
+                                    const Positioned(
+                                      // draw a red marble
+                                      top: 5.0,
+                                      right: 20.0,
+                                      child: Icon(Icons.brightness_1,
+                                          size: 16.0, color: Colors.redAccent),
+                                    ),
+                                ],
+                              )
+                            : CollapsingListTile(
+                                onTap: () {
+                                  setState(() {
+                                    linkService
+                                        .setCurrentSelectedIndex(counter);
+                                  });
+                                  if (counter == 0) {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
                                       return UserPage();
                                     })));
-
-                              }
-                              else if (counter == 1) {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: ((context) {
+                                  } else if (counter == 1) {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
                                       return MyHomePage(title: 'PolyScrabble');
                                     })));
-
-                              }
-                              else if (counter == 2) {
-                                Scaffold.of(context).openDrawer();
-                                if (linkService
-                                    .getNewMessageBoolean() &&
-                                    linkService
-                                        .getChannelWithNewMessages()
-                                        .length ==
-                                        0)
-                                  linkService.newMessageChange();
-                              }
-                            });
-                          },
-                          isSelected:
-                          linkService.getCurrentSelectedIndex() ==
-                              counter,
-                          title: navigationItems[counter].title,
-                          icon: navigationItems[counter].icon,
-                          notifiable:
-                          navigationItems[counter].notifiable,
-                        ),
-                        if (linkService.getNewMessageBoolean())
-                          const Positioned(
-                            // draw a red marble
-                            top: 5.0,
-                            right: 20.0,
-                            child: Icon(Icons.brightness_1,
-                                size: 16.0, color: Colors.redAccent),
-                          ),
-                      ],
-                    )
-                        : CollapsingListTile(
-                      onTap: () {
-                        setState(() {
-                          linkService
-                              .setCurrentSelectedIndex(counter);
-                        });
-                        if (counter == 0) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: ((context) {
-                                return UserPage();
-                              })));
-
-                        }
-                        else if (counter == 1) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: ((context) {
-                                return MyHomePage(title: 'PolyScrabble');
-                              })));
-
-                        }
-                        else if (counter == 2) {
-                          Scaffold.of(context).openDrawer();
-                          if (linkService.getNewMessageBoolean())
-                            linkService.newMessageChange();
-                        }
-                        // TODO : put function here depending on what we click on
-                        else if (counter == 4) {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: ((context) {
-                                return SettingsPage();
-                              })));
-                        } else if (counter == 5) {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: ((context) {
-                                return ConnexionPageWidget();
-                              })));
-                        }
-                      },
-                      isSelected:
-                      linkService.getCurrentSelectedIndex() ==
-                          counter,
-                      title: navigationItems[counter].title,
-                      icon: navigationItems[counter].icon,
-                      notifiable: navigationItems[counter].notifiable,
-                    );
+                                  } else if (counter == 2) {
+                                    Scaffold.of(context).openDrawer();
+                                    if (linkService.getNewMessageBoolean())
+                                      linkService.newMessageChange();
+                                  }
+                                  // TODO : put function here depending on what we click on
+                                  else if (counter == 4) {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return SettingsPage();
+                                    })));
+                                  } else if (counter == 5) {
+                                    themeManager.setThemeMode(false);
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return ConnexionPageWidget();
+                                    })));
+                                  }
+                                },
+                                isSelected:
+                                    linkService.getCurrentSelectedIndex() ==
+                                        counter,
+                                title: navigationItems[counter].title,
+                                icon: navigationItems[counter].icon,
+                                notifiable: navigationItems[counter].notifiable,
+                              );
                   },
                   itemCount: navigationItems.length,
                 ),

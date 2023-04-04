@@ -45,7 +45,6 @@ class MultiplayerGameService extends SoloGameService {
         rack: Rack(letters: '', indexLetterToReplace: []));
   }
 
-
   configureSocketFeatures() {
     socketService.send("availableRooms");
     socketService.send("publicRooms");
@@ -156,11 +155,33 @@ class MultiplayerGameService extends SoloGameService {
   reinitializeRoom() {
     chatService
         .setRoomChannel(ChatModel(name: '', activeUsers: [], messages: []));
-    room.roomInfo.name = '';
-    room.roomInfo.timerPerTurn = '';
-    room.roomInfo.gameType = '';
-    room.roomInfo.isPublic = true;
-    room.roomInfo.password = '';
+
+    room = Room(
+        elapsedTime: 0,
+        players: [],
+        roomInfo: RoomInfo(
+            name: '',
+            timerPerTurn: '60',
+            gameType: 'classic',
+            dictionary: 'dictionnaire par défaut',
+            maxPlayers: 4,
+            creatorName: authenticator.currentUser.username,
+            isPublic: true,
+            password: ''),
+        isBankUsable: false,
+        observers: [],
+        placementsData: [],
+        startDate: DateFormat('HH:mm:ss').format(DateTime.now()),
+        fillerNamesUsed: [],
+        botsLevel: '',
+        bots: []);
+    player = Player(
+        socketId: socketService.getSocketID() ?? 'id',
+        points: 0,
+        isCreator: true,
+        isItsTurn: false,
+        clientAccountInfo: authenticator.getCurrentUser(),
+        rack: Rack(letters: '', indexLetterToReplace: []));
   }
 
   requestGameStart() {
@@ -185,5 +206,6 @@ class MultiplayerGameService extends SoloGameService {
     }
     linkService.buttonChange();
     linkService.setCurrentOpenedChat('');
+    reinitializeRoom();
   }
 }

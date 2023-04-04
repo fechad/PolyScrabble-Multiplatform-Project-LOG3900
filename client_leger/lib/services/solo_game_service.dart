@@ -41,12 +41,7 @@ class SoloGameService {
   }
 
   configureBaseSocketFeatures() {
-    socketService.on(
-        "botInfos",
-        (bot) => {
-              room.players[1] = bot,
-              //TODO : navigate to game page from flutter widget
-            });
+    socketService.on("botInfos", (bot) => {room.players[1] = bot});
   }
 
   setRoomInfo(String pseudo, String difficulty) {
@@ -66,7 +61,6 @@ class SoloGameService {
   joinRoom(String botName, String desiredLevel) {
     String pseudo = gameService.gameData.pseudo;
     setRoomInfo(pseudo, desiredLevel);
-
     setPlayerInfo(pseudo);
     onProcess = true;
     socketService.send("createSoloRoom",

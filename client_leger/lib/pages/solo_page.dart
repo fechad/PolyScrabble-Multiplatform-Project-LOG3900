@@ -159,7 +159,8 @@ class _SoloPageState extends State<SoloPage> {
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
-                                    difficultyValue = difficulty.indexOf(value!);
+                                    difficultyValue =
+                                        difficulty.indexOf(value!);
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
@@ -255,11 +256,9 @@ class _SoloPageState extends State<SoloPage> {
     String level = 'débutant';
     if (difficultyValue == 0) {
       level = 'débutant';
-    }
-    else if (difficultyValue == 1) {
+    } else if (difficultyValue == 1) {
       level = 'expert';
-    }
-    else if (difficultyValue == 2) {
+    } else if (difficultyValue == 2) {
       level = 'adaptatif';
     }
     soloGameService.joinRoom(virtualValue, level);

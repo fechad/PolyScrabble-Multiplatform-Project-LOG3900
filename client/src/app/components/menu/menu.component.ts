@@ -250,6 +250,9 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.socketService.send(SocketEvent.LogOut);
 
         this.playerService.resetPlayerAndRoomInfo();
+        this.themeService.currentTheme = 'light-theme';
+        this.themeService.darkThemeSelected = false;
+        this.themeService.setTheme();
         this.router.navigate(['/home']);
     }
 
