@@ -33,7 +33,7 @@ export class LoginPageComponent implements AfterViewInit {
         // email validator: https://mailtrap.io/blog/angular-email-validation/
         this.loginForm = this.formBuilder.group({
             username: ['', [Validators.required, Validators.minLength(MIN_LENGTH_PSEUDO), Validators.maxLength(MAX_LENGTH_PSEUDO)]],
-            email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+            email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required]],
             confirmPassword: ['', [Validators.required]],
         });

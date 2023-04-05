@@ -22,7 +22,6 @@ import {
     DEFAULT_WIDTH,
     specialCases,
 } from '@app/constants/board-constants';
-import { ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { SelectionType } from '@app/enums/selection-type';
 import { SocketEvent } from '@app/enums/socket-event';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
@@ -182,8 +181,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         if (this.commandInvoker.commandMessage.length === 0) return;
         this.focusHandlerService.clientChatMessage.next(this.commandInvoker.commandMessage);
         this.socketService.send(SocketEvent.Message, this.commandInvoker.commandMessage);
-        this.handleGoodPlacement();
-        this.handleBadPlacement();
     }
 
     editLetterSize() {
@@ -256,23 +253,6 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         if (!this.playerService.player.isItsTurn) return;
         if (!this.boardService.canBeFocused(tileIndexes)) return;
         this.focusHandlerService.currentFocus.next(CurrentFocus.BOARD);
-    }
-
-    private handleGoodPlacement() {
-        const TURN_UPDATE_DELAY = 100;
-
-        setTimeout(() => {
-            if (!this.playerService.player.isItsTurn) {
-                return;
-            }
-        }, TURN_UPDATE_DELAY);
-    }
-
-    private handleBadPlacement() {
-        setTimeout(() => {
-            if (!this.playerService.player.isItsTurn) return;
-            this.socketService.send(SocketEvent.ChangeTurn, this.room.roomInfo.name);
-        }, ONE_SECOND_IN_MS);
     }
 
     private drawSpecialTiles() {

@@ -89,6 +89,20 @@ export class SocketHandlerService {
         this.socketJoin(socket, CHAT_WINDOW_SOCKET_CHANNEL);
     }
 
+    getSocketPlayerUsername(socket: io.Socket): string | undefined {
+        const room = this.getSocketRoom(socket);
+        if (!room) {
+            const discussionChannels = this.getSocketDiscussionChannels(socket);
+            if (!discussionChannels) return;
+            for (const discussionChannel of discussionChannels) {
+                const userInfo = discussionChannel.activeUsers.find((user) => user.socketId === socket.id);
+                if (!userInfo) continue;
+                return userInfo.username;
+            }
+        }
+        return room?.getPlayer(socket.id)?.clientAccountInfo.username;
+    }
+
     getSocketRoom(socket: io.Socket): Room | undefined {
         if (socket.rooms.has(CHAT_WINDOW_SOCKET_CHANNEL)) return;
 

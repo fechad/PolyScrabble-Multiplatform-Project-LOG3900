@@ -71,7 +71,7 @@ app-general-chat {
     display: none;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    max-width: 92vw;
     height: 100vh;
     background-color: var(--section-background);
 

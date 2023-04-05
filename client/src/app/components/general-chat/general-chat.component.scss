@@ -30,6 +30,7 @@ $avatarMinDimension: 60px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: 100%;
 
     &.my {
         flex-direction: row-reverse;
@@ -97,7 +98,7 @@ $avatarMinDimension: 60px;
     padding: 16px;
     border-radius: 4px;
     width: fit-content;
-    max-width: 80%;
+    max-width: 60%;
     margin: 0;
     background-color: #e6e6e6;
     overflow-wrap: break-word;
@@ -112,6 +113,8 @@ $avatarMinDimension: 60px;
     flex-direction: column;
     align-items: start;
     margin-bottom: 20px;
+    width: 90%;
+
     &.my {
         align-items: end;
     }

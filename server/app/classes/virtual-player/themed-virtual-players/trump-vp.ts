@@ -10,6 +10,7 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
     hasCheated: boolean;
     angryTurnsLeft: number;
     isAngry: boolean;
+    mustKeepTurn: boolean;
     constructor(
         pseudo: string,
         isCreator: boolean,
@@ -20,6 +21,7 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
         super(pseudo, isCreator, boardManipulator, letterBank, SCALES.beginner, language);
         this.setQuotes(trumpFrenchQuotes, trumpEnglishQuotes);
         this.hasCheated = false;
+        this.mustKeepTurn = false;
         this.angryTurnsLeft = 0;
     }
     override setScoreInterval(gap: number): void {
@@ -53,8 +55,9 @@ export class TrumpVirtualPlayer extends VirtualPlayer {
     private cheat() {
         // TODO: add cheat logic
         this.hasCheated = true;
+        this.mustKeepTurn = true;
         this.isAngry = true;
-        this.angryTurnsLeft = 3;
+        this.angryTurnsLeft = 2;
         this.sendMessage(this.quotes.specialAnnouncement, TOGGLE_PREFIX + this.pseudo);
     }
     private refreshAngry() {

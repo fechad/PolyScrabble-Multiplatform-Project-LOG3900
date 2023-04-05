@@ -11,7 +11,7 @@ import {
     WAIT_TURN_ERROR,
 } from '@app/constants/command-constants';
 import { RACK_CAPACITY } from '@app/constants/constants';
-import { THIRTY_POINTS_NEEDED_FOR_REWARD, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/constants/goals-constants';
+import { THIRTY_POINTS_NEEDED_FOR_REWARD, TILES_NEEDED_FOR_GOAL, TOTAL_POINTS_NEEDED_FOR_REWARD } from '@app/constants/goals-constants';
 import { BoardMessageTitle } from '@app/enums/board-message-title';
 import { CommandVerbs } from '@app/enums/command-verbs';
 import { GoalTitle } from '@app/enums/goal-titles';
@@ -61,6 +61,7 @@ export class PlaceLettersCommand extends Command {
         if (!message.score) return;
         if (this.commandSender.points >= TOTAL_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.FirstToHundred);
         if (message.score >= THIRTY_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.ThirtyPointer);
+        if (this.placementArguments.word.length >= TILES_NEEDED_FOR_GOAL) Matcher.notifyGoalManager(this.commandSender, GoalTitle.AtLeastFive);
         if (this.checkNoChangeNoPass()) Matcher.notifyGoalManager(this.commandSender, GoalTitle.NoChangeNoPass);
     }
 

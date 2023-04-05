@@ -33,8 +33,10 @@ export class CommandController {
         this.splittedCommand = this.splitCommand(command);
         switch (this.splittedCommand[commandIndex]) {
             case CommandVerbs.PLACE: {
-                if (socket && (sender as TrumpVirtualPlayer).angryTurnsLeft === 2) {
+                if (!sender.isItsTurn) return;
+                if (socket && sender instanceof TrumpVirtualPlayer && (sender as TrumpVirtualPlayer).mustKeepTurn) {
                     this.executePlaceCommand(command, true);
+                    (sender as TrumpVirtualPlayer).mustKeepTurn = false;
                     SocketManager.instance.socketGameService.notifyViewBasedOnCommandResult(this.executionResult, this.room, sender, socket);
                     SocketManager.instance.socketGameService.handleNewPlayerTurn(socket, room, sender);
                     return;
