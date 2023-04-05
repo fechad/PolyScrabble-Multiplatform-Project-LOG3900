@@ -1,9 +1,11 @@
 import { Application } from '@app/app';
+import { firestore } from 'firebase-admin';
 import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
-import { DatabaseService } from './services/database.service';
+import { SocketEvent } from './enums/socket-event';
 import { PlayerGameHistoryService } from './services/GameEndServices/player-game-history.service';
+import { DatabaseService, USED_USERNAMES_COLLECTION } from './services/database.service';
 import { GamesHistoryService } from './services/games.history.service';
 import { ScoresService } from './services/score.service';
 import { SocketManager } from './services/socket-manager.service';
@@ -41,6 +43,24 @@ export class Server {
         SocketManager.createInstance(this.server, this.scoreService, this.playerGameHistoryService, this.gamesHistoryService);
         this.socketManager = SocketManager.instance;
         this.socketManager.handleSockets();
+
+        this.socketManager.sio.on(SocketEvent.Connection, (socket) => {
+            socket.on(SocketEvent.Disconnection, async () => {
+                try {
+                    const username = this.socketManager.socketHandlerService.getSocketPlayerUsername(socket);
+                    if (!username) return;
+                    const userEmailInfo: { email: string } | null = await this.databaseService.getDocumentByID(USED_USERNAMES_COLLECTION, username);
+                    if (!userEmailInfo) throw new Error('Username was not linked to an email');
+                    this.databaseService.log('userActions', (userEmailInfo as { email: string }).email, {
+                        message: 'logout/déconnexion',
+                        time: firestore.Timestamp.now(),
+                    });
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.error(error);
+                }
+            });
+        });
 
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
