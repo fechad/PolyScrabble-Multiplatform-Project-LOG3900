@@ -13,15 +13,17 @@ import 'avatar.dart';
 class GameHeaderWidget extends StatefulWidget {
   final List<Player> opponentsInfo;
   final VoidCallback resetLetters;
+  final bool isObserver;
   const GameHeaderWidget(
-      {Key? key, required this.resetLetters, required this.opponentsInfo})
+      {Key? key, required this.isObserver, required this.resetLetters, required this.opponentsInfo})
       : super(key: key);
 
   @override
-  _GameHeaderWidgetState createState() => _GameHeaderWidgetState();
+  _GameHeaderWidgetState createState() => _GameHeaderWidgetState(isObserver: isObserver);
 }
 
 class _GameHeaderWidgetState extends State<GameHeaderWidget> {
+  _GameHeaderWidgetState({required this.isObserver});
   final scaffoldKey = GlobalKey<ScaffoldState>();
   String timerFormat = '00:00';
   int timeChosen = 0;
@@ -32,6 +34,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   String currentPlayer = '';
   List<Player> winningPlayers = [];
   List<String> winner = [];
+  final bool isObserver;
+
 
   @override
   void initState() {
@@ -63,12 +67,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                 currentPlayer = '';
                 _timer.cancel();
                 linkService.setTurn(false);
-                if (players.length > 1) {
-                  //CHECK
-                } else {
                   inGameService.findWinner(gameService.decodePlayers(players));
                   winner.add(inGameService.winnerPseudo);
-                }
               })
             });
 
@@ -165,10 +165,10 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                   child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
-                  if (widget.opponentsInfo.isEmpty) {
-                    return const CircularProgressIndicator(); // display a loading indicator
-                  } else {
-                    return Column(
+                        if (widget.opponentsInfo.isEmpty) {
+                        return const CircularProgressIndicator(); // display a loading indicator
+                        } else {
+                        return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           winner.contains(gameService.room.players[index]
@@ -221,7 +221,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                               style: const TextStyle(fontSize: 14)),
                           const SizedBox(width: 70),
                         ]);
-                  }
+
                 },
                 itemCount: gameService.room.players.length,
                 reverse: false,
@@ -232,7 +232,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                       ? Color.fromARGB(255, 125, 175, 107)
                       : Color.fromARGB(255, 121, 101, 220),
                   disabledColor: Colors.grey,
-                  icon: const Icon(
+                  icon: isObserver ? Container()
+                      : const Icon(
                     Icons.double_arrow_rounded,
                     size: 50,
                   ),

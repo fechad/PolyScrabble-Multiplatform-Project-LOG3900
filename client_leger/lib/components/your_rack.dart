@@ -39,12 +39,12 @@ class _YourRackState extends State<YourRack> {
     super.initState();
     socketService.on(
         'drawRack',
-        (letters) => {
-              setState(() {
-                linkService.resetRack();
-                linkService.getRack();
-              }),
-            });
+            (letters) => {
+          setState(() {
+            linkService.resetRack();
+            linkService.getRack();
+          }),
+        });
 
     _detector = ShakeDetector.autoStart(onPhoneShake: () {
       if (!linkService.getWantToExchange() && placementValidator.letters.isEmpty) {

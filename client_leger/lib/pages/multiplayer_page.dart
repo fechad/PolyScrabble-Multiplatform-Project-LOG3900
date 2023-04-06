@@ -309,6 +309,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
         gameIsPublic, _gamePasswordController.text, level);
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return WaitingPage(
+          isObserver: false,
           roomName: gameService.room.roomInfo.name,
           timer: gameService.gameData.timerPerTurn,
           botsLevel: gameService.room.botsLevel!,

@@ -63,6 +63,7 @@ class ObserverPageState extends State<ObserverPage> {
           'user': authenticator.getCurrentUser().username,
           'isRoomChannel': true,
         }),
+        Navigator.pop(context),
         if (gameService.room.elapsedTime > 0)
           {
             Navigator.push(context, MaterialPageRoute(builder: ((context) {
@@ -73,6 +74,7 @@ class ObserverPageState extends State<ObserverPage> {
           {
             Navigator.push(context, MaterialPageRoute(builder: ((context) {
               return WaitingPage(
+                  isObserver: true,
                   roomName: gameService.room.roomInfo.name,
                   timer: gameService.room.roomInfo.timerPerTurn.toString(),
                   botsLevel: gameService.room.botsLevel!,

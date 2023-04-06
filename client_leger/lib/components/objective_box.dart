@@ -43,7 +43,7 @@ class ObjectiveBoxState extends State<ObjectiveBox> {
             child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(20),
+            preferredSize: Size.fromHeight(30),
             child: Container(
               width: 300,
               child: SafeArea(

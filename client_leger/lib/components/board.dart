@@ -125,21 +125,56 @@ class _BoardState extends State<Board> {
         "gameIsOver",
             (data) => {
             inGameService.findWinner(gameService.decodePlayers(data)),
-            if (inGameService.winnerPseudo == authenticator.getCurrentUser().username){
-              _controllerCenter.play(),
+            if(!isObserver) {
+              if (inGameService.winnerPseudo == authenticator
+                  .getCurrentUser()
+                  .username){
+                _controllerCenter.play(),
+              }
+              else
+                {
+                  showDialog(
+                      barrierDismissible: true,
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(AppLocalizations.of(context)!.endGame),
+                          content: Text(
+                              "${AppLocalizations.of(context)!
+                                  .endGameText}${inGameService.winnerPseudo}"),
+                          actions: [
+                            ElevatedButton(
+                                onPressed: () =>
+                                {
+                                  Navigator.pop(context)
+                                },
+                                child: Text("OK"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                  themeManager.themeMode == ThemeMode.light
+                                      ? Color.fromARGB(255, 125, 175, 107)
+                                      : Color.fromARGB(255, 121, 101, 220),
+                                  textStyle: const TextStyle(fontSize: 20),
+                                )),
+                          ],
+                        );
+                      })
+                }
             }
-            else {
+            else if (isObserver){
               showDialog(
                   barrierDismissible: true,
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(AppLocalizations.of(context)!.endGame),
+                      title: Text(AppLocalizations.of(context)!.endGameObserver),
                       content: Text(
-                          "${AppLocalizations.of(context)!.endGameText}${inGameService.winnerPseudo}"),
+                          "${AppLocalizations.of(context)!
+                              .endGameObserverText}${inGameService.winnerPseudo}"),
                       actions: [
                         ElevatedButton(
-                            onPressed: () => {
+                            onPressed: () =>
+                            {
                               Navigator.pop(context)
                             },
                             child: Text("OK"),

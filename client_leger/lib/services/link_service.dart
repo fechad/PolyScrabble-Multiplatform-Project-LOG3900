@@ -74,6 +74,9 @@ abstract class _LinkService with Store {
   Observable<int> letterBankCount = Observable(88);
 
   @observable
+  ObservableList<int> indicesToExchange = ObservableList.of([]);
+
+  @observable
   ObservableList<Widget> rows = ObservableList<Widget>.of([]);
 
   @observable
@@ -106,6 +109,10 @@ abstract class _LinkService with Store {
 
   List<String> getChannelWithNewMessages() {
     return channelWithNewMessages;
+  }
+
+  List<int> getIndicesToExchange() {
+    return indicesToExchange;
   }
 
   List<Widget> getRows() {
@@ -179,6 +186,21 @@ abstract class _LinkService with Store {
   @action
   setWantToExchange(bool value) {
     wantToExchange.value = value;
+  }
+
+  @action
+  resetIndicesToExchange() {
+    indicesToExchange = ObservableList.of([]);
+  }
+
+  @action
+  addToIndicesToExchange(int value) {
+    indicesToExchange.add(value);
+  }
+
+  @action
+  removeIndexToExchange(int value) {
+    indicesToExchange.remove(value);
   }
 
   @action

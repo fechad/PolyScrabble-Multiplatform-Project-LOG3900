@@ -27,6 +27,10 @@
 	"@classicButtonJoin": {
 		"description": "Texte du boutton"
 	},
+	"classicButtonObserve": "Observer une partie multijoueur",
+    	"@classicButtonJoin": {
+    		"description": "Texte du bouton"
+    	},
 	"classicCreateSoloTitle": "Partie Solo",
 	"@classicCreateSoloTitle": {
 		"description": "Type de partie"
@@ -390,5 +394,13 @@
     "endGameText": "Très belle partie! Malheureusement, la victoire revient à ",
         "@endGameText": {
                 "description": "Erreur du popup"
-            }
+            },
+    "endGameObserver": "La partie est terminée",
+        "@endGame": {
+                "description": "Titre du popup"
+            },
+    "endGameObserverText": "Le gagnant est ",
+            "@endGameText": {
+                    "description": "Erreur du popup"
+                }
 }
