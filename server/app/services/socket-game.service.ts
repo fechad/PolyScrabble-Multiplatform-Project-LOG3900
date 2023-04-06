@@ -18,6 +18,7 @@ import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
 import { CommandResult } from '@app/interfaces/command-result';
 import { PlacementData } from '@app/interfaces/placement-data';
+import { Position } from '@app/interfaces/position';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import * as io from 'socket.io';
 import { SocketHandlerService } from './socket-handler.service';
@@ -100,6 +101,12 @@ export class SocketGameService extends SocketHandlerService {
         if (!room) return;
         this.socketEmit(socket, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         this.socketEmit(socket, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
+    }
+
+    handleFirstTilePlaced(socket: io.Socket, tileIndexes: Position | null) {
+        const room = this.getSocketRoom(socket);
+        if (!room) return;
+        this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.FirstTilePlaced, tileIndexes);
     }
 
     handleGetAllGoals(socket: io.Socket) {

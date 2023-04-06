@@ -3,4 +3,5 @@ export enum SelectionType {
     EXCHANGE = 'GREEN',
     PLACEMENT = 'RED',
     BOARD = 'LIGHT_RED',
+    PREVIEW = 'RED',
 }

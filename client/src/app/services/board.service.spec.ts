@@ -6,6 +6,8 @@ import { BoardMessage } from '@app/classes/board-message';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
+import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
+import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { Tile } from '@app/classes/tile';
 import { BOARD_SCALING_RATIO } from '@app/constants/board-constants';
 import { Direction } from '@app/enums/direction';
@@ -35,9 +37,12 @@ describe('BoardService', () => {
 
     let servicePrivateAccess: any;
 
+    let socketServiceMock: SocketClientServiceMock;
+
     beforeEach(async () => {
+        socketServiceMock = new SocketClientServiceMock(new SocketTestHelper());
         sessionStorageService = new SessionStorageService();
-        commandInvokerService = new CommandInvokerService();
+        commandInvokerService = new CommandInvokerService(socketServiceMock);
         rack = new Rack();
         TestBed.configureTestingModule({
             declarations: [],

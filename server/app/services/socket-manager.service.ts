@@ -6,6 +6,7 @@ import { Account } from '@app/interfaces/firestoreDB/account';
 import { JoinRoomForm } from '@app/interfaces/join-room-form';
 import { ObserveRoomForm } from '@app/interfaces/observe-room-form';
 import { PlayerData } from '@app/interfaces/player-data';
+import { Position } from '@app/interfaces/position';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
@@ -147,6 +148,12 @@ export class SocketManager {
                 console.log('SocketEvent.GetPlayersRackInfos', socket.id);
 
                 this.socketGameService.handleGetPlayersRackInfo(socket, roomName);
+            });
+
+            socket.on(SocketEvent.FirstTilePlaced, (tileIndexes: Position | null) => {
+                console.log('SocketEvent.FirstTilePlaced', socket.id);
+
+                this.socketGameService.handleFirstTilePlaced(socket, tileIndexes);
             });
 
             socket.on(SocketEvent.CreateRoom, (room: Room) => {

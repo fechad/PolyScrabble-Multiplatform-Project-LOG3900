@@ -48,7 +48,7 @@ describe('PlayAreaComponent', () => {
         socketServiceMock = new SocketClientServiceMock();
         socketServiceMock.socket = socketHelper as unknown as Socket;
         sessionStorageService = new SessionStorageService();
-        commandInvokerService = new CommandInvokerService();
+        commandInvokerService = new CommandInvokerService(socketServiceMock);
         focusHandlerService = new FocusHandlerService();
 
         playerService = new PlayerService();

@@ -1,6 +1,7 @@
 import { Command } from '@app/classes/command/abstract-command';
 import { Dimension } from '@app/classes/dimension';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
+import { Position } from '@app/classes/position';
 import { Rack } from '@app/classes/rack';
 import { Tile } from '@app/classes/tile';
 import { DEFAULT_CASE_COUNT } from '@app/constants/board-constants';
@@ -20,6 +21,10 @@ export class PlaceLetter extends Command {
         super();
         this.arrowDirection = arrowDirection;
         this.isFirstPlaced = isFirstPlaced;
+    }
+
+    get tilePosition(): Position {
+        return this.placeLetterInfo.indexes;
     }
 
     protected get letter(): string {

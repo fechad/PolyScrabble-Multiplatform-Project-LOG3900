@@ -6,7 +6,9 @@ import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Tile } from '@app/classes/tile';
 import { A_ASCII } from '@app/constants/constants';
 import { PlacementType } from '@app/enums/placement-type';
+import { SocketEvent } from '@app/enums/socket-event';
 import { ANY_ARROW, DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
+import { SocketClientService } from './socket-client.service';
 
 const PLACE_COMMAND = '!placer';
 @Injectable({
@@ -19,7 +21,7 @@ export class CommandInvokerService {
 
     private cancelStack: Command[];
 
-    constructor() {
+    constructor(private socketService: SocketClientService) {
         this.cancelStack = [];
         this.canSelectFirstCaseForPlacement = true;
         this.firstSelectedCaseForPlacement = '';
@@ -66,17 +68,20 @@ export class CommandInvokerService {
     }
 
     executeCommand(command: Command) {
+        const tilePosition = { ...(command as PlaceLetter).tilePosition };
         command.execute();
         this.cancelStack.push(command);
-        const placeLetterCommand = command as PlaceLetter;
-        if (placeLetterCommand) {
-            this.selectedTile = placeLetterCommand.getNextPlaceInfo();
-        }
+        if (command instanceof PlaceLetter === false) return;
 
-        this.canSelectFirstCaseForPlacement = false;
+        this.selectedTile = (command as PlaceLetter).getNextPlaceInfo();
+
+        if (this.canSelectFirstCaseForPlacement) {
+            this.socketService.send(SocketEvent.FirstTilePlaced, tilePosition);
+            this.canSelectFirstCaseForPlacement = false;
+        }
     }
 
-    cancel() {
+    cancel(isAfterPlacement?: boolean) {
         if (this.cancelStack.length <= 0) return;
         const placeLetterCommand = this.cancelStack[this.cancelStack.length - 1] as PlaceLetter;
         if (placeLetterCommand) {
@@ -87,14 +92,15 @@ export class CommandInvokerService {
         if (this.cancelStack.length <= 0) {
             this.canSelectFirstCaseForPlacement = true;
             this.selectedTile = undefined;
+            if (!isAfterPlacement) this.socketService.send(SocketEvent.FirstTilePlaced, null);
         }
 
         commandToCancel?.cancel();
     }
 
-    removeAllViewLetters() {
+    removeAllViewLetters(isAfterPlacement?: boolean) {
         while (this.cancelStack.length > 0) {
-            this.cancel();
+            this.cancel(isAfterPlacement);
         }
     }
 

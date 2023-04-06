@@ -85,7 +85,7 @@ export class BoardService {
         this.reinitializeLettersTiles();
     }
 
-    mouseHitDetect(tileIndexes: Position) {
+    mouseHitDetect(tileIndexes: Position, isOtherPlayerPreview?: boolean) {
         if (this.commandInvoker.placementType !== PlacementType.Simple && this.commandInvoker.placementType !== PlacementType.None) return;
         if (!this.canSelectCase(tileIndexes)) return;
 
@@ -96,7 +96,7 @@ export class BoardService {
             this.commandInvoker.selectedTile = undefined;
             return;
         }
-        this.commandInvoker.selectedTile.tile.updateSelectionType(SelectionType.BOARD);
+        this.commandInvoker.selectedTile.tile.updateSelectionType(isOtherPlayerPreview ? SelectionType.PREVIEW : SelectionType.BOARD);
     }
 
     dragEndDetect(tileIndexes: Position) {
@@ -208,11 +208,12 @@ export class BoardService {
         });
     }
 
-    removeAllViewLetters() {
-        this.commandInvoker.removeAllViewLetters();
+    removeAllViewLetters(isAfterPlacement?: boolean) {
+        this.commandInvoker.removeAllViewLetters(isAfterPlacement);
         if (!this.commandInvoker.selectedTile) return;
         this.commandInvoker.selectedTile.tile.content = '';
         this.commandInvoker.selectedTile.tile.updateSelectionType(SelectionType.UNSELECTED);
+        this.commandInvoker.selectedTile = undefined;
     }
 
     removePlacementCommands() {
