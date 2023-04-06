@@ -17,7 +17,6 @@ export class SocketRoomService extends SocketHandlerService {
         availableRoom.botsLevel = desiredLevel;
         availableRoom.createVirtualPlayer(data.botName);
         this.roomService.setUnavailable(availableRoom.roomInfo.name);
-
         this.socketJoin(socket, availableRoom.roomInfo.name);
         this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
     }

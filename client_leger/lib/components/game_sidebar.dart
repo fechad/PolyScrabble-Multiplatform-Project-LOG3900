@@ -4,9 +4,11 @@ import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../classes/game.dart';
 import '../main.dart';
+import '../pages/change_password_page.dart';
 import '../services/link_service.dart';
 
 class GameSidebar extends StatefulWidget {
@@ -38,6 +40,20 @@ class _GameSidebarState extends State<GameSidebar> {
   }
 
   _configure() {
+    socketService.on(
+        'channelMessage',
+            (data) => {
+
+                      FlutterRingtonePlayer.play(
+                        android: AndroidSounds.notification,
+                        ios: IosSounds.receivedMessage,
+                        looping: false, // Android only - API >= 28
+                        volume: 0.5, // Android only - API >= 28
+                        asAlarm: false, // Android only - all APIs
+                      ),
+
+        });
+
     socketService.on(
         "toggleAngryBotAvatar",
         (botName) => {
@@ -145,6 +161,7 @@ class _GameSidebarState extends State<GameSidebar> {
                             MaterialPageRoute(builder: ((context) {
                           return const MyHomePage(title: 'PolyScrabble');
                         })));
+                        httpService.getUserInfo(authenticator.getCurrentUser().email);
                       },
                     )
                   : IconButton(
@@ -165,7 +182,7 @@ class _GameSidebarState extends State<GameSidebar> {
                                         child: Text(
                                             AppLocalizations.of(context)!.no,
                                             style: TextStyle(
-                                              color: Colors.black,
+                                              color: Colors.white,
                                             )),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
@@ -204,6 +221,7 @@ class _GameSidebarState extends State<GameSidebar> {
                                                     MyHomePage(
                                                         title:
                                                             "PolyScrabble")));
+                                        httpService.getUserInfo(authenticator.getCurrentUser().email);
                                       },
                                     ),
                                   ],

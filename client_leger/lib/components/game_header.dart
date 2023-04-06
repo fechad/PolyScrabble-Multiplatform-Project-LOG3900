@@ -222,7 +222,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                           const SizedBox(width: 70),
                         ]);
 
-                },
+                }
+                        },
                 itemCount: gameService.room.players.length,
                 reverse: false,
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),

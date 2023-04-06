@@ -11,6 +11,7 @@ import 'package:http/http.dart';
 import '../classes/constants.dart';
 import '../firebase_options.dart';
 import '../main.dart';
+import 'init_service.dart';
 
 class AuthService {
   late FirebaseApp app;
@@ -214,5 +215,12 @@ class AuthService {
 
   Account getCurrentUser() {
     return currentUser;
+  }
+
+  getUserInfo() {
+    return {
+      'socketId': homeSocketService.getSocketID()!,
+      'username': getCurrentUser().username,
+    };
   }
 }

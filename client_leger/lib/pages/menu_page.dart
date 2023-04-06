@@ -54,7 +54,7 @@ class _MenuPageState extends State<MenuPage> {
                     "assets/images/scrabble_hero.png",
                   ),
                 ),
-                SizedBox(height: 130),
+                SizedBox(height: 100),
                 Text(AppLocalizations.of(context)!.mainButtonClassic,
                     style: TextStyle(
                       fontFamily: "Nunito",

@@ -105,7 +105,6 @@ export class SocketHandlerService {
 
     getSocketRoom(socket: io.Socket): Room | undefined {
         if (socket.rooms.has(CHAT_WINDOW_SOCKET_CHANNEL)) return;
-
         for (const room of socket.rooms) {
             if (room.toLowerCase().startsWith(DEFAULT_ROOM_NAME.toLowerCase())) {
                 const wantedRoom = this.roomService.getRoom(room);

@@ -76,7 +76,6 @@ export class SocketGameService extends SocketHandlerService {
         this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
         const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
-
         this.swapPlayerForBot(room, player);
         this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
