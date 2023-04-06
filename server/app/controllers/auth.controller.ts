@@ -35,7 +35,7 @@ export class AuthController {
                     .getDocumentByID('accounts', req.params.email)
                     .then((data) => {
                         if (!data) res.status(StatusCodes.NOT_FOUND).send('No such account');
-                        this.databaseService.log('userActions', req.params.email, { message: 'login/connection', time: firestore.Timestamp.now() });
+                        this.databaseService.log('userActions', req.params.email, { message: 'login/connexion', time: firestore.Timestamp.now() });
                         res.json(data);
                     })
                     // eslint-disable-next-line no-console

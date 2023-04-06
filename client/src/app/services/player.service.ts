@@ -71,5 +71,6 @@ export class PlayerService {
         if (!this.httpService) return;
         this.account.userSettings = newSettings;
         this.player.clientAccountInfo = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, this.account));
+        this.stats = await lastValueFrom(this.httpService.getPlayerStats(this.player.email));
     }
 }
