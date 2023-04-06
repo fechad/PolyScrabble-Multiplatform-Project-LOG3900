@@ -132,6 +132,10 @@ class _GameSidebarState extends State<GameSidebar> {
                       icon:
                           const Icon(Icons.logout, size: 50, color: Colors.red),
                       onPressed: () {
+                        if (!isObserver) {
+                          authenticator.setStats(
+                            authenticator.currentUser.email);
+                        }
                         audioPlayer.stop();
                         backgroundService.setBackground('');
                         gameService.reinitializeRoom();

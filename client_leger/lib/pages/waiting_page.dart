@@ -19,6 +19,7 @@ import 'chat_page.dart';
 class WaitingPage extends StatefulWidget {
   const WaitingPage(
       {super.key,
+        required this.isObserver,
       required this.roomName,
       required this.timer,
       required this.botsLevel,
@@ -27,14 +28,17 @@ class WaitingPage extends StatefulWidget {
   final String timer;
   final String botsLevel;
   final List<Player> players;
+  final bool isObserver;
   @override
   _WaitingPageState createState() => _WaitingPageState(
-      roomName: roomName, timer: timer, botsLevel: botsLevel, players: players);
+      isObserver: isObserver, roomName: roomName, timer: timer, botsLevel: botsLevel, players: players);
 }
 
 class _WaitingPageState extends State<WaitingPage> {
   _WaitingPageState(
-      {required this.roomName,
+      {
+        required this.isObserver,
+        required this.roomName,
       required this.timer,
       required this.botsLevel,
       required this.players});
@@ -45,6 +49,8 @@ class _WaitingPageState extends State<WaitingPage> {
   final String timer;
   final String botsLevel;
   final List<Player> players;
+  final bool isObserver;
+
   Room myRoom = gameService.room;
   bool isWriting = false;
   bool canStart = false;
@@ -182,9 +188,9 @@ class _WaitingPageState extends State<WaitingPage> {
               gameService.room = gameService.decodeModel(serverRoom),
               noPlayers = gameService.room.players.length,
               setState(() => {
-                    canStart = true,
-                    noPlayers++,
-                  })
+                if (!isObserver && noPlayers > 1) {
+                  canStart = true,
+                }})
             });
 
     socketService.on(

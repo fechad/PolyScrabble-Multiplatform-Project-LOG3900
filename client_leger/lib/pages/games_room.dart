@@ -54,6 +54,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
               linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
               Navigator.push(context, MaterialPageRoute(builder: ((context) {
                 return WaitingPage(
+                    isObserver: false,
                     roomName: gameService.room.roomInfo.name,
                     timer: gameService.gameData.timerPerTurn,
                     botsLevel: gameService.room.botsLevel!,

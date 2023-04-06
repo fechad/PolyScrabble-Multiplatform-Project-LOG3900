@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../classes/game.dart';
 import '../main.dart';
+import '../services/link_service.dart';
 
 class OthersRack extends StatefulWidget {
   const OthersRack(
@@ -34,16 +35,32 @@ class OthersRackState extends State<OthersRack> {
       clientAccountInfo: authenticator.getCurrentUser()),
       rackLetters: '');
   final bool isObserver;
+  late Player p;
 
   @override
   void initState() {
     super.initState();
+
+    socketService.on(
+        "playersRackUpdated",
+            (data) => {
+          if (mounted) {
+            setState(() {
+              for (var playerInfo in data) {
+                p = gameService.decodePlayer(playerInfo['player']);
+                gameService.playersRack.add(PlayerRack(
+                    player: p, rackLetters: playerInfo['rackLetters']));
+              }
+            })
+          }
+        });
 
     for (PlayerRack p in playerInfo) {
       if (p.player.clientAccountInfo!.username == player.clientAccountInfo!.username){
         rightPlayer = p;
       }
     }
+
   }
 
 

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_shake_animated/flutter_shake_animated.dart';
 import 'package:shake/shake.dart';
 
+import '../config/colors.dart';
 import '../main.dart';
 import '../pages/game_page.dart';
 
@@ -117,14 +118,13 @@ class _TileState extends State<Tile> {
                 borderColor = themeManager.themeMode == ThemeMode.light
                     ? Color.fromARGB(255, 125, 175, 107)
                     : Color.fromARGB(255, 121, 101, 220);
-                TileNotification(index).dispatch(context);
+               TileNotification(index).dispatch(context);
               } else {
                 borderColor = Colors.black;
                 TileNotification(index).dispatch(context);
               }
             }
           });
-          //return rebuildController?.rebuild();
         },
         child: linkService.getWantToExchange()
             ? Container(
@@ -132,8 +132,11 @@ class _TileState extends State<Tile> {
                   borderRadius: BorderRadius.circular(10),
                   color: const Color(0xFFFFEBCE),
                   border: Border.all(
-                    color: borderColor,
-                    width: 1,
+                    color: linkService.getIndicesToExchange().contains(index) ?
+                    (themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220)) : Colors.black,
+                    width: linkService.getIndicesToExchange().contains(index) ? 2:1,
                   ),
                 ),
                 margin: const EdgeInsets.only(left: 2.5, right: 2.5),
@@ -144,7 +147,7 @@ class _TileState extends State<Tile> {
                     Center(
                         child: Text(letter,
                             style: TextStyle(
-                                fontSize: 24, color: borderColor))),
+                                fontSize: 24, color: Colors.black))),
                     Positioned(
                       child: Text('$value',
                           style: const TextStyle(
@@ -175,7 +178,7 @@ class _TileState extends State<Tile> {
                           borderRadius: BorderRadius.circular(10),
                           color: const Color(0xFFFFEBCE),
                           border: Border.all(
-                            color: const Color(0xAA000000),
+                            color: borderColor,
                             width: 1,
                           ),
                         ),

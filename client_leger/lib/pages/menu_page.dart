@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../components/sidebar.dart';
 import '../main.dart';
+import 'observer_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -113,7 +114,24 @@ class _MenuPageState extends State<MenuPage> {
                     })));
                   },
                 ),
-                SizedBox(height: 200),
+                SizedBox(height: 15),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
+                    minimumSize: Size(310, 40),
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.classicButtonObserve),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: ((context) {
+                          return ObserverPage();
+                        })));
+                  },
+                ),
+                SizedBox(height: 100),
               ],
             ),
           ),

@@ -6,6 +6,7 @@
 	"classicButtonSoloGame": "Play a solo game",
 	"classicButtonMultiGame": "Create a multiplayer game",
 	"classicButtonJoin": "Join a multiplayer game",
+	"classicButtonObserve": "Observe a multiplayer game",
 	"classicCreateSoloTitle": "Solo Game",
 	"classicCreateSoloVpName": "Virtual player name",
 	"classicCreateSoloVpDifficultyLabel": "Virtual player difficulty",
@@ -96,5 +97,7 @@
     "createChatErrorTwo": "Chat name cant be empty",
     "createChatErrorThree": "Chat name cant start with 'room'",
     "endGame": "Too bad...",
-    "endGameText": "Good game! Unfortunately, the winner is "
+    "endGameText": "Good game! Unfortunately, the winner is ",
+    "endGameObserver": "The game has ended",
+    "endGameObserverText": "The winner is "
 }

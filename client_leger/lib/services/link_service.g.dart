@@ -60,6 +60,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  ObservableList<int> get indicesToExchange {
+    _$valueAtom.reportRead();
+    return super.indicesToExchange;
+  }
+
+  @override
   ObservableList<String> get channelWithNewMessages {
     _$valueAtom.reportRead();
     return super.channelWithNewMessages;
@@ -92,6 +98,17 @@ mixin _$LinkService on _LinkService, Store {
 
   late final _$_LinkServiceActionController =
       ActionController(name: '_LinkService');
+
+  @override
+  void resetIndicesToExchange() {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.resetIndicesToExchange');
+    try {
+      return super.resetIndicesToExchange();
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setCurrentBackground(value) {
@@ -231,6 +248,28 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setCurrentOpenedChat');
     try {
       return super.setCurrentOpenedChat(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void addToIndicesToExchange(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.addToIndicesToExchange');
+    try {
+      return super.addToIndicesToExchange(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void removeIndexToExchange(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.removeIndexToExchange');
+    try {
+      return super.removeIndexToExchange(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }

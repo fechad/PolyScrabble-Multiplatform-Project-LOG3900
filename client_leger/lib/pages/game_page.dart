@@ -161,18 +161,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             });
 
     socketService.on(
-        "playersRackUpdated",
-        (data) => {
-              for (var playerInfo in data)
-                {
-                  p = gameService.decodePlayer(playerInfo['player']),
-                  gameService.playersRack.add(PlayerRack(
-                      player: p, rackLetters: playerInfo['rackLetters']))
-                },
-              updateLetters(),
-            });
-
-    socketService.on(
         "observersUpdated",
         (roomObservers) => {
               gameService.room.observers =
@@ -316,8 +304,10 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     setState(() {
       if (letterIndexesToExchange.contains(letterIndex)) {
         letterIndexesToExchange.remove(letterIndex);
+        linkService.removeIndexToExchange(letterIndex);
       } else {
         letterIndexesToExchange.add(letterIndex);
+        linkService.addToIndicesToExchange(letterIndex);
       }
     });
   }
@@ -377,6 +367,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
           Column(children: [
             SizedBox(height: 10),
             GameHeaderWidget(
+                isObserver: observing,
                 opponentsInfo: gameService.room.players,
                 resetLetters: resetLettersPlaced),
             Observer(
@@ -408,6 +399,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                   ElevatedButton(
                     onPressed: () => {
                       setState(() {
+                        linkService.resetIndicesToExchange();
                         letterIndexesToExchange.clear();
                         linkService.resetRack();
                         linkService.setWantToExchange(false);
@@ -428,6 +420,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                             letterIndexes: letterIndexesToExchange);
                         gameCommandService.constructExchangeCommand(command);
                         linkService.resetRack();
+                        linkService.resetIndicesToExchange();
                         letterIndexesToExchange.clear();
                         linkService.setWantToExchange(false);
                       });

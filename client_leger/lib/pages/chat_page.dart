@@ -211,6 +211,10 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                                           onPressed: () {
                                             leaveChannel();
                                             Navigator.pop(context);
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder: ((context) {
+                                                  return const MyHomePage(title: 'PolyScrabble');
+                                                })));
                                           },
                                         ),
                                       ],
