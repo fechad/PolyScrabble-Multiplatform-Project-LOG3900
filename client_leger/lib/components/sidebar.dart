@@ -89,16 +89,17 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                           setState(() {
                             if (!linkService.getNewMessageBoolean())
                               linkService.newMessageChange();
-                          })
+                          }),
+                          FlutterRingtonePlayer.play(
+                            android: AndroidSounds.notification,
+                            ios: IosSounds.receivedMessage,
+                            looping: false, // Android only - API >= 28
+                            volume: 0.5, // Android only - API >= 28
+                            asAlarm: false, // Android only - all APIs
+                          ),
                         }
                     },
-                  FlutterRingtonePlayer.play(
-                    android: AndroidSounds.notification,
-                    ios: IosSounds.receivedMessage,
-                    looping: false, // Android only - API >= 28
-                    volume: 0.5, // Android only - API >= 28
-                    asAlarm: false, // Android only - all APIs
-                  ),
+
                 }
             });
 

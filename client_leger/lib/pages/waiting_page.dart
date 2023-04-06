@@ -87,19 +87,6 @@ class _WaitingPageState extends State<WaitingPage> {
                               {
                                 linkService.pushNewChannel(
                                     gameService.room.roomInfo.name),
-                                if (messages.isNotEmpty &&
-                                    messages[messages.length - 1].sender !=
-                                        authenticator.currentUser.username)
-                                  {
-                                    FlutterRingtonePlayer.play(
-                                      android: AndroidSounds.notification,
-                                      ios: IosSounds.receivedMessage,
-                                      looping:
-                                          false, // Android only - API >= 28
-                                      volume: 0.5, // Android only - API >= 28
-                                      asAlarm: false, // Android only - all APIs
-                                    ),
-                                  },
                               },
                             (data as List<dynamic>).forEach((message) => {
                                   messages.add(ChatMessage(

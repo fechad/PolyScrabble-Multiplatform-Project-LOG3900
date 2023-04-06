@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/sender_message.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
+import '../classes/game.dart';
 import '../components/chat_model.dart';
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
@@ -30,10 +32,16 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   final ChatModel chat;
   bool isWriting = false;
   late List<ChatMessage> messages;
+  bool joined = false;
 
   @override
   void initState() {
     super.initState();
+    for (var chatUser in chat.activeUsers){
+      if(chatUser.contains(authenticator.getCurrentUser().username)){
+        joined = true;
+      }
+    }
     messages = chatService.getDiscussionChannelByName(chat.name).messages;
     linkService.setCurrentOpenedChat(chat.name);
     linkService.popChannel(chat.name);
@@ -61,18 +69,6 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                       message: message['message'])),
                 })
               }))
-            },
-          if (messages[messages.length - 1].sender !=
-              authenticator.currentUser.username &&
-              linkService.currentOpenedChat != chat.name)
-            {
-              FlutterRingtonePlayer.play(
-                android: AndroidSounds.notification,
-                ios: IosSounds.receivedMessage,
-                looping: false, // Android only - API >= 28
-                volume: 0.5, // Android only - API >= 28
-                asAlarm: false, // Android only - all APIs
-              ),
             },
           _scrollDown()
         });
@@ -130,8 +126,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                   ),
                   SizedBox(width: 50),
                   chat.name != 'General Chat' &&
-                      (chat.activeUsers.contains(
-                          authenticator.currentUser.username) ||
+                      (joined ||
                           chat.owner?.username ==
                               authenticator.currentUser.username)
                       ? SizedBox(
@@ -283,8 +278,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                   onSubmitted: submitMsg,
                   decoration: InputDecoration.collapsed(
                       hintStyle: TextStyle(fontSize: 18),
-                      hintText: !chat.activeUsers.contains(
-                          authenticator.getCurrentUser().username) &&
+                      hintText: !joined &&
                           chat.owner?.username !=
                               authenticator.getCurrentUser().username &&
                           chat.name != 'General Chat'
