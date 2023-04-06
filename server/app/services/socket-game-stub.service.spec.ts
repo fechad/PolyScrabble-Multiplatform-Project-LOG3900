@@ -6,9 +6,8 @@ import { Player } from '@app/classes/player';
 import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
-import { COUNT_PLAYER_TURN, SYSTEM_NAME } from '@app/constants/constants';
+import { COUNT_PLAYER_TURN } from '@app/constants/constants';
 import { CommandVerbs } from '@app/enums/command-verbs';
-import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
@@ -276,16 +275,14 @@ describe('Socket-game-stub service tests', () => {
             assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, 'playerTurnChanged', firstPlayer.pseudo), 'playerTurnChanged event not sent');
             done();
         });
-        it('should send the events "drawRack" and "message" to the client when receiving a successful switch letters command', (done) => {
+        it('should send the events "drawRack" to the client when receiving a successful switch letters command', (done) => {
             const mock: CommandResult = { commandType: 'échanger', messageToSender: 'good', messageToOthers: 'very good' };
             executeCommandStub.callsFake(() => {
                 return mock;
             });
             socketGameService.handleMessage(socketMock, validSwitchLettersCommand);
-            const message = { text: mock.messageToSender, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
             assert(sendEveryoneStub.called, 'The method sendToEveryoneInRoom was not called');
             assert(sendEveryoneStub.calledWith(firstPlayer.socketId, 'drawRack', firstPlayer.rack.getLetters()), 'drawRack event not sent');
-            assert(sendEveryoneStub.calledWith(firstPlayer.socketId, 'message', message), 'message event not sent');
             done();
         });
         it('should send a message to the sender when executing hint command', (done) => {

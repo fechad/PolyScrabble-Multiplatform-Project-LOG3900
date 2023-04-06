@@ -25,7 +25,6 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late List<String> usernames;
   final TextEditingController textController = TextEditingController();
   bool isWriting = false;
   bool validUsername = false;
@@ -33,24 +32,12 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   @override
   void initState() {
     super.initState();
-    httpService.getUsernames().then((names) => {usernames = names});
   }
 
   @override
   void dispose() {
     _unfocusNode.dispose();
     super.dispose();
-  }
-
-  Future<bool> checkWithAvailableNames(String value) async {
-    await httpService.getUsernames().then((names) => {usernames = names});
-    if (usernames
-        .toString()
-        .toLowerCase()
-        .contains('"${value?.toLowerCase()}"')) {
-      return false;
-    }
-    return true;
   }
 
   @override
@@ -132,10 +119,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                   borderSide: BorderSide(color: Colors.black54),
                                 ),
                               ),
-
-                              // The validator receives the text that the user has entered.
                               validator: (value) {
-                                checkWithAvailableNames(value!);
                                 if (value == null || value.isEmpty) {
                                   return "Entrez un nom d'utilisateur valide";
                                 }
@@ -166,9 +150,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                                   borderSide: BorderSide(color: Colors.black54),
                                 ),
                               ),
-                              // The validator receives the text that the user has entered.
                               validator: (value) {
-                                checkWithAvailableNames(value!);
                                 if (value == null || value.isEmpty) {
                                   return 'Entrez un mot de passe valide';
                                 }
@@ -220,7 +202,6 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
                             padding: const EdgeInsets.symmetric(vertical: 20.0),
                             child: ElevatedButton(
                               onPressed: () async {
-                                // Validate returns true if the form is valid, or false otherwise.
                                 if (_formKey.currentState!.validate()) {
                                   loginUser();
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -325,7 +306,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
     }
     setState(() {
       isWriting = false;
-      usernames;
+      //usernames;
     });
   }
 

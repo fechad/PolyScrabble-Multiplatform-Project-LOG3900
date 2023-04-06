@@ -4,6 +4,7 @@ import { GoalRewards } from '@app/enums/goal-rewards';
 import { GoalTitle } from '@app/enums/goal-titles';
 import { Goal } from '@app/interfaces/goal';
 
+export const TILES_NEEDED_FOR_GOAL = 5;
 export const TARGET_GOAL_COUNT = 4;
 export const PUBLIC_GOAL_COUNT = 4;
 export const TOTAL_POINTS_NEEDED_FOR_REWARD = 100;
@@ -75,13 +76,4 @@ export const THREE_WORDS_AT_ONCE_GOAL: Goal = {
     players: [],
 };
 
-export const DEFAULT_GOALS = [
-    AT_LEAST_5_GOAL,
-    FIRST_TO_HUNDRED_GOAL,
-    NEED_OR_GOAL,
-    NO_CHANGE_NO_PASS_GOAL,
-    PALINDROME_GOAL,
-    THIRD_TIME_CHARM_GOAL,
-    THIRTY_POINTER_GOAL,
-    THREE_WORDS_AT_ONCE_GOAL,
-];
+export const DEFAULT_GOALS = [AT_LEAST_5_GOAL, FIRST_TO_HUNDRED_GOAL, NO_CHANGE_NO_PASS_GOAL, THIRTY_POINTER_GOAL];

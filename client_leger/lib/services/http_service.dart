@@ -50,20 +50,6 @@ class HttpService {
         body: {"email": email});
   }
 
-  Future<List<String>> getUsernames() async {
-    final response = await http.get(Uri.parse('$url/api/$authUrl/usernames'));
-    if (response.statusCode != 200) {
-      return throw Exception(
-        response.statusCode,
-      );
-    }
-
-    final firstReplace = response.body.replaceAll("[", '');
-    final secondReplace = firstReplace.replaceAll("]", '');
-    final respJson = secondReplace.split(",");
-    return Future.value(respJson);
-  }
-
   Future<http.Response> updateUserSettings(
       String userEmail, Account clientAccountInfo) {
     final Map<String, dynamic> body = {
