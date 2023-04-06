@@ -22,6 +22,7 @@
                         [class.placement]="boardService.lettersInBoard[j][i].content !== ''"
                         [class.new]="boardService.lettersInBoard[j][i].typeOfSelection === selectionType.BOARD"
                         [class.pink]="boardService.lettersInBoard[j][i].color === 'PINK' && boardService.lettersInBoard[j][i].content"
+                        [class.preview]="boardService.lettersInBoard[j][i].typeOfSelection === selectionType.PREVIEW"
                     >
                         <div [class.placed-tile-letter]="!isArrow(boardService.lettersInBoard[j][i].content)">
                             {{ boardService.lettersInBoard[j][i].content.toUpperCase() }}

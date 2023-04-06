@@ -1,8 +1,9 @@
 /* eslint-disable dot-notation */ // we want to access private attribute
-import { TestBed } from '@angular/core/testing';
 import { PlaceLetter } from '@app/classes/command/place-letter';
 import { PlaceLetterInfo } from '@app/classes/place-letter-info';
 import { Rack } from '@app/classes/rack';
+import { SocketClientServiceMock } from '@app/classes/socket-client-helper';
+import { SocketTestHelper } from '@app/classes/socket-test-helper';
 import { Tile } from '@app/classes/tile';
 import { BOARD_SCALING_RATIO, DEFAULT_CASE_COUNT, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/board-constants';
 import { DOWN_ARROW, RIGHT_ARROW } from '@app/enums/tile-constants';
@@ -21,8 +22,7 @@ describe('CommandInvokerService', () => {
     let tile2: Tile;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
-        service = TestBed.inject(CommandInvokerService);
+        service = new CommandInvokerService(new SocketClientServiceMock(new SocketTestHelper()));
 
         arrowDirection = RIGHT_ARROW;
         isFirstPlaced = true;

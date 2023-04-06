@@ -109,7 +109,8 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
         switch (event.key) {
             case KeyboardKeys.Enter:
                 this.confirmPlacement();
-                this.boardService.removeAllViewLetters();
+                if (this.commandInvoker.commandMessage.length === 0) return;
+                this.boardService.removeAllViewLetters(true);
                 break;
             case KeyboardKeys.Backspace:
                 this.commandInvoker.cancel();
@@ -217,11 +218,21 @@ export class PlayAreaComponent extends ComponentCommunicationManager implements 
 
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.DrawBoard, (placementData: PlacementData) => {
+            this.boardService.removeAllViewLetters();
             const rowNumber = this.boardService.matchRowNumber(placementData.row) as number;
             this.boardService.drawWord(placementData.word, parseInt(placementData.column, 10), rowNumber, placementData.direction);
         });
 
+        this.socketService.on(SocketEvent.FirstTilePlaced, (tileIndexes: Position) => {
+            if (tileIndexes) {
+                this.boardService.mouseHitDetect(tileIndexes, true);
+                return;
+            }
+            this.boardService.removeAllViewLetters();
+        });
+
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
+            this.boardService.removeAllViewLetters();
             if (this.playerService.player.pseudo !== currentPlayerTurnPseudo) {
                 this.boardService.removeAllViewLetters();
             }

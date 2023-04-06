@@ -1,95 +1,94 @@
 <div class="page-container">
     <div class="page-body mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
-            <div class="page-title">
-                <div class="form-title settings-title" [translate]="'SETTINGS-PAGE.TITLE'"></div>
-                <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
-            </div>
-            <form [formGroup]="settingsForm" class = "form">
-                <div class="page-options">
-                    <div class="avatar-section">
-                        <img (click)="openAvatarUrlsChoices()" [src]="avatarURL" class="avatar-img" />
-                        <button (click)="openAvatarUrlsChoices()" class="circle-icon" [translate]="'SETTINGS-PAGE.EDIT'"></button>
-                    </div>
-                    <div class="theme-section">
-                        <p class="section-title" [translate]="'SETTINGS-PAGE.THEME-SECTION.LABEL'"></p>
-                        <div class = "radio-displayer">
-                            <div class="radio-button-option">
-                                <input
-                                    type="radio"
-                                    (input)="themeService.switchTheme()"
-                                    id="dark"
-                                    name="defaultTheme"
-                                    value="dark"
-                                    formControlName="defaultTheme"
-                                />
-                                <label for="dark" [translate]="'SETTINGS-PAGE.THEME-SECTION.DARK'"></label><br />
-                            </div>
-                            <div class="radio-button-option">
-                                <input
-                                    type="radio"
-                                    (input)="themeService.switchTheme()"
-                                    id="light"
-                                    name="defaultTheme"
-                                    value="light"
-                                    formControlName="defaultTheme"
-                                />
-                                <label for="light" [translate]="'SETTINGS-PAGE.THEME-SECTION.LIGHT'"></label><br />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="language-section">
-                        <p class="section-title" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.LABEL'"></p>
-                        <div class = "radio-displayer">
-                            <div class="radio-button-option">
-                                <input
-                                    type="radio"
-                                    id="french"
-                                    name="defaultLanguage"
-                                    value="french"
-                                    formControlName="defaultLanguage"
-                                    (input)="languageService.switchLanguage()"
-                                />
-                                <label for="french" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.FRENCH'"></label><br />
-                            </div>
-                            <div class="radio-button-option">
-                                <input
-                                    type="radio"
-                                    id="english"
-                                    name="defaultLanguage"
-                                    value="english"
-                                    formControlName="defaultLanguage"
-                                    (input)="languageService.switchLanguage()"
-                                />
-                                <label for="english" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.ENGLISH'"></label><br />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="victory-music-section">
-                        <label for="music" class="section-title" [translate]="'SETTINGS-PAGE.MUSIC-SECTION.LABEL'"> </label>
-                        <select name="Music" id="music" (change)="onMusicSelectionChange($event)">
-                            <option
-                                *ngFor="let music of musicOptions"
-                                [selected]="settingsForm.controls.victoryMusic.value === music.key"
-                                [value]="music.key"
-                            >
-                                {{ music.value }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <input
-                        class="save-button button"
-                        type="submit"
-                        value="{{ 'SETTINGS-PAGE.SAVE' | translate }}"
-                        (click)="sendData()"
-                        [disabled]="!changed"
-                    />
-                    <button class="password-section" [translate]="'SETTINGS-PAGE.PASSWORD'"></button>
+        <div class="page-title">
+            <div class="form-title settings-title" [translate]="'SETTINGS-PAGE.TITLE'"></div>
+            <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
+        </div>
+        <form [formGroup]="settingsForm" class="form">
+            <div class="page-options">
+                <div class="avatar-section">
+                    <img (click)="openAvatarUrlsChoices()" [src]="avatarURL" class="avatar-img" />
+                    <button (click)="openAvatarUrlsChoices()" class="circle-icon" [translate]="'SETTINGS-PAGE.EDIT'"></button>
                 </div>
-                
-            </form>
-           
-            <app-historic></app-historic>
+                <div class="theme-section">
+                    <p class="section-title" [translate]="'SETTINGS-PAGE.THEME-SECTION.LABEL'"></p>
+                    <div class="radio-displayer">
+                        <div class="radio-button-option">
+                            <input
+                                type="radio"
+                                (input)="themeService.switchTheme()"
+                                id="dark"
+                                name="defaultTheme"
+                                value="dark"
+                                formControlName="defaultTheme"
+                            />
+                            <label for="dark" [translate]="'SETTINGS-PAGE.THEME-SECTION.DARK'"></label><br />
+                        </div>
+                        <div class="radio-button-option">
+                            <input
+                                type="radio"
+                                (input)="themeService.switchTheme()"
+                                id="light"
+                                name="defaultTheme"
+                                value="light"
+                                formControlName="defaultTheme"
+                            />
+                            <label for="light" [translate]="'SETTINGS-PAGE.THEME-SECTION.LIGHT'"></label><br />
+                        </div>
+                    </div>
+                </div>
+                <div class="language-section">
+                    <p class="section-title" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.LABEL'"></p>
+                    <div class="radio-displayer">
+                        <div class="radio-button-option">
+                            <input
+                                type="radio"
+                                id="french"
+                                name="defaultLanguage"
+                                value="french"
+                                formControlName="defaultLanguage"
+                                (input)="languageService.switchLanguage()"
+                            />
+                            <label for="french" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.FRENCH'"></label><br />
+                        </div>
+                        <div class="radio-button-option">
+                            <input
+                                type="radio"
+                                id="english"
+                                name="defaultLanguage"
+                                value="english"
+                                formControlName="defaultLanguage"
+                                (input)="languageService.switchLanguage()"
+                            />
+                            <label for="english" [translate]="'SETTINGS-PAGE.LANGUAGE-SECTION.ENGLISH'"></label><br />
+                        </div>
+                    </div>
+                </div>
+                <div class="victory-music-section">
+                    <label for="music" class="section-title" [translate]="'SETTINGS-PAGE.MUSIC-SECTION.LABEL'"> </label>
+                    <select name="Music" id="music" (change)="onMusicSelectionChange($event)">
+                        <option
+                            *ngFor="let music of musicOptions"
+                            [selected]="settingsForm.controls.victoryMusic.value === music.key"
+                            [value]="music.key"
+                        >
+                            {{ music.value }}
+                        </option>
+                    </select>
+                </div>
+
+                <input
+                    class="save-button button"
+                    type="submit"
+                    value="{{ 'SETTINGS-PAGE.SAVE' | translate }}"
+                    (click)="sendData()"
+                    [disabled]="!changed"
+                />
+                <button class="password-section" [translate]="'SETTINGS-PAGE.PASSWORD'"></button>
+            </div>
+        </form>
+
+        <app-historic></app-historic>
         <div class="footer"></div>
     </div>
     <app-menu></app-menu>

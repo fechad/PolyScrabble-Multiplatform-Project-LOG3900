@@ -84,6 +84,12 @@ export class Tile {
                 this.color = Colors.Pink;
                 this.updateArrowDirection();
                 break;
+            case SelectionType.PREVIEW:
+                this.selectionType = SelectionType.PREVIEW;
+                this.border.color = Colors.Red;
+                this.border.width = 2;
+                this.color = Colors.Pink;
+                break;
             default:
                 this.selectionType = SelectionType.UNSELECTED;
                 this.border.color = DEFAULT_TILE_BORDER_COLOR;
