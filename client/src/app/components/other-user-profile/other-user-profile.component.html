@@ -1,0 +1,49 @@
+<div class="page-container">
+    <div class="page-body mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
+        <div class="name">
+            <img class="avatar" [src]="playerToShow?.userSettings?.avatarUrl" alt="SantaBadge" />
+            <H1>{{ playerToShow?.username }}</H1>
+        </div>
+
+        <div class="badge-container">
+            <div class="badge" *ngFor="let badge of playerToShow?.badges">
+                <img class="pic" [src]="httpService.getBadgeURL(badge.imageURL)" [alt]="badge.id" [title]="badge.description" />
+            </div>
+        </div>
+        <div class="level-container">
+            <div class="level">
+                <div class="lvl-number">
+                    <p class="bold" [translate]="'USER-PAGE.LEVEL'"></p>
+                    <p class="bold">{{ currentLevel }}</p>
+                </div>
+                <div class="progress">
+                    <div></div>
+                    <div>
+                        <progress
+                            value="{{ (playerToShow?.progressInfo)!.totalXP - (playerToShow?.progressInfo)!.currentLevelXp }}"
+                            max="{{
+                                (playerToShow?.progressInfo)!.xpForNextLevel +
+                                    (playerToShow?.progressInfo)!.totalXP -
+                                    (playerToShow?.progressInfo)!.currentLevelXp
+                            }}"
+                        ></progress>
+                    </div>
+                    <div class="fraction">{{ totalXP - currentLevelXp }}/{{ xpForNextLevel + totalXP - currentLevelXp }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="objectives-header">
+            <h1 [translate]="'USER-PAGE.OBJECTIVES'"></h1>
+        </div>
+        <div class="objectives-container">
+            <div class="objective" [class.complete]="obj.target === obj.progression" *ngFor="let obj of objectives">
+                <div>
+                    <h3>{{ obj.name }}</h3>
+                </div>
+                <div class="bar"><progress [value]="obj.progression" [max]="obj.target"></progress></div>
+                <div class="fraction">{{ obj.progression }}/{{ obj.target }}</div>
+            </div>
+        </div>
+    </div>
+    <app-menu></app-menu>
+</div>

@@ -1,4 +1,5 @@
 //widget from https://github.com/PrateekSharma1712/custom_navigation_drawer/blob/master/lib/commons/collapsing_navigation_drawer_widget.dart
+import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/pages/profile_page.dart';
 import 'package:client_leger/pages/settings_page.dart';
@@ -64,6 +65,15 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             system: message['system'],
                             sender: message['sender'],
                             time: message['time'],
+                            account: message['system'] ||
+                                    message['avatarUrl']
+                                        .toString()
+                                        .contains('robot-avatar') ||
+                                    message['avatarUrl']
+                                        .toString()
+                                        .contains('assets')
+                                ? null
+                                : Account.fromJson(message['account']),
                             message: message['message'])),
                   }),
               if (chatService

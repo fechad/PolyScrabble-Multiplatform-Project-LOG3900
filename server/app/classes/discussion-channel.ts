@@ -1,4 +1,5 @@
 import { ChannelMessage } from '@app/interfaces/channel-message';
+import { ClientAccountInfo } from '@app/interfaces/client-exchange/client-account-info';
 import { Account } from '@app/interfaces/firestoreDB/account';
 
 export class DiscussionChannel {
@@ -31,11 +32,11 @@ export class DiscussionChannel {
         this.handleNewUserMessage(message);
     }
 
-    updatePlayerAvatarUrl(playerName: string, avatarUrl: string) {
+    updatePlayerAccount(playerName: string, account: ClientAccountInfo) {
         const userMessages = this.allTimeUsersMessage.get(playerName);
         if (!userMessages) return;
         for (const message of userMessages) {
-            message.avatarUrl = avatarUrl;
+            message.account = account;
         }
     }
 
@@ -44,6 +45,8 @@ export class DiscussionChannel {
         if (!userMessages) return;
         for (const message of userMessages) {
             message.sender = newUserName;
+            if (!message.account) return;
+            message.account.username = newUserName;
         }
         this.allTimeUsersMessage.set(newUserName, userMessages);
         this.allTimeUsersMessage.delete(previousUserName);

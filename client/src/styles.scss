@@ -77,6 +77,10 @@ app-menu {
     top: 0px;
 }
 
+.mat-drawer-backdrop.mat-drawer-shown {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
 select {
     width: inherit !important;
     color: var(--basic-font-color);

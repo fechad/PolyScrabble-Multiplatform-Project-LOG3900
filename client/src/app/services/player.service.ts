@@ -14,6 +14,7 @@ import { HttpService } from './http.service';
 })
 export class PlayerService {
     player: Player;
+    playerToShow?: ClientAccountInfo;
     stats: PlayerGameStats;
     room: Room;
     isNewChatWindowOpen: boolean;
@@ -23,6 +24,7 @@ export class PlayerService {
         this.isNewChatWindowOpen = false;
         this.room = new Room();
         this.player = new Player();
+        this.playerToShow = undefined;
         this.discussionChannelService = new DiscussionChannelService();
         this.isObserver = false;
     }
@@ -36,6 +38,14 @@ export class PlayerService {
         const userInfo = await lastValueFrom(this.httpService.getUserInfo(this.player.email));
         this.player.clientAccountInfo = userInfo;
         this.stats = await lastValueFrom(this.httpService.getPlayerStats(this.player.email));
+    }
+
+    setPlayerToShow(player: ClientAccountInfo) {
+        this.playerToShow = player;
+    }
+
+    getPlayerToShow() {
+        return this.playerToShow;
     }
 
     reducePLayerInfo(): Account {

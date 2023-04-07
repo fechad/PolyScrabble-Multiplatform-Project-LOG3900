@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { OtherUserProfileComponent } from '@app/components/other-user-profile/other-user-profile.component';
 import { UserProfileComponent } from '@app/components/user-profile/user-profile.component';
 import { AdminDictionariesPageComponent } from '@app/pages/admin-dictionaries-page/admin-dictionaries-page.component';
 import { AdminGamesPageComponent } from '@app/pages/admin-games-page/admin-games-page.component';
@@ -33,6 +34,7 @@ export const routes: Routes = [
     { path: 'admin/dictionaries', component: AdminDictionariesPageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'user', component: UserProfileComponent },
+    { path: 'other-user', component: OtherUserProfileComponent },
     { path: 'settings', component: SettingsPageComponent },
     { path: 'reset-password', component: ForgotPasswordPageComponent },
     { path: 'chat', component: ChatWindowPageComponent },

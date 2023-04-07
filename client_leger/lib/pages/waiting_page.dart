@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:client_leger/components/drawer.dart';
+import 'package:client_leger/components/user_resume.dart';
 import 'package:client_leger/config/flutter_flow/flutter_flow_util.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
@@ -94,6 +95,10 @@ class _WaitingPageState extends State<WaitingPage> {
                                       system: message['system'],
                                       sender: message['sender'],
                                       time: message['time'],
+                                      account: message['system']
+                                          ? null
+                                          : Account.fromJson(
+                                              message['account']),
                                       message: message['message'])),
                                 }),
                             _scrollDown()
@@ -238,6 +243,7 @@ class _WaitingPageState extends State<WaitingPage> {
     return Scaffold(
       key: scaffoldKey,
       drawer: ChatDrawer(),
+      endDrawer: UserResume(),
       body: Row(children: <Widget>[
         CollapsingNavigationDrawer(),
         Container(
@@ -276,6 +282,7 @@ class _WaitingPageState extends State<WaitingPage> {
                                 itemCount: gameService.room.players.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Avatar(
+                                      insideChat: false,
                                       url: gameService
                                           .room
                                           .players[index]
@@ -413,6 +420,7 @@ class _WaitingPageState extends State<WaitingPage> {
         channelName: gameService.room.roomInfo.name,
         sender: authenticator.getCurrentUser().username,
         system: false,
+        account: authenticator.getCurrentUser(),
         time: DateFormat('HH:mm:ss').format(DateTime.now()),
         message: txt.trim());
 

@@ -1,3 +1,4 @@
+import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -61,7 +62,8 @@ class _HighScoresState extends State<HighScores> {
         SizedBox(
           height: 8,
         ),
-        Text("18 victoire(s)",
+        Text(
+            '${authenticator.getCurrentUser().gamesWon} ${languageService.currentLanguage.languageCode == 'en' ? 'victories' : 'victoire(s)'}',
             style: GoogleFonts.nunito(
               textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             )),

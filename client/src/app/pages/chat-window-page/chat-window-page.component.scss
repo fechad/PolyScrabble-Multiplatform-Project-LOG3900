@@ -10,6 +10,20 @@ app-general-chat {
     height: 90%;
 }
 
+mat-sidenav-container.mat-drawer-container-has-open {
+    position: absolute;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: transparent;
+}
+
+.drawer-open {
+    position: absolute;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: transparent;
+}
+
 .menu-container {
     position: fixed;
     display: flex;

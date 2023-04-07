@@ -1,5 +1,7 @@
+import 'package:client_leger/components/avatar.dart';
 import 'package:flutter/material.dart';
 
+import '../classes/game.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../main.dart';
 
@@ -7,7 +9,12 @@ class OtherMessage extends StatelessWidget {
   final String txt;
   final String time;
   final String username;
-  OtherMessage({required this.username, required this.txt, required this.time});
+  final Account? account;
+  OtherMessage(
+      {required this.username,
+      required this.txt,
+      required this.time,
+      this.account});
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +39,22 @@ class OtherMessage extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.network(
-                    'https://picsum.photos/seed/540/600',
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                child: Avatar(
+                    insideChat: true,
+                    url: account!.userSettings.avatarUrl,
+                    previewData: account),
+                // child: Container(
+                //   width: 80,
+                //   height: 80,
+                //   clipBehavior: Clip.antiAlias,
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: Image.network(
+                //     account!.userSettings.avatarUrl,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),

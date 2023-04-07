@@ -12,6 +12,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get InsideChatBoolean {
+    _$valueAtom.reportRead();
+    return super.insideChat;
+  }
+
+  @override
   ObservableList<Widget> get rows {
     _$valueAtom.reportRead();
     return super.rows;
@@ -116,6 +122,17 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setCurrentBackground');
     try {
       return super.setCurrentBackground(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setInsideChatBoolean(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setInsideChatBoolean');
+    try {
+      return super.setInsideChatBoolean(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }

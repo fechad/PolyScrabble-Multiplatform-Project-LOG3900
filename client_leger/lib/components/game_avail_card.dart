@@ -153,6 +153,7 @@ class _GameCardState extends State<GameCard> {
                             itemCount: players.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Avatar(
+                                  insideChat: false,
                                   url: players[index]
                                       .clientAccountInfo!
                                       .userSettings

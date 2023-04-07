@@ -1,11 +1,13 @@
-import { AfterContentChecked, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
 import { DEFAULT_ROOM_NAME, GENERAL_CHAT_NAME } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
+import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
@@ -17,8 +19,9 @@ import { ThemeService } from '@app/services/theme.service';
     templateUrl: './general-chat.component.html',
     styleUrls: ['./general-chat.component.scss'],
 })
-export class GeneralChatComponent implements OnInit, AfterContentChecked {
+export class GeneralChatComponent implements OnInit {
     @Input() discussionChannel: DiscussionChannel;
+    @Input() inputSideNav: MatSidenav;
     enable: boolean;
     inputValue: string;
     constructor(
@@ -56,12 +59,12 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
         return this.playerService.player.clientAccountInfo.username === chatMessage.sender;
     }
 
-    ngAfterContentChecked(): void {
-        setTimeout(() => {
-            const chatBar = document.getElementsByClassName('chat-bar')[0] as HTMLInputElement;
-            if (chatBar) this.enable = chatBar.value !== '';
-        }, 0);
-    }
+    // ngAfterContentChecked(): void {
+    //     setTimeout(() => {
+    //         const chatBar = document.getElementsByClassName('chat-bar')[0] as HTMLInputElement;
+    //         if (chatBar) this.enable = chatBar.value !== '';
+    //     }, 0);
+    // }
 
     ngOnInit() {
         const delay = 100;
@@ -135,13 +138,19 @@ export class GeneralChatComponent implements OnInit, AfterContentChecked {
             message: this.inputValue,
             time: new Date().toLocaleTimeString([], { hour12: false }), // TODO: put it server side
             sender: this.playerService.player.clientAccountInfo.username,
-            avatarUrl: this.playerService.player.clientAccountInfo.userSettings.avatarUrl,
+            account: this.playerService.player.clientAccountInfo,
             channelName: this.discussionChannel.name,
         };
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         this.inputValue = '';
         this.discussionChannel.messages.push(channelMessage);
         setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
+    }
+
+    showSummary(accountInfo?: ClientAccountInfo) {
+        if (!accountInfo) return;
+        this.playerService.setPlayerToShow(accountInfo);
+        this.inputSideNav.toggle();
     }
 
     private removeUser(userName: string) {

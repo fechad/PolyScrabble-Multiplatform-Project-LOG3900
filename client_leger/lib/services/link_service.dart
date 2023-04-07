@@ -85,6 +85,9 @@ abstract class _LinkService with Store {
   @observable
   Observable<Account?> playerInfoToShow = Observable<Account?>(null);
 
+  @observable
+  Observable<bool> insideChat = Observable<bool>(false);
+
   List<Placement> placementStack = [];
 
   Account getPlayerToShow() {
@@ -93,6 +96,10 @@ abstract class _LinkService with Store {
 
   bool getIsInAGame() {
     return isInAGame.value;
+  }
+
+  bool getInsideChatBoolean() {
+    return insideChat.value;
   }
 
   int getCurrentSelectedIndex() {
@@ -151,6 +158,11 @@ abstract class _LinkService with Store {
   @action
   setCurrentBackground(String value) {
     currentBackground.value = value;
+  }
+
+  @action
+  setInsideChatBoolean(bool value) {
+    insideChat.value = value;
   }
 
   @action

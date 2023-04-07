@@ -1,19 +1,13 @@
 <div class="user-container">
-    <div class="user"></div>
+    <img class="user" [src]="playerService.playerToShow?.userSettings?.avatarUrl" />
 </div>
 <div class="name">
-    <H1>Étienne</H1>
+    <H1>{{ playerService.playerToShow?.username }}</H1>
 </div>
-
 <div class="badge-container">
-    <div class="badge"></div>
-    <div class="badge"></div>
-    <div class="badge"></div>
-    <div class="badge"></div>
-    <div class="badge"></div>
-    <div class="badge"></div>
-    <div class="badge"></div>
-    <div class="badge"></div>
+    <div class="badge" *ngFor="let badge of playerService.playerToShow?.badges">
+        <img class="pic" [src]="httpService.getBadgeURL(badge.imageURL)" [alt]="badge.id" [title]="badge.description" />
+    </div>
 </div>
 
 <div class="level-container">
@@ -41,6 +35,6 @@
     </div>
 </div>
 <H3>18 victoires</H3>
-<div class="button-container">
-    <button class="button" routerLink="/user">Voir profil</button>
+<div class="button-container" *ngIf="!isGamePage">
+    <button class="button" routerLink="/other-user">Voir profil</button>
 </div>

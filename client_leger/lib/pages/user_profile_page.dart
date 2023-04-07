@@ -1,6 +1,6 @@
 import 'package:client_leger/components/outgame_objectives.dart';
 import 'package:client_leger/components/sidebar.dart';
-import 'package:client_leger/main.dart';
+import 'package:client_leger/pages/game_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -8,12 +8,12 @@ import '../components/drawer.dart';
 import '../components/user_highscores.dart';
 import '../components/user_level.dart';
 
-class UserPage extends StatefulWidget {
+class OtherUserPage extends StatefulWidget {
   @override
-  _UserPageState createState() => _UserPageState();
+  _OtherUserPageState createState() => _OtherUserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _OtherUserPageState extends State<OtherUserPage> {
   @override
   void initState() {
     super.initState();
@@ -37,7 +37,7 @@ class _UserPageState extends State<UserPage> {
               children: [
                 Container(
                     padding: EdgeInsets.all(20),
-                    child: Text(authenticator.currentUser.username,
+                    child: Text(linkService.getPlayerToShow().username,
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 32, fontWeight: FontWeight.bold),

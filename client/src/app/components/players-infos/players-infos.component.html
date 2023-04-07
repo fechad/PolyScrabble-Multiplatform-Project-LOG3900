@@ -19,7 +19,7 @@
                 <div
                     class="avatar"
                     [class.player-active]="player.clientAccountInfo.username === currentPlayerTurnPseudo && !isGameOver"
-                    (click)="inputSideNav.toggle()"
+                    (click)="showSummary(player)"
                 >
                     <img class="avatar" [src]="player.clientAccountInfo.userSettings.avatarUrl" />
                 </div>

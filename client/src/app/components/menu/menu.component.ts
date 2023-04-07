@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { ComponentCommunicationManager } from '@app/classes/communication-manager/component-communication-manager';
 import { Player } from '@app/classes/player';
@@ -396,6 +397,9 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         this.updateAvailableChannels();
     }
 
+    protected isDrawerOpen(drawer: MatSidenav) {
+        return drawer.opened;
+    }
     private handleGameWaitPage() {
         if (this.isWaitMultiPage) this.showRoomChatChannel();
     }
