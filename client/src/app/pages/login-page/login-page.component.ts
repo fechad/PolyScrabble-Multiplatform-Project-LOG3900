@@ -129,6 +129,13 @@ export class LoginPageComponent implements AfterViewInit {
     async submitConnection() {
         if (!this.isLoginForm) return;
         // const loginResult = await lastValueFrom(this.httpService.loginUser(this.username));
+        const userConnectedInfo = await lastValueFrom(this.httpService.isAlreadyLoggedIn(this.loginForm.controls.email.value));
+        if (userConnectedInfo?.isAlreadyLoggedIn) {
+            this.isLoginInfoValid = false;
+            this.loginError = 'Cet utilisateur est déja connecté';
+            return;
+        }
+
         this.authService
             .signIn(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
             .then(async (userCredential) => {

@@ -5,7 +5,7 @@ import { app } from '@app/firebase-config';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Log } from '@app/interfaces/firestoreDB/log';
 import { Score } from '@app/interfaces/score';
-import { DocumentData, Firestore, getFirestore, WriteResult } from 'firebase-admin/firestore';
+import { DocumentData, Firestore, WriteResult, getFirestore } from 'firebase-admin/firestore';
 
 import 'reflect-metadata';
 import { Service } from 'typedi';
@@ -21,6 +21,11 @@ const USERNAME_USED_ERROR = 'chosen username already in use';
 @Service()
 export class DatabaseService {
     private db: Firestore;
+    private connectedUser: Map<string, unknown>;
+
+    constructor() {
+        this.connectedUser = new Map();
+    }
 
     get database(): Firestore {
         return this.db;
@@ -43,6 +48,20 @@ export class DatabaseService {
     }
     async log(docID: string, subCollectionId: string, log: Log) {
         this.db.collection(LOGS_COLLECTION).doc(docID).collection(subCollectionId).add(log);
+    }
+
+    isUserConnected(email: string): boolean {
+        return this.connectedUser.has(email);
+    }
+
+    setUserAsConnected(connectionData: unknown) {
+        if (!connectionData) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.connectedUser.set((connectionData as any).email, ''); // no data as value because not needed for the use case
+    }
+
+    setUserAsDisconnected(email: string) {
+        this.connectedUser.delete(email);
     }
 
     // TODO: Delete once in prod. If we ever have issues with account usernames, it is because of this.

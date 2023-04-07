@@ -96,6 +96,13 @@ export class HttpService {
         return this.http.get<unknown[]>(`${this.baseUrl}/${this.authUrl}/user/${email}`).pipe(catchError(this.handleError<string[]>('loginUser')));
     }
 
+    isAlreadyLoggedIn(email: string): Observable<{ isAlreadyLoggedIn: boolean }> {
+        this.clearError();
+        return this.http
+            .get<{ isAlreadyLoggedIn: boolean }>(`${this.baseUrl}/${this.authUrl}/isAlreadyLoggedIn/${email}`)
+            .pipe(catchError(this.handleError<{ isAlreadyLoggedIn: boolean }>('isAlreadyLoggedIn')));
+    }
+
     resetUserPassword(email: string) {
         this.clearError();
         return this.http
