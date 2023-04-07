@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { ChannelCreationPopupComponent } from '@app/components/channel-creation-popup/channel-creation-popup.component';
+import { GENERAL_CHAT_NAME } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { DiscussionChannel } from '@app/interfaces/discussion-channel';
@@ -32,6 +33,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcRenderer: any;
+    protected searchChannelInput: string;
     constructor(
         private playerService: PlayerService,
         protected socketService: SocketClientService,
@@ -40,6 +42,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
         private dialog: MatDialog,
     ) {
         super(socketService);
+        this.searchChannelInput = '';
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
         this.setIpcRender();
@@ -63,6 +66,12 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
 
     get roomChannel(): DiscussionChannel {
         return this.playerService.discussionChannelService.roomChannel;
+    }
+
+    get filteredChannels(): DiscussionChannel[] {
+        return this.availableDiscussionChannels.filter(
+            (discussionChannel) => discussionChannel.name === GENERAL_CHAT_NAME || discussionChannel.name.includes(this.searchChannelInput),
+        );
     }
 
     async ngOnInit() {
