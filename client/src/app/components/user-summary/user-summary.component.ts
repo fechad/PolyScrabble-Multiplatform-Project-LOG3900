@@ -1,8 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { HttpService } from '@app/services/http.service';
+import { OutgameObjectivesService } from '@app/services/outgame-objectives.service';
+import { PlayerService } from '@app/services/player.service';
 
 @Component({
     selector: 'app-user-summary',
     templateUrl: './user-summary.component.html',
     styleUrls: ['./user-summary.component.scss'],
 })
-export class UserSummaryComponent {}
+export class UserSummaryComponent {
+    @Input() isGamePage: boolean;
+
+    constructor(protected playerService: PlayerService, protected objectiveService: OutgameObjectivesService, protected httpService: HttpService) {}
+}

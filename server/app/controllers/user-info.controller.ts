@@ -94,7 +94,7 @@ export class UserInfoController {
                     .getDocumentByID('accounts', req.params.email)
                     .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)))
                     .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
-                SocketManager.instance.discussionChannelService.updatePlayerAvatar(req.body.username, req.body.userSettings.avatarUrl);
+                SocketManager.instance.discussionChannelService.updatePlayerAccount(req.body.username, req.body);
             } catch (error) {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }

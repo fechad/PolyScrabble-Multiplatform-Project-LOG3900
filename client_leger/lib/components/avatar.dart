@@ -6,7 +6,9 @@ import '../classes/game.dart';
 class Avatar extends StatefulWidget {
   final String url;
   final Account? previewData;
-  const Avatar({Key? key, required this.url, this.previewData})
+  final bool insideChat;
+  const Avatar(
+      {Key? key, required this.url, required this.insideChat, this.previewData})
       : super(key: key);
 
   @override
@@ -42,6 +44,7 @@ class _AvatarWidgetState extends State<Avatar> {
           setState(() {
             if (widget.previewData != null) {
               linkService.setPlayerToShow(widget.previewData);
+              linkService.setInsideChatBoolean(widget.insideChat);
               Scaffold.of(context).openEndDrawer();
             }
           });

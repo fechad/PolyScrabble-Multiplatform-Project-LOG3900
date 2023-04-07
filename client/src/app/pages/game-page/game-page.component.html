@@ -1,6 +1,6 @@
 <mat-sidenav-container>
     <mat-sidenav #drawer>
-        <app-user-summary></app-user-summary>
+        <app-user-summary [isGamePage]="true"></app-user-summary>
     </mat-sidenav>
     <mat-sidenav-content>
         <div class="page-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">

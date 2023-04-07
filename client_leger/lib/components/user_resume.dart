@@ -2,13 +2,12 @@ import 'dart:math';
 
 import 'package:client_leger/components/highscores.dart';
 import 'package:client_leger/pages/game_page.dart';
-import 'package:client_leger/services/link_service.dart';
+import 'package:client_leger/pages/user_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
-import '../pages/profile_page.dart';
 
 class UserResume extends StatefulWidget {
   @override
@@ -248,7 +247,7 @@ class _UserResumeState extends State<UserResume> {
           SizedBox(
             height: 96,
           ),
-          if (gameService.room.toString().isEmpty)
+          if (linkService.getInsideChatBoolean())
             Container(
                 width: 250,
                 height: 48,
@@ -256,7 +255,7 @@ class _UserResumeState extends State<UserResume> {
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
-                      return UserPage();
+                      return OtherUserPage();
                     })));
                   },
                   style: ButtonStyle(

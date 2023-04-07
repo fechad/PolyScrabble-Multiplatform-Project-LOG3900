@@ -1,34 +1,41 @@
-<div #menuContainer class="menu-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
-    <div class="menu" [class.game-page]="isGamePage">
-        <div *ngIf="!isGamePage" class="icons-container">
-            <div (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
-        </div>
-
-        <!-- CHAT MENU -->
-        <div #chatMenu class="chat-menu">
-            <div class="chats-list-container">
-                <div class="search-chat-container">
-                    <div class="simple-input-container">
-                        <input class="simple-input" type="text" [(ngModel)]="searchChannelInput" name="searchChannelInput" />
-                        <span class="material-symbols-outlined search-button"> search </span>
-                    </div>
+<mat-sidenav-container [class.drawer-open]="isDrawerOpen(chatDrawer)">
+    <mat-sidenav #chatDrawer>
+        <app-user-summary [isGamePage]="true"></app-user-summary>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div #menuContainer class="menu-container mat-app-background" [class.mat-app-background]="themeService.darkThemeSelected">
+            <div class="menu" [class.game-page]="isGamePage">
+                <div *ngIf="!isGamePage" class="icons-container">
+                    <div (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
                 </div>
-                <div></div>
-                <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
-                    {{ roomChannel.name }}
-                </button>
-                <div *ngFor="let discussionChannel of filteredChannels; index as i" class="chats-list">
-                    <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
-                        {{ discussionChannel.name }}
-                    </button>
-                    <hr *ngIf="i === 0" size="1" width="97%" />
+
+                <!-- CHAT MENU -->
+                <div #chatMenu class="chat-menu">
+                    <div class="chats-list-container">
+                        <div class="search-chat-container">
+                            <div class="simple-input-container">
+                                <input class="simple-input" type="text" [(ngModel)]="searchChannelInput" name="searchChannelInput" />
+                                <span class="material-symbols-outlined search-button"> search </span>
+                            </div>
+                        </div>
+                        <div></div>
+                        <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
+                            {{ roomChannel.name }}
+                        </button>
+                        <div *ngFor="let discussionChannel of filteredChannels; index as i" class="chats-list">
+                            <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
+                                {{ discussionChannel.name }}
+                            </button>
+                            <hr *ngIf="i === 0" size="1" width="97%" />
+                        </div>
+                    </div>
+                    <button (click)="createChatChannel()" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
                 </div>
             </div>
-            <button (click)="createChatChannel()" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
+            <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
+                <app-general-chat [inputSideNav]="chatDrawer" [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
+            </div>
+            <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
         </div>
-    </div>
-    <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
-        <app-general-chat [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
-    </div>
-    <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
-</div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

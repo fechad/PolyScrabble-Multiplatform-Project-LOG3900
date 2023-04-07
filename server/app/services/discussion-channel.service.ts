@@ -1,6 +1,7 @@
 import { DiscussionChannel } from '@app/classes/discussion-channel';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
+import { ClientAccountInfo } from '@app/interfaces/client-exchange/client-account-info';
 import { Account } from '@app/interfaces/firestoreDB/account';
 import { Service } from 'typedi';
 import { SocketManager } from './socket-manager.service';
@@ -74,12 +75,8 @@ export class DiscussionChannelService {
         );
     }
 
-    updatePlayerAvatar(playerUserName: string, avatarUrl: string) {
-        this.updatePlayerMessages(playerUserName, { attribute: ChannelMessageAttribute.AvatarUrl, value: avatarUrl });
-    }
-
-    updatePlayerUsername(previousUserName: string, newUserName: string) {
-        this.updatePlayerMessages(previousUserName, { attribute: ChannelMessageAttribute.UserName, value: newUserName });
+    updatePlayerAccount(playerUserName: string, account: ClientAccountInfo) {
+        this.updatePlayerMessages(playerUserName, { attribute: ChannelMessageAttribute.AvatarUrl, value: account });
     }
 
     getPlayerDiscussionChannels(playerUsername: string): DiscussionChannel[] {
@@ -96,15 +93,15 @@ export class DiscussionChannelService {
         return userDiscussionChannels;
     }
 
-    private updatePlayerMessages(playerUserName: string, newValue: { attribute: ChannelMessageAttribute; value: string }) {
+    private updatePlayerMessages(playerUserName: string, newValue: { attribute: ChannelMessageAttribute; value: ClientAccountInfo }) {
         const discussionChannels = this.getPlayerDiscussionChannels(playerUserName);
         for (const discussionChannel of discussionChannels) {
             switch (newValue.attribute) {
                 case ChannelMessageAttribute.AvatarUrl:
-                    discussionChannel.updatePlayerAvatarUrl(playerUserName, newValue.value);
+                    discussionChannel.updatePlayerAccount(playerUserName, newValue.value);
                     break;
                 case ChannelMessageAttribute.UserName:
-                    discussionChannel.updatePlayerUsername(playerUserName, newValue.value);
+                    discussionChannel.updatePlayerUsername(playerUserName, newValue.value.username);
                     break;
                 default:
                     break;

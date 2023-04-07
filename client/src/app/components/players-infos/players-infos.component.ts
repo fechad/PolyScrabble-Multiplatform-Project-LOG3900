@@ -134,6 +134,13 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.socketService.send(SocketEvent.Message, '!passer');
     }
 
+    showSummary(player: Player) {
+        if (player.avatarUrl.includes('assets')) return;
+        if (player.avatarUrl.includes('robot-avatar')) return;
+        this.playerService.setPlayerToShow(player.clientAccountInfo);
+        this.inputSideNav.toggle();
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.LettersBankCountUpdated, (lettersBankCount: number) => {
             this.lettersBankCount = lettersBankCount;

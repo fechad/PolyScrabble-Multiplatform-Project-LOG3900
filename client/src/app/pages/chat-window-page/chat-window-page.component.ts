@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { Room } from '@app/classes/room';
 import { ChannelCreationPopupComponent } from '@app/components/channel-creation-popup/channel-creation-popup.component';
@@ -213,6 +214,10 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
         }
 
         this.updateAvailableChannels();
+    }
+
+    protected isDrawerOpen(drawer: MatSidenav) {
+        return drawer.opened;
     }
 
     private getDiscussionChannelByName(channelName: string): DiscussionChannel | undefined {

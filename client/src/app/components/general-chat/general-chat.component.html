@@ -18,8 +18,13 @@
         >
             <div class="user-chat-container" [class.my]="isSender(chat)" *ngIf="!chat.system">
                 <img
+                    *ngIf="!isSender(chat)"
                     class="chat-avatar"
-                    [src]="chat.avatarUrl || 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png'"
+                    (click)="showSummary(chat.account)"
+                    [src]="
+                        chat.account?.userSettings?.avatarUrl ||
+                        'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png'
+                    "
                 />
                 <div class="chat-info-container" [class.my]="isSender(chat)">
                     <p class="hour">{{ chat.time }}</p>

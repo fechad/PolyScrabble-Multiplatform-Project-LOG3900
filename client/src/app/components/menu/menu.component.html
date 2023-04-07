@@ -1,111 +1,118 @@
-<div #menuContainer class="menu-container">
-    <div class="menu" [class.game-page]="isGamePage">
-        <div *ngIf="!isGamePage" class="first icons-container">
-            <i *ngIf="!isWaitMultiPage" class="fa fa-user" (click)="navigateUserPage()"></i>
-            <i *ngIf="!isWaitMultiPage" class="fa fa-home" (click)="navigateHome()"></i>
-            <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
-            <i *ngIf="isNewChatWindowOpen" class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
-            <i *ngIf="!isWaitMultiPage" class="fa fa-trophy" (click)="navigateUserPage()"></i>
-            <i *ngIf="!isWaitMultiPage" class="fa fa-eye" (click)="navigateObserveRoomPage()"></i>
-        </div>
-        <div *ngIf="!isGamePage" class="second icons-container">
-            <i *ngIf="!isWaitMultiPage" class="fa fa-gear" (click)="navigateSettings()"></i>
-            <div *ngIf="!isNewChatWindowOpen" (click)="logOut()" class="icon material-symbols-outlined discussion-out">logout</div>
-        </div>
-
-        <div *ngIf="isGamePage" class="icons-container game-page">
-            <div
-                *ngIf="!isGameOver"
-                (click)="showHint()"
-                class="hint-icon icon-background"
-                [class.icon-background]="backgroundService.currentVP"
-                [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
-            >
-                <div class="red-dot" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
-                    {{ hintService.nbHints ? hintService.nbHints : 0 }}
+<mat-sidenav-container [class.drawer-open]="isDrawerOpen(chatDrawer)">
+    <mat-sidenav #chatDrawer>
+        <app-user-summary [isGamePage]="isGamePage"></app-user-summary>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div #menuContainer class="menu-container">
+            <div class="menu" [class.game-page]="isGamePage">
+                <div *ngIf="!isGamePage" class="first icons-container">
+                    <i *ngIf="!isWaitMultiPage" class="fa fa-user" (click)="navigateUserPage()"></i>
+                    <i *ngIf="!isWaitMultiPage" class="fa fa-home" (click)="navigateHome()"></i>
+                    <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
+                    <i *ngIf="isNewChatWindowOpen" class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
+                    <i *ngIf="!isWaitMultiPage" class="fa fa-trophy" (click)="navigateUserPage()"></i>
+                    <i *ngIf="!isWaitMultiPage" class="fa fa-eye" (click)="navigateObserveRoomPage()"></i>
                 </div>
-                <i class="material-symbols-outlined" *ngIf="!isGameOver" [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
-                    >emoji_objects</i
-                >
-            </div>
-            <div class="chat" [class.icon-background]="backgroundService.currentVP" *ngIf="!isNewChatWindowOpen">
-                <span (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in"> chat_bubble </span>
-            </div>
-            <div [class.icon-background]="backgroundService.currentVP" *ngIf="isNewChatWindowOpen">
-                <i class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
-            </div>
-            <div class="leave-flag" [class.icon-background]="backgroundService.currentVP" *ngIf="!isGameOver && !isObserver">
-                <i class="fa fa-flag" (click)="confirmLeaving()"></i>
-            </div>
-            <div
-                *ngIf="isGameOver || isObserver"
-                [class.icon-background]="backgroundService.currentVP"
-                (click)="leaveGame()"
-                class="material-symbols-outlined quit"
-            >
-                logout
-            </div>
-        </div>
+                <div *ngIf="!isGamePage" class="second icons-container">
+                    <i *ngIf="!isWaitMultiPage" class="fa fa-gear" (click)="navigateSettings()"></i>
+                    <div *ngIf="!isNewChatWindowOpen" (click)="logOut()" class="icon material-symbols-outlined discussion-out">logout</div>
+                </div>
 
-        <!-- CHAT MENU -->
-        <div #chatMenu class="chat-menu">
-            <div class="chats-list-container">
-                <div class="search-chat-container">
-                    <div class="simple-input-container">
-                        <input class="simple-input" type="text" [(ngModel)]="searchChannelInput" name="searchChannelInput" />
-                        <span class="material-symbols-outlined search-button"> search </span>
+                <div *ngIf="isGamePage" class="icons-container game-page">
+                    <div
+                        *ngIf="!isGameOver"
+                        (click)="showHint()"
+                        class="hint-icon icon-background"
+                        [class.icon-background]="backgroundService.currentVP"
+                        [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
+                    >
+                        <div class="red-dot" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
+                            {{ hintService.nbHints ? hintService.nbHints : 0 }}
+                        </div>
+                        <i class="material-symbols-outlined" *ngIf="!isGameOver" [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
+                            >emoji_objects</i
+                        >
+                    </div>
+                    <div class="chat" [class.icon-background]="backgroundService.currentVP" *ngIf="!isNewChatWindowOpen">
+                        <span (click)="showChatMenu()" class="icon material-symbols-outlined discussion-in"> chat_bubble </span>
+                    </div>
+                    <div [class.icon-background]="backgroundService.currentVP" *ngIf="isNewChatWindowOpen">
+                        <i class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
+                    </div>
+                    <div class="leave-flag" [class.icon-background]="backgroundService.currentVP" *ngIf="!isGameOver && !isObserver">
+                        <i class="fa fa-flag" (click)="confirmLeaving()"></i>
+                    </div>
+                    <div
+                        *ngIf="isGameOver || isObserver"
+                        [class.icon-background]="backgroundService.currentVP"
+                        (click)="leaveGame()"
+                        class="material-symbols-outlined quit"
+                    >
+                        logout
                     </div>
                 </div>
-                <div></div>
-                <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
-                    {{ roomChannel.name }}
-                </button>
-                <div *ngFor="let discussionChannel of filteredChannels; index as i" class="chats-list">
-                    <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
-                        {{ discussionChannel.name }}
-                    </button>
-                    <hr *ngIf="i === 0" size="1" width="97%" />
+
+                <!-- CHAT MENU -->
+                <div #chatMenu class="chat-menu">
+                    <div class="chats-list-container">
+                        <div class="search-chat-container">
+                            <div class="simple-input-container">
+                                <input class="simple-input" type="text" [(ngModel)]="searchChannelInput" name="searchChannelInput" />
+                                <span class="material-symbols-outlined search-button"> search </span>
+                            </div>
+                        </div>
+                        <div></div>
+                        <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
+                            {{ roomChannel.name }}
+                        </button>
+                        <div *ngFor="let discussionChannel of filteredChannels; index as i" class="chats-list">
+                            <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
+                                {{ discussionChannel.name }}
+                            </button>
+                            <hr *ngIf="i === 0" size="1" width="97%" />
+                        </div>
+                    </div>
+                    <button (click)="createChatChannel()" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
                 </div>
             </div>
-            <button (click)="createChatChannel()" class="button new-channel" [translate]="'OTHER.CREATE-CHAT-BUTTON'"></button>
-        </div>
-    </div>
-    <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
-        <div *ngIf="!isWaitMultiPage" class="chat-header">
-            <div></div>
-            <div>
-                <button (click)="openChatOnNewWindow()" [translate]="'GENERAL-PAGE.BUTTON'"></button>
-                <button class="close-chat-button" (click)="closeChat()">X</button>
-            </div>
-        </div>
-        <div *ngIf="isWaitMultiPage" class="waiting-room-header">
-            <div class="game-info-container">
-                <div class="game-info">
-                    <i class="fa fa-id-card game-info-icon"></i>
-                    <div class="game-info-value">{{ room.botsLevel }}</div>
+            <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
+                <div *ngIf="!isWaitMultiPage" class="chat-header">
+                    <div></div>
+                    <div>
+                        <button (click)="openChatOnNewWindow()" [translate]="'GENERAL-PAGE.BUTTON'"></button>
+                        <button class="close-chat-button" (click)="closeChat()">X</button>
+                    </div>
                 </div>
-                <div class="game-info">
-                    <span class="material-symbols-outlined game-info-icon"> Alarm </span>
-                    <div class="game-info-value">{{ formattedTimerPerTurn }}</div>
+                <div *ngIf="isWaitMultiPage" class="waiting-room-header">
+                    <div class="game-info-container">
+                        <div class="game-info">
+                            <i class="fa fa-id-card game-info-icon"></i>
+                            <div class="game-info-value">{{ room.botsLevel }}</div>
+                        </div>
+                        <div class="game-info">
+                            <span class="material-symbols-outlined game-info-icon"> Alarm </span>
+                            <div class="game-info-value">{{ formattedTimerPerTurn }}</div>
+                        </div>
+                    </div>
+                    <div class="game-players">
+                        <img class="avatar" [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                        <img class="avatar" [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                        <img class="avatar" [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                        <img class="avatar" [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                    </div>
+                    <div class="game-buttons">
+                        <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option" [translate]="'OTHER.QUIT'"></button>
+                        <button
+                            [disabled]="room.players.length <= 1 || !isGameCreator"
+                            (click)="requestGameStart()"
+                            class="button"
+                            [translate]="'OTHER.START'"
+                        ></button>
+                    </div>
                 </div>
+                <app-general-chat [inputSideNav]="chatDrawer" [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
             </div>
-            <div class="game-players">
-                <img class="avatar" [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-                <img class="avatar" [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-                <img class="avatar" [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-                <img class="avatar" [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-            </div>
-            <div class="game-buttons">
-                <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option" [translate]="'OTHER.QUIT'"></button>
-                <button
-                    [disabled]="room.players.length <= 1 || !isGameCreator"
-                    (click)="requestGameStart()"
-                    class="button"
-                    [translate]="'OTHER.START'"
-                ></button>
-            </div>
+            <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
         </div>
-        <app-general-chat [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
-    </div>
-    <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
-</div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

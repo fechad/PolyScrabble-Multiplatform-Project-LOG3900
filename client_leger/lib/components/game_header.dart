@@ -197,6 +197,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                             : Color.fromARGB(255, 121, 101, 220)
                                         : Colors.transparent)),
                             child: Avatar(
+                              insideChat: false,
                               url: widget.opponentsInfo[index]
                                   .clientAccountInfo!.userSettings.avatarUrl,
                               previewData: widget
@@ -210,7 +211,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                           .clientAccountInfo!
                                           .userSettings
                                           .avatarUrl
-                                          .contains('Avatar.png')
+                                          .contains("assets")
                                   ? null
                                   : widget
                                       .opponentsInfo[index].clientAccountInfo,
