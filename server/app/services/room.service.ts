@@ -8,7 +8,7 @@ export class RoomService {
     roomsAvailable: Room[];
     roomsUnavailable: Room[];
     roomCount: number;
-
+    private roomToDelete?: Room;
     constructor() {
         this.roomCount = 0;
         this.roomsAvailable = [];
@@ -69,12 +69,15 @@ export class RoomService {
             const roomIndex = this.roomsAvailable.indexOf(roomAvailableToRemove);
             this.roomsAvailable.splice(roomIndex, 1);
             roomAvailableToRemove.reset();
+            this.roomToDelete = roomAvailableToRemove;
         }
         if (roomUnavailableToRemove) {
             const roomIndex = this.roomsUnavailable.indexOf(roomUnavailableToRemove);
             this.roomsUnavailable.splice(roomIndex, 1);
             roomUnavailableToRemove.reset();
+            this.roomToDelete = roomUnavailableToRemove;
         }
+        delete this.roomToDelete;
     }
 
     getRoom(roomName: string): Room | undefined {
