@@ -1,17 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogRefMock } from '@app/components/leaderboard-dialog-data/leaderboard-dialog-data.component.spec';
+import { MatDialogMock } from '@app/pages/main-page/main-page.component.spec';
+import { PlayerService } from '@app/services/player.service';
 import { PredefinedAvatarsPopupComponent } from './predefined-avatars-popup.component';
 
 describe('PredefinedAvatarsPopupComponent', () => {
     let component: PredefinedAvatarsPopupComponent;
     let fixture: ComponentFixture<PredefinedAvatarsPopupComponent>;
     let dialogReference: MatDialogRef<PredefinedAvatarsPopupComponent>;
+    let playerService: PlayerService;
 
     beforeEach(async () => {
+        playerService = new PlayerService();
         await TestBed.configureTestingModule({
             declarations: [PredefinedAvatarsPopupComponent],
-            providers: [{ provide: MatDialogRef, useClass: MatDialogRefMock }],
+            providers: [
+                { provide: MatDialogRef, useClass: MatDialogRefMock },
+                { provide: PlayerService, useValue: playerService },
+                { provide: MatDialog, useClass: MatDialogMock },
+            ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(PredefinedAvatarsPopupComponent);

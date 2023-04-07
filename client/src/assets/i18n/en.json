@@ -109,6 +109,9 @@
             "TITLE": "Choose a letter to place"
         }
     },
+    "AVATAR": {
+        "CHOOSE": "Choose your avatar"
+    },
     "OTHER": {
         "CREATE-GAME-BUTTON": "Create game",
         "CREATE-CHAT-BUTTON": "New chat",
@@ -122,9 +125,11 @@
         "QUIT": "Leave",
         "YES": "Yes",
         "NO": "No",
+        "OK": "Ok",
         "CANCEL": "Cancel",
         "CONFIRM": "Confirm",
         "CHALLENGE-BUTTON": "Challenge",
-        "JOIN": "Join"
+        "JOIN": "Join",
+        "WARNING": "Warning!"
     }
 }

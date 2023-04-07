@@ -210,7 +210,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.numberOfWinner = winnerArray.length;
         if (this.getPlayerInfo(true, 'pseudo') === this.winnerPseudo || this.numberOfWinner === 2) this.launchConfetti();
         else this.showEndGameDialog();
-        const firstWinner = this.room.players.find((player) => player.pseudo === winnerArray[0].pseudo);
+        const firstWinner = this.room.players.find((player) => player.clientAccountInfo.username === winnerArray[0].clientAccountInfo.username);
         if (!firstWinner) return;
         this.audioService.playWinnerMusic(firstWinner?.clientAccountInfo.userSettings.victoryMusic as string);
     }

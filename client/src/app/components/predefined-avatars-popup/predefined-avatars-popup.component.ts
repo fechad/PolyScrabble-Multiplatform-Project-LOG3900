@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
+import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { PlayerService } from '@app/services/player.service';
+
+const ONE_MB = 1048576;
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+const MAXIMUM_SIZE = ONE_MB * 2;
 
 const DEFAULT_IMG_URL = 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678661515/EinsteinAvatar_n2h25k.png';
 @Component({
@@ -12,7 +19,7 @@ export class PredefinedAvatarsPopupComponent {
     fileReader: FileReader;
     currentAvatarURL: string;
     predefinedAvatarsUrl: string[];
-    constructor(private dialogRef: MatDialogRef<PredefinedAvatarsPopupComponent>) {
+    constructor(private playerService: PlayerService, private dialogRef: MatDialogRef<PredefinedAvatarsPopupComponent>, private dialog: MatDialog) {
         this.currentAvatar = null;
         this.currentAvatarURL = '';
         this.fileReader = new FileReader();
@@ -33,7 +40,11 @@ export class PredefinedAvatarsPopupComponent {
     }
 
     get defaultAvatarUrl() {
-        return DEFAULT_IMG_URL;
+        return this.playerService.account.userSettings.avatarUrl || DEFAULT_IMG_URL;
+    }
+
+    get isFrenchLanguage() {
+        return this.playerService.account.userSettings.defaultLanguage === 'french';
     }
 
     selectPredefinedAvatar(predefinedAvatarUrl: string) {
@@ -47,6 +58,11 @@ export class PredefinedAvatarsPopupComponent {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onProfilePictureSelected(event: any) {
+        if (event.target.files[0].size > MAXIMUM_SIZE) {
+            return this.isFrenchLanguage
+                ? this.openErrorDialog(`Le fichier est trop gros! On accèpte juste une taille maximale de ${MAXIMUM_SIZE / ONE_MB}MB`)
+                : this.openErrorDialog(`The file is too big! We only accept a maximum size of ${MAXIMUM_SIZE / ONE_MB}MB`);
+        }
         this.currentAvatar = event.target.files[0] as File;
         this.currentAvatarURL = '';
 
@@ -63,5 +79,13 @@ export class PredefinedAvatarsPopupComponent {
 
     handleUserChoice() {
         this.dialogRef.close(this.currentAvatar || this.currentAvatarURL);
+    }
+
+    private openErrorDialog(errorMessage: string) {
+        this.dialog.open(ErrorDialogComponent, {
+            width: DIALOG_WIDTH,
+            autoFocus: true,
+            data: errorMessage,
+        });
     }
 }

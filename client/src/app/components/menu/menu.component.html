@@ -10,7 +10,6 @@
                     <i *ngIf="!isWaitMultiPage" class="fa fa-home" (click)="navigateHome()"></i>
                     <div *ngIf="!isNewChatWindowOpen" (click)="showChatMenu()" class="icon material-symbols-outlined discussion-out">chat_bubble</div>
                     <i *ngIf="isNewChatWindowOpen" class="fa fa-window-restore" (click)="closeChatNewWindow()"></i>
-                    <i *ngIf="!isWaitMultiPage" class="fa fa-trophy" (click)="navigateUserPage()"></i>
                     <i *ngIf="!isWaitMultiPage" class="fa fa-eye" (click)="navigateObserveRoomPage()"></i>
                 </div>
                 <div *ngIf="!isGamePage" class="second icons-container">

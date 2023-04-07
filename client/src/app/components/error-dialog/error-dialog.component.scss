@@ -1,0 +1,14 @@
+.popup-text {
+    color: var(--basic-font-color);
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.button {
+    max-width: fit-content;
+}
