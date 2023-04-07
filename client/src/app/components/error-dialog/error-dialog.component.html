@@ -1,8 +1,8 @@
-<h1 mat-dialog-title>Attention !</h1>
-<hr>
+<h1 mat-dialog-title class="popup-text" [translate]="'OTHER.WARNING'"></h1>
+<hr />
 <mat-dialog-content>
-    <h2>{{errorMessage}}</h2>
+    <h2 class="popup-text">{{ errorMessage }}</h2>
 </mat-dialog-content>
-<div mat-dialog-actions>
-    <button mat-stroked-button (click)="closeDialog() ">Fermer</button>
+<div class="buttons-container">
+    <button class="button cancel-button" (click)="closeDialog()" [translate]="'OTHER.OK'"></button>
 </div>

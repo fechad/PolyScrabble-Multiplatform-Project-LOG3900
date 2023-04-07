@@ -109,6 +109,9 @@
             "TITLE": "Choisissez une lettre à placer"
         }
     },
+    "AVATAR": {
+        "CHOOSE": "Choisissez votre avatar"
+    },
     "OTHER": {
         "CREATE-GAME-BUTTON": "Créez la partie",
         "CREATE-CHAT-BUTTON": "Créez un canal",
@@ -122,9 +125,11 @@
         "QUIT": "Quitter",
         "YES": "Oui",
         "NO": "Non",
+        "OK": "Ok",
         "CANCEL": "Annuler",
         "CONFIRM": "Confirmer",
         "CHALLENGE-BUTTON": "Affronter",
-        "JOIN": "Joindre"
+        "JOIN": "Joindre",
+        "WARNING": "Attention!"
     }
 }

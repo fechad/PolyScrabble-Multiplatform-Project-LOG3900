@@ -1,5 +1,16 @@
 $avatarWidth: 80px;
 
+.popup-text-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-text {
+    color: var(--basic-font-color);
+}
+
 .file-input-button {
     display: none;
 }
