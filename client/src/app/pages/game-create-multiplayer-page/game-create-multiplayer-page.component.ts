@@ -9,6 +9,7 @@ import { TIMER_MULTIPLE } from '@app/constants/constants';
 import { UNREACHABLE_SERVER_MESSAGE } from '@app/constants/http-constants';
 import { GameLevel } from '@app/enums/game-level';
 import { GameMode } from '@app/enums/game-mode';
+import { Language } from '@app/enums/language';
 import { SocketEvent } from '@app/enums/socket-event';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
@@ -44,6 +45,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
             timerPerTurn: [DEFAULT_TIMER_PER_TURN, [Validators.required, this.multipleValidator(TIMER_MULTIPLE)]],
             dictionary: [DEFAULT_DICTIONARY_TITLE, Validators.required],
             level: [GameLevel.Adaptative, Validators.required],
+            botLanguage: [this.userLanguage, Validators.required],
             roomPassword: [''],
             isPublic: [PUBLIC_GAME_VALUE],
             botName: ['Simon'],
@@ -80,6 +82,10 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         return this.httpService.getErrorMessage() === UNREACHABLE_SERVER_MESSAGE;
     }
 
+    get userLanguage(): Language {
+        return this.playerService.account.userSettings.defaultLanguage === 'french' ? Language.French : Language.English;
+    }
+
     ngOnInit() {
         this.connectSocket();
     }
@@ -106,7 +112,6 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         if (this.onProcess) return;
         this.initializeRoom();
         this.onProcess = true;
-
         if (this.isSolo) {
             this.socketService.send(SocketEvent.CreateSoloRoom, {
                 room: this.room,
@@ -167,6 +172,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
         this.room.currentPlayerPseudo = this.playerService.player.pseudo;
         this.room.roomInfo.timerPerTurn = this.gameForm.controls.timerPerTurn.value;
         this.room.roomInfo.dictionary = this.gameForm.controls.dictionary.value;
+        this.room.roomInfo.botLanguage = this.gameForm.controls.botLanguage.value;
         this.room.roomInfo.isSolo = this.isSolo;
         this.room.roomInfo.creatorName = this.playerService.player.pseudo;
         if (this.gameForm.controls.isPublic.value > 0) {

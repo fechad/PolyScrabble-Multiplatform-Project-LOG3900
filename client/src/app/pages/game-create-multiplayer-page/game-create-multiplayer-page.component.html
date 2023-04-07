@@ -66,6 +66,28 @@
                     </div>
 
                     <div class="input-container">
+                        <label
+                            #botLanguageLabel
+                            (click)="focusInput(botLanguageSelect)"
+                            class="simple-label select"
+                            [translate]="'CLASSIC.CREATE-MULTI.BOT-LANGUAGE.LABEL'"
+                        >
+                        </label>
+                        <select
+                            #botLanguageSelect
+                            (focus)="setPlaceholderAsLabel(botLanguageLabel)"
+                            (input)="setPlaceholderAsLabel(botLanguageLabel)"
+                            (blur)="setLabelAsPlaceholder(botLanguageLabel, 'botLanguage')"
+                            class="simple-input"
+                            [class.invalid]="false"
+                            formControlName="botLanguage"
+                        >
+                            <option [value]="'french'" [translate]="'CLASSIC.CREATE-MULTI.BOT-LANGUAGE.FRENCH'"></option>
+                            <option [value]="'english'" [translate]="'CLASSIC.CREATE-MULTI.BOT-LANGUAGE.ENGLISH'"></option>
+                        </select>
+                    </div>
+
+                    <div class="input-container">
                         <label #timerLabel (click)="focusInput(timerSelect)" class="simple-label select" [translate]="'CLASSIC.CREATE-MULTI.TIME'">
                         </label>
                         <select

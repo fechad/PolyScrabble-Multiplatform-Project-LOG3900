@@ -34,6 +34,11 @@
                 "ONE": "Privée",
                 "TWO": "Publique",
                 "THREE": "Publique avec mot de passe"
+            },
+            "BOT-LANGUAGE": {
+                "LABEL": "Langue des joueurs virtuels",
+                "FRENCH": "Français",
+                "ENGLISH": "Anglais"
             }
         },
         "JOIN-MULTI": {
