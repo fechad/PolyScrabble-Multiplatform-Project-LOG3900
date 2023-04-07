@@ -9,7 +9,7 @@
             <div class="chats-list-container">
                 <div class="search-chat-container">
                     <div class="simple-input-container">
-                        <input class="simple-input" type="text" />
+                        <input class="simple-input" type="text" [(ngModel)]="searchChannelInput" name="searchChannelInput" />
                         <span class="material-symbols-outlined search-button"> search </span>
                     </div>
                 </div>
@@ -17,7 +17,7 @@
                 <button *ngIf="roomChannel.name" (click)="showRoomChatChannel()" class="chat-button chat-name">
                     {{ roomChannel.name }}
                 </button>
-                <div *ngFor="let discussionChannel of availableDiscussionChannels; index as i" class="chats-list">
+                <div *ngFor="let discussionChannel of filteredChannels; index as i" class="chats-list">
                     <button (click)="showChatChannel(i)" class="chat-button" [class.chat-title]="i === 0" [class.chat-name]="i !== 0">
                         {{ discussionChannel.name }}
                     </button>

@@ -9,6 +9,7 @@ import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { ChannelCreationPopupComponent } from '@app/components/channel-creation-popup/channel-creation-popup.component';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
+import { GENERAL_CHAT_NAME } from '@app/constants/constants';
 import { DEFAULT_BOT_IMAGE } from '@app/constants/default-user-settings';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
@@ -43,6 +44,8 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     selectedDiscussionChannel: DiscussionChannel;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcRenderer: any;
+
+    protected searchChannelInput: string;
     constructor(
         private playerService: PlayerService,
         private httpService: HttpService,
@@ -56,6 +59,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         protected languageService: LanguageService,
     ) {
         super(socketService);
+        this.searchChannelInput = '';
         this.isWaitMultiPage = false;
         this.selectedDiscussionChannel = new DiscussionChannel('');
         try {
@@ -103,6 +107,12 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     get isObserver(): boolean {
         return this.playerService.isObserver;
+    }
+
+    get filteredChannels(): DiscussionChannel[] {
+        return this.availableDiscussionChannels.filter(
+            (discussionChannel) => discussionChannel.name === GENERAL_CHAT_NAME || discussionChannel.name.includes(this.searchChannelInput),
+        );
     }
 
     ngOnInit() {

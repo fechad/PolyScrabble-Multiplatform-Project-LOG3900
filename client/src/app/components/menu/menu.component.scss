@@ -236,13 +236,16 @@ app-general-chat {
     margin: 40px 10px;
 }
 
+.simple-input-container {
+    border: 2px solid var(--basic-font-color);
+    border-radius: 5px;
+
+    & .simple-input {
+        border: none;
+    }
+}
+
 .search-button {
-    height: 32px;
-    display: flex;
-    justify-content: center;
-    background-color: transparent;
-    border: 0px;
-    margin-bottom: 8px;
     color: var(--basic-font-color);
 }
 
