@@ -3,6 +3,7 @@ import 'package:client_leger/pages/game_page.dart';
 
 import '../classes/game.dart';
 import 'game_command_service.dart';
+import 'link_service.dart';
 
 class PlacementValidatorService {
   bool validPlacement = false;
@@ -18,6 +19,7 @@ class PlacementValidatorService {
   addLetter(String letter, int x, int y) {
     if (firstLetterPosition.isEmpty) {
       firstLetterPosition.addAll([x, y]);
+      socketService.send('firstTilePlaced', {'x': firstLetterPosition[0]+1, 'y': firstLetterPosition[1]+1});
       validPlacement = true;
       lettersDict.add(new Letter(letter: letter, x: x, y: y));
     } else {

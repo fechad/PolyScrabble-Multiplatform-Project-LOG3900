@@ -468,3 +468,21 @@ class PlayerRack {
         'rackLetters': rackLetters,
       };
 }
+
+class Position {
+  int x;
+  int y;
+
+  Position({required this.x, required this.y});
+
+  Position.fromJson(dynamic json)
+      : x = json['x'],
+        y = json['y'];
+
+  Map<String, dynamic> toJson() => {
+    'x': x,
+    'y': y,
+  };
+}
+
+

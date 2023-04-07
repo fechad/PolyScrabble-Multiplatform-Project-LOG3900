@@ -108,7 +108,7 @@ class ObserverPageState extends State<ObserverPage> {
               ),
               SizedBox(height: 30),
               Text(
-                AppLocalizations.of(context)!.classicJoinMultiTitle,
+                AppLocalizations.of(context)!.classicObserveMultiTitle,
                 style: FlutterFlowTheme.of(context).bodyText1.override(
                       fontFamily: 'Nunito',
                       fontSize: 24,

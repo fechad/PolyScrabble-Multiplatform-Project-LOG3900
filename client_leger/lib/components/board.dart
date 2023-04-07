@@ -98,6 +98,7 @@ class _BoardState extends State<Board> {
   ];
 
   late PlacementData placementData;
+  Position firstTile = Position(x:-1, y:-1);
   ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
   @override
@@ -117,8 +118,9 @@ class _BoardState extends State<Board> {
     socketService.on(
         "drawBoard",
         (data) => {
+          linkService.cancelPlacements(),
               placementData = PlacementData.fromJson(data),
-              serverPlacement(placementData)
+              serverPlacement(placementData),
             });
 
     socketService.on(
@@ -191,6 +193,20 @@ class _BoardState extends State<Board> {
             }
         });
 
+    socketService.on('firstTilePlaced', (data) => {
+      if (data != null) {
+        firstTile = Position.fromJson(data),
+        drawFirstTile(firstTile, themeManager.themeMode == ThemeMode.light
+    ? Color.fromARGB(255, 255, 235, 206)
+        : Color.fromARGB(255, 64, 64, 64)),
+      }
+      else if (data == null){
+        setState(() {
+          linkService.cancelPlacements();
+        }),
+      }
+    });
+
     if (gameService.room.placementsData != null && isObserver) {
       for (var placement in gameService.room.placementsData!) {
         serverPlacement(PlacementData(word: placement.word, row: placement.row, column: placement.column, direction: placement.direction, ));
@@ -210,6 +226,39 @@ class _BoardState extends State<Board> {
         colorTile(i, j);
       }
     }
+  }
+
+  drawFirstTile(Position position, color){
+    Container indicator = Container(
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(
+            color: Colors.red,
+            width: 2,
+          ),
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFFFEBCE),
+              border: Border.all(
+                color: const Color(0xAA000000),
+                width: 1,
+              ),
+            ),
+            width: 43,
+            height: 43,
+            child: Stack(
+              children: [
+                Center(
+                    child: Text('',
+                        style: const TextStyle(
+                            fontSize: 24, color: Colors.black))),
+              ],
+            )));
+    setState(() {
+      linkService.setRows(position.x-1, position.y-1, indicator);
+    });
   }
 
   int getTileScore(String letter) {
