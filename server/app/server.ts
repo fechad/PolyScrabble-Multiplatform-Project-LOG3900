@@ -55,6 +55,7 @@ export class Server {
                         message: 'logout/déconnexion',
                         time: firestore.Timestamp.now(),
                     });
+                    this.databaseService.setUserAsDisconnected((userEmailInfo as { email: string }).email);
                 } catch (error) {
                     // eslint-disable-next-line no-console
                     console.error(error);

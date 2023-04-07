@@ -29,6 +29,15 @@ export class AuthController {
             }
         });
 
+        this.router.get('/isAlreadyLoggedIn/:email', async (req: Request, res: Response) => {
+            try {
+                const email = req.params.email;
+                res.json({ isAlreadyLoggedIn: this.databaseService.isUserConnected(email) });
+            } catch (error) {
+                res.status(StatusCodes.NOT_FOUND).send(error.message);
+            }
+        });
+
         this.router.get('/user/:email', async (req: Request, res: Response) => {
             try {
                 await this.databaseService
@@ -36,6 +45,7 @@ export class AuthController {
                     .then((data) => {
                         if (!data) res.status(StatusCodes.NOT_FOUND).send('No such account');
                         this.databaseService.log('userActions', req.params.email, { message: 'login/connexion', time: firestore.Timestamp.now() });
+                        this.databaseService.setUserAsConnected(data);
                         res.json(data);
                     })
                     // eslint-disable-next-line no-console
@@ -56,6 +66,7 @@ export class AuthController {
                     message: 'logout/déconnexion',
                     time: firestore.Timestamp.now(),
                 });
+                this.databaseService.setUserAsDisconnected((userEmailInfo as { email: string }).email);
                 res.send();
             } catch (error) {
                 res.status(StatusCodes.BAD_REQUEST).send(error.message);
