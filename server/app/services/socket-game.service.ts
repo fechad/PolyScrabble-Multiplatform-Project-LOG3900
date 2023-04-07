@@ -55,7 +55,7 @@ export class SocketGameService extends SocketHandlerService {
         const player = room.getPlayer(socket.id);
         if (!player) return;
 
-        if (room.elapsedTime <= 0) {
+        if (room.elapsedTime === 0) {
             this.handleLeaveGameBeforeStart(socket, player, room.roomInfo.name);
             return;
         }
