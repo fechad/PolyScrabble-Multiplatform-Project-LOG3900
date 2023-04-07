@@ -9,4 +9,5 @@ export interface RoomInfo {
     surrender: string;
     isPublic: boolean;
     password: string;
+    botLanguage?: string;
 }

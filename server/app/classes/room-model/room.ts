@@ -17,7 +17,7 @@ import { firestore } from 'firebase-admin';
 import { GameManager } from './game-manager';
 const MULTIPLAYER_MIN_PLAYERS = 4;
 
-const DEFAULT_ROOM = {
+const DEFAULT_ROOM: RoomInfo = {
     name: '',
     creatorName: '',
     timerPerTurn: '',
@@ -28,6 +28,7 @@ const DEFAULT_ROOM = {
     isPublic: true,
     password: '',
     isSolo: false,
+    botLanguage: 'french',
 };
 export class Room {
     elapsedTime: number; // elapsedTime must be 0 only before the start of the game. Once it starts, it can't be 0 again. (so 1 to timerPerTurn)
@@ -66,8 +67,9 @@ export class Room {
                   isPublic: clientRoom.roomInfo.isPublic,
                   password: clientRoom.roomInfo.password,
                   isSolo: clientRoom.roomInfo.isSolo,
+                  botLanguage: clientRoom.roomInfo.botLanguage,
               };
-        this.gameManager = new GameManager();
+        this.gameManager = new GameManager(this.roomInfo.botLanguage);
         this.botCommunicationManager = new BotCommunicationManager();
 
         this.isFirstGame = true;

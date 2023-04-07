@@ -17,6 +17,7 @@ import { VirtualPlayerExpert } from '@app/classes/virtual-player/virtual-player-
 import { COUNT_PLAYER_TURN } from '@app/constants/constants';
 import { INVALID } from '@app/constants/virtual-player-constants';
 import { GameLevel } from '@app/enums/game-level';
+import { Language } from '@app/enums/language';
 import { BoardMessage } from '@app/interfaces/board-message';
 import { Goal } from '@app/interfaces/goal';
 import { PlacementData } from '@app/interfaces/placement-data';
@@ -29,13 +30,15 @@ export class GameManager {
     placementFinder: PlacementFinder;
     boardManipulator: BoardManipulator;
     goalManager: GoalManager;
+    private language: Language;
     private letterBank: LetterBank;
 
-    constructor() {
+    constructor(language?: string) {
         this.letterBank = new LetterBank();
         this.boardManipulator = new BoardManipulator(this.letterBank.produceValueMap());
         this.turnPassedCounter = 0;
         this.hasTimeout = false;
+        this.language = language && language === 'english' ? Language.English : Language.French;
         this.goalManager = new GoalManager();
         const tools: VirtualTools = {
             bank: this.letterBank,
@@ -60,31 +63,31 @@ export class GameManager {
     getNewVirtualPlayer(name: string, desiredLevel: string): VirtualPlayer {
         switch (desiredLevel) {
             case GameLevel.Beginner:
-                return new VirtualPlayerBeginner(name, false, this.boardManipulator, this.letterBank);
+                return new VirtualPlayerBeginner(name, false, this.boardManipulator, this.letterBank, this.language);
 
             case GameLevel.Adaptive:
-                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank);
+                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, undefined, this.language);
 
             case GameLevel.Expert:
-                return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank);
+                return new VirtualPlayerExpert(name, false, this.boardManipulator, this.letterBank, this.language);
 
             case GameLevel.Santa:
-                return new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
+                return new SantaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, this.language);
 
             case GameLevel.Trump:
-                return new TrumpVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
+                return new TrumpVirtualPlayer(name, false, this.boardManipulator, this.letterBank, this.language);
 
             case GameLevel.Einstein:
-                return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
+                return new EinsteinVirtualPlayer(name, false, this.boardManipulator, this.letterBank, this.language);
 
             case GameLevel.Mozart:
-                return new MozartVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
+                return new MozartVirtualPlayer(name, false, this.boardManipulator, this.letterBank, this.language);
 
             case GameLevel.Serena:
-                return new SerenaVirtualPlayer(name, false, this.boardManipulator, this.letterBank);
+                return new SerenaVirtualPlayer(name, false, this.boardManipulator, this.letterBank, this.language);
 
             default:
-                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank);
+                return new VirtualPlayerAdaptative(name, false, this.boardManipulator, this.letterBank, undefined, this.language);
         }
     }
 
