@@ -296,6 +296,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
     try {
       await authenticator.signInUser(
           emailController.text, passwordController.text);
+      httpService.loginUserLogs(authenticator.getCurrentUser().email);
       navigate();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -306,12 +307,12 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
     }
     setState(() {
       isWriting = false;
-      //usernames;
     });
   }
 
   void navigate() {
     validUsername = true;
+    authenticator.setStats(authenticator.getCurrentUser().email);
     chatService.joinDiscussion('General Chat');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {

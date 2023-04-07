@@ -95,14 +95,10 @@ class AuthService {
 
   Future<void> changeUserPassword(
       String emailAddress, String password, String newPassword) async {
-    try {
       await signInUser(emailAddress, password);
       firebase.currentUser
           ?.updatePassword(newPassword)
-          .then((value) => firebase.signOut());
-    } catch (e) {
-      print(e);
-    }
+          .then((value) async => await signInUser(emailAddress, newPassword));
   }
 
   Future<void> signOutUser() async {

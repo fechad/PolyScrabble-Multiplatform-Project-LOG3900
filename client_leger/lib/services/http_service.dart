@@ -27,6 +27,15 @@ class HttpService {
     return http.put(Uri.parse(loginUrl), body: {"username": username});
   }
 
+  Future<http.Response> loginUserLogs(String email) {
+    return http.get(Uri.parse('$url/api/$authUrl/user/$email'));
+  }
+
+  Future<http.Response> logoutUserLogs(String username) {
+    String logoutUrl = '$url/api/$authUrl/logout';
+    return http.put(Uri.parse(logoutUrl), body: {"username": username});
+  }
+
   Future<http.Response> getUserInfo(String email) {
     return http.get(Uri.parse('$url/api/userInfo/$email'));
   }

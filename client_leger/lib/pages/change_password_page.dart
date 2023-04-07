@@ -158,39 +158,44 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20.0),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // Validate returns true if the form is valid, or false otherwise.
                                 if (_formKey.currentState!.validate()) {
-                                  //loginUser(textController.text);
-                                  // TODO: authenticator modify user passoword
-                                  authenticator
-                                      .changeUserPassword(
-                                          widget.email,
-                                          temporaryPasswordController.text,
-                                          newPasswordController.text)
-                                      .then((value) => Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  //authenticator.setValidate();
-                                                  ConnexionPageWidget())))
-                                      .catchError((error) => ScaffoldMessenger
-                                              .of(context)
-                                          .showSnackBar(SnackBar(
-                                              backgroundColor: Colors.redAccent,
-                                              duration:
-                                                  Duration(milliseconds: 1000),
-                                              content: Text('Error: $error'))));
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          duration:
-                                              Duration(milliseconds: 1000),
-                                          content: Text(
-                                              'Changement réussi, reconnexion en cours ...')));
-                                  Timer(const Duration(milliseconds: 1000),
-                                      (() => {}));
+                                  bool errorValue = false;
+                                  try {
+                                    await authenticator
+                                        .changeUserPassword(
+                                        widget.email,
+                                        temporaryPasswordController.text,
+                                        newPasswordController.text);
+                                  } catch (error) {
+                                ScaffoldMessenger
+                                    .of(context)
+                                    .showSnackBar(SnackBar(
+                                backgroundColor: Colors.redAccent,
+                                duration:
+                                Duration(milliseconds: 1000),
+                                content: Text('Error: $error')));
+                                errorValue = true;
                                 }
-                              },
+                                  if (!errorValue) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            duration:
+                                            Duration(milliseconds: 1000),
+                                            content: Text(
+                                                'Changement réussi, reconnexion en cours ...')));
+                                    Timer(const Duration(milliseconds: 1000),
+                                        (() => {}));
+                                    httpService.loginUserLogs(authenticator.getCurrentUser().email);
+                                    authenticator.setStats(authenticator.getCurrentUser().email);
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                        //authenticator.setValidate();
+                                        MyHomePage(title: "PolyScrabble")));
+                                  }
+                                }},
                               style: ButtonStyle(
                                   shape: MaterialStatePropertyAll<
                                           RoundedRectangleBorder>(
@@ -240,6 +245,7 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
   }
 
   void navigate() {
+
     chatService.joinDiscussion('General Chat');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
