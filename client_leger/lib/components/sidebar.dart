@@ -266,6 +266,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                     })));
                                   } else if (counter == 5) {
                                     themeManager.setThemeMode(false);
+                                    httpService.logoutUser(authenticator.getCurrentUser().username);
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: ((context) {
                                       return ConnexionPageWidget();
