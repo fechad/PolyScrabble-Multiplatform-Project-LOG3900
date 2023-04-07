@@ -99,7 +99,7 @@
 	"@classicCreateMultiGameTypeThree": {
 		"description": "Option"
 	},
-	"classicJoinMultiTitle": "Parties Observables",
+	"classicJoinMultiTitle": "Parties Disponibles",
 	"@classicJoinMultiTitle": {
 		"description": "Type de mode"
 	},
@@ -123,6 +123,10 @@
 	"@classicJoinMultiPopupInput": {
 		"description": "Placeholder"
 	},
+	"classicObserveMultiTitle": "Parties Observables",
+    	"@classicJoinMultiTitle": {
+    		"description": "Type de mode"
+    	},
 	"themeTitle": "Joueurs virtuel à thème",
 	"@themeTitle": {
 		"description": "Type de mode de jeu"

@@ -443,6 +443,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                         linkService.cancelPlacements();
                         boardController.rebuild();
                         linkService.resetRack();
+                        socketService.send('firstTilePlaced', null);
                       })
                     },
                     style: ButtonStyle(
