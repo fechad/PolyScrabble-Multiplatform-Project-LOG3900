@@ -6,7 +6,7 @@ export interface Quotes {
     specialAnnouncement: string;
 }
 export const DEFAULT_ENGLISH_QUOTES: Quotes = {
-    greeting: 'Hello! 🥸',
+    greeting: 'Hello! 😁',
     bigScore: 'Wow, what a move! 😤',
     extremeScore: 'Incredible! Look at my moves! 🤩',
     angryAnnouncement: 'Hey, you made me angry! 👺',
@@ -14,7 +14,7 @@ export const DEFAULT_ENGLISH_QUOTES: Quotes = {
 };
 
 export const DEFAULT_FRENCH_QUOTES: Quotes = {
-    greeting: 'Bonjour ! 🥸',
+    greeting: 'Bonjour ! 😁',
     bigScore: 'Wow, quelle coup ! 😤',
     extremeScore: "Incroyable ! C'est un coup tout bonnement incroyable ! 🤩",
     angryAnnouncement: 'Je suis en colère maintenant... 👺',

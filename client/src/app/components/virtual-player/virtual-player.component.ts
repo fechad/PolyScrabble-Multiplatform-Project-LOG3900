@@ -5,6 +5,7 @@ import { ComponentCommunicationManager } from '@app/classes/communication-manage
 import { Room } from '@app/classes/room';
 import { DEFAULT_DICTIONARY_TITLE } from '@app/components/best-scores-table/best-scores-table.component';
 import { ThemedPopUpComponent } from '@app/components/themed-pop-up/themed-pop-up.component';
+import { Language } from '@app/enums/language';
 import { SocketEvent } from '@app/enums/socket-event';
 import { Badge } from '@app/interfaces/serveur info exchange/badge';
 import { AudioService } from '@app/services/audio.service';
@@ -38,6 +39,10 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
 
     get room(): Room {
         return this.playerService.room;
+    }
+
+    get userLanguage(): Language {
+        return this.playerService.account.userSettings.defaultLanguage === 'french' ? Language.French : Language.English;
     }
 
     ngOnInit(): void {
@@ -95,6 +100,7 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
         this.room.currentPlayerPseudo = this.playerService.player.pseudo;
         this.room.roomInfo.timerPerTurn = this.time.toString();
         this.room.roomInfo.dictionary = DEFAULT_DICTIONARY_TITLE;
+        this.room.roomInfo.botLanguage = this.userLanguage;
         this.room.roomInfo.isSolo = true;
         this.room.botsLevel = this.botId;
         this.room.roomInfo.creatorName = this.playerService.player.pseudo;

@@ -9,4 +9,5 @@ export interface RoomInfo {
     isGameOver?: boolean;
     isPublic: boolean;
     password: string;
+    botLanguage?: string;
 }
