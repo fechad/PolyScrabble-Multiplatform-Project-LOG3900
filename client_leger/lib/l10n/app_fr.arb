@@ -43,6 +43,10 @@
 	"@classicCreateSoloVpDifficultyLabel": {
 		"description": "Label"
 	},
+	"classicCreateSoloVpLanguageLabel": "Langue du joueur virtuel",
+    	"@classicCreateSoloVpLanguageLabel": {
+    		"description": "Label"
+    	},
 	"classicCreateSoloVpDifficultyOne": "Débutant",
 	"@classicCreateSoloVpDifficultyOne": {
 		"description": "Option"
@@ -67,6 +71,10 @@
 	"@classicCreateMultiVpDifficultyLabel": {
 		"description": "Label"
 	},
+	"classicCreateMultiVpLanguageLabel": "Langue des joueurs virtuels",
+    	"@classicCreateMultiVpLanguageLabel": {
+    		"description": "Label"
+    	},
 	"classicCreateMultiVpDifficultyOne": "Débutant",
 	"@classicCreateMultiVpDifficultyOne": {
 		"description": "Option"

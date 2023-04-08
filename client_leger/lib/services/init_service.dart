@@ -64,7 +64,8 @@ void connect() {
           maxPlayers: 4,
           creatorName: authenticator.currentUser.username,
           isPublic: false, //by default games are private
-          password: ''),
+          password: '',
+          botLanguage: languageService.currentLanguage.languageCode == 'en' ? 'english' : 'french'),
       isBankUsable: false,
       observers: [],
       placementsData: [],

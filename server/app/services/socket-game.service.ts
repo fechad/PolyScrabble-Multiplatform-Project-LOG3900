@@ -385,7 +385,7 @@ export class SocketGameService extends SocketHandlerService {
     private communicateNewAchievements(roomName: string, goalsReached: ReachedGoal[], isEnglishLanguage: boolean) {
         goalsReached.forEach((goal) => {
             const message = isEnglishLanguage
-                ? `${goal.playerName} reached the objectif: \n ${goal.title} \n \n Reward: ${goal.reward} points!!!`
+                ? `${goal.playerName} reached the objective: \n ${goal.title} \n \n Reward: ${goal.reward} points!!!`
                 : `${goal.playerName} a atteint l'objectif: \n ${goal.title} \n \n Récompense: ${goal.reward} points!!!`;
 
             if (goal.communicated) return;
