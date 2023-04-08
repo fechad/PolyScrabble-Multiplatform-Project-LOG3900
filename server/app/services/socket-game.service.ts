@@ -13,6 +13,7 @@ import {
 } from '@app/constants/constants';
 import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { CommandVerbs } from '@app/enums/command-verbs';
+import { Language } from '@app/enums/language';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
@@ -172,7 +173,6 @@ export class SocketGameService extends SocketHandlerService {
             this.updateWantedMessages(room);
             setTimeout(async () => {
                 const message = await virtualPlayer.playTurn();
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo, virtualPlayer.avatarUrl);
                 this.handleCommand(socket, room, message, virtualPlayer);
             }, BOT_DELAY);
         }, BOT_DELAY);
@@ -184,7 +184,6 @@ export class SocketGameService extends SocketHandlerService {
         if (!virtualPlayer.isItsTurn) return;
 
         const message = '!passer';
-        this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, virtualPlayer.pseudo, virtualPlayer.avatarUrl);
         this.handleCommand(socket, room, message, virtualPlayer);
     }
 
@@ -199,9 +198,6 @@ export class SocketGameService extends SocketHandlerService {
 
         const executionResult = this.commandController.executeCommand(message, room, commandSender, socket) as CommandResult;
         if (this.chatMessageService.isError) {
-            if (commandSender instanceof VirtualPlayer === false) {
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, this.chatMessageService.message.text);
-            }
             this.chatMessageService.restore();
             if (message.startsWith('!placer')) this.changeTurn(socket, room);
             return;
@@ -252,8 +248,6 @@ export class SocketGameService extends SocketHandlerService {
             if (room.elapsedTime > +room.roomInfo.timerPerTurn) {
                 const currentPlayer = room.getCurrentPlayerTurn();
                 if (!currentPlayer) return;
-
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, `${currentPlayer.pseudo} a passé son tour`);
                 this.changeTurn(socket, room);
                 return;
             }
@@ -308,7 +302,6 @@ export class SocketGameService extends SocketHandlerService {
                 this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
                 if (!socket) return;
-                this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, report.messageToOthers as string);
                 sender.addCommand(report);
                 break;
             case CommandVerbs.SKIP:
@@ -325,12 +318,8 @@ export class SocketGameService extends SocketHandlerService {
                 break;
         }
 
-        if (report.message) {
-            const systemMessage: ChatMessage = { text: report.message, sender: SYSTEM_NAME, color: MessageSenderColors.SYSTEM };
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, systemMessage.text);
-        }
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GoalsUpdated, room.getAllGoals());
-        this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals());
+        this.communicateNewAchievements(room.roomInfo.name, room.getReachedGoals(), room.roomInfo.botLanguage === Language.English);
     }
 
     private handleLeaveGameBeforeStart(socket: io.Socket, player: Player, roomName: string) {
@@ -393,11 +382,16 @@ export class SocketGameService extends SocketHandlerService {
         return true;
     }
 
-    private communicateNewAchievements(roomName: string, goalsReached: ReachedGoal[]) {
+    private communicateNewAchievements(roomName: string, goalsReached: ReachedGoal[], isEnglishLanguage: boolean) {
         goalsReached.forEach((goal) => {
+            const message = isEnglishLanguage
+                ? `${goal.playerName} reached the objectif: \n ${goal.title} \n \n Reward: ${goal.reward} points!!!`
+                : `${goal.playerName} a atteint l'objectif: \n ${goal.title} \n \n Récompense: ${goal.reward} points!!!`;
+
             if (goal.communicated) return;
+
             const goalMessage: ChatMessage = {
-                text: `${goal.playerName} a atteint l'objectif: \n ${goal.title} \n \n Récompense: ${goal.reward} points!!!`,
+                text: message,
                 sender: SYSTEM_NAME,
                 color: MessageSenderColors.GOALS,
             };

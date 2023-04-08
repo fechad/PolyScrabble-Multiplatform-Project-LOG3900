@@ -8,7 +8,6 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../classes/game.dart';
 import '../components/avatar.dart';
@@ -20,7 +19,7 @@ import 'chat_page.dart';
 class WaitingPage extends StatefulWidget {
   const WaitingPage(
       {super.key,
-        required this.isObserver,
+      required this.isObserver,
       required this.roomName,
       required this.timer,
       required this.botsLevel,
@@ -32,14 +31,17 @@ class WaitingPage extends StatefulWidget {
   final bool isObserver;
   @override
   _WaitingPageState createState() => _WaitingPageState(
-      isObserver: isObserver, roomName: roomName, timer: timer, botsLevel: botsLevel, players: players);
+      isObserver: isObserver,
+      roomName: roomName,
+      timer: timer,
+      botsLevel: botsLevel,
+      players: players);
 }
 
 class _WaitingPageState extends State<WaitingPage> {
   _WaitingPageState(
-      {
-        required this.isObserver,
-        required this.roomName,
+      {required this.isObserver,
+      required this.roomName,
       required this.timer,
       required this.botsLevel,
       required this.players});
@@ -95,7 +97,14 @@ class _WaitingPageState extends State<WaitingPage> {
                                       system: message['system'],
                                       sender: message['sender'],
                                       time: message['time'],
-                                      account: message['system']
+                                      avatarUrl: message['avatarUrl'],
+                                      account: message['system'] ||
+                                              message['avatarUrl']
+                                                  .toString()
+                                                  .contains('robot-avatar') ||
+                                              message['avatarUrl']
+                                                  .toString()
+                                                  .contains('assets')
                                           ? null
                                           : Account.fromJson(
                                               message['account']),
@@ -180,9 +189,11 @@ class _WaitingPageState extends State<WaitingPage> {
               gameService.room = gameService.decodeModel(serverRoom),
               noPlayers = gameService.room.players.length,
               setState(() => {
-                if (!isObserver && noPlayers > 1) {
-                  canStart = true,
-                }})
+                    if (!isObserver && noPlayers > 1)
+                      {
+                        canStart = true,
+                      }
+                  })
             });
 
     socketService.on(
