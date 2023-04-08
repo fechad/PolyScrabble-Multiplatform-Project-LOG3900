@@ -65,6 +65,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                             system: message['system'],
                             sender: message['sender'],
                             time: message['time'],
+                            avatarUrl: message['avatarUrl'],
                             account: message['system'] ||
                                     message['avatarUrl']
                                         .toString()
@@ -109,7 +110,6 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                           ),
                         }
                     },
-
                 }
             });
 

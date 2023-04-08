@@ -360,6 +360,7 @@ class ChatMessage extends StatelessWidget {
   bool system;
   String time;
   String message;
+  String? avatarUrl;
   Account? account;
   ChatMessage(
       {required this.channelName,
@@ -367,11 +368,13 @@ class ChatMessage extends StatelessWidget {
       required this.system,
       required this.time,
       required this.message,
-      this.account});
+      this.account,
+      this.avatarUrl});
 
   ChatMessage.fromJson(dynamic json)
       : channelName = json['channelName'],
         sender = json['sender'],
+        avatarUrl = json['avatarUrl'],
         account = json['system'] ? null : Account.fromJson(json['account']),
         system = json['system'],
         time = json['time'],
@@ -389,12 +392,20 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO add condition and see who sends msg to use different layout of msg -- system vs sender vs receiver
-    if (system)
+    if (system) {
       return (SystemMessage(txt: message, time: time));
-    else if (sender == authenticator.currentUser.username)
+    } else if (sender == authenticator.currentUser.username) {
       return (SenderMessage(txt: message, time: time));
-    else
+    } else if (avatarUrl != null && account == null) {
+      return (OtherMessage(
+        username: sender!,
+        txt: message,
+        time: time,
+        avatarUrl: avatarUrl,
+      ));
+    } else {
       return (OtherMessage(
           username: sender!, txt: message, time: time, account: account));
+    }
   }
 }

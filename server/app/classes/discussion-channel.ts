@@ -62,7 +62,7 @@ export class DiscussionChannel {
         const newMessage = {
             channelName: this.name,
             system: true,
-            message: `${username} has joined the chat!`,
+            message: `➕ ${username} ➕`,
             time: new Date().toLocaleTimeString([], { hour12: false }),
         };
         this.addMessage(newMessage);
@@ -83,7 +83,7 @@ export class DiscussionChannel {
         const newMessage = {
             channelName: this.name,
             system: true,
-            message: `${username} has left the chat!`,
+            message: `❌ ${username} ❌`,
             time: new Date().toLocaleTimeString([], { hour12: false }),
         };
         this.addMessage(newMessage);

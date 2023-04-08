@@ -17,13 +17,6 @@ export class DiscussionChannelService {
     roomChannels: DiscussionChannel[];
     constructor() {
         this.availableChannels = [new DiscussionChannel('General Chat')];
-        this.availableChannels[0].addMessage({
-            channelName: 'General Chat',
-            system: true,
-            time: new Date().toLocaleTimeString([], { hour12: false }),
-            message: 'Welcome to PolyScrabble!',
-        } as ChannelMessage);
-
         this.roomChannels = [];
     }
 

@@ -9,12 +9,14 @@ class OtherMessage extends StatelessWidget {
   final String txt;
   final String time;
   final String username;
+  final String? avatarUrl;
   final Account? account;
   OtherMessage(
       {required this.username,
       required this.txt,
       required this.time,
-      this.account});
+      this.account,
+      this.avatarUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +43,8 @@ class OtherMessage extends StatelessWidget {
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),
                 child: Avatar(
                     insideChat: true,
-                    url: account!.userSettings.avatarUrl,
-                    previewData: account),
+                    url: avatarUrl ?? account!.userSettings.avatarUrl,
+                    previewData: avatarUrl != null ? null : account),
                 // child: Container(
                 //   width: 80,
                 //   height: 80,

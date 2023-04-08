@@ -59,6 +59,7 @@ mat-sidenav-container.mat-drawer-container-has-open {
 }
 
 .fa.fa-window-restore {
+    color: red;
     font-size: 38px;
 }
 
@@ -91,7 +92,8 @@ mat-sidenav-container.mat-drawer-container-has-open {
     background-color: var(--section-background);
 
     &.game-page {
-        width: 32%;
+        width: 35%;
+        box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.25);
     }
 }
 
