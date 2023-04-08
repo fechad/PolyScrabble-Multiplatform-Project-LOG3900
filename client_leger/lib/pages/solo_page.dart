@@ -30,7 +30,9 @@ class _SoloPageState extends State<SoloPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String virtualValue = 'Simon';
-  int difficultyValue = 0;
+  int difficultyValue = 2;
+  List<String> language = <String>['Français', 'English'];
+  int langValue = languageService.currentLanguage.languageCode == 'en' ? 1:0;
   String timeValue = '60';
   List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
       ? <String>['Beginner', 'Expert', 'Adaptable']
@@ -69,7 +71,7 @@ class _SoloPageState extends State<SoloPage> {
                     "assets/images/scrabble_hero.png",
                   ),
                 ),
-                SizedBox(height: 60),
+                SizedBox(height: 20),
                 SafeArea(
                   child: Material(
                     color: Colors.transparent,
@@ -79,7 +81,7 @@ class _SoloPageState extends State<SoloPage> {
                     ),
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.30,
-                      height: MediaQuery.of(context).size.height * 0.55,
+                      height: MediaQuery.of(context).size.height * 0.65,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         boxShadow: [
@@ -150,12 +152,12 @@ class _SoloPageState extends State<SoloPage> {
                             SizedBox(
                               width: 280,
                               child: DropdownButtonFormField<String>(
-                                value: difficulty[0],
+                                value: difficulty[difficultyValue],
                                 icon: const Icon(Icons.keyboard_arrow_down),
                                 elevation: 16,
                                 decoration: InputDecoration(
                                     labelText: AppLocalizations.of(context)!
-                                        .classicCreateMultiVpDifficultyLabel),
+                                        .classicCreateSoloVpDifficultyLabel),
                                 onChanged: (String? value) {
                                   // This is called when the user selects an item.
                                   setState(() {
@@ -170,6 +172,33 @@ class _SoloPageState extends State<SoloPage> {
                                     child: Text(value),
                                   );
                                 }).toList(),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            SizedBox(
+                              width: 280,
+                              child: DropdownButtonFormField<String>(
+                                value: language[langValue],
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                elevation: 16,
+                                decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateSoloVpLanguageLabel),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    //TODO change difficulty to language to send
+                                    langValue = language.indexOf(value!);
+                                  });
+                                },
+                                items: language.map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                               ),
                             ),
                             SizedBox(
@@ -251,9 +280,16 @@ class _SoloPageState extends State<SoloPage> {
   }
 
   checkFormValues() {
-    if (virtualValue == null || difficultyValue == null || timeValue == null)
+    if (virtualValue == null || difficultyValue == null || langValue == null || timeValue == null)
       return 'Erreur';
     String level = 'débutant';
+    String language = 'french';
+    if (langValue == 0) {
+      language = 'french';
+    }
+    else if (langValue == 1) {
+      language = 'english';
+    }
     if (difficultyValue == 0) {
       level = 'débutant';
     } else if (difficultyValue == 1) {
@@ -261,7 +297,7 @@ class _SoloPageState extends State<SoloPage> {
     } else if (difficultyValue == 2) {
       level = 'adaptatif';
     }
-    soloGameService.joinRoom(virtualValue, level);
+    soloGameService.joinRoom(virtualValue, level, language);
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return GamePageWidget();
     })));

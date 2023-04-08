@@ -59,7 +59,6 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return (Drawer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

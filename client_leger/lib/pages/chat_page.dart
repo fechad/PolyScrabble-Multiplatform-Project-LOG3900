@@ -10,7 +10,6 @@ import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-
 import '../components/chat_model.dart';
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
@@ -37,9 +36,14 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   @override
   void initState() {
     super.initState();
-    for (var chatUser in chat.activeUsers) {
-      if (chatUser.contains(authenticator.getCurrentUser().username)) {
-        joined = true;
+    RegExp exp = new RegExp( "\\b" + authenticator.getCurrentUser().username + "\\b", caseSensitive: false, );
+    for (var chatUser in chat.activeUsers){
+      if(exp.hasMatch(chatUser)){
+        if (mounted) {
+          setState(() {
+            joined = true;
+          });
+        }
       }
     }
     messages = chatService.getDiscussionChannelByName(chat.name).messages;
@@ -243,7 +247,17 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
           actions: [
             InkWell(
               onTap: () {
-                Navigator.pop(context);
+                if (linkService.getIsInAGame()) {
+                  Navigator.pop(context, () {
+                    setState(() {});
+                  });
+                }
+                else {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                        return const MyHomePage(title: 'PolyScrabble');
+                      })));
+                }
                 linkService.setCurrentOpenedChat('');
               },
               child: Icon(
@@ -324,9 +338,12 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   void submitMsg(String txt) {
     if (textController.text.trim().isEmpty) return;
     textController.clear();
-    if (!chat.activeUsers.contains(authenticator.getCurrentUser().username) &&
+    if (!joined &&
         chat.owner?.username != authenticator.getCurrentUser().username) {
       chatService.joinDiscussion(chat.name);
+      setState(() {
+        joined = true;
+      });
     }
     ChatMessage msg = ChatMessage(
         channelName: chat.name,

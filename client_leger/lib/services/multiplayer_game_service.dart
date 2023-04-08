@@ -28,7 +28,8 @@ class MultiplayerGameService extends SoloGameService {
             maxPlayers: 4,
             creatorName: authenticator.currentUser.username,
             isPublic: false, //by default games are private
-            password: ''),
+            password: '',
+            botLanguage: languageService.currentLanguage.languageCode == 'en' ? 'english' : 'french'),
         isBankUsable: false,
         observers: [],
         placementsData: [],
@@ -121,7 +122,7 @@ class MultiplayerGameService extends SoloGameService {
     );
   }
 
-  setRoomInfoMultiplayer(bool isPublic, String pswd, String difficulty) {
+  setRoomInfoMultiplayer(bool isPublic, String pswd, String difficulty, String botLanguage) {
     room.botsLevel = difficulty.toLowerCase();
     room.roomInfo.timerPerTurn = gameData.timerPerTurn;
     room.roomInfo.dictionary = gameData.dictionary;
@@ -129,14 +130,15 @@ class MultiplayerGameService extends SoloGameService {
     room.roomInfo.isGameOver = false;
     room.roomInfo.isSolo = false;
     room.roomInfo.isPublic = isPublic;
+    room.roomInfo.botLanguage = botLanguage;
     if (isPublic) {
       room.roomInfo.password = pswd;
     }
   }
 
-  joinRoomMultiplayer(bool isPublic, String pswd, String difficulty) {
+  joinRoomMultiplayer(bool isPublic, String pswd, String difficulty, String botLanguage) {
     String pseudo = gameData.pseudo;
-    setRoomInfoMultiplayer(isPublic, pswd, difficulty);
+    setRoomInfoMultiplayer(isPublic, pswd, difficulty, botLanguage);
     setPlayerInfo(pseudo);
     onProcess = true;
     socketService.send("createRoom", room);
@@ -167,14 +169,16 @@ class MultiplayerGameService extends SoloGameService {
             maxPlayers: 4,
             creatorName: authenticator.currentUser.username,
             isPublic: true,
-            password: ''),
+            password: '',
+            botLanguage: languageService.currentLanguage.languageCode == 'en' ? 'english' : 'french'),
         isBankUsable: false,
         observers: [],
         placementsData: [],
         startDate: DateFormat('HH:mm:ss').format(DateTime.now()),
         fillerNamesUsed: [],
         botsLevel: '',
-        bots: []);
+        bots: [],
+        );
     player = Player(
         socketId: socketService.getSocketID() ?? 'id',
         points: 0,

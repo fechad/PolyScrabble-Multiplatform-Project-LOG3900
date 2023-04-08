@@ -62,6 +62,7 @@ class RoomInfo {
   bool? isGameOver;
   bool isPublic;
   String password;
+  String? botLanguage;
 
   RoomInfo(
       {required this.name,
@@ -73,7 +74,8 @@ class RoomInfo {
       this.isSolo,
       this.isGameOver,
       required this.isPublic,
-      required this.password});
+      required this.password,
+      this.botLanguage});
 
   RoomInfo.fromJson(dynamic json)
       : name = json['name'],
@@ -85,7 +87,8 @@ class RoomInfo {
         isSolo = json['isSolo'],
         isGameOver = json['isGameOver'],
         isPublic = json['isPublic'],
-        password = json['password'];
+        password = json['password'],
+        botLanguage = json['botLanguage'];
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -98,6 +101,7 @@ class RoomInfo {
         'isGameOver': isGameOver,
         'isPublic': isPublic,
         'password': password,
+        'botLanguage': botLanguage,
       };
 }
 

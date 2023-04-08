@@ -82,12 +82,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                   lettersPlaced = '',
                   placementValidator.cancelPlacement(),
                 }
-              else if (serverMsg.contains("a atteint l'objectif"))
+              else if (serverMsg.contains("a atteint l'objectif") || serverMsg.contains("reached the objective"))
                 {
                   for (Goal goal in gameService.goals)
                     {
                       if (goal.title ==
-                          serverMsg.split(':')[1].split('Récompense')[0].trim())
+                          serverMsg.split(':')[1].split('Récompense')[0].trim() ||
+                          goal.title ==
+                              serverMsg.split(':')[1].split('Reward')[0].trim())
                         {
                           goal.reached = true,
                         }

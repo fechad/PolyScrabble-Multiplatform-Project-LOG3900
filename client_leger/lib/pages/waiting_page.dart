@@ -251,7 +251,10 @@ class _WaitingPageState extends State<WaitingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async { return false; },
+    child:
+      Scaffold(
       key: scaffoldKey,
       drawer: ChatDrawer(),
       endDrawer: UserResume(),
@@ -380,7 +383,7 @@ class _WaitingPageState extends State<WaitingPage> {
           ),
         ),
       ]),
-    );
+    ));
   }
 
   Widget _buildComposer() {

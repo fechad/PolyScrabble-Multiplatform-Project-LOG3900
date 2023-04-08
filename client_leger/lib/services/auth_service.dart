@@ -174,6 +174,7 @@ class AuthService {
                 logs: logs,
               ),
             },
+
         });
   }
 

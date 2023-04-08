@@ -20,12 +20,14 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   FocusNode _focusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  int difficultyValue = 0;
   String timeValue = '60';
   bool gameIsPublic = true;
+  int difficultyValue = 2;
   List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
       ? <String>['Beginner', 'Expert', 'Adaptable']
       : <String>['Débutant', 'Expert', 'Adaptatif'];
+  List<String> language = <String>['Français', 'English'];
+  int langValue = languageService.currentLanguage.languageCode == 'en' ? 1:0;
   String gameTypeValue = languageService.currentLanguage.languageCode == 'en'
       ? 'Public'
       : 'Publique';
@@ -70,7 +72,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                     "assets/images/scrabble_hero.png",
                   ),
                 ),
-                SizedBox(height: 60),
+                SizedBox(height: 20),
                 SafeArea(
                   child: Material(
                     color: Colors.transparent,
@@ -80,7 +82,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                     ),
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.30,
-                      height: MediaQuery.of(context).size.height * 0.62,
+                      height: MediaQuery.of(context).size.height * 0.70,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         boxShadow: [
@@ -130,12 +132,38 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                         .classicCreateMultiVpDifficultyLabel),
                                 onChanged: (String? value) {
                                   setState(() {
+                                    //TODO change difficulty to language to send
                                     difficultyValue = difficulty.indexOf(value!);
-                                    bool val = value == "expert" ? true : false;
-                                    gameService.gameData.isExpertLevel = val;
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              width: 280,
+                              child: DropdownButtonFormField<String>(
+                                value: language[langValue],
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                elevation: 16,
+                                decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!
+                                        .classicCreateMultiVpLanguageLabel),
+                                onChanged: (String? value) {
+                                  setState(() {
+                                    //TODO change difficulty to language to send
+                                    langValue = language.indexOf(value!);
+                                  });
+                                },
+                                items: language.map<DropdownMenuItem<String>>(
                                     (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
@@ -294,19 +322,25 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   }
 
   checkFormValues() {
-    if (difficultyValue == null || timeValue == null) return 'Erreur';
+    if (langValue == null || difficultyValue == null || timeValue == null) return 'Erreur';
+    String language = 'french';
     String level = 'débutant';
+    if (langValue == 0) {
+      language = 'french';
+    }
+    else if (langValue == 1) {
+      language = 'english';
+    }
+
     if (difficultyValue == 0) {
       level = 'débutant';
-    }
-    else if (difficultyValue == 1) {
+    } else if (difficultyValue == 1) {
       level = 'expert';
-    }
-    else if (difficultyValue == 2) {
+    } else if (difficultyValue == 2) {
       level = 'adaptatif';
     }
     gameService.joinRoomMultiplayer(
-        gameIsPublic, _gamePasswordController.text, level);
+        gameIsPublic, _gamePasswordController.text, level, language);
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return WaitingPage(
           isObserver: false,

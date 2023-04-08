@@ -22,7 +22,8 @@ class SoloGameService {
             maxPlayers: 4,
             creatorName: authenticator.currentUser.username,
             isPublic: true,
-            password: ''),
+            password: '',
+            botLanguage: languageService.currentLanguage.languageCode == 'en' ? 'english' : 'french'),
         isBankUsable: false,
         observers: [],
         placementsData: [],
@@ -44,12 +45,13 @@ class SoloGameService {
     socketService.on("botInfos", (bot) => {room.players[1] = bot});
   }
 
-  setRoomInfo(String pseudo, String difficulty) {
-    room.botsLevel = difficulty;
+  setRoomInfo(String pseudo, String desiredLevel, String botLanguage) {
+    room.botsLevel = desiredLevel;
     room.roomInfo.timerPerTurn = gameService.gameData.timerPerTurn;
     room.roomInfo.dictionary = gameService.gameData.dictionary;
     room.roomInfo.isSolo = true;
     room.roomInfo.isGameOver = false;
+    room.roomInfo.botLanguage = botLanguage;
   }
 
   setPlayerInfo(String pseudo) {
@@ -58,9 +60,9 @@ class SoloGameService {
     room.players = [player];
   }
 
-  joinRoom(String botName, String desiredLevel) {
+  joinRoom(String botName, String desiredLevel, String botLanguage) {
     String pseudo = gameService.gameData.pseudo;
-    setRoomInfo(pseudo, desiredLevel);
+    setRoomInfo(pseudo, desiredLevel, botLanguage);
     setPlayerInfo(pseudo);
     onProcess = true;
     socketService.send("createSoloRoom",
