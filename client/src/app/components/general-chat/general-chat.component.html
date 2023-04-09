@@ -9,7 +9,7 @@
             [translate]="'OTHER.QUIT'"
         ></button>
     </div>
-    <div class="chat">
+    <div #chat class="chat" id="only-chat-container">
         <div
             *ngFor="let chat of discussionChannel.messages"
             [class.my-message]="isSender(chat)"
@@ -41,20 +41,12 @@
     </div>
     <div class="chat-bar-container">
         <input
-            *ngIf="isInChannel"
             [(ngModel)]="inputValue"
             (keyup.enter)="sendChannelMessage()"
             class="chat-bar"
+            [class.error]="!isInChannel"
             type="text"
-            placeholder="{{ 'GENERAL-PAGE.PLACEHOLDER' | translate }}"
-        />
-        <input
-            *ngIf="!isInChannel"
-            [(ngModel)]="inputValue"
-            (keyup.enter)="sendChannelMessage()"
-            class="chat-bar error"
-            type="text"
-            placeholder="{{ 'GENERAL-PAGE.JOIN-CHANNEL-PLACEHOLDER' | translate }}"
+            [placeholder]="inputPlaceholder"
         />
         <i class="fa fa-send fa-2x" [ngClass]="{ enabled: enable, disabled: !enable }" (click)="sendChannelMessage()"></i>
     </div>

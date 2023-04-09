@@ -100,7 +100,9 @@ export class SocketHandlerService {
                 return userInfo.username;
             }
         }
-        return room?.getPlayer(socket.id)?.clientAccountInfo.username;
+        return (
+            room?.getPlayer(socket.id)?.clientAccountInfo.username || room?.observers.find((observer) => observer.socketId === socket.id)?.username
+        );
     }
 
     getSocketRoom(socket: io.Socket): Room | undefined {

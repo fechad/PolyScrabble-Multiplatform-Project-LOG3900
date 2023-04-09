@@ -75,7 +75,7 @@ export class ThemeService {
         document.documentElement.style.setProperty('--accent', '#7865DC');
         document.documentElement.style.setProperty('--accent-hover', '#5848AF');
         document.documentElement.style.setProperty('--accent-active', '#7D6CD4');
-        document.documentElement.style.setProperty('--accent-white', '#F4F2FF');
+        document.documentElement.style.setProperty('--accent-white', 'transparent');
         document.documentElement.style.setProperty('--accent-disabled', '#403675');
         document.documentElement.style.setProperty('--accent-disabled-font', '#8C8E8B');
         document.documentElement.style.setProperty('--chat-button-hover', '#353534');

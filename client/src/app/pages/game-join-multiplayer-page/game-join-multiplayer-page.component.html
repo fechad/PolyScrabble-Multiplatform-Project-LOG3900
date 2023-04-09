@@ -5,7 +5,6 @@
         <div class="body-main-container">
             <div class="page-title">
                 <div class="form-title" [translate]="'CLASSIC.JOIN-MULTI.TITLE'"></div>
-                <hr style="margin-top: 0%; background-color: black" width="35%" size="1" />
             </div>
 
             <div *ngIf="roomsToShow.length <= 0" class="information-message-container">
@@ -35,22 +34,38 @@
 
                         <div class="game-body">
                             <div class="game-players">
-                                <img
-                                    class="avatar"
-                                    [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                                />
-                                <img
-                                    class="avatar"
-                                    [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                                />
-                                <img
-                                    class="avatar"
-                                    [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                                />
-                                <img
-                                    class="avatar"
-                                    [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
-                                />
+                                <div class="player-info">
+                                    <div *ngIf="room.players[0] && room.players[0].isCreator" [translate]="'CLASSIC.JOIN-MULTI.CREATOR'"></div>
+                                    <img
+                                        class="avatar"
+                                        [class.creator]="room.players[0] && room.players[0].isCreator"
+                                        [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                    />
+                                </div>
+                                <div>
+                                    <div *ngIf="room.players[1] && room.players[1].isCreator" [translate]="'CLASSIC.JOIN-MULTI.CREATOR'"></div>
+                                    <img
+                                        class="avatar"
+                                        [class.creator]="room.players[1] && room.players[1].isCreator"
+                                        [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                    />
+                                </div>
+                                <div>
+                                    <div *ngIf="room.players[2] && room.players[2].isCreator" [translate]="'CLASSIC.JOIN-MULTI.CREATOR'"></div>
+                                    <img
+                                        class="avatar"
+                                        [class.creator]="room.players[2] && room.players[2].isCreator"
+                                        [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                    />
+                                </div>
+                                <div>
+                                    <div *ngIf="room.players[3] && room.players[3].isCreator" [translate]="'CLASSIC.JOIN-MULTI.CREATOR'"></div>
+                                    <img
+                                        class="avatar"
+                                        [class.creator]="room.players[3] && room.players[3].isCreator"
+                                        [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                                    />
+                                </div>
                             </div>
                             <div class="game-buttons">
                                 <button

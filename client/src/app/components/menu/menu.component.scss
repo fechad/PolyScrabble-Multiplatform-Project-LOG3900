@@ -58,7 +58,8 @@ mat-sidenav-container.mat-drawer-container-has-open {
     margin-bottom: 100px;
 }
 
-.fa.fa-window-restore {
+.fa.fa-window-restore,
+.fa.fa-window-restore::before {
     color: red;
     font-size: 38px;
 }
@@ -106,6 +107,7 @@ mat-sidenav-container.mat-drawer-container-has-open {
     display: flex;
     align-items: end;
     justify-content: space-between;
+    box-shadow: 0px 5px 5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .icons-container {
@@ -161,6 +163,13 @@ mat-sidenav-container.mat-drawer-container-has-open {
 .material-symbols-outlined.disabled {
     color: #cccccc42;
     cursor: default;
+}
+
+.material-symbols-outlined.hint {
+    color: yellow;
+    &.disabled {
+        color: #cccccc42;
+    }
 }
 
 .red-dot.disabled {
@@ -269,8 +278,14 @@ mat-sidenav-container.mat-drawer-container-has-open {
     width: 80%;
 }
 
-.close-chat-button {
+.close-chat-icon {
+    color: red;
+    font-size: 35px;
     margin: 10px 20px;
+}
+.new-window-icon {
+    color: var(--accent);
+    font-size: 30px;
 }
 
 // ROOM CHAT CHANNEL
@@ -283,6 +298,7 @@ mat-sidenav-container.mat-drawer-container-has-open {
     margin: 10px 10px 0px 10px;
     width: 100%;
     background-color: var(--section-background);
+    box-shadow: 0px 5px 5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .game-info-container {
@@ -330,6 +346,10 @@ mat-sidenav-container.mat-drawer-container-has-open {
     border-radius: $avatarMinDimension;
     margin: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.15);
+}
+
+.avatar.creator {
+    border: 5px solid goldenrod;
 }
 
 button.new-channel {

@@ -31,7 +31,7 @@
                                         [translate]="'GAME-PAGE.RACK'"
                                     ></button>
                                 </div>
-                                <div class="bottom-content">
+                                <div class="bottom-content" [class.observer]="playerService.isObserver">
                                     <div *ngIf="!mustShowGoals" class="player-racks-section">
                                         <div *ngFor="let playerRack of playersRack" class="player-rack-container">
                                             <img class="avatar" [src]="playerRack.player.clientAccountInfo.userSettings.avatarUrl" />
