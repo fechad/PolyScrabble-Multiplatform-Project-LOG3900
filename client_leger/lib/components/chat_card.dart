@@ -24,7 +24,7 @@ class ChatCard extends StatelessWidget {
                     isObserver: false,
                     roomName: gameService.room.roomInfo.name,
                     timer: gameService.gameData.timerPerTurn,
-                    botsLevel: gameService.room.botsLevel!,
+                    botsLevel: gameService.room.botsLevel != null ? gameService.room.botsLevel : '',
                     players: gameService.room.players),
               ));
         } else {

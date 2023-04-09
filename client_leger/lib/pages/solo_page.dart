@@ -188,7 +188,6 @@ class _SoloPageState extends State<SoloPage> {
                                         .classicCreateSoloVpLanguageLabel),
                                 onChanged: (String? value) {
                                   setState(() {
-                                    //TODO change difficulty to language to send
                                     langValue = language.indexOf(value!);
                                   });
                                 },

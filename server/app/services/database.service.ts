@@ -57,7 +57,7 @@ export class DatabaseService {
     setUserAsConnected(connectionData: unknown) {
         if (!connectionData) return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.connectedUser.set((connectionData as any).email, ''); // no data as value because not needed for the use case
+        this.connectedUser.set((connectionData as any).email.toLowerCase(), ''); // no data as value because not needed for the use case
     }
 
     setUserAsDisconnected(email: string) {

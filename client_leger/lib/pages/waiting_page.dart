@@ -22,11 +22,11 @@ class WaitingPage extends StatefulWidget {
       required this.isObserver,
       required this.roomName,
       required this.timer,
-      required this.botsLevel,
+      this.botsLevel,
       required this.players});
   final String roomName;
   final String timer;
-  final String botsLevel;
+  final String? botsLevel;
   final List<Player> players;
   final bool isObserver;
   @override
@@ -43,14 +43,14 @@ class _WaitingPageState extends State<WaitingPage> {
       {required this.isObserver,
       required this.roomName,
       required this.timer,
-      required this.botsLevel,
+      this.botsLevel,
       required this.players});
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController textController = TextEditingController();
   final ScrollController _controller = ScrollController();
   final String roomName;
   final String timer;
-  final String botsLevel;
+  final String? botsLevel;
   final List<Player> players;
   final bool isObserver;
 
