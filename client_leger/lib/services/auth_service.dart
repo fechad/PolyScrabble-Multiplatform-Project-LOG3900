@@ -77,11 +77,16 @@ class AuthService {
 
   Future<void> signInUser(String emailAddress, String password) async {
     try {
-      final credential = await firebase.signInWithEmailAndPassword(
-          email: emailAddress, password: password);
 
-      await setUser(credential.user!.email!);
-      await setStats(credential.user!.email!);
+      Response userConnectedInfo = await httpService.isAlreadyLoggedIn(emailAddress);
+      if (userConnectedInfo.body.contains('false'))
+       {
+        final credential = await firebase.signInWithEmailAndPassword(
+            email: emailAddress, password: password);
+
+        await setUser(credential.user!.email!);
+      }
+      else throw ('Cet utilisateur est déja connecté');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw ('No user found for that email.');

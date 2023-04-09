@@ -132,7 +132,6 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                         .classicCreateMultiVpDifficultyLabel),
                                 onChanged: (String? value) {
                                   setState(() {
-                                    //TODO change difficulty to language to send
                                     difficultyValue = difficulty.indexOf(value!);
                                   });
                                 },

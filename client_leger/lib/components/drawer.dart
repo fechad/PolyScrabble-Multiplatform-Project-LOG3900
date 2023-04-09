@@ -101,7 +101,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                     },
                     onSubmitted: submitMsg,
                     decoration: InputDecoration(
-                      hintText: 'Search',
+                      hintText: '',
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
                           color: Color(0x00000000),

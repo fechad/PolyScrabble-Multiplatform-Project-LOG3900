@@ -123,7 +123,7 @@ class MultiplayerGameService extends SoloGameService {
   }
 
   setRoomInfoMultiplayer(bool isPublic, String pswd, String difficulty, String botLanguage) {
-    room.botsLevel = difficulty.toLowerCase();
+    room.botsLevel = difficulty;
     room.roomInfo.timerPerTurn = gameData.timerPerTurn;
     room.roomInfo.dictionary = gameData.dictionary;
     room.roomInfo.gameType = 'classic'; //TODO get variable for game type

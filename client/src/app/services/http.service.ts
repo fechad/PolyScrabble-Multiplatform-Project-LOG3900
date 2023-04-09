@@ -99,7 +99,7 @@ export class HttpService {
     isAlreadyLoggedIn(email: string): Observable<{ isAlreadyLoggedIn: boolean }> {
         this.clearError();
         return this.http
-            .get<{ isAlreadyLoggedIn: boolean }>(`${this.baseUrl}/${this.authUrl}/isAlreadyLoggedIn/${email}`)
+            .get<{ isAlreadyLoggedIn: boolean }>(`${this.baseUrl}/${this.authUrl}/isAlreadyLoggedIn/${email.toLowerCase()}`)
             .pipe(catchError(this.handleError<{ isAlreadyLoggedIn: boolean }>('isAlreadyLoggedIn')));
     }
 

@@ -49,6 +49,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   late Player p;
   @override
   void initState() {
+    print(gameService.room.botsLevel);
     super.initState();
     inGameService.configure();
     linkService.setIsInAGame(true);
@@ -62,112 +63,94 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   _configure() {
     socketService.on(
         "message",
-        (msg) => {
-              serverMsg = Message.fromJson(msg).text,
-              if (serverMsg.contains('Placement invalide'))
-                {
-                  inGameService.handleBadPlacement(),
-                  setState(() {
-                    placementValidator.cancelPlacement();
-                    lettersPlaced = '';
-                    linkService.cancelPlacements();
-                    boardController.rebuild();
-                    linkService.resetRack();
-                  })
-                }
-              else if (serverMsg.contains('a effectué le placement suivant:'))
-                {
-                  linkService.confirm(),
-                  linkService.resetRack(),
-                  lettersPlaced = '',
-                  placementValidator.cancelPlacement(),
-                }
-              else if (serverMsg.contains("a atteint l'objectif") || serverMsg.contains("reached the objective"))
-                {
-                  for (Goal goal in gameService.goals)
-                    {
-                      if (goal.title ==
-                          serverMsg.split(':')[1].split('Récompense')[0].trim() ||
-                          goal.title ==
-                              serverMsg.split(':')[1].split('Reward')[0].trim())
-                        {
-                          goal.reached = true,
-                        }
-                    }
-                }
-            });
+            (msg) => {
+          serverMsg = Message.fromJson(msg).text,
+           if (serverMsg.contains("a atteint l'objectif") || serverMsg.contains("reached the objective"))
+              {
+                for (Goal goal in gameService.goals)
+                  {
+                    if (goal.title ==
+                        serverMsg.split(':')[1].split('Récompense')[0].trim() ||
+                        goal.title ==
+                            serverMsg.split(':')[1].split('Reward')[0].trim())
+                      {
+                        goal.reached = true,
+                      }
+                  }
+              }
+        });
 
     socketService.on(
         'hint',
-        (data) => {
-              hints =
-                  Message.fromJson(data).text.replaceAll("_", "-").split(' '),
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Container(
-                      width: 200,
-                      height: 200,
-                      child: AlertDialog(
-                          title: Text(
-                              AppLocalizations.of(context)!.gamePageHintTitle,
-                              style: TextStyle(
-                                fontSize: 24,
-                              )),
-                          content: SizedBox(
-                              width: 400,
-                              height: 370,
-                              child: ListView.builder(
-                                  itemCount: int.parse(hints[hints.length - 1]),
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                        padding: EdgeInsets.only(bottom: 20),
-                                        child: SizedBox(
-                                            height: 50,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    themeManager.themeMode ==
-                                                            ThemeMode.light
-                                                        ? Colors.white
-                                                        : Color.fromARGB(
-                                                            255, 53, 53, 52),
-                                                shadowColor: Colors.black,
-                                                elevation: 5,
-                                                side: BorderSide(
-                                                    color: Colors.grey,
-                                                    width: 1.0,
-                                                    style: BorderStyle.solid),
-                                              ),
-                                              onPressed: () {
-                                                lettersPlaced =
-                                                    hints[index].split("-")[1];
-                                                serverPlacement(
-                                                    hints[index].split("-")[0],
-                                                    hints[index].split("-")[1]);
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(
-                                                  "${hints[index].split("-")[1]} ${AppLocalizations.of(context)!.gamePageHintFor} ${hints[index].split("-")[2]} points",
-                                                  style: TextStyle(
-                                                    color: themeManager.themeMode == ThemeMode.light
-                                                        ? Color.fromARGB(255, 62, 62, 62)
-                                                        : Color.fromRGBO(249, 255, 246, 1),
-                                                    fontSize: 18,
-                                                  )),
-                                            )));
-                                  }))),
-                    );
-                  })
-            });
+            (data) => {
+          hints =
+              Message.fromJson(data).text.replaceAll("_", "-").split(' '),
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Container(
+                  width: 200,
+                  height: 200,
+                  child: AlertDialog(
+                      title: Text(
+                          AppLocalizations.of(context)!.gamePageHintTitle,
+                          style: TextStyle(
+                            fontSize: 24,
+                          )),
+                      content: SizedBox(
+                          width: 400,
+                          height: 370,
+                          child: ListView.builder(
+                              itemCount: int.parse(hints[hints.length - 1]),
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                    child: SizedBox(
+                                        height: 50,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                            themeManager.themeMode ==
+                                                ThemeMode.light
+                                                ? Colors.white
+                                                : Color.fromARGB(
+                                                255, 53, 53, 52),
+                                            shadowColor: Colors.black,
+                                            elevation: 5,
+                                            side: BorderSide(
+                                                color: Colors.grey,
+                                                width: 1.0,
+                                                style: BorderStyle.solid),
+                                          ),
+                                          onPressed: () {
+                                            lettersPlaced =
+                                            hints[index].split("-")[1];
+                                            serverPlacement(
+                                                hints[index].split("-")[0],
+                                                hints[index].split("-")[1]);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                              "${hints[index].split("-")[1]} ${AppLocalizations.of(context)!.gamePageHintFor} ${hints[index].split("-")[2]} points",
+                                              style: TextStyle(
+                                                color: themeManager.themeMode == ThemeMode.light
+                                                    ? Color.fromARGB(255, 62, 62, 62)
+                                                    : Color.fromRGBO(249, 255, 246, 1),
+                                                fontSize: 18,
+                                              )),
+                                        )));
+                              }))),
+                );
+              })
+        });
 
     socketService.on(
         "observersUpdated",
-        (roomObservers) => {
-              gameService.room.observers =
-                  gameService.decodeObservers(roomObservers),
-            });
+            (roomObservers) => {
+          gameService.room.observers =
+              gameService.decodeObservers(roomObservers),
+        });
   }
 
   int getTileScore(String letter) {
@@ -225,7 +208,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                 Positioned(
                   child: Text(value,
                       style:
-                          const TextStyle(fontSize: 10, color: Colors.black)),
+                      const TextStyle(fontSize: 10, color: Colors.black)),
                   bottom: 4.0,
                   right: 4.0,
                 )
@@ -341,154 +324,154 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     return WillPopScope(
         onWillPop: () async { return false; },
         child: Scaffold(
-        drawer: ChatDrawer(),
-        endDrawer: UserResume(),
-        onDrawerChanged: (isOpen) {
-          // write your callback implementation here
-          if (!isOpen)
-            Timer(Duration(milliseconds: 250), () {
-              setState(() {
-                drawer = 0;
-              });
-            });
-        },
-        body: Row(children: [
-          GameSidebar(isObserver: observing),
-          Column(children: [
-            Container(
-              width: screenWidth * 0.65,
-              height: screenHeight,
-              child: RebuildWrapper(
-                  controller: boardController,
-                  child: Board(
+            drawer: ChatDrawer(),
+            endDrawer: UserResume(),
+            onDrawerChanged: (isOpen) {
+              // write your callback implementation here
+              if (!isOpen)
+                Timer(Duration(milliseconds: 250), () {
+                  setState(() {
+                    drawer = 0;
+                  });
+                });
+            },
+            body: Row(children: [
+              GameSidebar(isObserver: observing),
+              Column(children: [
+                Container(
+                  width: screenWidth * 0.65,
+                  height: screenHeight,
+                  child: RebuildWrapper(
+                      controller: boardController,
+                      child: Board(
+                        isObserver: observing,
+                        alertGamePage: updateLettersPlaced,
+                      )),
+                )
+              ]),
+              Column(children: [
+                SizedBox(height: 10),
+                GameHeaderWidget(
                     isObserver: observing,
-                    alertGamePage: updateLettersPlaced,
-                  )),
-            )
-          ]),
-          Column(children: [
-            SizedBox(height: 10),
-            GameHeaderWidget(
-                isObserver: observing,
-                opponentsInfo: gameService.room.players,
-                resetLetters: resetLettersPlaced),
-            Observer(
-              builder: (context) => Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: linkService.currentBackground.value.isNotEmpty
-                        ? DecorationImage(
-                            image:
-                                AssetImage(linkService.getCurrentBackground()),
-                            fit: BoxFit.cover,
-                          )
-                        : null),
-                padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                child: Column(
-                  children: [
-                    ObjectiveBox(
-                        updateLetters: updateLetters, isObserver: observing),
-                    observing
-                        ? Container()
-                        : YourRack(tileChange: tileChange)
-                  ],
+                    opponentsInfo: gameService.room.players,
+                    resetLetters: resetLettersPlaced),
+                Observer(
+                  builder: (context) => Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        image: linkService.currentBackground.value.isNotEmpty
+                            ? DecorationImage(
+                          image:
+                          AssetImage(linkService.getCurrentBackground()),
+                          fit: BoxFit.cover,
+                        )
+                            : null),
+                    padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                    child: Column(
+                      children: [
+                        ObjectiveBox(
+                            updateLetters: updateLetters, isObserver: observing),
+                        observing
+                            ? Container()
+                            : YourRack(tileChange: tileChange)
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            if (letterIndexesToExchange.length != 0 && lettersPlaced == '')
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => {
-                      setState(() {
-                        linkService.resetIndicesToExchange();
-                        letterIndexesToExchange.clear();
-                        linkService.resetRack();
-                        linkService.setWantToExchange(false);
-                      })
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
+                if (letterIndexesToExchange.length != 0 && lettersPlaced == '')
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => {
+                          setState(() {
+                            linkService.resetIndicesToExchange();
+                            letterIndexesToExchange.clear();
+                            linkService.resetRack();
+                            linkService.setWantToExchange(false);
+                          })
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
                             MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
-                    child: Text(AppLocalizations.of(context)!.cancel),
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            final ExchangeCommand command = ExchangeCommand(
+                                letterIndexes: letterIndexesToExchange);
+                            gameCommandService.constructExchangeCommand(command);
+                            linkService.resetRack();
+                            linkService.resetIndicesToExchange();
+                            letterIndexesToExchange.clear();
+                            linkService.setWantToExchange(false);
+                          });
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: const MaterialStatePropertyAll<Color>(
+                                Palette.mainColor)),
+                        child: Text(AppLocalizations.of(context)!.exchange),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        final ExchangeCommand command = ExchangeCommand(
-                            letterIndexes: letterIndexesToExchange);
-                        gameCommandService.constructExchangeCommand(command);
-                        linkService.resetRack();
-                        linkService.resetIndicesToExchange();
-                        letterIndexesToExchange.clear();
-                        linkService.setWantToExchange(false);
-                      });
-                    },
-                    style: ButtonStyle(
-                        backgroundColor: const MaterialStatePropertyAll<Color>(
-                            Palette.mainColor)),
-                    child: Text(AppLocalizations.of(context)!.exchange),
-                  )
-                ],
-              ),
-            if (lettersPlaced != '')
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => {
-                      setState(() {
-                        placementValidator.cancelPlacement();
-                        lettersPlaced = '';
-                        linkService.cancelPlacements();
-                        boardController.rebuild();
-                        linkService.resetRack();
-                        socketService.send('firstTilePlaced', null);
-                      })
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
-                    child: Text(AppLocalizations.of(context)!.cancel),
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-                  ElevatedButton(
-                    onPressed: linkService.getMyTurn()
-                        ? () {
+                if (lettersPlaced != '')
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => {
+                          setState(() {
+                            placementValidator.cancelPlacement();
+                            lettersPlaced = '';
                             linkService.cancelPlacements();
-                            if (linkService.getMyTurn()) {
-                              placementValidator.executeCommand();
-                              setState(() {
-                                linkService.resetRack();
-                                lettersPlaced = '';
-                                placementValidator.cancelPlacement();
-                              });
-                            } else {
-                              placementValidator.cancelPlacement();
+                            boardController.rebuild();
+                            linkService.resetRack();
+                            socketService.send('firstTilePlaced', null);
+                          })
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                      ElevatedButton(
+                        onPressed: linkService.getMyTurn()
+                            ? () {
+                          linkService.cancelPlacements();
+                          if (linkService.getMyTurn()) {
+                            placementValidator.executeCommand();
+                            setState(() {
                               linkService.resetRack();
                               lettersPlaced = '';
-                            }
+                              placementValidator.cancelPlacement();
+                            });
+                          } else {
+                            placementValidator.cancelPlacement();
+                            linkService.resetRack();
+                            lettersPlaced = '';
                           }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
+                        }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
                             themeManager.themeMode == ThemeMode.light
                                 ? Color.fromARGB(255, 125, 175, 107)
                                 : Color.fromARGB(255, 121, 101, 220),
-                        disabledBackgroundColor:
+                            disabledBackgroundColor:
                             themeManager.themeMode == ThemeMode.light
                                 ? Colors.grey
                                 : Color.fromARGB(255, 64, 38, 117)),
-                    child: Text(AppLocalizations.of(context)!.confirm),
+                        child: Text(AppLocalizations.of(context)!.confirm),
+                      )
+                    ],
                   )
-                ],
-              )
-          ])
-        ]))
+              ])
+            ]))
     );
   }
 

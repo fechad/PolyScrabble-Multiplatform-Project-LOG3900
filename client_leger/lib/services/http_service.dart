@@ -54,6 +54,10 @@ class HttpService {
         body: {"email": email, "username": username});
   }
 
+  Future<http.Response> isAlreadyLoggedIn(String email) {
+    return http.get(Uri.parse('$url/api/$authUrl/isAlreadyLoggedIn/${email.toLowerCase()}'));
+  }
+
   Future<http.Response> resetUserPassword(String email) {
     return http.post(Uri.parse('$url/api/$authUrl/user/reset/$email'),
         body: {"email": email});
