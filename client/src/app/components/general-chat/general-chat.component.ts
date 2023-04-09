@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ConfirmationPopupComponent } from '@app/components/confirmation-popup/confirmation-popup.component';
@@ -9,7 +9,6 @@ import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
-import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
@@ -19,17 +18,17 @@ import { ThemeService } from '@app/services/theme.service';
     templateUrl: './general-chat.component.html',
     styleUrls: ['./general-chat.component.scss'],
 })
-export class GeneralChatComponent implements OnInit {
-    @Input() discussionChannel: DiscussionChannel;
+export class GeneralChatComponent {
     @Input() inputSideNav: MatSidenav;
+    @ViewChild('chat', { static: true }) private chat: ElementRef;
     enable: boolean;
     inputValue: string;
+    discussionChannel: DiscussionChannel;
     constructor(
         private playerService: PlayerService,
         private socketService: SocketClientService,
         protected themeService: ThemeService,
         private dialog: MatDialog,
-        protected languageService: LanguageService,
     ) {
         this.enable = false;
         this.discussionChannel = new DiscussionChannel('');
@@ -48,28 +47,41 @@ export class GeneralChatComponent implements OnInit {
     }
 
     get isFrenchLanguage(): boolean {
-        return this.languageService.currentLanguage === 'fr';
+        return this.playerService.account.userSettings.defaultLanguage === 'french';
+    }
+
+    get inputPlaceholder(): string {
+        if (this.isFrenchLanguage) {
+            if (this.isInChannel) return 'Entrez un message';
+            return 'Entrez un message pour rejoindre le canal';
+        }
+
+        if (this.isInChannel) return 'Type a message';
+        return 'Type a message to join the channel';
     }
 
     get isOwner(): boolean {
         return this.discussionChannel.owner?.username === this.playerService.player.clientAccountInfo.username;
     }
 
+    @Input() set discussionChannelInput(discussionChannel: DiscussionChannel) {
+        this.discussionChannel = discussionChannel;
+        this.scrollChatToBottom();
+    }
+
     isSender(chatMessage: ChannelMessage): boolean {
         return this.playerService.player.clientAccountInfo.username === chatMessage.sender;
     }
 
-    // ngAfterContentChecked(): void {
-    //     setTimeout(() => {
-    //         const chatBar = document.getElementsByClassName('chat-bar')[0] as HTMLInputElement;
-    //         if (chatBar) this.enable = chatBar.value !== '';
-    //     }, 0);
-    // }
-
-    ngOnInit() {
-        const delay = 100;
-        const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
-        setTimeout(() => chat.scrollTo(0, chat.scrollHeight), delay);
+    scrollChatToBottom() {
+        if (!this.chat) return;
+        setTimeout(() => {
+            this.chat.nativeElement.scrollTo({
+                top: this.chat.nativeElement.scrollHeight,
+                left: 0,
+                behavior: 'instant',
+            });
+        }, 1);
     }
 
     handleLeaveChannel() {
@@ -119,7 +131,6 @@ export class GeneralChatComponent implements OnInit {
     }
 
     sendChannelMessage() {
-        const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
         if (this.inputValue.length <= 0 || this.inputValue.replace(/\s/g, '').length <= 0) return;
 
         if (!this.isInChannel) {
@@ -144,7 +155,7 @@ export class GeneralChatComponent implements OnInit {
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         this.inputValue = '';
         this.discussionChannel.messages.push(channelMessage);
-        setTimeout(() => chat.scrollTo(0, chat.scrollHeight), 0);
+        this.scrollChatToBottom();
     }
 
     showSummary(accountInfo?: ClientAccountInfo) {

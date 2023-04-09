@@ -49,7 +49,8 @@
                 "TITLE": "Private game",
                 "BODY": "Enter the password to join the lobby.",
                 "INPUT": "Type the password"
-            }
+            },
+            "CREATOR": "Creator"
         },
         "NO-GAME-AVAILABLE": "No game available. You can create one by going in the main page or wait for someone to do it."
     },
@@ -58,11 +59,6 @@
     },
     "CHAT-BAR": {
         "GENERAL": "General Chat"
-    },
-    "GENERAL-PAGE": {
-        "BUTTON": "New window",
-        "PLACEHOLDER": "Type a message",
-        "JOIN-CHANNEL-PLACEHOLDER": "Type a message to join the channel"
     },
     "USER-PAGE": {
         "LEVEL": "lvl",

@@ -15,7 +15,8 @@
     <div class="gamers-displayer">
         <div class="gamers">
             <div class="player-panel" *ngFor="let player of room.players">
-                <div *ngIf="winnerPseudo === player.pseudo || numberOfWinner > 1" class="crown">👑</div>
+                <div>{{ player.clientAccountInfo.username }}</div>
+                <div *ngIf="winnerPseudo === player.clientAccountInfo.username || numberOfWinner > 1" class="crown">👑</div>
                 <div
                     class="avatar"
                     [class.player-active]="player.clientAccountInfo.username === currentPlayerTurnPseudo && !isGameOver"

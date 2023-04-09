@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div #chatContainer class="chat-container" [class.game-page]="isGamePage">
-                <app-general-chat [inputSideNav]="chatDrawer" [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
+                <app-general-chat [inputSideNav]="chatDrawer" [discussionChannelInput]="selectedDiscussionChannel"></app-general-chat>
             </div>
             <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
         </div>

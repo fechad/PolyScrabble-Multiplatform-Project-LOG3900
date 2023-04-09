@@ -28,7 +28,7 @@
                         <div class="red-dot" [class.disabled]="!isYourTurn() || hintService.nbHints === 0">
                             {{ hintService.nbHints ? hintService.nbHints : 0 }}
                         </div>
-                        <i class="material-symbols-outlined" *ngIf="!isGameOver" [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
+                        <i class="material-symbols-outlined hint" *ngIf="!isGameOver" [class.disabled]="!isYourTurn() || hintService.nbHints === 0"
                             >emoji_objects</i
                         >
                     </div>
@@ -78,8 +78,8 @@
                 <div *ngIf="!isWaitMultiPage" class="chat-header">
                     <div></div>
                     <div>
-                        <button (click)="openChatOnNewWindow()" [translate]="'GENERAL-PAGE.BUTTON'"></button>
-                        <button class="close-chat-button" (click)="closeChat()">X</button>
+                        <i (click)="openChatOnNewWindow()" class="fa fa-external-link new-window-icon"></i>
+                        <i (click)="closeChat()" class="fa fa-times close-chat-icon"></i>
                     </div>
                 </div>
                 <div *ngIf="isWaitMultiPage" class="waiting-room-header">
@@ -94,10 +94,26 @@
                         </div>
                     </div>
                     <div class="game-players">
-                        <img class="avatar" [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-                        <img class="avatar" [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-                        <img class="avatar" [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
-                        <img class="avatar" [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl" />
+                        <img
+                            class="avatar"
+                            [class.creator]="room.players[0] && room.players[0].isCreator"
+                            [src]="room.players[0] ? room.players[0].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                        />
+                        <img
+                            class="avatar"
+                            [class.creator]="room.players[1] && room.players[1].isCreator"
+                            [src]="room.players[1] ? room.players[1].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                        />
+                        <img
+                            class="avatar"
+                            [class.creator]="room.players[2] && room.players[2].isCreator"
+                            [src]="room.players[2] ? room.players[2].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                        />
+                        <img
+                            class="avatar"
+                            [class.creator]="room.players[3] && room.players[3].isCreator"
+                            [src]="room.players[3] ? room.players[3].clientAccountInfo.userSettings.avatarUrl : botAvatarUrl"
+                        />
                     </div>
                     <div class="game-buttons">
                         <button class="button cancel-button" (click)="leaveRoom()" routerLink="/game/option" [translate]="'OTHER.QUIT'"></button>
@@ -109,7 +125,7 @@
                         ></button>
                     </div>
                 </div>
-                <app-general-chat [inputSideNav]="chatDrawer" [discussionChannel]="selectedDiscussionChannel"></app-general-chat>
+                <app-general-chat [inputSideNav]="chatDrawer" [discussionChannelInput]="selectedDiscussionChannel"></app-general-chat>
             </div>
             <div #menuDarkBackground (click)="closeChatMenu()" class="dark-background"></div>
         </div>

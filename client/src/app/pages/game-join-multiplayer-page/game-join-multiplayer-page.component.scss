@@ -65,6 +65,18 @@ $gameMinWidth: 390px;
     justify-content: space-between;
 }
 
+.game-players {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .avatar {
     width: $avatarMaxDimension;
     height: $avatarMaxDimension;
@@ -84,6 +96,10 @@ $gameMinWidth: 390px;
     .button {
         height: 45px;
     }
+}
+
+.avatar.creator {
+    border: 5px solid goldenrod;
 }
 
 @media (max-width: 1025px) {

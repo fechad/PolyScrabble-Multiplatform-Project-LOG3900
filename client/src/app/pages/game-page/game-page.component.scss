@@ -57,7 +57,7 @@ app-rack {
     color: white;
 }
 
-.hint-icon{
+.hint-icon {
     width: 60px;
 }
 
@@ -145,6 +145,10 @@ app-rack {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+
+    &.observer {
+        height: 450px;
+    }
 }
 
 .top-content {

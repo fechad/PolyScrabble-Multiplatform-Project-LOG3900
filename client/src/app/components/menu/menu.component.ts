@@ -232,23 +232,23 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     navigateSettings() {
-        this.audioService.stopSound();
+        this.handlePageChange();
         this.router.navigate(['/settings']);
     }
 
     navigateHome() {
-        this.audioService.stopSound();
+        this.handlePageChange();
         if (this.router.url === '/game') this.playerService.setUserInfo();
         this.router.navigate(['/main']);
     }
 
     navigateUserPage() {
-        this.audioService.stopSound();
+        this.handlePageChange();
         this.router.navigate(['/user']);
     }
 
     navigateObserveRoomPage() {
-        this.audioService.stopSound();
+        this.handlePageChange();
         this.playerService.isObserver = true;
         this.room.roomInfo.gameType = 'classic';
         this.router.navigate(['game/multiplayer/join']);
@@ -272,8 +272,8 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             header: this.languageService.currentLanguage === 'fr' ? 'Voulez-vous vraiment abandonner ?' : 'Do you really want to quit?',
             body:
                 this.languageService.currentLanguage === 'fr'
-                    ? 'Vous ne serez pas dans le tableau des meilleurs scores.'
-                    : 'Your score wont appear in the rankings.',
+                    ? 'Vous ne pourrez plus rejoindre la partie en en tant que joueur par la suite.'
+                    : "You won't be able to join back the game as a player once you leave.",
         };
         const dialog = this.dialog.open(ConfirmationPopupComponent, {
             width: DIALOG_WIDTH,
@@ -288,7 +288,6 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     leaveGame() {
-        this.audioService.stopSound();
         this.socketService.send(SocketEvent.LeaveGame);
         this.navigateHome();
         this.backgroundService.setBackground('');
@@ -324,12 +323,17 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         }
     }
 
+    handlePageChange() {
+        this.closeChat();
+        this.audioService.stopSound();
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
             const discussionChannel = this.getDiscussionChannelByName(channelMessages[0]?.channelName);
             if (!discussionChannel) return;
             discussionChannel.messages = channelMessages;
-            const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
+            const chat = document.getElementById('only-chat-container') as HTMLDivElement;
             setTimeout(() => chat?.scrollTo(0, chat.scrollHeight), 0);
         });
 

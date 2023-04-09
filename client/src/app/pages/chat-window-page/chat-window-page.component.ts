@@ -158,7 +158,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
             if (discussionChannel.name === this.selectedDiscussionChannel.name) this.selectedDiscussionChannel.messages = channelMessages;
             else discussionChannel.messages = channelMessages;
 
-            const chat = document.getElementsByClassName('chat')[0] as HTMLDivElement;
+            const chat = document.getElementById('only-chat-container') as HTMLDivElement;
             setTimeout(() => chat?.scrollTo(0, chat.scrollHeight), 0);
         });
 
