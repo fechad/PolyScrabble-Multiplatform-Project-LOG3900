@@ -11,6 +11,7 @@ const ANGRY_THRESHOLD = 1;
 export class EinsteinVirtualPlayer extends VirtualPlayer {
     angryTurnsLeft: number;
     needToToggle: boolean;
+    isAngry: boolean;
     constructor(
         pseudo: string,
         isCreator: boolean,
@@ -20,27 +21,29 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
     ) {
         super(pseudo, isCreator, boardManipulator, letterBank, SCALES.default, language);
         this.angryTurnsLeft = 0;
-        this.needToToggle = true;
+        this.needToToggle = false;
         this.setQuotes(einsteinFrenchQuotes, einsteinEnglishQuotes);
     }
     override setScoreInterval(gap: number): void {
+        console.log(this.angryTurnsLeft);
         if (this.needToToggle) {
-            this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
-            this.needToToggle = false;
+            this.sendToggleSignal();
         }
-        if (this.angryTurnsLeft < 1 && gap < ANGRY_THRESHOLD) return this.intervalComputer.setScoreInterval(gap);
+        if (gap < ANGRY_THRESHOLD && this.angryTurnsLeft <= 0) return this.intervalComputer.setScoreInterval(gap);
 
+        // Should be angry:
+        // refresh angry counter if it ran out
         if (this.angryTurnsLeft < 1) {
+            if (!this.isAngry) this.sendToggleSignal();
             this.angryTurnsLeft = 3;
-            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
         }
         this.intervalComputer.scale = SCALES.expert;
 
         this.intervalComputer.isRuthless = true;
-        this.angryTurnsLeft -= 1;
+        this.angryTurnsLeft--;
         this.intervalComputer.setScoreInterval(gap);
 
-        if (this.angryTurnsLeft >= 1) return;
+        if (this.angryTurnsLeft >= 1 || gap > ANGRY_THRESHOLD) return;
         this.intervalComputer.scale = SCALES.default;
         this.intervalComputer.isRuthless = false;
         // TODO: Maybe implement a proper cooldown quote
@@ -57,5 +60,10 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         const placement = this.possiblePlacements[this.possiblePlacements.length - 1];
 
         return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
+    }
+    private sendToggleSignal() {
+        this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
+        this.needToToggle = false;
+        this.isAngry = !this.isAngry;
     }
 }
