@@ -24,11 +24,6 @@ export class VirtualPlayerAdaptative extends VirtualPlayer {
     }
 
     protected override placeLettersAction(specialFilter: (placement: UserPlacement) => boolean = () => false): string {
-        if (this.playedSpecial) {
-            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
-            this.playedSpecial = false;
-        }
-
         this.possiblePlacements = this.tools.finder.getPlacement(this.rack.getLetters());
         if (this.possiblePlacements.length === 0) return this.switchLettersAction();
 
@@ -45,8 +40,12 @@ export class VirtualPlayerAdaptative extends VirtualPlayer {
             offset++;
         } while (filtered.length === 0);
         const chosenPlacement = filtered[Math.floor(Math.random() * filtered.length)];
-        if (specialPlacements.length > 0) {
-            this.sendSpecialQuote(chosenPlacement);
+
+        if (this.playedSpecial && specialPlacements.length === 0) {
+            this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
+            this.playedSpecial = false;
+        } else if (specialPlacements.length > 0) {
+            this.sendSpecialQuote(chosenPlacement, !this.playedSpecial);
             this.playedSpecial = true;
         } else if (chosenPlacement.points >= EXTREME_SCORE) this.sendMessage(this.quotes.extremeScore);
         else if (chosenPlacement.points > BIG_SCORE) this.sendMessage(this.quotes.bigScore);
@@ -55,7 +54,7 @@ export class VirtualPlayerAdaptative extends VirtualPlayer {
     }
 
     // eslint-disable-next-line no-unused-vars
-    protected sendSpecialQuote(placement: UserPlacement) {
+    protected sendSpecialQuote(placement: UserPlacement, needToggle: boolean) {
         this.sendMessage(this.quotes.specialAnnouncement, TOGGLE_PREFIX + this.pseudo);
     }
 }
