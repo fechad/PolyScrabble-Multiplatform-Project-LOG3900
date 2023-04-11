@@ -29,7 +29,7 @@ mat-sidenav-container.mat-drawer-container-has-open {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .material-symbols-outlined {
@@ -96,7 +96,7 @@ mat-sidenav-container.mat-drawer-container-has-open {
 .chat-header {
     width: 100%;
     display: flex;
-    align-items: end;
+    align-items: flex-end;
     justify-content: space-between;
     box-shadow: 0px 5px 5px 1px rgba(0, 0, 0, 0.1);
 }
