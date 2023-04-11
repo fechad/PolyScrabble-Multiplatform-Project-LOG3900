@@ -3,7 +3,7 @@ import { Quotes } from './quotes';
 export const einsteinEnglishQuotes: Quotes = {
     greeting: 'Guten Tag! Together we will make humanity shine at its brightest! 🤩',
     bigScore: 'Behold the human genius! 😚',
-    extremeScore: "After extending Newton's law, I have now extended your anus! 😤 ",
+    extremeScore: "After extending Newton's law, I have now extended your comprehension of Scrabble! 😤 ",
     angryAnnouncement: 'YOU? BEAT ME? I WILL SWALLOW YOU LIKE A BLACK HOLE 👺',
     specialAnnouncement: 'I DO NOT NEED TO CHEAT',
 };
