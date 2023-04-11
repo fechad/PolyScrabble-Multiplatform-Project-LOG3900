@@ -258,7 +258,6 @@ export class SocketGameService extends SocketHandlerService {
                 return;
             }
             this.updateWantedMessages(room);
-            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.TimeUpdated, room);
             ++room.elapsedTime;
         }, ONE_SECOND_IN_MS);
     }

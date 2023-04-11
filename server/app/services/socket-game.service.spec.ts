@@ -181,16 +181,6 @@ describe('socketGameService service tests', () => {
             done();
         });
 
-        it('should call sendToEveryoneInRoom if room.elapsedTime < room.timerPerTurn ', (done) => {
-            roomMock.elapsedTime = 10;
-            roomMock.players = [firstPlayer];
-            const clock = sinon.useFakeTimers();
-            socketGameService.setTimer(socketMock, roomMock);
-            clock.tick(TIMER_DELAY);
-            assert(sendEveryoneStub.called, 'did not call sendToEveryoneInRoom when conditions were met');
-            done();
-        });
-
         it('should clear the interval if room.elapsedTime has a negative value', (done) => {
             roomMock.elapsedTime = -1;
             roomMock.players = [firstPlayer];
