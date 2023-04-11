@@ -16,7 +16,6 @@
         "noImplicitReturns": true,
         "resolveJsonModule": true,
         "esModuleInterop": true, // import common modules as ES6 Modules
-        "suppressImplicitAnyIndexErrors": true,
         "strictNullChecks": true,
         "paths": {
             "@app/*": ["./app/*"]
