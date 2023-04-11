@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
 import { DiscussionChannelService } from '@app/classes/discussion-channel-service';
 import { Player } from '@app/classes/player';
@@ -15,6 +17,7 @@ import { HttpService } from './http.service';
 export class PlayerService {
     player: Player;
     playerToShow?: ClientAccountInfo;
+    playerToShowStat: PlayerGameStats;
     stats: PlayerGameStats;
     room: Room;
     isNewChatWindowOpen: boolean;
@@ -40,8 +43,10 @@ export class PlayerService {
         this.stats = await lastValueFrom(this.httpService.getPlayerStats(this.player.email));
     }
 
-    setPlayerToShow(player: ClientAccountInfo) {
+    async setPlayerToShow(player: ClientAccountInfo) {
+        if (!this.httpService) return;
         this.playerToShow = player;
+        this.playerToShowStat = await lastValueFrom(this.httpService.getPlayerStats(this.playerToShow.email));
     }
 
     getPlayerToShow() {
@@ -82,5 +87,18 @@ export class PlayerService {
         this.account.userSettings = newSettings;
         this.player.clientAccountInfo = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, this.account));
         this.stats = await lastValueFrom(this.httpService.getPlayerStats(this.player.email));
+    }
+
+    getBorder(level: number) {
+        let path = '';
+        const borders: { [key: string]: number } = {
+            'bronze.png': 10,
+            'silver.png': 25,
+            'gold.png': 50,
+        };
+        for (const key in borders) {
+            if (level >= borders[key]) path = key;
+        }
+        return 'assets/images/borders/' + path;
     }
 }

@@ -1,5 +1,8 @@
 <div class="user-container">
-    <img class="user" [src]="playerService.playerToShow?.userSettings?.avatarUrl" />
+    <div class = "image-container">
+        <img class="user" [src]="playerService.playerToShow?.userSettings?.avatarUrl" />
+        <img *ngIf = "objService.currentLevel >= 10" class="border" [src]="playerService.getBorder(10)" alt="SantaBadge" />
+    </div>
 </div>
 <div class="name">
     <H1>{{ playerService.playerToShow?.username }}</H1>
@@ -13,28 +16,36 @@
 <div class="level-container">
     <div class="level">
         <div class="lvl-number">
-            <p class="bold">niv</p>
-            <p class="bold">4</p>
+            <p class="bold" [translate]="'USER-PAGE.LEVEL'"></p>
+            <p class="bold">{{ objService.currentLevel }}</p>
         </div>
         <div class="progress">
             <div></div>
-            <div><progress value="32" max="100"></progress></div>
-            <div class="fraction">32/100</div>
+            <div>
+                <progress
+                    value="{{ objService.totalXP - objService.currentLevelXp }}"
+                    max="{{ objService.xpForNextLevel + objService.totalXP - objService.currentLevelXp }}"
+                ></progress>
+            </div>
+            <div class="fraction">
+                {{ objService.totalXP - objService.currentLevelXp }}/{{
+                    objService.xpForNextLevel + objService.totalXP - objService.currentLevelXp
+                }}
+            </div>
         </div>
     </div>
 </div>
 <div class="high-scores">
-    <div class="classique mode">
-        <H3>Classique</H3>
-        <p>160</p>
+    <div style="display: flex; flex-direction: column; gap: 5px; width: 30%;">
+        <H3 [translate]="'USER-PAGE.VICTORIES'"></H3>
+        <h3>{{ playerService.playerToShow?.gamesWon }}</h3>
     </div>
     <i class="fa fa-trophy fa-4x"></i>
-    <div class="log2990 mode">
-        <H3>Log2990</H3>
-        <p>160</p>
+    <div style="display: flex; flex-direction: column; gap: 5px; width: 30%;">
+        <H3 >Highest score</H3>
+        <h3>{{ objService.highScore }}</h3>     
     </div>
 </div>
-<H3>18 victoires</H3>
 <div class="button-container" *ngIf="!isGamePage">
     <button class="button" routerLink="/other-user">Voir profil</button>
 </div>

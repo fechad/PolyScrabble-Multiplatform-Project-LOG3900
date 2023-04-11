@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { HttpService } from '@app/services/http.service';
 import { OutgameObjectivesService } from '@app/services/outgame-objectives.service';
 import { PlayerService } from '@app/services/player.service';
@@ -10,6 +11,12 @@ import { PlayerService } from '@app/services/player.service';
 })
 export class UserSummaryComponent {
     @Input() isGamePage: boolean;
-
-    constructor(protected playerService: PlayerService, protected objectiveService: OutgameObjectivesService, protected httpService: HttpService) {}
+    playerToShow: ClientAccountInfo | undefined;
+    rank: string;
+    constructor(
+        protected playerService: PlayerService,
+        protected objectiveService: OutgameObjectivesService,
+        protected httpService: HttpService,
+        public objService: OutgameObjectivesService,
+    ) {}
 }

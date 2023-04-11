@@ -7,7 +7,6 @@ import { PlayerService } from './player.service';
 export class ThemeService {
     currentTheme: string;
     darkThemeSelected: boolean;
-
     constructor(private playerService: PlayerService) {
         this.currentTheme = this.playerService.account.userSettings.defaultTheme + '-theme';
         this.darkThemeSelected = this.currentTheme === 'dark-theme' ? true : false;
