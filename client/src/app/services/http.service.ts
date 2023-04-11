@@ -120,7 +120,7 @@ export class HttpService {
         return this.http
             .post<{ email: string; username: string }>(
                 `${this.baseUrl}/${this.authUrl}/user`,
-                { email, username },
+                { email, username: username?.toLowerCase() },
                 {
                     headers: this.createCacheHeaders(),
                     observe: 'response',

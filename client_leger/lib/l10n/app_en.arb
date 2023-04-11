@@ -102,5 +102,6 @@
     "endGame": "Too bad...",
     "endGameText": "Good game! Unfortunately, the winner is ",
     "endGameObserver": "The game has ended",
-    "endGameObserverText": "The winner is "
+    "endGameObserverText": "The winner is ",
+	"userNameError": "This username is already taken, try another one"
 }

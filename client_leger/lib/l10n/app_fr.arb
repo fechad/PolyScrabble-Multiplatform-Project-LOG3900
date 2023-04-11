@@ -414,5 +414,9 @@
     "endGameObserverText": "Le gagnant est ",
             "@endGameText": {
                     "description": "Erreur du popup"
-                }
+                },
+	"userNameError": "Ce pseudo est déjà utilisé, essayez en un autre",
+	"@userNameError": {
+		"description": "Erreur de nom d'utilisateur"
+	}
 }

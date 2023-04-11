@@ -10,6 +10,7 @@ import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+
 import '../components/chat_model.dart';
 import '../components/receiver_message.dart';
 import '../components/system_message.dart';
@@ -36,9 +37,12 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   @override
   void initState() {
     super.initState();
-    RegExp exp = new RegExp( "\\b" + authenticator.getCurrentUser().username + "\\b", caseSensitive: false, );
-    for (var chatUser in chat.activeUsers){
-      if(exp.hasMatch(chatUser)){
+    RegExp exp = new RegExp(
+      "\\b" + authenticator.getCurrentUser().username + "\\b",
+      caseSensitive: false,
+    );
+    for (var chatUser in chat.activeUsers) {
+      if (exp.hasMatch(chatUser)) {
         if (mounted) {
           setState(() {
             joined = true;
@@ -251,12 +255,11 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                   Navigator.pop(context, () {
                     setState(() {});
                   });
-                }
-                else {
+                } else {
                   Navigator.push(context,
                       MaterialPageRoute(builder: ((context) {
-                        return const MyHomePage(title: 'PolyScrabble');
-                      })));
+                    return const MyHomePage(title: 'PolyScrabble');
+                  })));
                 }
                 linkService.setCurrentOpenedChat('');
               },
@@ -392,7 +395,11 @@ class ChatMessage extends StatelessWidget {
       : channelName = json['channelName'],
         sender = json['sender'],
         avatarUrl = json['avatarUrl'],
-        account = json['system'] ? null : Account.fromJson(json['account']),
+        account = json['system'] ||
+                json['avatarUrl'].toString().contains('robot-avatar') ||
+                json['avatarUrl'].toString().contains('assets')
+            ? null
+            : Account.fromJson(json['account']),
         system = json['system'],
         time = json['time'],
         message = json['message'];

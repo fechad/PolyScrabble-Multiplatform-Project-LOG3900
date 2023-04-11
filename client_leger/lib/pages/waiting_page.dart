@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../classes/game.dart';
 import '../components/avatar.dart';
-import '../components/sidebar.dart';
 import '../services/init_service.dart';
 import '../services/link_service.dart';
 import 'chat_page.dart';
@@ -211,12 +210,15 @@ class _WaitingPageState extends State<WaitingPage> {
         "playerLeft",
         (player) => {
               noPlayers = gameService.room.players.length -= 1,
-              setState(() => {
-                    gameService.room.players.removeWhere((element) =>
-                        element.clientAccountInfo!.username ==
-                        player['clientAccountInfo']['username']),
-                    if (noPlayers <= 1) canStart = false,
-                  })
+              if (mounted)
+                {
+                  setState(() => {
+                        gameService.room.players.removeWhere((element) =>
+                            element.clientAccountInfo!.username ==
+                            player['clientAccountInfo']['username']),
+                        if (noPlayers <= 1) canStart = false,
+                      })
+                }
             });
 
     socketService.on(
@@ -252,138 +254,144 @@ class _WaitingPageState extends State<WaitingPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async { return false; },
-    child:
-      Scaffold(
-      key: scaffoldKey,
-      drawer: ChatDrawer(),
-      endDrawer: UserResume(),
-      body: Row(children: <Widget>[
-        CollapsingNavigationDrawer(),
-        Container(
-          width: MediaQuery.of(context).size.width * 0.937,
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 0.937,
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: Row(children: [
-                  Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 15.0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("🤖 $botsLevel",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                )),
-                            SizedBox(height: 8),
-                            Text("🕓 ${this.timer}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                )),
-                          ])),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
-                      child: Row(children: [
-                        Container(
-                            height: 70,
-                            width: 300,
-                            child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: gameService.room.players.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Avatar(
-                                      insideChat: false,
-                                      url: gameService
-                                          .room
-                                          .players[index]
-                                          .clientAccountInfo!
-                                          .userSettings
-                                          .avatarUrl);
-                                }))
-                      ])),
-                  linkService.getIsInAGame()
-                      ? Padding(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          key: scaffoldKey,
+          drawer: ChatDrawer(),
+          endDrawer: UserResume(),
+          body: Row(children: <Widget>[
+            //CollapsingNavigationDrawer(),
+            SizedBox(width: 40),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.937,
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.937,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: Row(children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 15.0),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("🤖 $botsLevel",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    )),
+                                SizedBox(height: 8),
+                                Text("🕓 ${this.timer}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    )),
+                              ])),
+                      Padding(
                           padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
-                          child: InkWell(
-                            onTap: () {
-                              linkService.setCurrentOpenedChat('');
-                              Navigator.pop(context);
-                            },
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.black,
-                              size: 60,
-                            ),
-                          ))
-                      : Padding(
-                          padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
                           child: Row(children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                minimumSize: Size(50, 40),
-                                textStyle: const TextStyle(fontSize: 20),
-                              ),
-                              child: Text(AppLocalizations.of(context)!.quit),
-                              onPressed: () {
-                                gameService.leave();
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: ((context) {
-                                  return MyHomePage(title: "polyscrabble");
-                                })));
-                              },
-                            ),
-                            SizedBox(width: 30),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      themeManager.themeMode == ThemeMode.light
+                            Container(
+                                height: 70,
+                                width: 300,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: gameService.room.players.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Avatar(
+                                          insideChat: false,
+                                          url: gameService
+                                              .room
+                                              .players[index]
+                                              .clientAccountInfo!
+                                              .userSettings
+                                              .avatarUrl);
+                                    }))
+                          ])),
+                      linkService.getIsInAGame()
+                          ? Padding(
+                              padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
+                              child: InkWell(
+                                onTap: () {
+                                  linkService.setCurrentOpenedChat('');
+                                  Navigator.pop(context);
+                                },
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  color: Colors.black,
+                                  size: 60,
+                                ),
+                              ))
+                          : Padding(
+                              padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
+                              child: Row(children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    minimumSize: Size(50, 40),
+                                    textStyle: const TextStyle(fontSize: 20),
+                                  ),
+                                  child:
+                                      Text(AppLocalizations.of(context)!.quit),
+                                  onPressed: () {
+                                    gameService.leave();
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
+                                      return MyHomePage(title: "polyscrabble");
+                                    })));
+                                  },
+                                ),
+                                SizedBox(width: 30),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: themeManager.themeMode ==
+                                              ThemeMode.light
                                           ? Color.fromARGB(255, 125, 175, 107)
                                           : Color.fromARGB(255, 121, 101, 220),
-                                  minimumSize: Size(50, 40),
-                                  textStyle: const TextStyle(fontSize: 20),
-                                ),
-                                child:
-                                    Text(AppLocalizations.of(context)!.start),
-                                onPressed: canStart
-                                    ? () => {
-                                          gameService.requestGameStart(),
-                                          linkService.setCurrentOpenedChat(''),
-                                        }
-                                    : null),
-                          ])),
-                ]),
+                                      minimumSize: Size(50, 40),
+                                      textStyle: const TextStyle(fontSize: 20),
+                                    ),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.start),
+                                    onPressed: canStart
+                                        ? () => {
+                                              gameService.requestGameStart(),
+                                              linkService
+                                                  .setCurrentOpenedChat(''),
+                                            }
+                                        : null),
+                              ])),
+                    ]),
+                  ),
+                  Column(children: [
+                    Text(gameService.room.roomInfo.name,
+                        style: TextStyle(
+                          fontSize: 40,
+                        )),
+                  ]),
+                  Flexible(
+                      fit: FlexFit.tight,
+                      child: ListView.builder(
+                        controller: _controller,
+                        itemBuilder: (BuildContext context, int index) =>
+                            messages[index],
+                        itemCount: messages.length,
+                        reverse: false,
+                        padding: EdgeInsets.all(6.0),
+                      )),
+                  Divider(height: 1.0),
+                  Container(
+                    child: _buildComposer(),
+                    decoration:
+                        BoxDecoration(color: Theme.of(context).cardColor),
+                  ),
+                ],
               ),
-              Column(children: [
-                Text(gameService.room.roomInfo.name,
-                    style: TextStyle(
-                      fontSize: 40,
-                    )),
-              ]),
-              Flexible(
-                  fit: FlexFit.tight,
-                  child: ListView.builder(
-                    controller: _controller,
-                    itemBuilder: (BuildContext context, int index) =>
-                        messages[index],
-                    itemCount: messages.length,
-                    reverse: false,
-                    padding: EdgeInsets.all(6.0),
-                  )),
-              Divider(height: 1.0),
-              Container(
-                child: _buildComposer(),
-                decoration: BoxDecoration(color: Theme.of(context).cardColor),
-              ),
-            ],
-          ),
-        ),
-      ]),
-    ));
+            ),
+          ]),
+        ));
   }
 
   Widget _buildComposer() {
