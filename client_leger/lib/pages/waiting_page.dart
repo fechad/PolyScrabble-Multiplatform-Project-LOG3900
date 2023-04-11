@@ -227,7 +227,7 @@ class _WaitingPageState extends State<WaitingPage> {
             (data) => {
           Navigator.push(context, MaterialPageRoute(builder: ((context) {
             return const GamePageWidget();
-          })))
+          }))),
         });
 
     socketService.on(

@@ -9,6 +9,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shake/shake.dart';
 
 import '../main.dart';
+import '../pages/home_page.dart';
 
 typedef IntCallback = void Function(int i);
 
@@ -52,6 +53,8 @@ class _YourRackState extends State<YourRack> {
       }
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
