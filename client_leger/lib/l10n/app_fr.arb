@@ -239,7 +239,7 @@
 	"@leaveGameTitle": {
 		"description": "Titre de modal"
 	},
-	"leaveGameBody": "Vous ne serez pas dans le tableau des meilleurs scores.",
+	"leaveGameBody": "Vous ne pourrez plus rejoindre la partie en tant que joueur par la suite..",
 	"@leaveGameBody": {
 		"description": "Description de modal"
 	},

@@ -51,18 +51,23 @@ class OthersRackState extends State<OthersRack> {
                 gameService.playersRack.add(PlayerRack(
                     player: p, rackLetters: playerInfo['rackLetters']));
               }
-            })
+            }),
+            getPlayer(),
           }
         });
 
-    for (PlayerRack p in playerInfo) {
-      if (p.player.clientAccountInfo!.username == player.clientAccountInfo!.username){
-        rightPlayer = p;
-      }
+    if(isObserver) {
+      socketService.send('GetPlayersRackInfos', gameService.room.roomInfo.name);
     }
-
   }
 
+  getPlayer() {
+      for (PlayerRack p in playerInfo) {
+        if (p.player.clientAccountInfo!.username == player.clientAccountInfo!.username){
+          rightPlayer = p;
+        }
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +76,6 @@ class OthersRackState extends State<OthersRack> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
          Row(children: [
-           Container(
-             margin: EdgeInsets.only(right: 8),
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey,
-              ),
-            ),
            Text(player.clientAccountInfo!.username, style: GoogleFonts.nunito(
              textStyle: TextStyle(
                fontSize: 18,

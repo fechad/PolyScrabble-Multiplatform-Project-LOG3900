@@ -152,7 +152,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
             ),
           ),
           const SizedBox(height: 20),
-          ChatCard(chatModel: chatService.getRoomChannel()),
+          chatService.getRoomChannel().name != '' ? ChatCard(chatModel: chatService.getRoomChannel()) : SizedBox(height:50),
           ChatCard(chatModel: chatService.getDiscussions()[0]),
           const Padding(
             padding: EdgeInsets.only(right: 20, left: 20),
