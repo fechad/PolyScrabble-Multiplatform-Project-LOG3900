@@ -51,7 +51,6 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   late Player p;
   @override
   void initState() {
-    print(gameService.room.botsLevel);
     super.initState();
     inGameService.configure();
     linkService.setIsInAGame(true);

@@ -126,7 +126,7 @@ class ObserverPageState extends State<ObserverPage> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 30,
                           crossAxisSpacing: 30,
-                          mainAxisExtent: 130),
+                          mainAxisExtent: 178),
                       itemCount: publicRooms.length,
                       itemBuilder: (_, index) {
                         return GameCard(
@@ -135,6 +135,7 @@ class ObserverPageState extends State<ObserverPage> {
                           time: publicRooms[index].roomInfo.timerPerTurn,
                           password: publicRooms[index].roomInfo.password,
                           roomName: publicRooms[index].roomInfo.name,
+                          observersCount: publicRooms[index].observers?.length,
                           isObserver: true,
                         );
                       })),

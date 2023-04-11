@@ -26,7 +26,7 @@ class OtherMessage extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 1070, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 940, 0),
             child: (Text(
               time,
               textAlign: TextAlign.start,
@@ -45,18 +45,6 @@ class OtherMessage extends StatelessWidget {
                     insideChat: true,
                     url: avatarUrl ?? account!.userSettings.avatarUrl,
                     previewData: avatarUrl != null ? null : account),
-                // child: Container(
-                //   width: 80,
-                //   height: 80,
-                //   clipBehavior: Clip.antiAlias,
-                //   decoration: BoxDecoration(
-                //     shape: BoxShape.circle,
-                //   ),
-                //   child: Image.network(
-                //     account!.userSettings.avatarUrl,
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
               ),
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(24, 0, 0, 0),

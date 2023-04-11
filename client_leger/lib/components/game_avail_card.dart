@@ -3,6 +3,7 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../classes/game.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
@@ -16,7 +17,7 @@ class GameCard extends StatefulWidget {
       required this.difficulty,
       required this.time,
       required this.password,
-      required this.roomName,
+      required this.roomName, this.observersCount,
       required this.isObserver});
 
   final String difficulty;
@@ -25,6 +26,7 @@ class GameCard extends StatefulWidget {
   final String roomName;
   final bool isObserver;
   final List<Player> players;
+  final int? observersCount;
 
   @override
   _GameCardState createState() => _GameCardState(
@@ -33,7 +35,8 @@ class GameCard extends StatefulWidget {
       password: password,
       roomName: roomName,
       isObserver: isObserver,
-      players: players);
+      players: players,
+      observersCount: observersCount);
 }
 
 class _GameCardState extends State<GameCard> {
@@ -42,13 +45,15 @@ class _GameCardState extends State<GameCard> {
       required this.time,
       required this.password,
       required this.roomName,
-      required this.isObserver,
-      required this.players});
+      required this.isObserver, this.observersCount,
+  required this.players});
   final String difficulty;
   final String time;
   final String password;
   final String roomName;
   final bool isObserver;
+  final int? observersCount;
+
   final Player player = Player(
     socketId: homeSocketService.getSocketID()!,
     isCreator: false,
@@ -126,6 +131,8 @@ class _GameCardState extends State<GameCard> {
               )
             ]),
             Spacer(),
+            Row(
+              children: [
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
               child: Text(
@@ -137,27 +144,53 @@ class _GameCardState extends State<GameCard> {
                 textAlign: TextAlign.end,
               ),
             ),
+                Icon(Icons.remove_red_eye_rounded),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(5, 0, 16, 0),
+                  child: Text(observersCount != null ? "$observersCount" : "0",
+                    style: FlutterFlowTheme.of(context).bodyText1.override(
+                      fontFamily: 'Nunito',
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+            ]),
           ]),
           Spacer(),
           Row(
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
+                padding: EdgeInsetsDirectional.fromSTEB(25, 10, 0, 0),
                 child: Row(
                   children: [
                     Container(
-                        height: 50,
+                      height: 90,
                         width: 200,
                         child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: players.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return Avatar(
+                              return
+                                Column (
+                                    children: [
+                                Text(players[index].isCreator ? (languageService.currentLanguage.languageCode == 'en' ? "Creator" : "Créateur") : ''),
+                                SizedBox(height: 5),
+                                      Container(
+                                  decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                  strokeAlign: StrokeAlign.center,
+                                  width: 4,
+                                  color: players[index].isCreator ?
+                                  Colors.orange : Colors.transparent)),
+                                child :
+                                Avatar(
                                   insideChat: false,
                                   url: players[index]
                                       .clientAccountInfo!
                                       .userSettings
-                                      .avatarUrl);
+                                      .avatarUrl))]);
                             })),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(80, 0, 16, 0),
@@ -306,6 +339,7 @@ class _GameCardState extends State<GameCard> {
           username: authenticator.getCurrentUser().username),
       "password": password
     });
+
   }
 
   sendJoinRequest() {

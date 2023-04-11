@@ -56,7 +56,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                 return WaitingPage(
                     isObserver: false,
                     roomName: gameService.room.roomInfo.name,
-                    timer: gameService.gameData.timerPerTurn,
+                    timer: gameService.room.roomInfo.timerPerTurn,
                     botsLevel: gameService.room.botsLevel!,
                     players: gameService.room.players);
               })))
@@ -123,7 +123,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 30,
                           crossAxisSpacing: 30,
-                          mainAxisExtent: 130),
+                          mainAxisExtent: 178),
                       itemCount: availableRooms.length,
                       itemBuilder: (_, index) {
                         return GameCard(
@@ -132,6 +132,7 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                           time: availableRooms[index].roomInfo.timerPerTurn,
                           password: availableRooms[index].roomInfo.password,
                           roomName: availableRooms[index].roomInfo.name,
+                          observersCount: availableRooms[index].observers?.length,
                           isObserver: false,
                         );
                       })),

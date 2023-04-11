@@ -59,7 +59,7 @@
 	"gamePageHintTitle": "Choose a hint to preview",
 	"gamePageHintFor": "for",
 	"leaveGameTitle": "Do you really want to quit?",
-	"leaveGameBody": "You're score for this game wont be in the rankings.",
+	"leaveGameBody": "You won't be able to join as a player anymore...",
 	"endGameTitleWinner": "",
 	"endGameBodyWinner": "",
 	"ok": "Ok",
