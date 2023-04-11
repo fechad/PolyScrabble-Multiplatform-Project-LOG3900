@@ -26,16 +26,16 @@ export class MozartVirtualPlayer extends VirtualPlayerAdaptative {
 
     protected override placeLettersAction(): string {
         const specialFilter = (placement: UserPlacement) =>
-            !this.centerNode.content || placement.newWord.length - placement.letters.length >= MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR;
+            placement.newWord.length - placement.letters.length >= MOZART_LETTERS_FOR_SPECIAL_BEHAVIOUR;
         return super.placeLettersAction(specialFilter);
     }
 
-    protected sendSpecialQuote(placement: UserPlacement) {
+    protected sendSpecialQuote(placement: UserPlacement, needToggle: boolean) {
         let quote = this.quotes.specialAnnouncement;
         let lettersAlready = placement.newWord;
         [...placement.letters].forEach((letter) => (lettersAlready = lettersAlready.replace(letter, '')));
         quote = quote.replace(PLACEHOLDER_LETTERS_ALREADY_PLACED, lettersAlready);
         quote = quote.replace(PLACEHOLDER_NEW_WORD_PLACED, placement.newWord);
-        this.sendMessage(quote, TOGGLE_PREFIX + this.pseudo);
+        this.sendMessage(quote, needToggle ? TOGGLE_PREFIX + this.pseudo : undefined);
     }
 }
