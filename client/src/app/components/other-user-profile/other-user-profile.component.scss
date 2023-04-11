@@ -34,6 +34,7 @@
     margin: 0 4px;
     background-color: #ccc;
     border-radius: 100%;
+    object-fit: cover;
 }
 
 .level {
@@ -115,7 +116,7 @@ progress[value]::-webkit-progress-value {
     right: 10%;
     bottom: 85%;
 }
- .image-container {
+.image-container {
     height: 96px;
     width: 96px;
     margin: 16px 16px 0 40px;

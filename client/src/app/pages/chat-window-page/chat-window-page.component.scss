@@ -315,6 +315,7 @@ mat-sidenav-container.mat-drawer-container-has-open {
     border-radius: $avatarMinDimension;
     margin: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.15);
+    object-fit: cover;
 }
 
 button.new-channel {
