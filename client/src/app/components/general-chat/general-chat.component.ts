@@ -156,7 +156,6 @@ export class GeneralChatComponent {
         };
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         this.inputValue = '';
-        this.discussionChannel.messages.push(channelMessage);
         this.scrollChatToBottom();
     }
 

@@ -3,6 +3,7 @@ import 'package:client_leger/classes/game.dart';
 import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/pages/profile_page.dart';
 import 'package:client_leger/pages/settings_page.dart';
+import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
@@ -266,7 +267,10 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                     })));
                                   } else if (counter == 5) {
                                     themeManager.setThemeMode(false);
-                                    httpService.logoutUser(authenticator.getCurrentUser().username);
+                                    httpService.logoutUser(authenticator
+                                        .getCurrentUser()
+                                        .username);
+                                    socketService.send('logOut');
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: ((context) {
                                       return ConnexionPageWidget();

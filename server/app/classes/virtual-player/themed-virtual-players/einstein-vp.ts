@@ -25,7 +25,6 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         this.setQuotes(einsteinFrenchQuotes, einsteinEnglishQuotes);
     }
     override setScoreInterval(gap: number): void {
-        console.log(this.angryTurnsLeft);
         if (this.needToToggle) {
             this.sendToggleSignal();
         }
