@@ -90,10 +90,7 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
     }
 
     hintCommand() {
-        setTimeout(() => {
-            this.socketService.send(SocketEvent.Message, '!indice');
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        }, 5000);
+        this.socketService.send(SocketEvent.Message, '!indice');
     }
 
     letterBankCommand() {
@@ -128,7 +125,6 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         });
 
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
-            this.hintService.nbHints = 0;
             this.hintService.hintValue = 0;
             this.hintService.currentHint = 0;
             this.hintService.hideFraction = true;
