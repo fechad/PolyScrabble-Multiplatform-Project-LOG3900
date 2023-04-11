@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:client_leger/classes/command.dart';
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/components/game_header.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
 import '../classes/game.dart';
 import '../components/board.dart';
 import '../components/game_sidebar.dart';
@@ -63,94 +65,102 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   _configure() {
     socketService.on(
         "message",
-            (msg) => {
-          serverMsg = Message.fromJson(msg).text,
-           if (serverMsg.contains("a atteint l'objectif") || serverMsg.contains("reached the objective"))
-              {
-                for (Goal goal in gameService.goals)
-                  {
-                    if (goal.title ==
-                        serverMsg.split(':')[1].split('Récompense')[0].trim() ||
-                        goal.title ==
-                            serverMsg.split(':')[1].split('Reward')[0].trim())
-                      {
-                        goal.reached = true,
-                      }
-                  }
-              }
-        });
+        (msg) => {
+              serverMsg = Message.fromJson(msg).text,
+              if (serverMsg.contains("a atteint l'objectif") ||
+                  serverMsg.contains("reached the objective"))
+                {
+                  for (Goal goal in gameService.goals)
+                    {
+                      if (goal.title ==
+                              serverMsg
+                                  .split(':')[1]
+                                  .split('Récompense')[0]
+                                  .trim() ||
+                          goal.title ==
+                              serverMsg.split(':')[1].split('Reward')[0].trim())
+                        {
+                          goal.reached = true,
+                        }
+                    }
+                }
+            });
 
     socketService.on(
         'hint',
-            (data) => {
-          hints =
-              Message.fromJson(data).text.replaceAll("_", "-").split(' '),
-          showDialog(
-              context: context,
-              builder: (context) {
-                return Container(
-                  width: 200,
-                  height: 200,
-                  child: AlertDialog(
-                      title: Text(
-                          AppLocalizations.of(context)!.gamePageHintTitle,
-                          style: TextStyle(
-                            fontSize: 24,
-                          )),
-                      content: SizedBox(
-                          width: 400,
-                          height: 370,
-                          child: ListView.builder(
-                              itemCount: int.parse(hints[hints.length - 1]),
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: SizedBox(
-                                        height: 50,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                            themeManager.themeMode ==
-                                                ThemeMode.light
-                                                ? Colors.white
-                                                : Color.fromARGB(
-                                                255, 53, 53, 52),
-                                            shadowColor: Colors.black,
-                                            elevation: 5,
-                                            side: BorderSide(
-                                                color: Colors.grey,
-                                                width: 1.0,
-                                                style: BorderStyle.solid),
-                                          ),
-                                          onPressed: () {
-                                            lettersPlaced =
-                                            hints[index].split("-")[1];
-                                            serverPlacement(
-                                                hints[index].split("-")[0],
-                                                hints[index].split("-")[1]);
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                              "${hints[index].split("-")[1]} ${AppLocalizations.of(context)!.gamePageHintFor} ${hints[index].split("-")[2]} points",
-                                              style: TextStyle(
-                                                color: themeManager.themeMode == ThemeMode.light
-                                                    ? Color.fromARGB(255, 62, 62, 62)
-                                                    : Color.fromRGBO(249, 255, 246, 1),
-                                                fontSize: 18,
-                                              )),
-                                        )));
-                              }))),
-                );
-              })
-        });
+        (data) => {
+              hints =
+                  Message.fromJson(data).text.replaceAll("_", "-").split(' '),
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      width: 200,
+                      height: 200,
+                      child: AlertDialog(
+                          title: Text(
+                              AppLocalizations.of(context)!.gamePageHintTitle,
+                              style: TextStyle(
+                                fontSize: 24,
+                              )),
+                          content: SizedBox(
+                              width: 400,
+                              height: 370,
+                              child: ListView.builder(
+                                  itemCount: int.parse(hints[hints.length - 1]),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 500),
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                        padding: EdgeInsets.only(bottom: 20),
+                                        child: SizedBox(
+                                            height: 50,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    themeManager.themeMode ==
+                                                            ThemeMode.light
+                                                        ? Colors.white
+                                                        : Color.fromARGB(
+                                                            255, 53, 53, 52),
+                                                shadowColor: Colors.black,
+                                                elevation: 5,
+                                                side: BorderSide(
+                                                    color: Colors.grey,
+                                                    width: 1.0,
+                                                    style: BorderStyle.solid),
+                                              ),
+                                              onPressed: () {
+                                                lettersPlaced =
+                                                    hints[index].split("-")[1];
+                                                serverPlacement(
+                                                    hints[index].split("-")[0],
+                                                    hints[index].split("-")[1]);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                  "${hints[index].split("-")[1]} ${AppLocalizations.of(context)!.gamePageHintFor} ${hints[index].split("-")[2]} points",
+                                                  style: TextStyle(
+                                                    color: themeManager
+                                                                .themeMode ==
+                                                            ThemeMode.light
+                                                        ? Color.fromARGB(
+                                                            255, 62, 62, 62)
+                                                        : Color.fromRGBO(
+                                                            249, 255, 246, 1),
+                                                    fontSize: 18,
+                                                  )),
+                                            )));
+                                  }))),
+                    );
+                  })
+            });
 
     socketService.on(
         "observersUpdated",
-            (roomObservers) => {
-          gameService.room.observers =
-              gameService.decodeObservers(roomObservers),
-        });
+        (roomObservers) => {
+              gameService.room.observers =
+                  gameService.decodeObservers(roomObservers),
+            });
   }
 
   int getTileScore(String letter) {
@@ -160,7 +170,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     return POINTS[letter.toLowerCase().codeUnits[0] - A_ASCII];
   }
 
-  void addPlacement(int x, int y, String value, String letter, color, List<String> myAsterisk) {
+  void addPlacement(int x, int y, String value, String letter, color,
+      List<String> myAsterisk) {
     bool isAsterisk = false;
 
     if (letter == '*') {
@@ -169,14 +180,9 @@ class _GamePageWidgetState extends State<GamePageWidget> {
       if (!placementValidator.validPlacement) return;
       isAsterisk = true;
       String confirmedLetters =
-      placementValidator.letters
-          .toLowerCase()
-          .replaceFirst('*', letter!);
-      placementValidator.letters =
-          confirmedLetters;
-    }
-
-    else {
+          placementValidator.letters.toLowerCase().replaceFirst('*', letter!);
+      placementValidator.letters = confirmedLetters;
+    } else {
       placementValidator.addLetter(letter.toLowerCase(), x, y);
       if (!placementValidator.validPlacement) return;
     }
@@ -208,7 +214,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                 Positioned(
                   child: Text(value,
                       style:
-                      const TextStyle(fontSize: 10, color: Colors.black)),
+                          const TextStyle(fontSize: 10, color: Colors.black)),
                   bottom: 4.0,
                   right: 4.0,
                 )
@@ -216,8 +222,9 @@ class _GamePageWidgetState extends State<GamePageWidget> {
             )));
     setState(() {
       linkService.setRows(x, y, newSquare);
-      linkService.removeLetter(
-          Tile(letter: isAsterisk ? letter : letter.toLowerCase(), index: isAsterisk ? getIndex('*') : getIndex(letter)));
+      linkService.removeLetter(Tile(
+          letter: isAsterisk ? letter : letter.toLowerCase(),
+          index: isAsterisk ? getIndex('*') : getIndex(letter)));
     });
   }
 
@@ -238,8 +245,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     else
       x = int.parse(position.substring(1, 3)) - 1;
 
-
-    for(int i = 0; i < word.length; i++){
+    for (int i = 0; i < word.length; i++) {
       if (word[i].codeUnitAt(0) >= 65 && word[i].codeUnitAt(0) <= 90) {
         myAsterisk.add(word[i]);
         word = word.replaceAll(word[i], '*');
@@ -247,9 +253,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     }
 
     List<String> letters = word.toUpperCase().split('');
-    addPlacement(x, y, letters[0] == '*' ? '0':getTileScore(letters[0]).toString(), letters[0],
-        Color(0xFFFFEBCE), myAsterisk);
-    if(letters[0] == '*') myAsterisk.removeAt(0);
+    addPlacement(
+        x,
+        y,
+        letters[0] == '*' ? '0' : getTileScore(letters[0]).toString(),
+        letters[0],
+        Color(0xFFFFEBCE),
+        myAsterisk);
+    if (letters[0] == '*') myAsterisk.removeAt(0);
     letters.removeAt(0);
 
     if (letters.isEmpty) return;
@@ -260,9 +271,14 @@ class _GamePageWidgetState extends State<GamePageWidget> {
         final square = (linkService.getRows()[y] as Row).children[x];
 
         if (square.runtimeType.toString().contains('DragTarget')) {
-          addPlacement(x, y, letters[0] == '*' ? '0':getTileScore(letters[0]).toString(), letters[0],
-              Color(0xFFFFEBCE), myAsterisk);
-          if(letters[0] == '*') myAsterisk.removeAt(0);
+          addPlacement(
+              x,
+              y,
+              letters[0] == '*' ? '0' : getTileScore(letters[0]).toString(),
+              letters[0],
+              Color(0xFFFFEBCE),
+              myAsterisk);
+          if (letters[0] == '*') myAsterisk.removeAt(0);
           letters.removeAt(0);
         }
         if (letters.isEmpty) break;
@@ -276,7 +292,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
         if (square.runtimeType.toString().contains('DragTarget')) {
           addPlacement(x, y, getTileScore(letters[0]).toString(), letters[0],
               Color(0xFFFFEBCE), myAsterisk);
-          if(letters[0] == '*') myAsterisk.removeAt(0);
+          if (letters[0] == '*') myAsterisk.removeAt(0);
           letters.removeAt(0);
         }
         if (letters.isEmpty) break;
@@ -315,14 +331,15 @@ class _GamePageWidgetState extends State<GamePageWidget> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
     return WillPopScope(
-        onWillPop: () async { return false; },
+        onWillPop: () async {
+          return false;
+        },
         child: Scaffold(
             drawer: ChatDrawer(),
             endDrawer: UserResume(),
@@ -352,25 +369,24 @@ class _GamePageWidgetState extends State<GamePageWidget> {
               Column(children: [
                 SizedBox(height: 10),
                 GameHeaderWidget(
-                    isObserver: observing,
-                    opponentsInfo: gameService.room.players,
-                    resetLetters: resetLettersPlaced),
+                    isObserver: observing, resetLetters: resetLettersPlaced),
                 Observer(
                   builder: (context) => Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         image: linkService.currentBackground.value.isNotEmpty
                             ? DecorationImage(
-                          image:
-                          AssetImage(linkService.getCurrentBackground()),
-                          fit: BoxFit.cover,
-                        )
+                                image: AssetImage(
+                                    linkService.getCurrentBackground()),
+                                fit: BoxFit.cover,
+                              )
                             : null),
                     padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
                     child: Column(
                       children: [
                         ObjectiveBox(
-                            updateLetters: updateLetters, isObserver: observing),
+                            updateLetters: updateLetters,
+                            isObserver: observing),
                         observing
                             ? Container()
                             : YourRack(tileChange: tileChange)
@@ -391,8 +407,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                           })
                         },
                         style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                Color(0xFFFF4C4C))),
                         child: Text(AppLocalizations.of(context)!.cancel),
                       ),
                       SizedBox(
@@ -403,7 +419,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                           setState(() {
                             final ExchangeCommand command = ExchangeCommand(
                                 letterIndexes: letterIndexesToExchange);
-                            gameCommandService.constructExchangeCommand(command);
+                            gameCommandService
+                                .constructExchangeCommand(command);
                             linkService.resetRack();
                             linkService.resetIndicesToExchange();
                             letterIndexesToExchange.clear();
@@ -411,8 +428,9 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                           });
                         },
                         style: ButtonStyle(
-                            backgroundColor: const MaterialStatePropertyAll<Color>(
-                                Palette.mainColor)),
+                            backgroundColor:
+                                const MaterialStatePropertyAll<Color>(
+                                    Palette.mainColor)),
                         child: Text(AppLocalizations.of(context)!.exchange),
                       )
                     ],
@@ -432,8 +450,8 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                           })
                         },
                         style: ButtonStyle(
-                            backgroundColor:
-                            MaterialStatePropertyAll<Color>(Color(0xFFFF4C4C))),
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                Color(0xFFFF4C4C))),
                         child: Text(AppLocalizations.of(context)!.cancel),
                       ),
                       SizedBox(
@@ -442,37 +460,36 @@ class _GamePageWidgetState extends State<GamePageWidget> {
                       ElevatedButton(
                         onPressed: linkService.getMyTurn()
                             ? () {
-                          linkService.cancelPlacements();
-                          if (linkService.getMyTurn()) {
-                            placementValidator.executeCommand();
-                            setState(() {
-                              linkService.resetRack();
-                              lettersPlaced = '';
-                              placementValidator.cancelPlacement();
-                            });
-                          } else {
-                            placementValidator.cancelPlacement();
-                            linkService.resetRack();
-                            lettersPlaced = '';
-                          }
-                        }
+                                linkService.cancelPlacements();
+                                if (linkService.getMyTurn()) {
+                                  placementValidator.executeCommand();
+                                  setState(() {
+                                    linkService.resetRack();
+                                    lettersPlaced = '';
+                                    placementValidator.cancelPlacement();
+                                  });
+                                } else {
+                                  placementValidator.cancelPlacement();
+                                  linkService.resetRack();
+                                  lettersPlaced = '';
+                                }
+                              }
                             : null,
                         style: ElevatedButton.styleFrom(
                             backgroundColor:
-                            themeManager.themeMode == ThemeMode.light
-                                ? Color.fromARGB(255, 125, 175, 107)
-                                : Color.fromARGB(255, 121, 101, 220),
+                                themeManager.themeMode == ThemeMode.light
+                                    ? Color.fromARGB(255, 125, 175, 107)
+                                    : Color.fromARGB(255, 121, 101, 220),
                             disabledBackgroundColor:
-                            themeManager.themeMode == ThemeMode.light
-                                ? Colors.grey
-                                : Color.fromARGB(255, 64, 38, 117)),
+                                themeManager.themeMode == ThemeMode.light
+                                    ? Colors.grey
+                                    : Color.fromARGB(255, 64, 38, 117)),
                         child: Text(AppLocalizations.of(context)!.confirm),
                       )
                     ],
                   )
               ])
-            ]))
-    );
+            ])));
   }
 
   resetLettersPlaced() {
@@ -488,5 +505,4 @@ class _GamePageWidgetState extends State<GamePageWidget> {
       gameService.playersRack;
     });
   }
-
 }

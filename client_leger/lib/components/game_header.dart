@@ -11,15 +11,15 @@ import '../services/link_service.dart';
 import 'avatar.dart';
 
 class GameHeaderWidget extends StatefulWidget {
-  final List<Player> opponentsInfo;
   final VoidCallback resetLetters;
   final bool isObserver;
   const GameHeaderWidget(
-      {Key? key, required this.isObserver, required this.resetLetters, required this.opponentsInfo})
+      {Key? key, required this.isObserver, required this.resetLetters})
       : super(key: key);
 
   @override
-  _GameHeaderWidgetState createState() => _GameHeaderWidgetState(isObserver: isObserver);
+  _GameHeaderWidgetState createState() =>
+      _GameHeaderWidgetState(isObserver: isObserver);
 }
 
 class _GameHeaderWidgetState extends State<GameHeaderWidget> {
@@ -30,12 +30,12 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   late Timer _timer;
   late int minutes;
   late int seconds;
+  late List<Player> opponentsInfo;
   bool alreadyReceived = false;
   String currentPlayer = '';
   List<Player> winningPlayers = [];
   List<String> winner = [];
   final bool isObserver;
-
 
   @override
   void initState() {
@@ -67,8 +67,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                 currentPlayer = '';
                 _timer.cancel();
                 linkService.setTurn(false);
-                  inGameService.findWinner(gameService.decodePlayers(players));
-                  winner.add(inGameService.winnerPseudo);
+                inGameService.findWinner(gameService.decodePlayers(players));
+                winner.add(inGameService.winnerPseudo);
               })
             });
 
@@ -119,6 +119,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    opponentsInfo = gameService.room.players;
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(' ${linkService.getLetterBankCount()}',
@@ -165,10 +166,10 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                   child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
-                        if (widget.opponentsInfo.isEmpty) {
-                        return const CircularProgressIndicator(); // display a loading indicator
-                        } else {
-                        return Column(
+                  if (opponentsInfo.isEmpty) {
+                    return const CircularProgressIndicator(); // display a loading indicator
+                  } else {
+                    return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           winner.contains(gameService.room.players[index]
@@ -198,23 +199,22 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                                         : Colors.transparent)),
                             child: Avatar(
                               insideChat: false,
-                              url: widget.opponentsInfo[index]
-                                  .clientAccountInfo!.userSettings.avatarUrl,
-                              previewData: widget
-                                          .opponentsInfo[index]
+                              url: opponentsInfo[index]
+                                  .clientAccountInfo!
+                                  .userSettings
+                                  .avatarUrl,
+                              previewData: opponentsInfo[index]
                                           .clientAccountInfo!
                                           .userSettings
                                           .avatarUrl
                                           .contains("robot-avatar") ||
-                                      widget
-                                          .opponentsInfo[index]
+                                      opponentsInfo[index]
                                           .clientAccountInfo!
                                           .userSettings
                                           .avatarUrl
                                           .contains("assets")
                                   ? null
-                                  : widget
-                                      .opponentsInfo[index].clientAccountInfo,
+                                  : opponentsInfo[index].clientAccountInfo,
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -222,9 +222,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                               style: const TextStyle(fontSize: 14)),
                           const SizedBox(width: 70),
                         ]);
-
-                }
-                        },
+                  }
+                },
                 itemCount: gameService.room.players.length,
                 reverse: false,
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -234,11 +233,12 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                       ? Color.fromARGB(255, 125, 175, 107)
                       : Color.fromARGB(255, 121, 101, 220),
                   disabledColor: Colors.grey,
-                  icon: isObserver ? Container()
+                  icon: isObserver
+                      ? Container()
                       : const Icon(
-                    Icons.double_arrow_rounded,
-                    size: 50,
-                  ),
+                          Icons.double_arrow_rounded,
+                          size: 50,
+                        ),
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 45),
                   onPressed: linkService.getMyTurn()
                       ? () {

@@ -82,11 +82,22 @@ export class PlayerService {
         this.isObserver = false;
     }
 
-    async updateUserSettings(newSettings: UserSettings) {
+    async updateUserSettings(newSettings: UserSettings, username: string) {
         if (!this.httpService) return;
-        this.account.userSettings = newSettings;
-        this.player.clientAccountInfo = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, this.account));
-        this.stats = await lastValueFrom(this.httpService.getPlayerStats(this.player.email));
+        // eslint-disable-next-line no-useless-catch
+        try {
+            const updatedInfo = { ...this.account };
+            updatedInfo.userSettings = newSettings;
+            updatedInfo.username = username.toLowerCase();
+
+            this.player.clientAccountInfo = await lastValueFrom(this.httpService.updateUserSettings(this.account.email, updatedInfo));
+
+            this.account.userSettings = newSettings;
+            this.account.username = username.toLowerCase();
+            this.stats = await lastValueFrom(this.httpService.getPlayerStats(this.player.email));
+        } catch (e) {
+            return e;
+        }
     }
 
     getBorder(level: number) {

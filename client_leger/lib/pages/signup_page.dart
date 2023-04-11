@@ -99,6 +99,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                 width: 400,
                                 child: TextFormField(
                                   controller: usernameController,
+                                  maxLength: 10,
                                   style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
                                     hintText: 'Choose a username',
@@ -250,13 +251,12 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                           .signUpUser(
                                               emailController.text,
                                               passwordController.text,
-                                              usernameController.text)
+                                              usernameController.text
+                                                  .toLowerCase())
                                           .then((value) => Navigator.of(context)
                                               .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MyHomePage(
-                                                          title:
-                                                              'PolyScrabble'))))
+                                                  builder: (context) => MyHomePage(
+                                                      title: 'PolyScrabble'))))
                                           .catchError((error) =>
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(

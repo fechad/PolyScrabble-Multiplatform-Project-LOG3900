@@ -37,6 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmNewPasswordController =
       TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
 
   late CameraDescription firstCamera;
   late CameraController _controller;
@@ -67,6 +68,12 @@ class _SettingsPageState extends State<SettingsPage> {
               : 'en'),
         });
     getCameras();
+    usernameController.addListener(() {
+      if (usernameController.text != authenticator.getCurrentUser().username &&
+          usernameController.text.isNotEmpty) {
+        valuesChanged = true;
+      }
+    });
   }
 
   @override
@@ -350,6 +357,24 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   ),
                   const SizedBox(height: 50),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    SizedBox(
+                      height: 40,
+                      width: 200,
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        maxLength: 10,
+                        style: const TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                        controller: usernameController,
+                        decoration: InputDecoration(
+                            hintText: authenticator.getCurrentUser().username,
+                            hintStyle: const TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold)),
+                      ),
+                    )
+                  ]),
+                  const SizedBox(height: 35),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -575,12 +600,24 @@ class _SettingsPageState extends State<SettingsPage> {
                                             defaultTheme:
                                                 theme.toString().split('.')[1],
                                             victoryMusic: victoryMusic);
+                                    authenticator.currentUser.username =
+                                        usernameController.text.toLowerCase();
                                     httpService
                                         .updateUserSettings(
                                             authenticator.currentUser.email,
                                             authenticator.currentUser)
                                         .then((response) {
                                       if (response.statusCode == 500) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                backgroundColor:
+                                                    Colors.redAccent,
+                                                duration: Duration(
+                                                    milliseconds: 1000),
+                                                content: Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .userNameError)));
                                         return;
                                       } else if (response.statusCode == 404) {
                                         return;

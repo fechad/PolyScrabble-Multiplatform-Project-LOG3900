@@ -9,6 +9,17 @@
                     <img (click)="openAvatarUrlsChoices()" [src]="avatarURL" class="avatar-img" />
                     <button (click)="openAvatarUrlsChoices()" class="circle-icon" [translate]="'SETTINGS-PAGE.EDIT'"></button>
                 </div>
+                <input
+                    type="text"
+                    class="simple-input settings-username"
+                    [value]="settingsForm.controls.username.value"
+                    name="username"
+                    formControlName="username"
+                    maxlength="10"
+                />
+                <div class="simple-input-error-msg invalidUsernameMessage">
+                    {{ invalidUsernameMessage }}
+                </div>
                 <div class="theme-section">
                     <p class="section-title" [translate]="'SETTINGS-PAGE.THEME-SECTION.LABEL'"></p>
                     <div class="radio-displayer">

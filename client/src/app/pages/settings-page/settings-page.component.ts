@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,6 +24,8 @@ export class SettingsPageComponent implements OnInit {
     fileReader: FileReader;
     isPredefinedAvatar: boolean;
     userSettings: UserSettings;
+    userName: string;
+    invalidUsernameMessage: string;
     musicOptions: { key: string; value: string }[];
     avatarChanged: boolean;
     protected settingsForm: FormGroup;
@@ -39,10 +42,12 @@ export class SettingsPageComponent implements OnInit {
         this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
         this.settingsForm = this.formBuilder.group({
             avatarUrl: [this.userSettings.avatarUrl || DEFAULT_USER_IMAGE, [Validators.required]],
+            username: [this.playerService.account.username, [Validators.required]],
             defaultTheme: [this.userSettings.defaultTheme, [Validators.required]],
             defaultLanguage: [this.userSettings.defaultLanguage, [Validators.required]],
             victoryMusic: [this.userSettings.victoryMusic, [Validators.required]],
         });
+        this.invalidUsernameMessage = '';
         themeService.verifyTheme();
         languageService.verifyLanguage();
         this.fileReader = new FileReader();
@@ -53,7 +58,7 @@ export class SettingsPageComponent implements OnInit {
         return this.settingsForm.controls.avatarUrl.value;
     }
     get changed(): boolean {
-        return this.settingsForm.dirty || this.avatarChanged;
+        return this.settingsForm.controls.username.value !== this.playerService.account.username || this.settingsForm.dirty || this.avatarChanged;
     }
     // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method, @typescript-eslint/no-empty-function
     ngOnInit(): void {}
@@ -139,8 +144,23 @@ export class SettingsPageComponent implements OnInit {
     }
 
     private async updateUserInfo() {
-        const formValues: UserSettings = this.settingsForm.value;
-        this.playerService.updateUserSettings(formValues);
+        const formValues: UserSettings = {
+            avatarUrl: this.settingsForm.controls.avatarUrl.value,
+            defaultLanguage: this.settingsForm.controls.defaultLanguage.value,
+            defaultTheme: this.settingsForm.controls.defaultTheme.value,
+            victoryMusic: this.settingsForm.controls.victoryMusic.value,
+        };
+
+        this.playerService.updateUserSettings(formValues, this.settingsForm.controls.username.value).then((res) => {
+            if (res) {
+                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+                if ((res as HttpResponse<unknown>).status === 500) {
+                    if (this.playerService.player.clientAccountInfo.userSettings.defaultLanguage === 'english')
+                        this.invalidUsernameMessage = 'This username is already taken';
+                    else this.invalidUsernameMessage = 'Ce pseudo est déjà utilisé';
+                }
+            } else this.invalidUsernameMessage = '';
+        });
     }
 
     private openErrorDialog() {
