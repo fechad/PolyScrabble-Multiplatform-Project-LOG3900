@@ -83,6 +83,7 @@ $gameMinWidth: 390px;
     border-radius: $avatarMaxDimension;
     margin: 5px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.15);
+    object-fit: cover;
 }
 
 @media (max-width: 1200px) {
@@ -91,6 +92,7 @@ $gameMinWidth: 390px;
         height: $avatarMinDimension;
         border-radius: $avatarMinDimension;
         margin: 5px;
+        object-fit: cover;
     }
 
     .button {

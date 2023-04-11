@@ -28,6 +28,7 @@
     width: 64px;
     height: 64px;
     background-color: gray;
+    object-fit: cover;
 }
 
 .fa-clone,
@@ -47,7 +48,7 @@
     cursor: default;
 }
 
-.crown{
+.crown {
     z-index: 100000;
     position: relative;
     bottom: 0;

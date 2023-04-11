@@ -7,6 +7,7 @@
     border-radius: 100%;
     width: 100px;
     background-color: rgb(228, 228, 228);
+    object-fit: cover;
 }
 
 .user-container {
@@ -47,6 +48,7 @@
     margin: 0 4px;
     background-color: #ccc;
     border-radius: 100%;
+    object-fit: cover;
 }
 
 .level {
@@ -154,7 +156,7 @@ H3 {
     left: 24%;
     bottom: 124%;
 }
- .image-container {
+.image-container {
     height: 96px;
     width: 96px;
     display: flex;

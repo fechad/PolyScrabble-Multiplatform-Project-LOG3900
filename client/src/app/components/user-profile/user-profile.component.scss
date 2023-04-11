@@ -5,6 +5,11 @@
     align-items: center;
     height: 200px;
     justify-content: space-between;
+    margin-top: 50px;
+}
+
+.username {
+    margin: 25px 0px;
 }
 
 .badge-container {
@@ -31,11 +36,11 @@
 }
 
 .avatar {
-    aspect-ratio: 1 / 1;
-    height: 64px;
-    margin: 0 4px;
+    aspect-ratio: 1/1;
+    height: 150px;
     background-color: #ccc;
     border-radius: 100%;
+    object-fit: cover;
 }
 
 .level {
@@ -110,16 +115,17 @@ progress[value]::-webkit-progress-value {
 }
 
 .border {
-    aspect-ratio: 1/1;
-    height: 96px;
-    position: relative;
-    right: 10%;
-    bottom: 85%;
+    position: absolute;
+    width: 200px;
+    height: 200px;
 }
- .image-container {
-    height: 96px;
-    width: 96px;
-    margin: 16px 16px 0 40px;
+.image-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 }
 
 H3 {
@@ -181,9 +187,10 @@ H3 {
     column-gap: 16px;
     row-gap: 16px;
     overflow-y: auto;
-    height: 20vw;
+    height: 30vh;
     scrollbar-gutter: stable;
 }
+
 .objective div {
     height: 33.33333%;
     display: flex;
