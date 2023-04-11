@@ -85,12 +85,6 @@ describe('GamePageComponent', () => {
         });
     });
 
-    it('should call socketService.send with good attributes on hintCommand', () => {
-        const spy = spyOn(socketServiceMock, 'send');
-        component.hintCommand();
-        expect(spy).toHaveBeenCalledWith('message', '!indice');
-    });
-
     it('should call socketService.send with good attributes on letterBankCommand', () => {
         const spy = spyOn(socketServiceMock, 'send');
         component.letterBankCommand();

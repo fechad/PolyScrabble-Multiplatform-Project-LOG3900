@@ -9,6 +9,7 @@ import { DiscussionChannel } from '@app/interfaces/discussion-channel';
 import { InformationalPopupData } from '@app/interfaces/informational-popup-data';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
+import { OutgameObjectivesService } from '@app/services/outgame-objectives.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
@@ -29,6 +30,7 @@ export class GeneralChatComponent {
         private socketService: SocketClientService,
         protected themeService: ThemeService,
         private dialog: MatDialog,
+        public objService: OutgameObjectivesService,
     ) {
         this.enable = false;
         this.discussionChannel = new DiscussionChannel('');
@@ -158,10 +160,18 @@ export class GeneralChatComponent {
         this.scrollChatToBottom();
     }
 
-    showSummary(accountInfo?: ClientAccountInfo) {
+    async showSummary(accountInfo?: ClientAccountInfo) {
         if (!accountInfo) return;
-        this.playerService.setPlayerToShow(accountInfo);
+        await this.playerService.setPlayerToShow(accountInfo);
+        this.showTarget();
         this.inputSideNav.toggle();
+    }
+
+    showTarget() {
+        const playerToShow = this.playerService.playerToShow;
+        this.objService.objectives = [];
+        if (!playerToShow || !this.playerService.playerToShowStat) return;
+        this.objService.generateObjectives(this.playerService.playerToShowStat, playerToShow);
     }
 
     private removeUser(userName: string) {

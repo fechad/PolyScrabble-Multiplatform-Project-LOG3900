@@ -1,6 +1,10 @@
 .name {
     width: 100%;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 200px;
+    justify-content: space-between;
 }
 
 .badge-container {
@@ -100,8 +104,22 @@ progress[value]::-webkit-progress-value {
 
 .high-scores {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin: 32px 0 0 8px;
+    width: 30%;
+}
+
+.border {
+    aspect-ratio: 1/1;
+    height: 96px;
+    position: relative;
+    right: 10%;
+    bottom: 85%;
+}
+ .image-container {
+    height: 96px;
+    width: 96px;
+    margin: 16px 16px 0 40px;
 }
 
 H3 {
@@ -132,13 +150,11 @@ H3 {
 :host ::ng-deep .mat-slide-toggle.mat-checked .mat-ripple-element {
     background-color: var(--accent);
 }
-.mat-slide-toggle {
-    transform: scale(1.2);
-}
+
 .objectives-header {
     display: flex;
-    justify-content: start;
-    margin: 64px 0 0 12px;
+    justify-content: flex-start;
+    margin: 40px 0px 0px 12px;
     width: 95%;
 }
 
@@ -165,7 +181,7 @@ H3 {
     column-gap: 16px;
     row-gap: 16px;
     overflow-y: auto;
-    height: 25vw;
+    height: 20vw;
     scrollbar-gutter: stable;
 }
 .objective div {
