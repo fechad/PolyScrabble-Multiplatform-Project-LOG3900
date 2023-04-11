@@ -42,6 +42,9 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     super.initState();
     setTimer();
     configure();
+    socketService.send(
+        'getRackInfos', gameService.room.roomInfo.name);
+
   }
 
   configure() {
@@ -71,18 +74,6 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
                 winner.add(inGameService.winnerPseudo);
               })
             });
-
-    socketService.on(
-        "timeUpdated",
-        (room) => {
-              gameService.room = gameService.decodeModel(room),
-              timeChosen = int.parse(gameService.room.roomInfo.timerPerTurn) -
-                  gameService.room.elapsedTime,
-              if (!alreadyReceived)
-                socketService.send(
-                    'getRackInfos', gameService.room.roomInfo.name),
-              alreadyReceived = true,
-            });
   }
 
   setTimer() {
@@ -111,6 +102,7 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
             timerFormat = Duration(minutes: minutes, seconds: seconds)
                 .toString()
                 .substring(2, 7);
+            --timeChosen;
           });
         }
       },

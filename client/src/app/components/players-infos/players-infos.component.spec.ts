@@ -152,12 +152,6 @@ describe('PlayersInfosComponent', () => {
                 socketHelper.peerSideEmit('playerLeft', playerService.player.pseudo);
                 expect(sessionStorageServiceSpy.removeItem).toHaveBeenCalled();
             });
-            it('should check if timeUpdated was called', () => {
-                componentPrivateAccess.configureBaseSocketFeatures();
-                const timeBefore = Math.max(+componentPrivateAccess.room.roomInfo.timerPerTurn - componentPrivateAccess.room.elapsedTime, 0);
-                socketHelper.peerSideEmit('timeUpdated', componentPrivateAccess.room);
-                expect(timeBefore).toEqual(componentPrivateAccess.remainingTime);
-            });
 
             it('should not update the score of the players when player received does not exist', async () => {
                 componentPrivateAccess.configureBaseSocketFeatures();

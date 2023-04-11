@@ -5,7 +5,7 @@ import { ComponentCommunicationManager } from '@app/classes/communication-manage
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
 import { EndGamePopupComponent } from '@app/components/endgame-popup/endgame-popup.component';
-import { BASE_TEN, MINUTE_IN_SECOND } from '@app/constants/constants';
+import { BASE_TEN, MINUTE_IN_SECOND, ONE_SECOND_IN_MS } from '@app/constants/constants';
 import { RACK_CAPACITY } from '@app/constants/rack-constants';
 import { ThemedPseudos } from '@app/constants/themed-mode-constants';
 import { SocketEvent } from '@app/enums/socket-event';
@@ -35,7 +35,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     winnerPseudo: string;
     numberOfWinner: number;
     opponentsInfo: ClientAccountInfo[];
-
+    // eslint-disable-next-line no-undef
+    timerInterval: NodeJS.Timer;
     constructor(
         protected socketService: SocketClientService,
         private sessionStorageService: SessionStorageService,
@@ -141,6 +142,20 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.inputSideNav.toggle();
     }
 
+    resetTimer() {
+        this.remainingTime = +this.room.roomInfo.timerPerTurn;
+
+        clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => {
+            if (this.remainingTime <= 0) {
+                clearInterval(this.timerInterval);
+                return;
+            }
+            ++this.room.elapsedTime;
+            this.remainingTime--;
+        }, ONE_SECOND_IN_MS);
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.LettersBankCountUpdated, (lettersBankCount: number) => {
             this.lettersBankCount = lettersBankCount;
@@ -158,12 +173,14 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.socketService.on(SocketEvent.PlayerTurnChanged, (currentPlayerTurnPseudo: string) => {
             this.currentPlayerTurnPseudo = currentPlayerTurnPseudo;
             this.playerService.player.isItsTurn = this.playerService.player.pseudo === currentPlayerTurnPseudo;
+            this.resetTimer();
         });
 
-        this.socketService.on(SocketEvent.TimeUpdated, (room: Room) => {
-            this.room.elapsedTime = room.elapsedTime;
-            this.remainingTime = Math.max(+room.roomInfo.timerPerTurn - room.elapsedTime, 0);
-        });
+        // this.socketService.on(SocketEvent.TimeUpdated, (room: Room) => {
+        // this.room.elapsedTime = room.elapsedTime;
+        // this.remainingTime = Math.max(+room.roomInfo.timerPerTurn - room.elapsedTime, 0);
+        // this.resetTimer();
+        // });
 
         this.socketService.on(SocketEvent.PlayerLeft, () => {
             this.sessionStorageService.removeItem('data');
