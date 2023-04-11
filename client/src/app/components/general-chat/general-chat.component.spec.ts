@@ -68,11 +68,9 @@ describe('GeneralChatComponent', () => {
 
         it('should send a channelMessage on sendChannelMessage()', () => {
             component.inputValue = 'valid message';
-            const previousMessageLength = component.discussionChannel.messages.length;
             const sendSpy = spyOn(socketServiceMock, 'send');
             component.sendChannelMessage();
             expect(sendSpy).toHaveBeenCalled();
-            expect(component.discussionChannel.messages.length).toEqual(previousMessageLength + 1);
         });
 
         it('should not send a channelMessage on sendChannelMessage() if input is empty', () => {

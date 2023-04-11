@@ -68,7 +68,7 @@ $gameMinWidth: 390px;
 .game-players {
     display: flex;
     flex-direction: row;
-    align-items: end;
+    align-items: flex-end;
 }
 
 .player-info {
@@ -151,7 +151,7 @@ $gameMinWidth: 390px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .button {
