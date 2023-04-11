@@ -66,7 +66,6 @@ class MultiplayerGameService extends SoloGameService {
         "roomCreated",
         (serverRoom) async => {
               room = decodeModel(serverRoom),
-              //await getOpponentsInfo(),
               socketService.send("createChatChannel", {
                 "channel": room.roomInfo.name,
                 "username": authenticator.getCurrentUser(),

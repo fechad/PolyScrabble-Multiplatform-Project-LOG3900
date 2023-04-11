@@ -43,6 +43,7 @@ class SoloGameService {
 
   configureBaseSocketFeatures() {
     socketService.on("botInfos", (bot) => {room.players[1] = bot});
+
   }
 
   setRoomInfo(String pseudo, String desiredLevel, String botLanguage) {

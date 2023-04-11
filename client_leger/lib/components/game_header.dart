@@ -42,9 +42,6 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     super.initState();
     setTimer();
     configure();
-    socketService.send(
-        'getRackInfos', gameService.room.roomInfo.name);
-
   }
 
   configure() {
@@ -60,7 +57,11 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               _timer.cancel(),
               currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
-            });
+          if (!alreadyReceived)
+            socketService.send(
+                'getRackInfos', gameService.room.roomInfo.name),
+          alreadyReceived = true,
+        });
 
     socketService.on(
         "gameIsOver",
