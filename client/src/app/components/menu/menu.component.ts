@@ -116,6 +116,10 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
         );
     }
 
+    get isInChannel() {
+        return this.selectedDiscussionChannel.activeUsers.find((user) => user.username === this.playerService.player.clientAccountInfo.username);
+    }
+
     ngOnInit() {
         this.closeChatNewWindow();
         this.connectSocket();
@@ -142,6 +146,13 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     showChatChannel(discussionChannelIndex: number) {
         if (discussionChannelIndex < 0 || discussionChannelIndex > this.availableDiscussionChannels.length) return;
         this.selectedDiscussionChannel = this.availableDiscussionChannels[discussionChannelIndex];
+        if (this.selectedDiscussionChannel.name === GENERAL_CHAT_NAME && !this.isInChannel) {
+            this.selectedDiscussionChannel.activeUsers.push({
+                socketId: this.socketService.socket.id,
+                username: this.playerService.player.clientAccountInfo.username,
+            });
+        }
+
         if (!this.selectedDiscussionChannel) return;
         this.closeChatMenu();
         this.menuContainer.nativeElement.classList.add('show');
@@ -383,7 +394,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
         if (this.playerService.discussionChannelService.availableChannels.length === 0) {
             this.socketService.send(SocketEvent.JoinChatChannel, {
-                name: 'General Chat',
+                name: GENERAL_CHAT_NAME,
                 user: this.playerService.player.clientAccountInfo.username,
             });
         }
@@ -404,6 +415,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     protected isDrawerOpen(drawer: MatSidenav) {
         return drawer.opened;
     }
+
     private handleGameWaitPage() {
         if (this.isWaitMultiPage) this.showRoomChatChannel();
     }

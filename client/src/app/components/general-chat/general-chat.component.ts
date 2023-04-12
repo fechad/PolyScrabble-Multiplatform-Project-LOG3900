@@ -136,14 +136,7 @@ export class GeneralChatComponent {
         if (this.inputValue.length <= 0 || this.inputValue.replace(/\s/g, '').length <= 0) return;
 
         if (!this.isInChannel) {
-            this.socketService.send(SocketEvent.JoinChatChannel, {
-                name: this.discussionChannel.name,
-                user: this.playerService.player.clientAccountInfo.username,
-            });
-            this.discussionChannel.activeUsers.push({
-                socketId: this.socketService.socket.id,
-                username: this.playerService.player.clientAccountInfo.username,
-            });
+            this.joinChannel();
         }
 
         const channelMessage = {
@@ -157,6 +150,17 @@ export class GeneralChatComponent {
         this.socketService.send(SocketEvent.ChatChannelMessage, channelMessage);
         this.inputValue = '';
         this.scrollChatToBottom();
+    }
+
+    joinChannel() {
+        this.socketService.send(SocketEvent.JoinChatChannel, {
+            name: this.discussionChannel.name,
+            user: this.playerService.player.clientAccountInfo.username,
+        });
+        this.discussionChannel.activeUsers.push({
+            socketId: this.socketService.socket.id,
+            username: this.playerService.player.clientAccountInfo.username,
+        });
     }
 
     async showSummary(accountInfo?: ClientAccountInfo) {

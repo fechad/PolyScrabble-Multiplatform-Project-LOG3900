@@ -71,7 +71,6 @@ export class SettingsPageComponent implements OnInit {
             this.avatarChanged = false;
             return;
         }
-        this.chosePredefinedAvatar();
         this.settingsForm.markAsPristine();
         this.avatarChanged = false;
         await this.updateUserInfo();
@@ -112,11 +111,6 @@ export class SettingsPageComponent implements OnInit {
         this.fileReader.readAsDataURL(this.currentAvatar);
     }
 
-    private chosePredefinedAvatar() {
-        if (!this.avatarURL) return;
-        this.playerService.account.userSettings.avatarUrl = this.avatarURL;
-    }
-
     private async uploadFile() {
         if (!this.currentAvatar) return;
 
@@ -139,8 +133,7 @@ export class SettingsPageComponent implements OnInit {
         }
         if (!response) return;
 
-        this.playerService.account.userSettings.avatarUrl = response.url;
-        this.settingsForm.value.avatarUrl = this.playerService.account.userSettings.avatarUrl;
+        this.settingsForm.value.avatarUrl = response.url;
     }
 
     private async updateUserInfo() {
@@ -158,7 +151,9 @@ export class SettingsPageComponent implements OnInit {
                     if (this.playerService.player.clientAccountInfo.userSettings.defaultLanguage === 'english')
                         this.invalidUsernameMessage = 'This username is already taken';
                     else this.invalidUsernameMessage = 'Ce pseudo est déjà utilisé';
+                    return;
                 }
+                this.playerService.account.userSettings.avatarUrl = this.settingsForm.controls.avatarUrl.value;
             } else this.invalidUsernameMessage = '';
         });
     }
