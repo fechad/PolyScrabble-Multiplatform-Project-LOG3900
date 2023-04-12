@@ -60,12 +60,16 @@ class _SettingsPageState extends State<SettingsPage> {
             .contains('french')
         ? Language.french
         : Language.english;
+    usernameController.text = authenticator.currentUser.username;
     SchedulerBinding.instance.addPostFrameCallback((_) => {
           languageService.switchLanguage(authenticator
                   .currentUser.userSettings.defaultLanguage
                   .contains('french')
               ? 'fr'
               : 'en'),
+          themeManager.setThemeMode(authenticator
+              .currentUser.userSettings.defaultTheme
+              .contains('dark'))
         });
     selectedUrl = authenticator.currentUser.userSettings.avatarUrl;
     getCameras();
@@ -242,32 +246,60 @@ class _SettingsPageState extends State<SettingsPage> {
                                                                   ),
                                                                   onPressed:
                                                                       () async {
-                                                                    // Take the Picture in a try / catch block. If anything goes wrong,
-                                                                    // catch the error.
-                                                                    try {
-                                                                      // Ensure that the camera is initialized.
-                                                                      await _initializeControllerFuture;
+                                                                    showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (context) {
+                                                                          return AlertDialog(
+                                                                              title: null,
+                                                                              actions: [
+                                                                                Center(
+                                                                                  child: FloatingActionButton(
+                                                                                    // Provide an onPressed callback.
+                                                                                    onPressed: () async {
+                                                                                      // Take the Picture in a try / catch block. If anything goes wrong,
+                                                                                      // catch the error.
+                                                                                      try {
+                                                                                        // Ensure that the camera is initialized.
+                                                                                        await _initializeControllerFuture;
 
-                                                                      // Attempt to take a picture and then get the location
-                                                                      // where the image file is saved.
+                                                                                        // Attempt to take a picture and then get the location
+                                                                                        // where the image file is saved.
+                                                                                        final image = await _controller.takePicture();
 
-                                                                      final image =
-                                                                          await _picker.pickImage(
-                                                                              source: ImageSource.camera);
-                                                                      setState(
-                                                                          () {
-                                                                        setDialogState(
-                                                                            () {
-                                                                          selectedUrl =
-                                                                              image!.path;
-                                                                          tookPicture =
-                                                                              true;
+                                                                                        Navigator.pop(context);
+                                                                                        setState(() {
+                                                                                          setDialogState(() {
+                                                                                            selectedUrl = image.path;
+                                                                                            tookPicture = true;
+                                                                                          });
+                                                                                        });
+                                                                                      } catch (e) {
+                                                                                        // If an error occurs, log the error to the console.
+                                                                                        print(e);
+                                                                                      }
+                                                                                    },
+                                                                                    child: const Icon(Icons.camera_alt),
+                                                                                  ),
+                                                                                )
+                                                                              ],
+                                                                              content: Container(
+                                                                                  height: 300,
+                                                                                  width: 400,
+                                                                                  child: FutureBuilder<void>(
+                                                                                    future: _initializeControllerFuture,
+                                                                                    builder: (context, snapshot) {
+                                                                                      if (snapshot.connectionState == ConnectionState.done) {
+                                                                                        // If the Future is complete, display the preview.
+                                                                                        return CameraPreview(_controller);
+                                                                                      } else {
+                                                                                        // Otherwise, display a loading indicator.
+                                                                                        return const Center(child: CircularProgressIndicator());
+                                                                                      }
+                                                                                    },
+                                                                                  )));
                                                                         });
-                                                                      });
-                                                                    } catch (e) {
-                                                                      // If an error occurs, log the error to the console.
-                                                                      print(e);
-                                                                    }
                                                                   },
                                                                 ),
                                                               ),

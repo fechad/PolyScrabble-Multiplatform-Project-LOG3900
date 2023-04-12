@@ -331,6 +331,9 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                     onPressed: textController.text.trim().isNotEmpty
                         ? () => {submitMsg(textController.text)}
                         : null,
+                    color: themeManager.themeMode == ThemeMode.light
+                        ? Color.fromARGB(255, 125, 175, 107)
+                        : Color.fromARGB(255, 121, 101, 220),
                     icon: const Icon(Icons.send),
                   ))
             ],

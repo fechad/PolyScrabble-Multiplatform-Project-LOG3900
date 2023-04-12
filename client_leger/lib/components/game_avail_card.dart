@@ -3,7 +3,6 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/services/link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../classes/game.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
@@ -17,7 +16,8 @@ class GameCard extends StatefulWidget {
       required this.difficulty,
       required this.time,
       required this.password,
-      required this.roomName, this.observersCount,
+      required this.roomName,
+      this.observersCount,
       required this.isObserver});
 
   final String difficulty;
@@ -45,8 +45,9 @@ class _GameCardState extends State<GameCard> {
       required this.time,
       required this.password,
       required this.roomName,
-      required this.isObserver, this.observersCount,
-  required this.players});
+      required this.isObserver,
+      this.observersCount,
+      required this.players});
   final String difficulty;
   final String time;
   final String password;
@@ -90,11 +91,15 @@ class _GameCardState extends State<GameCard> {
       width: 500,
       padding: EdgeInsets.fromLTRB(0, 8, 0, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: themeManager.themeMode == ThemeMode.light
+            ? Colors.white
+            : Color.fromARGB(255, 62, 61, 61),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: themeManager.themeMode == ThemeMode.light
+                ? Colors.grey.withOpacity(0.5)
+                : Color.fromARGB(255, 36, 36, 36),
             spreadRadius: 5,
             blurRadius: 7,
             offset: Offset(0, 3), // changes position of shadow
@@ -131,30 +136,30 @@ class _GameCardState extends State<GameCard> {
               )
             ]),
             Spacer(),
-            Row(
-              children: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-              child: Text(
-                "⏱ $time",
-                style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Nunito',
-                      fontSize: 20,
-                    ),
-                textAlign: TextAlign.end,
-              ),
-            ),
-                Icon(Icons.remove_red_eye_rounded),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(5, 0, 16, 0),
-                  child: Text(observersCount != null ? "$observersCount" : "0",
-                    style: FlutterFlowTheme.of(context).bodyText1.override(
-                      fontFamily: 'Nunito',
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.end,
-                  ),
+            Row(children: [
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                child: Text(
+                  "⏱ $time",
+                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                        fontFamily: 'Nunito',
+                        fontSize: 20,
+                      ),
+                  textAlign: TextAlign.end,
                 ),
+              ),
+              Icon(Icons.remove_red_eye_rounded),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(5, 0, 16, 0),
+                child: Text(
+                  observersCount != null ? "$observersCount" : "0",
+                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                        fontFamily: 'Nunito',
+                        fontSize: 20,
+                      ),
+                  textAlign: TextAlign.end,
+                ),
+              ),
             ]),
           ]),
           Spacer(),
@@ -165,32 +170,37 @@ class _GameCardState extends State<GameCard> {
                 child: Row(
                   children: [
                     Container(
-                      height: 90,
+                        height: 90,
                         width: 200,
                         child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: players.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return
-                                Column (
-                                    children: [
-                                Text(players[index].isCreator ? (languageService.currentLanguage.languageCode == 'en' ? "Creator" : "Créateur") : ''),
+                              return Column(children: [
+                                Text(players[index].isCreator
+                                    ? (languageService
+                                                .currentLanguage.languageCode ==
+                                            'en'
+                                        ? "Creator"
+                                        : "Créateur")
+                                    : ''),
                                 SizedBox(height: 5),
-                                      Container(
-                                  decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                  strokeAlign: StrokeAlign.center,
-                                  width: 4,
-                                  color: players[index].isCreator ?
-                                  Colors.orange : Colors.transparent)),
-                                child :
-                                Avatar(
-                                  insideChat: false,
-                                  url: players[index]
-                                      .clientAccountInfo!
-                                      .userSettings
-                                      .avatarUrl))]);
+                                Container(
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            strokeAlign: StrokeAlign.center,
+                                            width: 4,
+                                            color: players[index].isCreator
+                                                ? Colors.orange
+                                                : Colors.transparent)),
+                                    child: Avatar(
+                                        insideChat: false,
+                                        url: players[index]
+                                            .clientAccountInfo!
+                                            .userSettings
+                                            .avatarUrl))
+                              ]);
                             })),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(80, 0, 16, 0),
@@ -339,7 +349,6 @@ class _GameCardState extends State<GameCard> {
           username: authenticator.getCurrentUser().username),
       "password": password
     });
-
   }
 
   sendJoinRequest() {
