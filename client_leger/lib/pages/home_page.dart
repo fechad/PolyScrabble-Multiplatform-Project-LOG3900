@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:client_leger/components/drawer.dart';
 import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/themed_page.dart';
@@ -52,6 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   .contains('french')
               ? 'fr'
               : 'en'),
+          themeManager.setThemeMode(authenticator
+              .currentUser.userSettings.defaultTheme
+              .contains('dark'))
         });
     connect();
   }
