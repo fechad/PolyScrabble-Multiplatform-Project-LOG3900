@@ -67,6 +67,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ? 'fr'
               : 'en'),
         });
+    selectedUrl = authenticator.currentUser.userSettings.avatarUrl;
     getCameras();
     usernameController.addListener(() {
       if (usernameController.text != authenticator.getCurrentUser().username &&
@@ -135,8 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       )),
                   Stack(
                     children: [
-                      authenticator.currentUser.userSettings.avatarUrl
-                              .contains('/data/')
+                      selectedUrl.contains('/data/')
                           ? Container(
                               width: 78,
                               height: 78,
@@ -151,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           : CircleAvatar(
                               // TODO: Insérer l'url de l'avatar du joueur
                               backgroundImage: NetworkImage(
-                                  '${authenticator.currentUser.userSettings.avatarUrl.isNotEmpty ? authenticator.currentUser.userSettings.avatarUrl : 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large'}'),
+                                  '${selectedUrl.isNotEmpty ? selectedUrl : 'https://pbs.twimg.com/media/FS646o-UcAE3luS?format=jpg&name=large'}'),
                               radius: 50,
                             ),
                       Positioned(
@@ -316,10 +316,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                           TextButton(
                                             onPressed: () => {
                                               setState(() {
-                                                authenticator
-                                                    .currentUser
-                                                    .userSettings
-                                                    .avatarUrl = selectedUrl;
+                                                // authenticator
+                                                //     .currentUser
+                                                //     .userSettings
+                                                //     .avatarUrl = selectedUrl;
 
                                                 valuesChanged = true;
                                                 Navigator.pop(context);
@@ -591,23 +591,41 @@ class _SettingsPageState extends State<SettingsPage> {
                                       await uploadFile(),
                                     },
                                   setState(() {
-                                    authenticator.currentUser.userSettings =
-                                        UserSettings(
-                                            avatarUrl: selectedUrl,
-                                            defaultLanguage: language
-                                                .toString()
-                                                .split('.')[1],
-                                            defaultTheme:
-                                                theme.toString().split('.')[1],
-                                            victoryMusic: victoryMusic);
-                                    authenticator.currentUser.username =
-                                        usernameController.text.toLowerCase();
+                                    final settings = UserSettings(
+                                        avatarUrl: selectedUrl,
+                                        defaultLanguage:
+                                            language.toString().split('.')[1],
+                                        defaultTheme:
+                                            theme.toString().split('.')[1],
+                                        victoryMusic: victoryMusic);
+                                    final account = Account(
+                                        username: usernameController.text,
+                                        email: authenticator.currentUser.email,
+                                        userSettings: settings,
+                                        progressInfo: authenticator
+                                            .currentUser.progressInfo,
+                                        highScores: authenticator
+                                            .currentUser.highScores,
+                                        badges:
+                                            authenticator.currentUser.badges,
+                                        bestGames:
+                                            authenticator.currentUser.bestGames,
+                                        gamesPlayed: authenticator
+                                            .currentUser.gamesPlayed,
+                                        gamesWon:
+                                            authenticator.currentUser.gamesWon);
                                     httpService
                                         .updateUserSettings(
                                             authenticator.currentUser.email,
-                                            authenticator.currentUser)
+                                            account)
                                         .then((response) {
-                                      if (response.statusCode == 500) {
+                                      if (response.statusCode == 200) {
+                                        authenticator.currentUser.userSettings =
+                                            settings;
+                                        authenticator.currentUser.username =
+                                            usernameController.text
+                                                .toLowerCase();
+                                      } else if (response.statusCode == 500) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 backgroundColor:

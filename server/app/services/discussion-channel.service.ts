@@ -6,11 +6,6 @@ import { Account } from '@app/interfaces/firestoreDB/account';
 import { Service } from 'typedi';
 import { SocketManager } from './socket-manager.service';
 
-enum ChannelMessageAttribute {
-    AvatarUrl = 'avatarUrl',
-    UserName = 'userName',
-}
-
 @Service()
 export class DiscussionChannelService {
     availableChannels: DiscussionChannel[];
@@ -68,13 +63,13 @@ export class DiscussionChannelService {
         );
     }
 
-    updatePlayerAccount(playerUserName: string, account: ClientAccountInfo) {
-        this.updatePlayerMessages(playerUserName, { attribute: ChannelMessageAttribute.AvatarUrl, value: account });
+    updatePlayerAccount(account: ClientAccountInfo) {
+        this.updatePlayerMessages(account);
     }
 
-    getPlayerDiscussionChannels(playerUsername: string): DiscussionChannel[] {
-        const userChannels = this.availableChannels.filter((channel) => channel.userSentMessage(playerUsername));
-        const roomChannels = this.roomChannels.filter((channel) => channel.userSentMessage(playerUsername));
+    getPlayerDiscussionChannels(playerEmail: string): DiscussionChannel[] {
+        const userChannels = this.availableChannels.filter((channel) => channel.userSentMessage(playerEmail));
+        const roomChannels = this.roomChannels.filter((channel) => channel.userSentMessage(playerEmail));
         const userDiscussionChannels = userChannels.concat(roomChannels);
         return userDiscussionChannels;
     }
@@ -86,19 +81,10 @@ export class DiscussionChannelService {
         return userDiscussionChannels;
     }
 
-    private updatePlayerMessages(playerUserName: string, newValue: { attribute: ChannelMessageAttribute; value: ClientAccountInfo }) {
-        const discussionChannels = this.getPlayerDiscussionChannels(playerUserName);
+    private updatePlayerMessages(account: ClientAccountInfo) {
+        const discussionChannels = this.getPlayerDiscussionChannels(account.email);
         for (const discussionChannel of discussionChannels) {
-            switch (newValue.attribute) {
-                case ChannelMessageAttribute.AvatarUrl:
-                    discussionChannel.updatePlayerAccount(playerUserName, newValue.value);
-                    break;
-                case ChannelMessageAttribute.UserName:
-                    discussionChannel.updatePlayerUsername(playerUserName, newValue.value.username);
-                    break;
-                default:
-                    break;
-            }
+            discussionChannel.updatePlayerAccount(account);
             SocketManager.instance.socketHandlerService.sendToEveryoneInRoom(
                 discussionChannel.name,
                 SocketEvent.ChannelMessage,

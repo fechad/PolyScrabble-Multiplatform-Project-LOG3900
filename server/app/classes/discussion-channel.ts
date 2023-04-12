@@ -22,8 +22,8 @@ export class DiscussionChannel {
         return this.activeUsers.find((user) => user.username === userName) ? true : false;
     }
 
-    userSentMessage(userName: string): boolean {
-        return this.allTimeUsersMessage.get(userName) ? true : false;
+    userSentMessage(userEmail: string): boolean {
+        return this.allTimeUsersMessage.get(userEmail) ? true : false;
     }
 
     addMessage(message: ChannelMessage) {
@@ -32,24 +32,26 @@ export class DiscussionChannel {
         this.handleNewUserMessage(message);
     }
 
-    updatePlayerAccount(playerName: string, account: ClientAccountInfo) {
-        const userMessages = this.allTimeUsersMessage.get(playerName);
+    updatePlayerAccount(account: ClientAccountInfo) {
+        const userMessages = this.allTimeUsersMessage.get(account.email);
         if (!userMessages) return;
+        const previousUserName = userMessages[0].sender;
+        if (!previousUserName) return;
+
         for (const message of userMessages) {
+            message.sender = account.username;
             message.account = account;
         }
+        if (previousUserName === account.username) return;
+
+        this.swapActiveUser(previousUserName, account.username);
+        this.allTimeUsersMessage.set(account.email, userMessages);
     }
 
-    updatePlayerUsername(previousUserName: string, newUserName: string) {
-        const userMessages = this.allTimeUsersMessage.get(previousUserName);
-        if (!userMessages) return;
-        for (const message of userMessages) {
-            message.sender = newUserName;
-            if (!message.account) return;
-            message.account.username = newUserName;
-        }
-        this.allTimeUsersMessage.set(newUserName, userMessages);
-        this.allTimeUsersMessage.delete(previousUserName);
+    swapActiveUser(previousUserName: string, newUserName: string) {
+        const activeUser = this.activeUsers.find((user) => user.username === previousUserName);
+        if (!activeUser) return;
+        this.activeUsers[this.activeUsers.indexOf(activeUser)] = { username: newUserName, socketId: activeUser.socketId };
     }
 
     joinChannel(socketId: string, username: string): ChannelMessage | undefined {
@@ -91,11 +93,11 @@ export class DiscussionChannel {
     }
 
     private handleNewUserMessage(message: ChannelMessage) {
-        if (!message.sender) return;
+        if (!message.sender || !message.account) return;
 
-        const usersMessages = this.allTimeUsersMessage.get(message.sender);
+        const usersMessages = this.allTimeUsersMessage.get(message.account.email);
         if (!usersMessages) {
-            this.allTimeUsersMessage.set(message.sender, [message]);
+            this.allTimeUsersMessage.set(message.account.email, [message]);
             return;
         }
         usersMessages.push(message);

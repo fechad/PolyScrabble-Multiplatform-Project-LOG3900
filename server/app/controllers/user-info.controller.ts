@@ -92,9 +92,11 @@ export class UserInfoController {
                 await this.databaseService.updateDocumentByID('accounts', req.params.email, await this.reduceClientAccountInfo(req.body));
                 await this.databaseService
                     .getDocumentByID('accounts', req.params.email)
-                    .then((newData: Account) => res.json(this.buildClientAccountInfo(newData)))
+                    .then((newData: Account) => {
+                        SocketManager.instance.discussionChannelService.updatePlayerAccount(req.body);
+                        res.json(this.buildClientAccountInfo(newData));
+                    })
                     .catch((error) => res.status(StatusCodes.NOT_FOUND).send(error.message));
-                SocketManager.instance.discussionChannelService.updatePlayerAccount(req.body.username, req.body);
             } catch (error) {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
             }
