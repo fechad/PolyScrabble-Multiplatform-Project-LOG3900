@@ -20,9 +20,7 @@ class PlacementValidatorService {
   addLetter(String letter, int x, int y) {
     if (lettersDict.isEmpty || firstLetterPosition.isEmpty) {
       firstLetterPosition.addAll([x, y]);
-      if (linkService.getMyTurn()) {
-        socketService.send('firstTilePlaced', {'x': firstLetterPosition[0]+1, 'y': firstLetterPosition[1]+1});
-      }
+      socketService.send('firstTilePlaced', {'x': firstLetterPosition[0]+1, 'y': firstLetterPosition[1]+1});
       validPlacement = true;
       lettersDict.add(new Letter(letter: letter, x: x, y: y));
     } else {
