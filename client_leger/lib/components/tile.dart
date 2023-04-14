@@ -126,7 +126,7 @@ class _TileState extends State<Tile> {
             }
           });
         },
-        child: linkService.getWantToExchange()
+        child: linkService.getWantToExchange() || !linkService.getMyTurn()
             ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
