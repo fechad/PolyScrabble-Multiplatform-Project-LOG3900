@@ -92,8 +92,8 @@ class MultiplayerGameService extends SoloGameService {
 
     socketService.on(
         "playerAccepted",
-        (room) => {
-              room = decodeModel(room),
+        (data) => {
+              room = decodeModel(data['serverRoom']),
               if (room.roomInfo.creatorName !=
                   authenticator.getCurrentUser().username)
                 socketService.send("joinChatChannel", {

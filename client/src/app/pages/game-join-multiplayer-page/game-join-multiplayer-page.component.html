@@ -108,7 +108,16 @@
         <div #roomPasswordPopup class="room-password-popup">
             <div class="pop-up-title" [translate]="'CLASSIC.JOIN-MULTI.POPUP.TITLE'"></div>
             <div [translate]="'CLASSIC.JOIN-MULTI.POPUP.BODY'"></div>
-            <input #roomPasswordInput class="simple-input" type="password" placeholder="{{ 'CLASSIC.JOIN-MULTI.POPUP.INPUT' | translate }}" />
+            <input
+                (keyup.enter)="joinRoom(roomPasswordInput.value)"
+                #roomPasswordInput
+                class="simple-input"
+                type="password"
+                placeholder="{{ 'CLASSIC.JOIN-MULTI.POPUP.INPUT' | translate }}"
+            />
+            <div class="simple-input-error-msg">
+                {{ invalidPasswordText }}
+            </div>
             <div class="buttons-container">
                 <button
                     (click)="closePasswordPopup(roomPasswordPopup, darkBackground)"

@@ -8,12 +8,10 @@ import { Rack } from '@app/classes/rack';
 import { Room } from '@app/classes/room-model/room';
 import { SocketMock } from '@app/classes/socket-mock';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { DISCONNECT_DELAY, SYSTEM_NAME } from '@app/constants/constants';
+import { DISCONNECT_DELAY } from '@app/constants/constants';
 import { GoalTitle } from '@app/enums/goal-titles';
-import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { DEFAULT_ENGLISH_QUOTES, DEFAULT_FRENCH_QUOTES } from '@app/enums/themed-quotes/quotes';
-import { ChatMessage } from '@app/interfaces/chat-message';
 import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
@@ -411,13 +409,6 @@ describe('socketGameService service tests', () => {
         it('should call the correct methods when a real player leave on multi room', (done) => {
             sinon.stub(roomMock, 'createVirtualPlayer').returns(virtualPlayer);
             const socketEmitRoomSpy = sinon.spy(socketGameService, 'socketEmitRoom');
-
-            const systemAlert: ChatMessage = {
-                sender: SYSTEM_NAME,
-                color: MessageSenderColors.SYSTEM,
-                text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + virtualPlayer.pseudo,
-            };
-
             const clock = sinon.useFakeTimers();
             socketGameService.handleDisconnecting(socketMock);
             clock.tick(DISCONNECT_DELAY + RESPONSE_DELAY * 3);
@@ -431,8 +422,6 @@ describe('socketGameService service tests', () => {
                 'did not call socketEmitRoom with good param when player left',
             );
             assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, SocketEvent.BotJoinedRoom, roomMock.players), 'did not send BotJoinedRoom');
-            assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, SocketEvent.Message, systemAlert), 'did not send Message with systemAlert');
-
             done();
         });
     });

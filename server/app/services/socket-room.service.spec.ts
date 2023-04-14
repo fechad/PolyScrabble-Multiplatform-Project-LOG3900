@@ -264,10 +264,10 @@ describe('socketRoomService service tests', () => {
             roomMock.players = [firstPlayer];
         });
 
-        it('should emit to the room if the roomName is valid ', (done) => {
-            const spy = sinon.spy(socketRoomService, 'socketEmitRoom');
+        it('should send to everyone in room if the roomName is valid ', (done) => {
+            const spy = sinon.spy(socketRoomService, 'sendToEveryoneInRoom');
             socketRoomService.handleAcceptPlayer(socketMock, { roomName: roomMock.roomInfo.name, playerName: firstPlayer.pseudo });
-            assert(spy.called, 'did not call socketEmitROom on acceptPlayer');
+            assert(spy.called, 'did not call sendToEveryoneInRoom on acceptPlayer');
             done();
         });
         it('should not emit to the room if the roomName is not valid', (done) => {

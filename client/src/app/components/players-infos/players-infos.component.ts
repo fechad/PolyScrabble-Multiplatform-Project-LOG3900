@@ -32,8 +32,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     lettersBankCount: number;
     remainingTime: number;
     currentPlayerTurnPseudo: string;
-    winnerPseudo: string;
-    numberOfWinner: number;
+    winnersPseudos: string[];
     opponentsInfo: ClientAccountInfo[];
     // eslint-disable-next-line no-undef
     timerInterval: NodeJS.Timer;
@@ -49,6 +48,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         super(socketService);
         this.room.roomInfo.isGameOver = false;
         this.opponentsInfo = [];
+        this.winnersPseudos = [];
         if (!this.room.roomInfo.isSolo) return;
         this.setBotInfo();
     }
@@ -121,14 +121,36 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             header: this.languageService.currentLanguage === 'fr' ? 'Dommage...' : 'Too bad...',
             body:
                 this.languageService.currentLanguage === 'fr'
-                    ? 'Tres belle partie! Malheureusement, la victoire revient à ' + this.winnerPseudo
-                    : 'Good game! Unfortunately, the winner is ' + this.winnerPseudo,
+                    ? 'Tres belle partie! Malheureusement, la victoire revient à ' + this.getWinnersPseudos()
+                    : 'Good game! Unfortunately, the winner is ' + this.getWinnersPseudos(),
         };
+
+        if (this.playerService.isObserver) {
+            description.header = this.languageService.currentLanguage === 'fr' ? 'La Partie est terminée!' : 'The game is over!';
+            description.body =
+                this.languageService.currentLanguage === 'fr'
+                    ? 'La victoire revient à ' + this.getWinnersPseudos()
+                    : 'The winner is ' + this.getWinnersPseudos();
+        }
         this.dialog.open(EndGamePopupComponent, {
             width: END_GAME_WIDTH,
             autoFocus: true,
             data: description,
         });
+    }
+
+    getWinnersPseudos() {
+        if (this.winnersPseudos.length === 1) return this.winnersPseudos[0];
+        let winnersPseudosText = '';
+        for (let i = 0; i < this.winnersPseudos.length; i++) {
+            if (i === this.winnersPseudos.length - 1) {
+                winnersPseudosText +=
+                    this.languageService.currentLanguage === 'fr' ? `et ${this.winnersPseudos[i]}` : `and ${this.winnersPseudos[i]}`;
+                continue;
+            }
+            winnersPseudosText += `${this.winnersPseudos[i]}, `;
+        }
+        return winnersPseudosText;
     }
 
     changePlayerTurn() {
@@ -156,6 +178,12 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         }, ONE_SECOND_IN_MS);
     }
 
+    endTimer() {
+        clearInterval(this.timerInterval);
+        this.remainingTime = 0;
+        this.room.elapsedTime = 0;
+    }
+
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.LettersBankCountUpdated, (lettersBankCount: number) => {
             this.lettersBankCount = lettersBankCount;
@@ -176,18 +204,13 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
             this.resetTimer();
         });
 
-        // this.socketService.on(SocketEvent.TimeUpdated, (room: Room) => {
-        // this.room.elapsedTime = room.elapsedTime;
-        // this.remainingTime = Math.max(+room.roomInfo.timerPerTurn - room.elapsedTime, 0);
-        // this.resetTimer();
-        // });
-
         this.socketService.on(SocketEvent.PlayerLeft, () => {
             this.sessionStorageService.removeItem('data');
         });
 
         this.socketService.on(SocketEvent.GameIsOver, (winnerArray: Player[]) => {
             this.room.roomInfo.isGameOver = true;
+            this.endTimer();
             this.setPlayersTurnToFalse();
             this.findWinner(winnerArray);
         });
@@ -221,11 +244,8 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
 
     private findWinner(winnerArray: Player[]) {
         if (!winnerArray || winnerArray.length === 0) return;
-        if (winnerArray.length <= 1) {
-            this.winnerPseudo = winnerArray[0].clientAccountInfo.username;
-        }
-        this.numberOfWinner = winnerArray.length;
-        if (this.getPlayerInfo(true, 'pseudo') === this.winnerPseudo || this.numberOfWinner === 2) this.launchConfetti();
+        this.winnersPseudos = winnerArray.map((winner) => winner.clientAccountInfo.username);
+        if (this.winnersPseudos.includes(this.getPlayerInfo(true, 'pseudo') as string)) this.launchConfetti();
         else this.showEndGameDialog();
         const firstWinner = this.room.players.find((player) => player.clientAccountInfo.username === winnerArray[0].clientAccountInfo.username);
         if (!firstWinner) return;

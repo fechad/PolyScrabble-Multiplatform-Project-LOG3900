@@ -185,11 +185,11 @@ class _WaitingPageState extends State<WaitingPage> {
 
     socketService.on(
         "playerAccepted",
-            (serverRoom) => {
-          gameService.room = gameService.decodeModel(serverRoom),
+            (data) => {
+          gameService.room = gameService.decodeModel(data['serverRoom']),
           noPlayers = gameService.room.players.length,
           setState(() => {
-            if (!isObserver && noPlayers > 1)
+            if (!isObserver && noPlayers > 1 && gameService.room.roomInfo.creatorName == authenticator.getCurrentUser().username)
               {
                 canStart = true,
               }

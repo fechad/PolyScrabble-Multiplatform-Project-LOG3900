@@ -7,6 +7,7 @@ import '../classes/game.dart';
 import '../components/game_avail_card.dart';
 import '../components/sidebar.dart';
 import '../config/flutter_flow/flutter_flow_theme.dart';
+import '../main.dart';
 import '../services/link_service.dart';
 import 'game_page.dart';
 
@@ -49,17 +50,20 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
 
     socketService.on(
         "playerAccepted",
-        (serverRoom) => {
-              gameService.room = gameService.decodeModel(serverRoom),
-              linkService.setCurrentOpenedChat(gameService.room.roomInfo.name),
-              Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                return WaitingPage(
-                    isObserver: false,
-                    roomName: gameService.room.roomInfo.name,
-                    timer: gameService.room.roomInfo.timerPerTurn,
-                    botsLevel: gameService.room.botsLevel!,
-                    players: gameService.room.players);
-              })))
+        (data) => {
+              gameService.room = gameService.decodeModel(data['serverRoom']),
+              if(data['playerName'] == authenticator.getCurrentUser().username){
+                linkService.setCurrentOpenedChat(
+                    gameService.room.roomInfo.name),
+                Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                  return WaitingPage(
+                      isObserver: false,
+                      roomName: gameService.room.roomInfo.name,
+                      timer: gameService.room.roomInfo.timerPerTurn,
+                      botsLevel: gameService.room.botsLevel!,
+                      players: gameService.room.players);
+                })))
+              }
             });
 
     socketService.on(
