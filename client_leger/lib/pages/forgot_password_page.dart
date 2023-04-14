@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../config/flutter_flow/flutter_flow_theme.dart';
 import '../services/http_service.dart';
+import 'connexion_page.dart';
 
 final httpService = HttpService();
 
@@ -125,8 +126,9 @@ class _ForgotPasswordPagePageWidgetState
                               },
                             ),
                           ),
+                          SizedBox(height: 20),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
                             child: ElevatedButton(
                               onPressed: () {
                                 // Validate returns true if the form is valid, or false otherwise.
@@ -165,6 +167,39 @@ class _ForgotPasswordPagePageWidgetState
                               ),
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Validate returns true if the form is valid, or false otherwise.
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: ((context) {
+                                  return ConnexionPageWidget();
+                                })));
+                              },
+                              style: ButtonStyle(
+                                  shape: MaterialStatePropertyAll<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(48))),
+                                  minimumSize: MaterialStateProperty.all(
+                                      const Size(400, 50)),
+                                  backgroundColor:
+                                      const MaterialStatePropertyAll<Color>(
+                                          Color.fromARGB(255, 236, 186, 140))),
+                              child: Text(
+                                'Retour',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyText1
+                                    .override(
+                                      color: Colors.white,
+                                      fontFamily: 'Nunito',
+                                      fontSize: 24,
+                                    ),
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     ),

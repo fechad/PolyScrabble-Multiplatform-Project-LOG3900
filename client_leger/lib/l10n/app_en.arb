@@ -103,5 +103,11 @@
     "endGameText": "Good game! Unfortunately, the winner is ",
     "endGameObserver": "The game has ended",
     "endGameObserverText": "The winner is ",
-	"userNameError": "This username is already taken, try another one"
+	"userNameError": "This username is already taken, try another one",
+	"oldPasswordLabel": "Old password",
+	"newPasswordLabel": "New password",
+	"confirmNewPasswordLabel": "Confirm your new password",
+	"confirmNewPasswordError": "Please confirm your password", 
+	"matchNewPasswordError": "The passwords do not match",
+	"passwordMessage": "You will be logged out to continue with this request."
 }

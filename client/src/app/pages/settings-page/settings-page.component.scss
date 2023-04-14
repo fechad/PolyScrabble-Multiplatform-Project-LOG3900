@@ -117,27 +117,23 @@
 
 .password-section {
     display: flex;
-    justify-content: center;
-    width: 200px;
-    height: 50px;
-    align-items: center;
-    color: white;
-    font-size: 16px;
-    background: #a8bbff;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 8px;
-    border-style: none;
-    border-color: rgb(178, 178, 178);
+    justify-content: start;
+    width: 600px;
+    height: 100px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    color: rgb(87, 87, 249);
+    text-decoration: underline;
+    font-size: 20px;
+    background: transparent;
+    border: none;
 
     &:hover {
         cursor: pointer;
-        background: #899ad7;
     }
 
     &:active {
         cursor: pointer;
-        background: #9dace0;
-        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
     }
 }
 

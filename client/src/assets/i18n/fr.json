@@ -82,6 +82,7 @@
             "LABEL": "Musique de victoire:"
         },
         "PASSWORD": "Changer le mot de passe",
+        "PASSWORD-MESSAGE": "Vous serez déconnecté pour continuer avec cette demande.",
         "SAVE": "Sauvegarder",
         "EDIT": "editer"
     },
@@ -126,6 +127,11 @@
         "CONFIRM": "Confirmer",
         "CHALLENGE-BUTTON": "Affronter",
         "JOIN": "Joindre",
-        "WARNING": "Attention!"
+        "WARNING": "Attention!",
+        "oldPasswordLabel": "Ancien mot de passe",
+        "newPasswordLabel": "Nouveau mot de passe",
+        "confirmNewPasswordLabel": "Confirmez votre nouveau mot de passe",
+        "confirmNewPasswordError": "Confirmez votre mot de passe",
+        "matchNewPasswordError": "Les mots de passe ne corresondent pas"
     }
 }

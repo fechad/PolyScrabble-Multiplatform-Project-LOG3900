@@ -82,6 +82,7 @@
             "LABEL": "Victory music"
         },
         "PASSWORD": "Change password",
+        "PASSWORD-MESSAGE": "You will be logged out to continue with this request.",
         "SAVE": "Save",
         "EDIT": "edit"
     },
@@ -126,6 +127,11 @@
         "CONFIRM": "Confirm",
         "CHALLENGE-BUTTON": "Challenge",
         "JOIN": "Join",
-        "WARNING": "Warning!"
+        "WARNING": "Warning!",
+        "oldPasswordLabel": "Old password",
+        "newPasswordLabel": "New password",
+        "confirmNewPasswordLabel": "Confirm your new password",
+        "confirmNewPasswordError": "Please confirm your password",
+        "matchNewPasswordError": "The passwords do not match"
     }
 }

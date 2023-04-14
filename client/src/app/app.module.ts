@@ -57,6 +57,7 @@ import { HistoricComponent } from './components/historic/historic.component';
 import { ChannelCreationPopupComponent } from './components/channel-creation-popup/channel-creation-popup.component';
 import { TileChoicePopupComponent } from './components/tile-choice-popup/tile-choice-popup.component';
 import { OtherUserProfileComponent } from './components/other-user-profile/other-user-profile.component';
+import { PasswordChangerPopupComponent } from './components/password-changer-popup/password-changer-popup.component';
 
 /**
  * Main module that is used in main.ts.
@@ -122,6 +123,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         ChannelCreationPopupComponent,
         TileChoicePopupComponent,
         OtherUserProfileComponent,
+        PasswordChangerPopupComponent,
     ],
     imports: [
         AppMaterialModule,
