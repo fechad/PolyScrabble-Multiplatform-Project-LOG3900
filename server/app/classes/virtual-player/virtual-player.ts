@@ -41,7 +41,7 @@ export class VirtualPlayer extends Player implements Observable {
         scale: AdaptiveScale = SCALES.default,
         language: Language = Language.French,
     ) {
-        super('', pseudo, isCreator, DEFAULT_BOT_ACCOUNT);
+        super('', pseudo, isCreator, { ...DEFAULT_BOT_ACCOUNT });
         if (THEMED_VP_IDS.includes(pseudo))
             this.clientAccountInfo.userSettings.avatarUrl = BASE_AVATAR_PATH + this.clientAccountInfo.username + 'Avatar.png';
         else this.clientAccountInfo.userSettings.avatarUrl = DEFAULT_BOT_IMAGE;
@@ -79,7 +79,7 @@ export class VirtualPlayer extends Player implements Observable {
     }
 
     sendMessage(message: string, senderOverwrite?: string) {
-        this.notifyObservers({ message, sender: senderOverwrite ? senderOverwrite : this.pseudo, avatarUrl: this.avatarUrl });
+        this.notifyObservers({ message, sender: senderOverwrite ? senderOverwrite : this.pseudo, account: this.clientAccountInfo });
     }
 
     registerObserver(observer: Observer) {

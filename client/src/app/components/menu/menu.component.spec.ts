@@ -159,7 +159,7 @@ describe('MenuComponent', () => {
         it('should set the players correctly on PlayerAccepted', () => {
             const roomMock2 = new Room();
             roomMock2.players = [firstPlayer];
-            socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock2);
+            socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, { serverRoom: roomMock2, playerName: firstPlayer.pseudo });
             expect(playerService.room.players).toEqual(roomMock2.players);
         });
 

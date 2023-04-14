@@ -84,7 +84,7 @@ export class SocketRoomService extends SocketHandlerService {
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
 
         if (serverRoom.roomInfo.isPublic) {
-            this.sendToEveryoneInRoom(roomName, SocketEvent.PlayerAccepted, serverRoom);
+            this.sendToEveryoneInRoom(roomName, SocketEvent.PlayerAccepted, { serverRoom, playerName: playerToAdd.clientAccountInfo.username });
             return;
         }
 
@@ -112,7 +112,7 @@ export class SocketRoomService extends SocketHandlerService {
         if (!serverRoom) return;
         const playerToAccept = serverRoom.getPlayerByName(data.playerName);
         if (!playerToAccept) return;
-        this.socketEmitRoom(socket, playerToAccept.socketId, SocketEvent.PlayerAccepted, serverRoom);
+        this.sendToEveryoneInRoom(data.roomName, SocketEvent.PlayerAccepted, { serverRoom, playerName: playerToAccept.pseudo });
     }
 
     handleRejectPlayer(socket: io.Socket, data: { roomName: string; playerName: string }) {

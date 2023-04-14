@@ -364,8 +364,8 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
             this.handleGameWaitPage();
         });
 
-        this.socketService.on(SocketEvent.PlayerAccepted, (room: Room) => {
-            this.room.setPlayers(room.players);
+        this.socketService.on(SocketEvent.PlayerAccepted, (data: { serverRoom: Room; playerName: string }) => {
+            this.room.setPlayers(data.serverRoom.players);
         });
 
         this.socketService.on(SocketEvent.PlayerFound, (data: { room: Room; player: Player }) => {

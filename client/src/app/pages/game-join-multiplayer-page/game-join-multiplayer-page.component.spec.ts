@@ -95,7 +95,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
     describe('Receiving events', () => {
         describe('sockets configurations tests', () => {
             it('should set the room to the serverRoom on playerAccepted', () => {
-                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
+                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, { serverRoom: roomMock, playerName: playerService.player.pseudo });
                 expect(component.room.roomInfo.name).toEqual(roomMock.roomInfo.name);
                 expect(component.room.roomInfo.timerPerTurn).toEqual(roomMock.roomInfo.timerPerTurn);
                 expect(component.room.roomInfo.dictionary).toEqual(roomMock.roomInfo.dictionary);
@@ -105,7 +105,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
 
             it('should call joinChatChannel with correct info on playerAccepted', () => {
                 socketServiceMock.send = jasmine.createSpy();
-                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
+                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, { serverRoom: roomMock, playerName: playerService.player.pseudo });
                 expect(socketServiceMock.send).toHaveBeenCalledWith(SocketEvent.JoinChatChannel, {
                     name: roomMock.roomInfo.name,
                     user: component.playerService.player.pseudo,
@@ -114,7 +114,7 @@ describe('GameJoinMultiplayerPageComponent', () => {
             });
 
             it('should move the player to game wait page on playerAccepted', () => {
-                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, roomMock);
+                socketHelper.peerSideEmit(SocketEvent.PlayerAccepted, { serverRoom: roomMock, playerName: playerService.player.pseudo });
                 expect(routerSpy.navigate).toHaveBeenCalledWith(['/game/multiplayer/wait']);
             });
 

@@ -2,12 +2,10 @@ import { DiscussionChannel } from '@app/classes/discussion-channel';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { CHAT_WINDOW_SOCKET_CHANNEL, DEFAULT_ROOM_NAME, SYSTEM_NAME } from '@app/constants/constants';
+import { CHAT_WINDOW_SOCKET_CHANNEL, DEFAULT_ROOM_NAME } from '@app/constants/constants';
 import { FILLER_BOT_NAMES } from '@app/constants/virtual-player-constants';
 import { CommandController } from '@app/controllers/command.controller';
-import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
-import { ChatMessage } from '@app/interfaces/chat-message';
 import { Game } from '@app/interfaces/firestoreDB/game';
 import { PlayerData } from '@app/interfaces/player-data';
 import { Score } from '@app/interfaces/score';
@@ -64,13 +62,6 @@ export class SocketHandlerService {
         bot.replaceRack(player.rack);
 
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotJoinedRoom, room.players);
-
-        const systemAlert: ChatMessage = {
-            sender: SYSTEM_NAME,
-            color: MessageSenderColors.SYSTEM,
-            text: 'Votre adversaire a quitté la partie \n Il a été remplacé par le jouer virtuel ' + bot.pseudo,
-        };
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, systemAlert);
     }
 
     handleReconnect(socket: io.Socket, playerData: PlayerData) {
@@ -139,23 +130,21 @@ export class SocketHandlerService {
         }
     }
 
+    // eslint-disable-next-line no-unused-vars
     displayGameResume(room: Room) {
-        if (!room.letterBank) return;
-
-        let message = `
-            Fin de partie - ${room.letterBank.convertAvailableLettersBankToString()} \n
-        `;
-
-        for (const player of room.players) {
-            message += `${player.pseudo}: ${player.rack.getLetters()} \n`;
-        }
-
-        const chatMessage: ChatMessage = {
-            text: message,
-            sender: SYSTEM_NAME,
-            color: MessageSenderColors.SYSTEM,
-        };
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, chatMessage);
+        // if (!room.letterBank) return;
+        // let message = `
+        //     Fin de partie - ${room.letterBank.convertAvailableLettersBankToString()} \n
+        // `;
+        // for (const player of room.players) {
+        //     message += `${player.pseudo}: ${player.rack.getLetters()} \n`;
+        // }
+        // const chatMessage: ChatMessage = {
+        //     text: message,
+        //     sender: SYSTEM_NAME,
+        //     color: MessageSenderColors.SYSTEM,
+        // };
+        // this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.Message, chatMessage);
     }
 
     updateLeaderboard(room: Room) {

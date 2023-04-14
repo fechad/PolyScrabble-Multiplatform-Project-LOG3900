@@ -21,6 +21,7 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
     isInRoom: boolean;
     isRejected: boolean;
     canJoinRoom: boolean;
+    invalidPasswordText: string;
 
     constructor(
         protected socketService: SocketClientService,
@@ -37,6 +38,7 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         this.selectedRoom = new Room();
         this.availableRooms = [];
         this.publicRooms = [];
+        this.invalidPasswordText = '';
     }
 
     get room(): Room {
@@ -65,6 +67,10 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
         return this.availableRooms;
     }
 
+    setInvalidPasswordText() {
+        this.invalidPasswordText = this.isFrenchLanguage ? 'Votre mot de passe est invalide' : 'Your password is invalid';
+    }
+
     ngOnInit() {
         this.connectSocket();
         this.updateRooms();
@@ -84,7 +90,10 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
     joinRoom(password: string, room?: Room) {
         const roomToUse = room || this.selectedRoom;
         if (!this.playerService.isObserver && !this.canJoinCreatorRoom(roomToUse)) return;
-        if (roomToUse.roomInfo.isPublic && password !== roomToUse.roomInfo.password) return;
+        if (roomToUse.roomInfo.isPublic && password !== roomToUse.roomInfo.password) {
+            this.setInvalidPasswordText();
+            return;
+        }
 
         this.sendJoinRoomRequest(roomToUse, password);
     }
@@ -117,14 +126,15 @@ export class GameJoinMultiplayerPageComponent extends PageCommunicationManager i
     }
 
     protected configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.PlayerAccepted, (roomCreator: Room) => {
+        this.socketService.on(SocketEvent.PlayerAccepted, (data: { serverRoom: Room; playerName: string }) => {
+            if (data.playerName !== this.playerService.player.clientAccountInfo.username) return;
             sessionStorage.removeItem('data');
-            this.room.setRoom(roomCreator);
+            this.room.setRoom(data.serverRoom);
 
             // TODO: remove currentPlayerPseudo. Obsolete
             this.room.currentPlayerPseudo = this.playerService.player.pseudo;
             this.socketService.send(SocketEvent.JoinChatChannel, {
-                name: roomCreator.roomInfo.name,
+                name: data.serverRoom.roomInfo.name,
                 user: this.playerService.player.pseudo,
                 isRoomChannel: true,
             });

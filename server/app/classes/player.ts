@@ -16,7 +16,10 @@ export class Player {
     clientAccountInfo: ClientAccountInfo;
 
     constructor(socketId: string, pseudo: string, isCreator: boolean, clientAccountInfo?: ClientAccountInfo) {
-        this.clientAccountInfo = clientAccountInfo ? { ...clientAccountInfo } : { ...DEFAULT_ACCOUNT };
+        const infoToDeepCopy = clientAccountInfo ? { ...clientAccountInfo } : { ...DEFAULT_ACCOUNT };
+        const stringifiedAccountInfo = JSON.stringify(infoToDeepCopy);
+        this.clientAccountInfo = JSON.parse(stringifiedAccountInfo);
+
         if (pseudo) this.pseudo = pseudo;
         this.socketId = socketId;
         this.rack = new Rack('');

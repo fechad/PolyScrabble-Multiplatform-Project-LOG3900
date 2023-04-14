@@ -11,12 +11,14 @@ import {
     ONE_SECOND_IN_MS,
     SYSTEM_NAME,
 } from '@app/constants/constants';
+import { BASE_AVATAR_PATH } from '@app/constants/default-user-settings';
 import { TOGGLE_PREFIX } from '@app/constants/virtual-player-constants';
 import { CommandVerbs } from '@app/enums/command-verbs';
 import { Language } from '@app/enums/language';
 import { MessageSenderColors } from '@app/enums/message-sender-colors';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChatMessage } from '@app/interfaces/chat-message';
+import { ClientAccountInfo } from '@app/interfaces/client-exchange/client-account-info';
 import { CommandResult } from '@app/interfaces/command-result';
 import { PlacementData } from '@app/interfaces/placement-data';
 import { Position } from '@app/interfaces/position';
@@ -82,7 +84,7 @@ export class SocketGameService extends SocketHandlerService {
         this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
 
-        if (room.realPlayers.length <= 1) {
+        if (room.realPlayers.length <= 1 && room.elapsedTime !== END_TIMER_VALUE) {
             this.handleGamePassFinish(room);
         }
     }
@@ -192,7 +194,7 @@ export class SocketGameService extends SocketHandlerService {
         if (!isCommand) {
             const player = room.getPlayer(socket.id);
             if (!player) return;
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, player.pseudo, player.avatarUrl);
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, message, player.pseudo, player.clientAccountInfo);
             return;
         }
 
@@ -281,8 +283,12 @@ export class SocketGameService extends SocketHandlerService {
         this.handleNewPlayerTurn(socket, room, currentTurnPlayer);
         return;
     }
-    toggleAngryBotAvatar(room: Room, botName: string) {
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ToggleAngryBotAvatar, botName);
+    toggleAngryBotAvatar(room: Room, botInfo: ClientAccountInfo) {
+        const currentAvatar = botInfo.userSettings.avatarUrl;
+        botInfo.userSettings.avatarUrl = currentAvatar.startsWith(BASE_AVATAR_PATH + 'angry')
+            ? BASE_AVATAR_PATH + botInfo.username + 'Avatar.png'
+            : BASE_AVATAR_PATH + 'angry' + botInfo.username + 'Avatar.png';
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ToggleAngryBotAvatar, botInfo.username);
     }
 
     notifyViewBasedOnCommandResult(report: CommandResult, room: Room, sender: Player, socket: io.Socket) {
@@ -339,21 +345,21 @@ export class SocketGameService extends SocketHandlerService {
             const messageInfo = room.botCommunicationManager.popFirstWantedMessage();
             if (!messageInfo || !messageInfo.message) return;
             if (!messageInfo.sender.startsWith(TOGGLE_PREFIX))
-                return this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender, messageInfo.avatarUrl);
+                return this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender, messageInfo.account);
             messageInfo.sender = messageInfo.sender.replace(new RegExp('^' + TOGGLE_PREFIX), '');
-            this.toggleAngryBotAvatar(room, messageInfo.sender);
-            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender, messageInfo.avatarUrl);
+            this.toggleAngryBotAvatar(room, messageInfo.account);
+            this.sendChannelMessageToEveryoneInRoom(room.roomInfo.name, messageInfo.message, messageInfo.sender, messageInfo.account);
         }
     }
 
-    private sendChannelMessageToEveryoneInRoom(channelName: string, message: string, sender?: string, avatarUrl?: string) {
+    private sendChannelMessageToEveryoneInRoom(channelName: string, message: string, sender?: string, account?: ClientAccountInfo) {
         const discussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);
         if (!discussionChannel) return;
         const channelMessage = {
             channelName,
             system: sender ? false : true,
             sender,
-            avatarUrl,
+            account,
             message,
             time: new Date().toLocaleTimeString([], { hour12: false }),
         };

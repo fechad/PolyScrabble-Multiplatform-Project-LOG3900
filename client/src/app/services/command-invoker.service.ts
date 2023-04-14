@@ -71,7 +71,9 @@ export class CommandInvokerService {
         const tilePosition = { ...(command as PlaceLetter).tilePosition };
         command.execute();
         this.cancelStack.push(command);
-        if (command instanceof PlaceLetter === false) return;
+        if (command instanceof PlaceDraggedLetter === true && this.cancelStack.length === 1) {
+            this.socketService.send(SocketEvent.FirstTilePlaced, null);
+        }
 
         this.selectedTile = (command as PlaceLetter).getNextPlaceInfo();
 

@@ -178,11 +178,11 @@ describe('PlayersInfosComponent', () => {
                 expect(playerService.player.points).toEqual(initialPoints);
             });
 
-            it('The winnerPseudo should become the pseudo of the player that won the game', () => {
+            it('The winnerPseudo should have the pseudo of the player that won the game', () => {
                 componentPrivateAccess.configureBaseSocketFeatures();
                 const winners: Player[] = [player2];
                 socketHelper.peerSideEmit('gameIsOver', winners);
-                expect(componentPrivateAccess.winnerPseudo).toEqual(player2.pseudo);
+                expect(componentPrivateAccess.winnersPseudos[0]).toEqual(player2.pseudo);
             });
         });
     });
