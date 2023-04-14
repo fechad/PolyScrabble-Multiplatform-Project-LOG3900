@@ -1,12 +1,14 @@
 import 'dart:math';
 
-import 'package:client_leger/pages/game_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../classes/game.dart';
 import '../classes/objective.dart';
 import '../main.dart';
+import '../pages/game_page.dart';
+import '../services/objectives_service.dart';
 
 class UserLevel extends StatefulWidget {
   @override
@@ -16,14 +18,9 @@ class UserLevel extends StatefulWidget {
 class _UserLevelState extends State<UserLevel> {
   List<Objective> objectives = [];
   List<Widget> badges = [];
-  int currentExp = 0;
-  int requiredExp = 0;
-  double fraction = 0;
-  int level = 0;
+
   @override
   void initState() {
-    recalculateExp();
-    fraction = currentExp / requiredExp;
     linkService.getPlayerToShow().badges.forEach((badge) {
       badges.add(Container(
         width: 40,
@@ -42,49 +39,12 @@ class _UserLevelState extends State<UserLevel> {
     });
   }
 
-  recalculateExp() {
-    int addedExp = 0;
-    objectives.forEach((objective) {
-      if (objective.progression == objective.target) addedExp += objective.exp!;
-    });
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    final totalXP =
-        linkService.getPlayerToShow().progressInfo.totalXP! + addedExp;
-    level = this.getLevel(totalXP);
-    currentExp = (totalXP - this.getTotalXpForLevel(level)).round() as int;
-    requiredExp = (this.getRemainingNeededXp(totalXP) +
-            totalXP -
-            this.getTotalXpForLevel(level))
-        .round();
-  }
-
-  getTotalXpForLevel(targetLevel) {
-    const base = 200;
-    const ratio = 1.05;
-    return ((base * (1 - pow(ratio, targetLevel))) / (1 - ratio)).floor();
-  }
-
-  getLevel(totalXP) {
-    int left = 1;
-    int right = 100;
-    while (left < right) {
-      final mid = ((left + right) / 2).floor();
-      final seriesSum = getTotalXpForLevel(mid);
-      if (seriesSum > totalXP)
-        right = mid;
-      else
-        left = mid + 1;
-    }
-    return left - 1;
-  }
-
-  getRemainingNeededXp(totalXP) {
-    final currentLevel = getLevel(totalXP);
-    return this.getTotalXpForLevel(currentLevel + 1) - totalXP;
-  }
-
   @override
   Widget build(BuildContext context) {
+    ObjectivesService objService = new ObjectivesService();
+    Account player = linkService.getPlayerToShow();
+    authenticator.getOtherStats(player.email);
+    objService.generateObjectives(authenticator.otherStats, player);
     return Container(
         width: 1000,
         child: Column(
@@ -127,12 +87,7 @@ class _UserLevelState extends State<UserLevel> {
                               textStyle: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             )),
-                        Text(
-                            linkService
-                                .getPlayerToShow()
-                                .progressInfo
-                                .currentLevel
-                                .toString(),
+                        Text(objService.currentLevel.toString(),
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   fontSize: 32, fontWeight: FontWeight.bold),
@@ -155,13 +110,13 @@ class _UserLevelState extends State<UserLevel> {
                               color: Color(0xCCCCCCCC)),
                           child: FractionallySizedBox(
                               alignment: Alignment.centerLeft,
-                              widthFactor: fraction,
+                              widthFactor: objService.currentExp / objService.requiredExp,
                               heightFactor: 1,
                               child: Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(1000),
                                     color: themeManager.themeMode ==
-                                            ThemeMode.light
+                                        ThemeMode.light
                                         ? Color.fromARGB(255, 125, 175, 107)
                                         : Color.fromARGB(255, 121, 101, 220)),
                               )),
@@ -170,9 +125,9 @@ class _UserLevelState extends State<UserLevel> {
                           height: 8,
                         ),
                         Text(
-                            currentExp.toString() +
+                            objService.currentExp.toString() +
                                 " / " +
-                                requiredExp.toString(),
+                                objService.requiredExp.toString(),
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   color: Color(0xFFBBBBBB),

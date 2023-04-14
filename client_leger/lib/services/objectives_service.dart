@@ -1,6 +1,11 @@
+import 'dart:math';
+
+import 'package:client_leger/classes/game.dart';
+import 'package:client_leger/classes/game_stats.dart';
 import 'package:client_leger/main.dart';
 
 import '../classes/objective.dart';
+import '../pages/game_page.dart';
 
 class ObjectivesService {
   List<Objective> objectives = [];
@@ -8,26 +13,30 @@ class ObjectivesService {
   ObjectivesService() {}
   final GAME_TARGETS = [5, 10, 25, 50, 100];
   final SCORES_OBJECTIVES = [200, 300, 500];
-  generateObjectives() {
+  int currentExp = 0;
+  int requiredExp = 0;
+  int currentLevel = 0;
+  int highScore = 0;
+  generateObjectives(Stats stats, Account player) {
     isEnglish =
         authenticator.currentUser.userSettings.defaultLanguage == 'english';
     this.objectives = [];
-    this.generateThemedObjectives();
-    this.generateLevelObjectives();
-    this.generateLossObjectives();
-    this.generateTimeObjectives();
-    this.generatePlayedGameObjectives();
-    this.generateWonGameObjectives();
-    this.generateScoreObjectives();
-    return this.objectives;
+    this.generateThemedObjectives(player);
+    this.generateLossObjectives(stats);
+    this.generateTimeObjectives(stats);
+    this.generatePlayedGameObjectives(stats);
+    this.generateWonGameObjectives(stats);
+    this.generateScoreObjectives(stats);
+    this.recalculateXP(player);
+
   }
 
-  generatePlayedGameObjectives() {
+  generatePlayedGameObjectives(Stats stats) {
     for (var i = 0; i < 5; i++) {
       final target = GAME_TARGETS[i];
-      final progression = authenticator.stats.playedGamesCount! > target
+      final progression = stats.playedGamesCount! > target
           ? target
-          : authenticator.stats.playedGamesCount;
+          : stats.playedGamesCount;
       final title = isEnglish
           ? 'Play ' + target.toString() + ' games'
           : 'Jouer ' + target.toString() + ' parties';
@@ -35,12 +44,12 @@ class ObjectivesService {
     }
   }
 
-  generateWonGameObjectives() {
+  generateWonGameObjectives(Stats stats) {
     for (int i = 0; i < 5; i++) {
       final target = GAME_TARGETS[i];
-      final progression = authenticator.stats.gamesWonCount! > target
+      final progression = stats.gamesWonCount! > target
           ? target
-          : authenticator.stats.gamesWonCount;
+          : stats.gamesWonCount;
       final title = isEnglish
           ? 'Win ' + target.toString() + ' games'
           : 'Gagner ' + target.toString() + ' parties';
@@ -50,46 +59,32 @@ class ObjectivesService {
     }
   }
 
-  generateScoreObjectives() {
-    int highestScore = 0;
-    authenticator.stats.playedGames!.forEach((game) {
-      if (game.score! > highestScore) highestScore = game.score!;
+  generateScoreObjectives(Stats stats) {
+    stats.playedGames!.forEach((game) {
+      if (game.score! > highScore) highScore = game.score!;
     });
     SCORES_OBJECTIVES.forEach((score) {
       final target = score;
       final title = isEnglish
           ? 'Score higher than ' + target.toString() + ' in Classic mode'
           : 'Scorer plus haut que ' + target.toString() + ' en mode classique';
-      final progression = highestScore > target ? target : highestScore;
+      final progression = highScore > target ? target : highScore;
       this.objectives.add(new Objective(title, progression, target, target));
     });
   }
 
-  generateThemedObjectives() {
+  generateThemedObjectives(Account player) {
     final title = isEnglish
         ? 'Beat every themed virtual players'
         : 'Battre tous les joueurs virtuels à thème';
-    final progression = authenticator.currentUser.badges.length == 5 ? 1 : 0;
+    final progression = player.badges.length == 5 ? 1 : 0;
     const target = 1;
     this.objectives.add(new Objective(title, progression, target, 600));
   }
 
-  generateLevelObjectives() {
-    GAME_TARGETS.forEach((level) {
-      final currentLevel = authenticator.currentUser.progressInfo.currentLevel;
-      final target = level;
-      final title = (isEnglish ? 'Reach level ' : 'Atteindre le niveau ') +
-          target.toString();
-      final progression = currentLevel! > target ? target : currentLevel;
-      this
-          .objectives
-          .add(new Objective(title, progression, target, target * 10));
-    });
-  }
-
-  generateLossObjectives() {
+  generateLossObjectives(Stats stats) {
     int progression = 0;
-    authenticator.stats.playedGames!.forEach((game) {
+    stats.playedGames!.forEach((game) {
       if (!(game.won ?? true)) {
         progression = 1;
       }
@@ -100,9 +95,9 @@ class ObjectivesService {
     this.objectives.add(new Objective(title, progression, target, 20));
   }
 
-  generateTimeObjectives() {
+  generateTimeObjectives(Stats stats) {
     int achieved = 0;
-    authenticator.stats.playedGames!.forEach((game) {
+    stats.playedGames!.forEach((game) {
       var strMinutes = game.duration!.split(' ')[0];
       int minutes = game.duration!.split(' ').length == 2
           ? int.parse(strMinutes.substring(0, strMinutes.length - 3))
@@ -117,5 +112,48 @@ class ObjectivesService {
     final progression = achieved;
     const target = 1;
     this.objectives.add(new Objective(title, progression, target, 100));
+  }
+  recalculateXP(Account player) {
+    int addedExp = 0;
+    for(Objective obj in this.objectives) {
+      if (obj.progression == obj.target)
+        addedExp += obj.exp!;
+
+    }
+    int totalExp =  player.progressInfo.totalXP! + addedExp;
+    currentLevel = getLevel(totalExp);
+    currentExp = (totalExp -
+        this.getTotalXpForLevel(
+            currentLevel))
+        .round() as int;
+    requiredExp = (this.getRemainingNeededXp(
+        totalExp) +
+        totalExp -
+        this.getTotalXpForLevel(currentLevel));
+  }
+
+  getTotalXpForLevel(targetLevel) {
+    const base = 200;
+    const ratio = 1.05;
+    return ((base * (1 - pow(ratio, targetLevel))) / (1 - ratio)).floor();
+  }
+
+  getLevel(totalXP) {
+    int left = 1;
+    int right = 100;
+    while (left < right) {
+      final mid = ((left + right) / 2).floor();
+      final seriesSum = getTotalXpForLevel(mid);
+      if (seriesSum > totalXP)
+        right = mid;
+      else
+        left = mid + 1;
+    }
+    return left - 1;
+  }
+
+  getRemainingNeededXp(totalXP) {
+    final currentLevel = getLevel(totalXP);
+    return this.getTotalXpForLevel(currentLevel + 1) - totalXP;
   }
 }

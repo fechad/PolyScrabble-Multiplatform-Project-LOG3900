@@ -1,3 +1,4 @@
+import 'package:client_leger/main.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:flutter/material.dart';
 
@@ -40,14 +41,16 @@ class _AvatarWidgetState extends State<Avatar> {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
       child: GestureDetector(
-        onTap: () {
+        onTap: () async {
+          if (widget.previewData != null) {
+          linkService.setPlayerToShow(widget.previewData);
+          await authenticator.getOtherStats(linkService.getPlayerToShow().email);
           setState(() {
-            if (widget.previewData != null) {
-              linkService.setPlayerToShow(widget.previewData);
+
               linkService.setInsideChatBoolean(widget.insideChat);
               Scaffold.of(context).openEndDrawer();
-            }
-          });
+
+          });}
         },
         child: Container(
             width: 45,

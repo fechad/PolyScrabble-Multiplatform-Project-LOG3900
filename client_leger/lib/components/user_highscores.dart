@@ -2,14 +2,16 @@ import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../pages/game_page.dart';
-
 class UserHighScores extends StatefulWidget {
+  final int highScore;
+  final int victories;
+  UserHighScores({required this.highScore, required this.victories});
   @override
   _UserHighScoresState createState() => _UserHighScoresState();
 }
 
 class _UserHighScoresState extends State<UserHighScores> {
+
   @override
   void initState() {}
   @override
@@ -26,10 +28,7 @@ class _UserHighScoresState extends State<UserHighScores> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                        languageService.currentLanguage.languageCode == 'en'
-                            ? 'Classic'
-                            : "Classique",
+                    Text("Classique",
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
@@ -50,10 +49,7 @@ class _UserHighScoresState extends State<UserHighScores> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                        languageService.currentLanguage.languageCode == 'en'
-                            ? 'Themed'
-                            : "Thème",
+                    Text("Mania",
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
@@ -71,7 +67,7 @@ class _UserHighScoresState extends State<UserHighScores> {
           height: 8,
         ),
         Text(
-            '${linkService.getPlayerToShow().gamesWon} ${languageService.currentLanguage.languageCode == 'en' ? 'victories' : 'victoire(s)'}',
+            '${authenticator.getCurrentUser().gamesWon} ${languageService.currentLanguage.languageCode == 'en' ? 'victories' : 'victoire(s)'}',
             style: GoogleFonts.nunito(
               textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             )),

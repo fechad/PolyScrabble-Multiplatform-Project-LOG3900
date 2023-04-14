@@ -112,6 +112,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
+      endDrawerEnableOpenDragGesture: false,
       drawer: ChatDrawer(),
       endDrawer: UserResume(),
       appBar: PreferredSize(

@@ -1,4 +1,5 @@
 import 'package:client_leger/components/achievement.dart';
+import 'package:client_leger/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,16 +14,15 @@ class OutObj extends StatefulWidget {
 
 class _OutObjState extends State<OutObj> {
   @override
-  List<Objective> objectives = [];
   ObjectivesService objService = new ObjectivesService();
   List<Widget> firstColumn = [];
   List<Widget> secondColumn = [];
   int center = 0;
   void initState() {
     super.initState();
-    objectives = objService.generateObjectives();
-    objectives.forEach((objective) {
-      if(objectives.indexOf(objective) % 2 == 0)
+    objService.generateObjectives(authenticator.stats, authenticator.currentUser);
+    objService.objectives.forEach((objective) {
+      if(objService.objectives.indexOf(objective) % 2 == 0)
       firstColumn.add(
           Achievement(title: objective.name, current: objective.progression, total: objective.target)
       );
@@ -49,9 +49,8 @@ class _OutObjState extends State<OutObj> {
             ),
             Container(
               width: 1000,
-              height: 300,
-              child: SingleChildScrollView(
-                child: Row(
+              height: 900,
+              child:  Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
@@ -65,7 +64,6 @@ class _OutObjState extends State<OutObj> {
                   ],
                 ),
               ),
-            )
           ],
         ));
   }
