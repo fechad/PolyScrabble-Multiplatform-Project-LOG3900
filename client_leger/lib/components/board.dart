@@ -6,6 +6,7 @@ import 'package:client_leger/pages/game_page.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import '../classes/placement.dart';
 import '../main.dart';
 import '../services/link_service.dart';
 
@@ -106,6 +107,17 @@ class _BoardState extends State<Board> {
     super.initState();
     constructBoard();
     _configureSocket();
+  }
+
+  removeTile(int x, int y) {
+    for (Placement p in linkService.placementStack){
+      if (p.x == x && p.y == y) {
+        setState(() {
+          final previous = p.previousSquare;
+          (linkService.rows[y] as Row).children[x] = previous;
+        });
+      }
+    }
   }
 
   @override
@@ -494,42 +506,96 @@ class _BoardState extends State<Board> {
               width: placementValidator.letters.length == 1 ? 2 : 1,
             ),
           ),
-          child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFFFFEBCE),
-                border: Border.all(
-                  color: const Color(0xAA000000),
-                  width: 1,
+          child: Draggable(
+            data: {
+              'letter': letter,
+              'value': value.toString(),
+              'index': index
+            },
+            onDragCompleted: () {
+              removeTile(x, y);
+              placementValidator.removeLetter(x, y);
+              if(x == placementValidator.firstLetterPosition[0] && y == placementValidator.firstLetterPosition[1]){
+                if (placementValidator.lettersDict.isNotEmpty) {
+                  placementValidator.firstLetterPosition = [placementValidator.lettersDict[0].x, placementValidator.lettersDict[0].y];
+                }
+                else {
+                  placementValidator.firstLetterPosition = [];
+                  socketService.send('firstTilePlaced', null);
+                }
+              }
+            },
+            childWhenDragging: Container(
+
+              color: Color(0x66000000),
+              width: 40,
+              height: 40,
+            ),
+            child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color(0xFFFFEBCE),
+                  border: Border.all(
+                    color: const Color(0xAA000000),
+                    width: 1,
+                  ),
                 ),
-              ),
-              width: 43,
-              height: 43,
-              child: Stack(
-                children: [
-                  Center(
-                      child: Text(letter!,
-                          style: const TextStyle(
-                              fontSize: 24, color: Colors.black))),
-                  Positioned(
-                    child: Text(value!,
-                        style:
-                            const TextStyle(fontSize: 10, color: Colors.black)),
-                    bottom: 4.0,
-                    right: 4.0,
-                  )
-                ],
-              )));
+                width: 43,
+                height: 43,
+                child: Stack(
+                  children: [
+                    Center(
+                        child: Text(letter!,
+                            style: const TextStyle(
+                                fontSize: 24, color: Colors.black))),
+                    Positioned(
+                      child: Text(value!,
+                          style:
+                          const TextStyle(fontSize: 10, color: Colors.black)),
+                      bottom: 4.0,
+                      right: 4.0,
+                    )
+                  ],
+                )),
+            feedback: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color(0xFFFFEBCE),
+                  border: Border.all(
+                    color: const Color(0xAA000000),
+                    width: 1,
+                  ),
+                ),
+                width: 43,
+                height: 43,
+                child: Stack(
+                  children: [
+                    Center(
+                        child: Text(letter!,
+                            style: const TextStyle(
+                                fontSize: 24, color: Colors.black))),
+                    Positioned(
+                      child: Text(value!,
+                          style:
+                          const TextStyle(fontSize: 10, color: Colors.black)),
+                      bottom: 4.0,
+                      right: 4.0,
+                    )
+                  ],
+                )),
+          )
+      );
 
       setState(() {
         linkService.setRows(x, y, square);
+        if(linkService.getFromRack()){
         linkService
             .removeLetter(Tile(letter: letter!.toLowerCase(), index: index!));
+        }
         alertGamePage(placementValidator.letters);
       });
     }
   }
-
   void colorTile(int x, int y) {
     if (word_3x.contains(x.toString() + "-" + y.toString()))
       (linkService.getRows()[y] as Row).children[x] = DragTarget<Map>(

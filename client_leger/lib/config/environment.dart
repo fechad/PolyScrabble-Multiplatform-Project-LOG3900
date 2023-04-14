@@ -16,7 +16,7 @@ String getServerURL() {
   const bool isProduction = bool.fromEnvironment('dart.vm.product');
   if (isProduction) {
     // TODO: Changer pour le bon url serveur
-    return 'http://ec2-3-96-187-147.ca-central-1.compute.amazonaws.com:3000';
+    return environmentProd;
   } else {
     return 'http://10.0.2.2:3000';
   }

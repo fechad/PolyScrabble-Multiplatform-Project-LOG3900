@@ -47,6 +47,9 @@ abstract class _LinkService with Store {
   ]);
 
   @observable
+  Observable<bool> fromRack = Observable(false);
+
+  @observable
   Observable<bool> isInAGame = Observable(false);
 
   @observable
@@ -92,6 +95,10 @@ abstract class _LinkService with Store {
 
   Account getPlayerToShow() {
     return playerInfoToShow.value!;
+  }
+
+  bool getFromRack() {
+    return fromRack.value;
   }
 
   bool getIsInAGame() {
@@ -148,6 +155,11 @@ abstract class _LinkService with Store {
 
   String getCurrentBackground() {
     return currentBackground.value;
+  }
+
+  @action
+  setFromRack(bool value) {
+    fromRack.value = value;
   }
 
   @action

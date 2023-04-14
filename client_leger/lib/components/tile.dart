@@ -163,6 +163,12 @@ class _TileState extends State<Tile> {
               enableWebMouseHover: true,
               shakeConstant: ShakeCrazyConstant1(),
               child: Draggable<Map>(
+                onDragStarted: () {
+                  linkService.setFromRack(true);
+                },
+                  onDragCompleted: () {
+                    linkService.setFromRack(false);
+                  },
                 data: {
                     'letter': letter,
                     'value': value.toString(),
