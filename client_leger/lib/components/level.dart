@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../classes/objective.dart';
 import '../main.dart';
+import '../services/objectives_service.dart';
 
 class Level extends StatefulWidget {
   @override
@@ -15,14 +16,9 @@ class Level extends StatefulWidget {
 class _LevelState extends State<Level> {
   List<Objective> objectives = [];
   List<Widget> badges = [];
-  int currentExp = 0;
-  int requiredExp = 0;
-  double fraction = 0;
-  int level = 0;
+
   @override
   void initState() {
-    recalculateExp();
-    fraction = currentExp / requiredExp;
     authenticator.currentUser.badges.forEach((badge) {
       badges.add(Container(
         width: 40,
@@ -41,48 +37,11 @@ class _LevelState extends State<Level> {
     });
   }
 
-  recalculateExp() {
-    int addedExp = 0;
-    objectives.forEach((objective) {
-      if (objective.progression == objective.target) addedExp += objective.exp!;
-    });
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    final totalXP = authenticator.currentUser.progressInfo.totalXP! + addedExp;
-    level = this.getLevel(totalXP);
-    currentExp = (totalXP - this.getTotalXpForLevel(level)).round() as int;
-    requiredExp = (this.getRemainingNeededXp(totalXP) +
-            totalXP -
-            this.getTotalXpForLevel(level))
-        .round();
-  }
-
-  getTotalXpForLevel(targetLevel) {
-    const base = 200;
-    const ratio = 1.05;
-    return ((base * (1 - pow(ratio, targetLevel))) / (1 - ratio)).floor();
-  }
-
-  getLevel(totalXP) {
-    int left = 1;
-    int right = 100;
-    while (left < right) {
-      final mid = ((left + right) / 2).floor();
-      final seriesSum = getTotalXpForLevel(mid);
-      if (seriesSum > totalXP)
-        right = mid;
-      else
-        left = mid + 1;
-    }
-    return left - 1;
-  }
-
-  getRemainingNeededXp(totalXP) {
-    final currentLevel = getLevel(totalXP);
-    return this.getTotalXpForLevel(currentLevel + 1) - totalXP;
-  }
-
   @override
   Widget build(BuildContext context) {
+    ObjectivesService objService = new ObjectivesService();
+    objService.generateObjectives(authenticator.stats, authenticator.currentUser);
+    print(objService.currentLevel);
     return Container(
         width: 1000,
         child: Column(
@@ -125,7 +84,7 @@ class _LevelState extends State<Level> {
                               textStyle: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             )),
-                        Text(level.toString(),
+                        Text(objService.currentLevel.toString(),
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   fontSize: 32, fontWeight: FontWeight.bold),
@@ -148,7 +107,7 @@ class _LevelState extends State<Level> {
                               color: Color(0xCCCCCCCC)),
                           child: FractionallySizedBox(
                               alignment: Alignment.centerLeft,
-                              widthFactor: fraction,
+                              widthFactor: objService.currentExp / objService.requiredExp,
                               heightFactor: 1,
                               child: Container(
                                 decoration: BoxDecoration(
@@ -163,9 +122,9 @@ class _LevelState extends State<Level> {
                           height: 8,
                         ),
                         Text(
-                            currentExp.toString() +
+                            objService.currentExp.toString() +
                                 " / " +
-                                requiredExp.toString(),
+                                objService.requiredExp.toString(),
                             style: GoogleFonts.nunito(
                               textStyle: TextStyle(
                                   color: Color(0xFFBBBBBB),

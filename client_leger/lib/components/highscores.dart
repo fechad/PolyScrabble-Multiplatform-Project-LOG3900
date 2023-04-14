@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HighScores extends StatefulWidget {
+  final int highScore;
+  final int victories;
+  HighScores({required this.highScore, required this.victories});
   @override
   _HighScoresState createState() => _HighScoresState();
 }
 
 class _HighScoresState extends State<HighScores> {
+
   @override
   void initState() {}
   @override
@@ -20,16 +24,16 @@ class _HighScoresState extends State<HighScores> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 116,
+              width: 160,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Classique",
+                    Text('${languageService.currentLanguage.languageCode == 'en' ? 'victories' : 'victoire(s)'}',
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         )),
-                    Text("360",
+                    Text(widget.victories.toString(),
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
@@ -41,16 +45,16 @@ class _HighScoresState extends State<HighScores> {
               size: 72,
             ),
             Container(
-              width: 116,
+              width: 160,
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Mania",
+                    Text('${languageService.currentLanguage.languageCode == 'en' ? 'highest score' : 'meilleur score'}',
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         )),
-                    Text("360",
+                    Text(widget.highScore.toString(),
                         style: GoogleFonts.nunito(
                           textStyle: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
@@ -62,11 +66,6 @@ class _HighScoresState extends State<HighScores> {
         SizedBox(
           height: 8,
         ),
-        Text(
-            '${authenticator.getCurrentUser().gamesWon} ${languageService.currentLanguage.languageCode == 'en' ? 'victories' : 'victoire(s)'}',
-            style: GoogleFonts.nunito(
-              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            )),
       ],
     );
   }

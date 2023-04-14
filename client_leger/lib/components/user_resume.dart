@@ -3,10 +3,13 @@ import 'dart:math';
 import 'package:client_leger/components/highscores.dart';
 import 'package:client_leger/pages/game_page.dart';
 import 'package:client_leger/pages/user_profile_page.dart';
+import 'package:client_leger/services/border_service.dart';
+import 'package:client_leger/services/objectives_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../classes/game.dart';
 import '../main.dart';
 
 class UserResume extends StatefulWidget {
@@ -16,24 +19,12 @@ class UserResume extends StatefulWidget {
 
 class _UserResumeState extends State<UserResume> {
   List<Widget> badges = [];
-  int currentExp = 0;
-  int requiredExp = 0;
-  double fraction = 0;
   @override
   void initState() {
     /*
       value="{{ progressInfo.totalXP - progressInfo.currentLevelXp }}"
       max="{{ progressInfo.xpForNextLevel + progressInfo.totalXP - progressInfo.currentLevelXp }}"
     */
-
-    if (linkService.getPlayerToShow().toString().isNotEmpty) {
-      recalculateXP();
-    } else {
-      currentExp = 500;
-      requiredExp = 500;
-    }
-
-    fraction = currentExp / requiredExp;
 
     if (linkService.getPlayerToShow().badges.isNotEmpty) {
       for (int i = 0; i < linkService.getPlayerToShow().badges.length; i++) {
@@ -49,44 +40,10 @@ class _UserResumeState extends State<UserResume> {
     }
   }
 
-  recalculateXP() {
-    currentExp = (linkService.getPlayerToShow().progressInfo.totalXP! -
-            this.getTotalXpForLevel(
-                linkService.getPlayerToShow().progressInfo.currentLevel))
-        .round() as int;
-    requiredExp = (this.getRemainingNeededXp(
-            linkService.getPlayerToShow().progressInfo.totalXP!) +
-        linkService.getPlayerToShow().progressInfo.totalXP! -
-        this.getTotalXpForLevel(
-            linkService.getPlayerToShow().progressInfo.currentLevel));
-  }
 
-  getTotalXpForLevel(targetLevel) {
-    const base = 200;
-    const ratio = 1.05;
-    return ((base * (1 - pow(ratio, targetLevel))) / (1 - ratio)).floor();
-  }
-
-  getLevel(totalXP) {
-    int left = 1;
-    int right = 100;
-    while (left < right) {
-      final mid = ((left + right) / 2).floor();
-      final seriesSum = getTotalXpForLevel(mid);
-      if (seriesSum > totalXP)
-        right = mid;
-      else
-        left = mid + 1;
-    }
-    return left - 1;
-  }
-
-  getRemainingNeededXp(totalXP) {
-    final currentLevel = getLevel(totalXP);
-    return this.getTotalXpForLevel(currentLevel + 1) - totalXP;
-  }
-
-  Widget rightImageFormat() {
+  Widget rightImageFormat(int level) {
+    BorderService borderService = new BorderService();
+    String path = borderService.getBorder(level);
     if (linkService
         .getPlayerToShow()
         .userSettings
@@ -105,19 +62,31 @@ class _UserResumeState extends State<UserResume> {
             shape: BoxShape.circle),
       );
     else
-      return CircleAvatar(
-          radius: 60,
-          backgroundImage: NetworkImage(
-            linkService.getPlayerToShow().userSettings.avatarUrl,
-          ));
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          CircleAvatar(
+            radius: 60,
+            backgroundImage: NetworkImage(
+              linkService.getPlayerToShow().userSettings.avatarUrl,
+            )),
+          borderService.border(path)
+        ]
+      );
   }
+
 
   @override
   Widget build(BuildContext context) {
+    ObjectivesService objService = new ObjectivesService();
+    Account player = linkService.getPlayerToShow();
+    authenticator.getOtherStats(player.email);
+    objService.generateObjectives(authenticator.otherStats, player);
     return Drawer(
+      width: 400,
       child: Column(
         children: [
-          rightImageFormat(),
+          rightImageFormat(objService.currentLevel),
           Text(
               linkService.getPlayerToShow().toString().isNotEmpty
                   ? linkService.getPlayerToShow().username
@@ -140,6 +109,7 @@ class _UserResumeState extends State<UserResume> {
           Container(
               margin: EdgeInsets.only(right: 8, left: 8, top: 32, bottom: 32),
               padding: EdgeInsets.only(left: 16, right: 8),
+              width: 360,
               height: 90,
               decoration: BoxDecoration(
                 color: themeManager.themeMode == ThemeMode.light
@@ -171,13 +141,7 @@ class _UserResumeState extends State<UserResume> {
                                 fontSize: 12, fontWeight: FontWeight.bold),
                           )),
                       Text(
-                          linkService.getPlayerToShow().toString().isNotEmpty
-                              ? linkService
-                                  .getPlayerToShow()
-                                  .progressInfo
-                                  .currentLevel
-                                  .toString()
-                              : "1",
+                          objService.currentLevel.toString(),
                           style: GoogleFonts.nunito(
                             textStyle: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold),
@@ -193,14 +157,14 @@ class _UserResumeState extends State<UserResume> {
                       ),
                       Container(
                         margin: EdgeInsets.only(left: 16),
-                        width: 200,
+                        width: 280,
                         height: 10,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(1000),
                             color: Color(0xCCCCCCCC)),
                         child: FractionallySizedBox(
                             alignment: Alignment.centerLeft,
-                            widthFactor: fraction,
+                            widthFactor: objService.currentExp / objService.requiredExp,
                             heightFactor: 1,
                             child: Container(
                               decoration: BoxDecoration(
@@ -215,9 +179,9 @@ class _UserResumeState extends State<UserResume> {
                         height: 8,
                       ),
                       Text(
-                          currentExp.toString() +
+                          objService.currentExp.toString() +
                               " / " +
-                              requiredExp.toString(),
+                              objService.requiredExp.toString(),
                           style: GoogleFonts.nunito(
                             textStyle: TextStyle(
                                 color: Color(0xFFBBBBBB),
@@ -231,7 +195,7 @@ class _UserResumeState extends State<UserResume> {
           SizedBox(
             height: 32,
           ),
-          HighScores(),
+          HighScores(highScore: objService.highScore, victories: authenticator.otherStats.gamesWonCount!),
           SizedBox(
             height: 32,
           ),
