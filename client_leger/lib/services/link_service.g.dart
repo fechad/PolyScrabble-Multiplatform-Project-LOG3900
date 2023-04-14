@@ -12,6 +12,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get fromRack {
+    _$valueAtom.reportRead();
+    return super.fromRack;
+  }
+
+  @override
   Observable<bool> get InsideChatBoolean {
     _$valueAtom.reportRead();
     return super.insideChat;
@@ -122,6 +128,17 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setCurrentBackground');
     try {
       return super.setCurrentBackground(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setFromRack(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setFromRack');
+    try {
+      return super.setFromRack(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }

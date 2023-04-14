@@ -32,6 +32,7 @@ class _YourRackState extends State<YourRack> {
 
   final IntCallback tileChange;
   late ShakeDetector _detector;
+  int noLetters = 7;
 
   _YourRackState({required this.tileChange});
 
@@ -41,6 +42,8 @@ class _YourRackState extends State<YourRack> {
     socketService.on(
         'drawRack',
             (letters) => {
+              letters = letters.replaceAll(' ', ''),
+              noLetters = letters.length,
           setState(() {
             linkService.resetRack();
             linkService.getRack();
@@ -58,7 +61,9 @@ class _YourRackState extends State<YourRack> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DragTarget<Map>(
+    builder: (BuildContext context, List<Object?> candidateData, List<dynamic> rejectedData) {
+        return Container(
         key: GlobalKey<ScaffoldState>(),
         height: 60,
         width: 352,
@@ -79,5 +84,13 @@ class _YourRackState extends State<YourRack> {
             },
             child: Observer(
                 builder: (context) => Row(children: linkService.getRack()))));
+    },
+    onAccept: (data) {
+    setState(() {
+      if (linkService.tempRack.length + 1 > noLetters) return;
+        linkService.tempRack.add(
+            Tile(letter: data['letter'], index: data['index']));
+    });
+      });
   }
 }

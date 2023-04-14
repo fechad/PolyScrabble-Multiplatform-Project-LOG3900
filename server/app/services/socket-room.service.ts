@@ -79,6 +79,7 @@ export class SocketRoomService extends SocketHandlerService {
             new Player(playerToAdd.socketId, playerToAdd.pseudo, playerToAdd.isCreator, playerToAdd.clientAccountInfo),
             joinRoomForm.password,
         );
+
         if (serverRoom.players.length >= serverRoom.maxPlayers) this.roomService.setUnavailable(roomName);
         this.socketJoin(socket, roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());

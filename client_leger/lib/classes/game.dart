@@ -323,6 +323,7 @@ class Letter {
   Letter({required this.letter, required this.x, required this.y});
 }
 
+
 class PlacementData {
   String word;
   String row;
