@@ -418,5 +418,29 @@
 	"userNameError": "Ce pseudo est déjà utilisé, essayez en un autre",
 	"@userNameError": {
 		"description": "Erreur de nom d'utilisateur"
+	},
+	"oldPasswordLabel": "Ancien mot de passe",
+	"@oldPasswordLabel": {
+		"description": "Field pour entrer son ancien mot de passe"
+	},
+	"newPasswordLabel": "Nouveau mot de passe",
+	"@newPasswordLabel": {
+		"description": "Field pour entrer son nouveau mot de passe"
+	},
+	"confirmNewPasswordLabel": "Confirmez votre nouveau mot de passe",
+	"@confirmNewPasswordLabel": {
+		"description": "Field pour confirmer son nouveau mot de passe"
+	},
+	"confirmNewPasswordError": "Confirmez votre mot de passe", 
+	"@confirmNewPasswordError": {
+		"description": "Field pour confirmer son nouveau mot de passe"
+	},
+	"matchNewPasswordError": "Les mots de passe ne corresondent pas", 
+	"@matchNewPasswordError": {
+		"description": "Field pour confirmer son nouveau mot de passe"
+	},
+	"passwordMessage": "Vous serez déconnecté pour continuer avec cette demande.",
+	"@passwordMessage": {
+		"description": "Message dans popup"
 	}
 }

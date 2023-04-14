@@ -294,7 +294,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   Future<void> loginUser() async {
     try {
       await authenticator.signInUser(
-          emailController.text, passwordController.text);
+          emailController.text.trim(), passwordController.text.trim());
       httpService.loginUserLogs(authenticator.getCurrentUser().email);
       navigate();
     } catch (error) {

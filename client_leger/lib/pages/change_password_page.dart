@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:client_leger/config/colors.dart';
 import 'package:client_leger/main.dart';
-import 'package:client_leger/pages/connexion_page.dart';
 import 'package:client_leger/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -163,39 +162,41 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
                                 if (_formKey.currentState!.validate()) {
                                   bool errorValue = false;
                                   try {
-                                    await authenticator
-                                        .changeUserPassword(
+                                    await authenticator.changeUserPassword(
                                         widget.email,
                                         temporaryPasswordController.text,
                                         newPasswordController.text);
                                   } catch (error) {
-                                ScaffoldMessenger
-                                    .of(context)
-                                    .showSnackBar(SnackBar(
-                                backgroundColor: Colors.redAccent,
-                                duration:
-                                Duration(milliseconds: 1000),
-                                content: Text('Error: $error')));
-                                errorValue = true;
-                                }
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            backgroundColor: Colors.redAccent,
+                                            duration:
+                                                Duration(milliseconds: 1000),
+                                            content: Text('Error: $error')));
+                                    errorValue = true;
+                                  }
                                   if (!errorValue) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
                                             duration:
-                                            Duration(milliseconds: 1000),
+                                                Duration(milliseconds: 1000),
                                             content: Text(
                                                 'Changement réussi, reconnexion en cours ...')));
                                     Timer(const Duration(milliseconds: 1000),
                                         (() => {}));
-                                    httpService.loginUserLogs(authenticator.getCurrentUser().email);
-                                    authenticator.setStats(authenticator.getCurrentUser().email);
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                        //authenticator.setValidate();
-                                        MyHomePage(title: "PolyScrabble")));
+                                    httpService.loginUserLogs(
+                                        authenticator.getCurrentUser().email);
+                                    authenticator.setStats(
+                                        authenticator.getCurrentUser().email);
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                //authenticator.setValidate();
+                                                MyHomePage(
+                                                    title: "PolyScrabble")));
                                   }
-                                }},
+                                }
+                              },
                               style: ButtonStyle(
                                   shape: MaterialStatePropertyAll<
                                           RoundedRectangleBorder>(
@@ -245,7 +246,6 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
   }
 
   void navigate() {
-
     chatService.joinDiscussion('General Chat');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {

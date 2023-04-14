@@ -17,6 +17,8 @@ import '../components/drawer.dart';
 import '../components/historics.dart';
 import '../components/sidebar.dart';
 import '../config/colors.dart';
+import '../services/link_service.dart';
+import 'forgot_password_page.dart' hide httpService;
 
 enum TheColor { dark, light }
 
@@ -33,11 +35,12 @@ class _SettingsPageState extends State<SettingsPage> {
   String victoryMusic = authenticator.currentUser.userSettings.victoryMusic;
   bool valuesChanged = false;
   String selectedUrl = authenticator.currentUser.userSettings.avatarUrl;
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmNewPasswordController =
-      TextEditingController();
+  // final TextEditingController passwordController = TextEditingController();
+  // final TextEditingController newPasswordController = TextEditingController();
+  // final TextEditingController confirmNewPasswordController =
+  //     TextEditingController();
   final TextEditingController usernameController = TextEditingController();
+  // final _formKey = GlobalKey<FormState>();
 
   late CameraDescription firstCamera;
   late CameraController _controller;
@@ -521,82 +524,92 @@ class _SettingsPageState extends State<SettingsPage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                                title: Text('Changement de mot de passe'),
-                                content: Container(
-                                    height: 300,
-                                    width: 400,
-                                    child: Column(children: [
-                                      TextFormField(
-                                        controller: passwordController,
-                                        obscureText: true,
-                                        decoration: const InputDecoration(
-                                          hintText: '',
-                                          labelText: 'Ancien mot de passe',
-                                        ),
-                                      ),
-                                      TextFormField(
-                                        controller: passwordController,
-                                        obscureText: true,
-                                        decoration: const InputDecoration(
-                                          hintText: '',
-                                          labelText: 'Nouveau mot de passe',
-                                        ),
-                                      ),
-                                      TextFormField(
-                                        controller: passwordController,
-                                        obscureText: true,
-                                        decoration: const InputDecoration(
-                                          hintText: '',
-                                          labelText:
-                                              'Confirmez votre nouveau mot de passe',
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 50,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () => {
-                                              setState(() {
-                                                //letterIndexesToExchange.clear();
-                                                //linkService.resetRack();
-                                                Navigator.pop(context);
-                                              })
-                                            },
-                                            style: TextButton.styleFrom(
-                                                foregroundColor: Colors.red),
-                                            child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .cancel,
-                                                style: TextStyle(fontSize: 14)),
+                                title: Text(AppLocalizations.of(context)!
+                                    .settingsPagePassword),
+                                content: Form(
+                                    child: Container(
+                                        height: 120,
+                                        width: 400,
+                                        child: Column(children: [
+                                          Text(AppLocalizations.of(context)!
+                                              .passwordMessage),
+                                          const SizedBox(
+                                            height: 50,
                                           ),
-                                          TextButton(
-                                            onPressed: () => {
-                                              setState(() {
-                                                //TODO: change password
-                                                Navigator.pop(context);
-                                              })
-                                            },
-                                            style: TextButton.styleFrom(
-                                                foregroundColor: themeManager
-                                                            .themeMode ==
-                                                        ThemeMode.light
-                                                    ? Color.fromARGB(
-                                                        255, 125, 175, 107)
-                                                    : Color.fromARGB(
-                                                        255, 121, 101, 220)),
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .save,
-                                              style: TextStyle(fontSize: 14),
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              TextButton(
+                                                onPressed: () => {
+                                                  setState(() {
+                                                    //letterIndexesToExchange.clear();
+                                                    //linkService.resetRack();
+                                                    Navigator.pop(context);
+                                                  })
+                                                },
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                        Colors.red),
+                                                child: Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .cancel,
+                                                    style: TextStyle(
+                                                        fontSize: 18)),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  try {
+                                                    themeManager
+                                                        .setThemeMode(false);
+
+                                                    await httpService.logoutUser(
+                                                        authenticator
+                                                            .getCurrentUser()
+                                                            .username);
+                                                    socketService
+                                                        .send('logOut');
+                                                    Navigator.pop(context);
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                ((context) {
+                                                      return ForgotPasswordPageWidget();
+                                                    })));
+                                                  } catch (error) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .redAccent,
+                                                            duration: Duration(
+                                                                milliseconds:
+                                                                    1000),
+                                                            content: Text(
+                                                                'Error: $error')));
+                                                  }
+                                                },
+                                                style: TextButton.styleFrom(
+                                                    foregroundColor: themeManager
+                                                                .themeMode ==
+                                                            ThemeMode.light
+                                                        ? Color.fromARGB(
+                                                            255, 125, 175, 107)
+                                                        : Color.fromARGB(255,
+                                                            121, 101, 220)),
+                                                child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .save,
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                ),
+                                              )
+                                            ],
                                           )
-                                        ],
-                                      )
-                                    ])));
+                                        ]))));
+                            ;
                           })
                     },
                     style: const ButtonStyle(

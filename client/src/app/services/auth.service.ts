@@ -22,7 +22,6 @@ export class Authentificator {
     }
 
     async changePassword(newPassword: string) {
-        // TODO:
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return updatePassword(this.auth.currentUser!, newPassword);
     }

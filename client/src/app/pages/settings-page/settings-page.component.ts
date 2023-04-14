@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
+import { PasswordChangerPopupComponent } from '@app/components/password-changer-popup/password-changer-popup.component';
 import { PredefinedAvatarsPopupComponent } from '@app/components/predefined-avatars-popup/predefined-avatars-popup.component';
 import { DEFAULT_USER_IMAGE } from '@app/constants/default-user-settings';
 import { VICTORY_MUSIC } from '@app/constants/victory-musics';
@@ -98,6 +99,22 @@ export class SettingsPageComponent implements OnInit {
                 return;
             }
             this.selectAvatar(avatarFile);
+        });
+    }
+
+    changePassword() {
+        const dialog = this.dialog.open(PasswordChangerPopupComponent, {
+            width: DIALOG_WIDTH,
+            autoFocus: true,
+        });
+
+        dialog.afterClosed().subscribe(async (oldPassword) => {
+            if (!oldPassword) return;
+            // this.socketService.send(SocketEvent.CreateChatChannel, {
+            //     channel: channelName,
+            //     username: this.playerService.reducePLayerInfo(),
+            //     isRoomChannel: false,
+            // });
         });
     }
 
