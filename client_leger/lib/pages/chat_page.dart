@@ -191,7 +191,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                         ),
                   ),
                   SizedBox(width: 50),
-                  chat.name != 'General Chat' &&
+                  chat.name != 'Principal' &&
                           (joined ||
                               chat.owner?.username ==
                                   authenticator.currentUser.username)
@@ -365,7 +365,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                       hintText: !joined &&
                               chat.owner?.username !=
                                   authenticator.getCurrentUser().username &&
-                              chat.name != 'General Chat'
+                              chat.name != 'Principal'
                           ? AppLocalizations.of(context)!
                               .otherChatPagePlaceHolderJoin
                           : AppLocalizations.of(context)!

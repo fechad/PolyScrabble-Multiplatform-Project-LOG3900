@@ -11,7 +11,7 @@ describe('LocalStorageService', () => {
         service = TestBed.inject(SessionStorageService);
         service.removeItem('key');
 
-        playerData = { socketId: 'socketId', roomName: 'Room0' };
+        playerData = { socketId: 'socketId', roomName: 'R-0' };
     });
 
     it('should be created', () => {

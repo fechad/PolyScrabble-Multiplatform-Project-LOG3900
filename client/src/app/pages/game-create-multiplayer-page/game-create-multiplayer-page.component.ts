@@ -151,7 +151,7 @@ export class GameCreateMultiplayerPageComponent extends PageCommunicationManager
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.RoomCreated, (serverRoom: Room) => {
             this.onProcess = false;
-            if (!serverRoom.roomInfo.name.startsWith('Room')) return;
+            if (!serverRoom.roomInfo.name.startsWith('R-')) return;
             this.room.roomInfo.name = serverRoom.roomInfo.name;
             this.socketService.send(SocketEvent.CreateChatChannel, {
                 channel: serverRoom.roomInfo.name,

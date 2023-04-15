@@ -134,7 +134,7 @@ describe('GameCreateMultiplayerPageComponent', () => {
 
     describe('socketService.on tests', () => {
         const roomValidName = new Room();
-        roomValidName.roomInfo.name = 'Room0';
+        roomValidName.roomInfo.name = 'R-0';
         const roomInvalidName = new Room();
         roomInvalidName.roomInfo.name = '----';
 

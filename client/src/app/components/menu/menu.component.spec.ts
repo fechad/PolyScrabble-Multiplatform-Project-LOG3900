@@ -24,7 +24,7 @@ import { MenuComponent } from './menu.component';
 import SpyObj = jasmine.SpyObj;
 
 const discussionChannelName = 'channel1';
-const roomName = 'Room1';
+const roomName = 'R-1';
 
 describe('MenuComponent', () => {
     let component: MenuComponent;
@@ -238,7 +238,7 @@ describe('MenuComponent', () => {
         let roomMock2: Room;
         beforeEach(() => {
             roomMock2 = new Room();
-            roomMock2.roomInfo.name = 'Room2';
+            roomMock2.roomInfo.name = 'R-2';
             roomMock2.players = [firstPlayer];
             data = { room: roomMock2, player: firstPlayer };
         });

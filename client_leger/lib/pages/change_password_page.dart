@@ -246,7 +246,7 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
   }
 
   void navigate() {
-    chatService.joinDiscussion('General Chat');
+    chatService.joinDiscussion('Principal');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return MyHomePage(title: 'PolyScrabble');

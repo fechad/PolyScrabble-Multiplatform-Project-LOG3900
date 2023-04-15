@@ -9,7 +9,7 @@ import 'init_service.dart';
 
 class ChatService {
   List<ChatModel> discussionChannels = [
-    ChatModel(name: 'General Chat', activeUsers: [], messages: [])
+    ChatModel(name: 'Principal', activeUsers: [], messages: [])
   ];
   Account owner = Account(
       username: '',
@@ -33,7 +33,7 @@ class ChatService {
   ChatModel _roomChannel = ChatModel(name: '', activeUsers: [], messages: []);
   ChatService() {
     _askForDiscussions();
-    joinDiscussion('General Chat');
+    joinDiscussion('Principal');
     print(socket.connected);
     print('This is my SOCKET ID: ');
     print(socket.id);
@@ -66,7 +66,7 @@ class ChatService {
     }
 
     ChatModel discussionChannels = ChatModel.fromJson(data, messages);
-    if (data['name'] != 'General Chat' && !data['name'].startsWith('Room')) {
+    if (data['name'] != 'Principal' && !data['name'].startsWith('R-')) {
       owner = Account.fromJson(data['owner']);
     }
     discussionChannels.owner = owner;

@@ -23,7 +23,7 @@ export const A_ASCII = 97;
 
 // TESTS CONSTANTS
 export const DEFAULT_ROOM_INFO = {
-    name: 'Room1',
+    name: 'R-1',
     creatorName: '',
     timerPerTurn: '60',
     dictionary: 'french',
@@ -33,5 +33,5 @@ export const DEFAULT_ROOM_INFO = {
     password: '',
 };
 
-export const DEFAULT_ROOM_NAME = 'Room';
-export const GENERAL_CHAT_NAME = 'General Chat';
+export const DEFAULT_ROOM_NAME = 'R-';
+export const GENERAL_CHAT_NAME = 'Principal';

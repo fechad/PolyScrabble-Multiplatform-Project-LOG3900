@@ -55,7 +55,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
     socket.on(
         'channelMessage',
         (message) => {
-              if (!message['channelName'].toString().startsWith('Room') && linkService.getCurrentOpenedChat() == '') {
+              if (!message['channelName'].toString().startsWith('R-') && linkService.getCurrentOpenedChat() == '') {
               chatService
                   .getDiscussionChannelByName(message['channelName'])
                   .messages
@@ -115,7 +115,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
         'availableChannels',
         (data) => {
               socket.emit('joinChatChannel',
-                  {'General Chat', authenticator.currentUser.username}),
+                  {'Principal', authenticator.currentUser.username}),
               chatService.discussionChannels = [],
               for (var i in data)
                 {

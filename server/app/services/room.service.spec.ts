@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 
 describe('Room service tests', () => {
     const roomMock: Room = new Room();
-    roomMock.roomInfo.name = 'Room0';
+    roomMock.roomInfo.name = 'R-0';
     const roomService = new RoomService();
 
     it('should be empty on start', () => {

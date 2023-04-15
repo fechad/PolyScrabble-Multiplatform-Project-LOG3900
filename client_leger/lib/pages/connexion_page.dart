@@ -312,7 +312,7 @@ class _ConnexionPageWidgetState extends State<ConnexionPageWidget> {
   void navigate() {
     validUsername = true;
     authenticator.setStats(authenticator.getCurrentUser().email);
-    chatService.joinDiscussion('General Chat');
+    chatService.joinDiscussion('Principal');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return MyHomePage(title: 'PolyScrabble');

@@ -44,18 +44,18 @@ describe('GameJoinMultiplayerPageComponent', () => {
 
         roomMock = new Room();
         roomMock.roomInfo = DEFAULT_ROOM_INFO;
-        roomMock.roomInfo.name = 'Room2';
+        roomMock.roomInfo.name = 'R-2';
         roomMock.roomInfo.gameType = 'log2990';
         roomMock.currentPlayerPseudo = '';
 
         sameGameTypeRoom1 = new Room();
         sameGameTypeRoom1.roomInfo = DEFAULT_ROOM_INFO;
-        roomMock.roomInfo.name = 'Room3';
+        roomMock.roomInfo.name = 'R-3';
         sameGameTypeRoom1.currentPlayerPseudo = '';
 
         sameGameTypeRoom2 = new Room();
         sameGameTypeRoom2.roomInfo = DEFAULT_ROOM_INFO;
-        roomMock.roomInfo.name = 'Room4';
+        roomMock.roomInfo.name = 'R-4';
         sameGameTypeRoom2.currentPlayerPseudo = '';
 
         player = new Player();

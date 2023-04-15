@@ -205,7 +205,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
         });
 
         this.socketService.send(SocketEvent.JoinChatChannel, {
-            name: 'General Chat',
+            name: 'Principal',
             user: this.playerService.player.clientAccountInfo.username,
         });
 

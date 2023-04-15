@@ -395,7 +395,7 @@
     "@createChatErrorTwo": {
         "description": "Erreur du popup"
     },
-    "createChatErrorThree": "Le nom ne peut commencer par 'room'",
+    "createChatErrorThree": "Le nom ne peut commencer par 'r-'",
     "@createChatErrorThree": {
         "description": "Erreur du popup"
     },

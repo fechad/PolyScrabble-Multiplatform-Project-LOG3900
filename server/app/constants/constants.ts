@@ -1,8 +1,8 @@
 import { DictionariesFileService } from '@app/services/dictionaries-files.service';
 
 export const DEFAULT_DICTIONARY_TITLE = 'dictionnaire par défaut';
-export const GENERAL_CHAT_NAME = 'General Chat';
-export const DEFAULT_ROOM_NAME = 'Room';
+export const GENERAL_CHAT_NAME = 'Principal';
+export const DEFAULT_ROOM_NAME = 'R-';
 
 export const ONE_SECOND_IN_MS = 1000;
 export const BOT_COMMAND_TIMEOUT_SEC = 15;

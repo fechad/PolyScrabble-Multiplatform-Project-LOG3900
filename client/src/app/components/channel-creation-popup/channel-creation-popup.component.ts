@@ -64,7 +64,7 @@ export class ChannelCreationPopupComponent {
         if (this.isFrenchLanguage) {
             if (this.nameErrors.isGeneralChatName) return 'Vous ne pouvez pas prendre le nom du canal général';
             if (this.nameErrors.notUniqueChannelNameValue) return "Le nom de votre canal de discussion n'est pas unique";
-            if (this.nameErrors.startsWithRoomName) return 'Vous ne pouvez pas avoir un nom de canal de discussion qui commence avec Room';
+            if (this.nameErrors.startsWithRoomName) return 'Vous ne pouvez pas avoir un nom de canal de discussion qui commence avec R-';
             if (this.nameErrors.maxlength)
                 return `Le nom de canal est trop long. Il doit être en dessous de ${this.nameErrors.maxlength.requiredLength} caractères`;
             if (this.nameErrors.minlength)
@@ -75,7 +75,7 @@ export class ChannelCreationPopupComponent {
 
         if (this.nameErrors.isGeneralChatName) return "You can't take the name of the general discussion channel";
         if (this.nameErrors.notUniqueChannelNameValue) return 'The name of your discussion channel is not unique';
-        if (this.nameErrors.startsWithRoomName) return "You can't have a discussion channel's name that starts with Room";
+        if (this.nameErrors.startsWithRoomName) return "You can't have a discussion channel's name that starts with R-";
         if (this.nameErrors.maxlength)
             return `The name of the discussion channel is too long. It must be below ${this.nameErrors.maxlength.requiredLength} characters`;
         if (this.nameErrors.minlength)
