@@ -1,7 +1,8 @@
 import { Player } from '@app/classes/player';
 import { Randomiser } from '@app/classes/randomiser';
-import { DEFAULT_GOALS, PUBLIC_GOAL_COUNT, TARGET_GOAL_COUNT } from '@app/constants/goals-constants';
+import { DEFAULT_GOALS, DEFAULT_GOALS_EN, PUBLIC_GOAL_COUNT, TARGET_GOAL_COUNT } from '@app/constants/goals-constants';
 import { GoalTitle } from '@app/enums/goal-titles';
+import { Language } from '@app/enums/language';
 import { Goal } from '@app/interfaces/goal';
 import { ReachedGoal } from '@app/interfaces/reached-goal';
 import { Matcher } from './matcher';
@@ -12,10 +13,11 @@ export class GoalManager {
     goalsReached: ReachedGoal[];
     private goals: Goal[];
 
-    constructor() {
+    constructor(language: Language) {
         this.goalsReached = [];
         this.goals = [];
-        DEFAULT_GOALS.forEach((goal) => {
+        const tempGoals: Goal[] = language === Language.English ? DEFAULT_GOALS_EN : DEFAULT_GOALS;
+        tempGoals.forEach((goal) => {
             this.goals.push({ ...goal });
         });
         this.selectGoals();

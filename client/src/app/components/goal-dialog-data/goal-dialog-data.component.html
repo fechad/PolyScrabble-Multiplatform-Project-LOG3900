@@ -8,11 +8,11 @@
         <div id="goal-info">
             <div class="flex-row">
                 <input disabled class="goal-checkbox" type="checkbox" [checked]="goal.isPublic" />
-                <label>publique</label>
+                <label [translate]="'GAME-PAGE.OBJECTIVES.PUBLIC'"></label>
             </div>
             <div class="flex-row">
                 <input disabled class="goal-checkbox" type="checkbox" [checked]="goal.reached" />
-                <div>atteint</div>
+                <label [translate]="'GAME-PAGE.OBJECTIVES.REACHED'"></label>
             </div>
         </div>
     </div>
