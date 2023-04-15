@@ -55,6 +55,10 @@ class ChatService {
     _roomChannel = chat;
   }
 
+  saveRoomMessages(List<ChatMessage> messages){
+    _roomChannel.messages = messages;
+  }
+
   ChatModel decodeModel(dynamic data) {
     List<ChatMessage> messages = [];
     for (var j in data['messages']) {

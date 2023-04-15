@@ -46,10 +46,8 @@ export class SocketGameService extends SocketHandlerService {
         const roomObserver = room.getObserver(socket.id);
         if (roomObserver) {
             room.removeObserver(roomObserver.username);
-            this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
-            const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
-            this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
-
+            const leaveMessage = this.discussionChannelService.leaveChannel(room.roomInfo.name, roomObserver.username);
+            if (leaveMessage) this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, leaveMessage);
             this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ObserversUpdated, room.observers);
             this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
             return roomObserver.username;
@@ -77,9 +75,8 @@ export class SocketGameService extends SocketHandlerService {
             return;
         }
 
-        this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
-        const channelMessages = this.discussionChannelService.getDiscussionChannel(room.roomInfo.name)?.messages;
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, channelMessages);
+        const leaveMessage = this.discussionChannelService.leaveChannel(room.roomInfo.name, player.pseudo);
+        if (leaveMessage) this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.ChannelMessage, leaveMessage);
         this.swapPlayerForBot(room, player);
         this.socketEmitRoom(socket, room.roomInfo.name, SocketEvent.PlayerLeft, player);
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayerTurnChanged, room.getCurrentPlayerTurn()?.pseudo);
@@ -364,7 +361,7 @@ export class SocketGameService extends SocketHandlerService {
             time: new Date().toLocaleTimeString([], { hour12: false }),
         };
         discussionChannel.addMessage(channelMessage);
-        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, discussionChannel.messages);
+        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessage);
     }
 
     private mustVerifyBotPlayedHisTurn(room: Room): boolean {

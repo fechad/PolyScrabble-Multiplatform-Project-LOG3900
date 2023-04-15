@@ -118,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: Text(AppLocalizations.of(context)!.mainButtonClassic),
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const MenuPage()));
                   },
@@ -133,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: Text(AppLocalizations.of(context)!.mainButtonTheme),
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
                       return ThemedPage();

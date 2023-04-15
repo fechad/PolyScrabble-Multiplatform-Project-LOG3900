@@ -27,7 +27,6 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
   void initState() {
     super.initState();
     _configure();
-    chatService.discussionChannels = gameService.availableChannels;
   }
 
   _configure() {
@@ -152,7 +151,9 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
             ),
           ),
           const SizedBox(height: 20),
-          chatService.getRoomChannel().name != '' ? ChatCard(chatModel: chatService.getRoomChannel()) : SizedBox(height:50),
+          chatService.getRoomChannel().name != ''
+              ? ChatCard(chatModel: chatService.getRoomChannel())
+              : SizedBox(height: 50),
           ChatCard(chatModel: chatService.getDiscussions()[0]),
           const Padding(
             padding: EdgeInsets.only(right: 20, left: 20),

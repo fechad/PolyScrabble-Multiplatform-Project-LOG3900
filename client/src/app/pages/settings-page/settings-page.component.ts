@@ -2,6 +2,7 @@ import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { PageCommunicationManager } from '@app/classes/communication-manager/page-communication-manager';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import { PasswordChangerPopupComponent } from '@app/components/password-changer-popup/password-changer-popup.component';
 import { PredefinedAvatarsPopupComponent } from '@app/components/predefined-avatars-popup/predefined-avatars-popup.component';
@@ -12,6 +13,7 @@ import { DIALOG_WIDTH } from '@app/pages/main-page/main-page.component';
 import { HttpService } from '@app/services/http.service';
 import { LanguageService } from '@app/services/language.service';
 import { PlayerService } from '@app/services/player.service';
+import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
 
@@ -20,7 +22,7 @@ import { lastValueFrom } from 'rxjs';
     templateUrl: './settings-page.component.html',
     styleUrls: ['./settings-page.component.scss'],
 })
-export class SettingsPageComponent implements OnInit {
+export class SettingsPageComponent extends PageCommunicationManager implements OnInit {
     currentAvatar: File | null;
     fileReader: FileReader;
     isPredefinedAvatar: boolean;
@@ -31,6 +33,7 @@ export class SettingsPageComponent implements OnInit {
     avatarChanged: boolean;
     protected settingsForm: FormGroup;
     constructor(
+        protected socketService: SocketClientService,
         private formBuilder: FormBuilder,
         private dialog: MatDialog,
         private httpService: HttpService,
@@ -38,6 +41,7 @@ export class SettingsPageComponent implements OnInit {
         protected themeService: ThemeService,
         protected languageService: LanguageService,
     ) {
+        super(socketService);
         this.userSettings = this.playerService.account.userSettings;
         this.avatarChanged = false;
         this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
@@ -61,8 +65,9 @@ export class SettingsPageComponent implements OnInit {
     get changed(): boolean {
         return this.settingsForm.controls.username.value !== this.playerService.account.username || this.settingsForm.dirty || this.avatarChanged;
     }
-    // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method, @typescript-eslint/no-empty-function
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.connectSocket();
+    }
 
     async sendData() {
         if (this.currentAvatar) {
@@ -116,6 +121,10 @@ export class SettingsPageComponent implements OnInit {
             //     isRoomChannel: false,
             // });
         });
+    }
+
+    protected configureBaseSocketFeatures() {
+        return;
     }
 
     private selectAvatar(avatarFile: File) {

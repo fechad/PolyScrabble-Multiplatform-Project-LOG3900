@@ -40,7 +40,12 @@ class _ThemedJVState extends State<ThemedJV> {
     gameService.gameData.timerPerTurn = widget.time.toString();
 
     gameService.room.roomInfo.timerPerTurn = widget.time.toString();
-    soloGameService.joinRoom(widget.name, widget.name, languageService.currentLanguage.languageCode == 'en' ? 'english':'french');
+    soloGameService.joinRoom(
+        widget.name,
+        widget.name,
+        languageService.currentLanguage.languageCode == 'en'
+            ? 'english'
+            : 'french');
 
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
       return GamePageWidget();

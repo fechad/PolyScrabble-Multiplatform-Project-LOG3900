@@ -570,7 +570,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                                             .username);
                                                     socketService
                                                         .send('logOut');
-                                                    Navigator.pop(context);
                                                     Navigator.push(context,
                                                         MaterialPageRoute(
                                                             builder:

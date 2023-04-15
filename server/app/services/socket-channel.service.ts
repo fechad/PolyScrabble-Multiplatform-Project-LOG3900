@@ -1,4 +1,5 @@
 import { DiscussionChannel } from '@app/classes/discussion-channel';
+import { GENERAL_CHAT_NAME } from '@app/constants/constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { ChannelMessage } from '@app/interfaces/channel-message';
 import { Account } from '@app/interfaces/firestoreDB/account';
@@ -20,12 +21,15 @@ export class SocketChannelService extends SocketHandlerService {
 
     handleJoinChannel(socket: io.Socket, channelName: string, username: string, isRoomChannel?: boolean) {
         if (!channelName) return;
-        this.discussionChannelService.joinChannel(socket.id, channelName, username);
+        const joinMessage = this.discussionChannelService.joinChannel(socket.id, channelName, username);
+        const discussionChannel = this.discussionChannelService.getDiscussionChannel(channelName);
         this.socketJoin(socket, channelName);
-        if (isRoomChannel) this.socketEmit(socket, SocketEvent.RoomChannelUpdated, this.discussionChannelService.getDiscussionChannel(channelName));
-
-        const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
-        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
+        if (isRoomChannel) this.socketEmit(socket, SocketEvent.RoomChannelUpdated, discussionChannel);
+        if (joinMessage) {
+            this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, joinMessage);
+            if (discussionChannel?.name === GENERAL_CHAT_NAME) return;
+            this.socketEmit(socket, SocketEvent.UpdateDiscussionChannel, discussionChannel);
+        }
     }
 
     handleLeaveChannelCreator(socket: io.Socket, channelName: string, isRoomChannel: boolean) {
@@ -54,18 +58,14 @@ export class SocketChannelService extends SocketHandlerService {
     }
 
     handleLeaveChannel(socket: io.Socket, channelName: string, username: string) {
-        this.discussionChannelService.leaveChannel(channelName, username);
+        const leaveMessage = this.discussionChannelService.leaveChannel(channelName, username);
         this.socketLeaveRoom(socket, channelName);
-        const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
-        this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
+        if (leaveMessage) this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, leaveMessage);
     }
 
     handleChatChannelMessage(channelName: string, message: ChannelMessage) {
         const messageAdded = this.discussionChannelService.addChannelMessage(channelName, message);
-        if (messageAdded) {
-            const channelMessages = this.discussionChannelService.getDiscussionChannel(channelName)?.messages;
-            this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, channelMessages);
-        }
+        if (messageAdded) this.sendToEveryoneInRoom(channelName, SocketEvent.ChannelMessage, message);
     }
 
     handleGetDiscussionChannels(socket: io.Socket) {

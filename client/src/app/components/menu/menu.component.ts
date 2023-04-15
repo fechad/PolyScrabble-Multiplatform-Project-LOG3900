@@ -340,23 +340,36 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
     }
 
     protected configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.ChannelMessage, (channelMessages: ChannelMessage[]) => {
-            const discussionChannel = this.getDiscussionChannelByName(channelMessages[0]?.channelName);
+        this.socketService.on(SocketEvent.ChannelMessage, (channelMessage: ChannelMessage) => {
+            const discussionChannel = this.getDiscussionChannelByName(channelMessage.channelName);
             if (!discussionChannel) return;
-            discussionChannel.messages = channelMessages;
+            discussionChannel.messages.push(channelMessage);
+            const chat = document.getElementById('only-chat-container') as HTMLDivElement;
+            setTimeout(() => chat?.scrollTo(0, chat.scrollHeight), 0);
+        });
+
+        this.socketService.on(SocketEvent.UpdateDiscussionChannel, (updatedDiscussionChannel: DiscussionChannel) => {
+            const discussionChannel = this.getDiscussionChannelByName(updatedDiscussionChannel.name);
+            if (!discussionChannel) return;
+            this.setDiscussionChannel(discussionChannel, updatedDiscussionChannel);
             const chat = document.getElementById('only-chat-container') as HTMLDivElement;
             setTimeout(() => chat?.scrollTo(0, chat.scrollHeight), 0);
         });
 
         this.socketService.on(SocketEvent.AvailableChannels, (channels: DiscussionChannel[]) => {
             this.playerService.discussionChannelService.availableChannels = channels;
-            if (this.selectedDiscussionChannel.name && !channels.find((channel) => channel.name === this.selectedDiscussionChannel.name)) {
+            const newSelectedDiscussionChannel = this.playerService.discussionChannelService.availableChannels.find(
+                (channel) => channel.name === this.selectedDiscussionChannel.name,
+            );
+            if (this.selectedDiscussionChannel.name && !newSelectedDiscussionChannel) {
                 if (this.isWaitMultiPage) {
                     this.showRoomChatChannel();
                     return;
                 }
                 this.showChatChannel(0);
+                return;
             }
+            if (newSelectedDiscussionChannel) this.selectedDiscussionChannel = newSelectedDiscussionChannel;
         });
 
         this.socketService.on(SocketEvent.RoomChannelUpdated, (roomChannel: DiscussionChannel) => {
@@ -414,6 +427,13 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
 
     protected isDrawerOpen(drawer: MatSidenav) {
         return drawer.opened;
+    }
+
+    private setDiscussionChannel(discussionChannel: DiscussionChannel, updatedDiscussionChannel: DiscussionChannel) {
+        discussionChannel.messages = updatedDiscussionChannel.messages;
+        discussionChannel.activeUsers = updatedDiscussionChannel.activeUsers;
+        discussionChannel.name = updatedDiscussionChannel.name;
+        discussionChannel.owner = updatedDiscussionChannel.owner;
     }
 
     private handleGameWaitPage() {

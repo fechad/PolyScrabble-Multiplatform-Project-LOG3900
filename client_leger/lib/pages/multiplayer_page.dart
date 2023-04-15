@@ -27,7 +27,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
       ? <String>['Beginner', 'Expert', 'Adaptable']
       : <String>['Débutant', 'Expert', 'Adaptatif'];
   List<String> language = <String>['Français', 'English'];
-  int langValue = languageService.currentLanguage.languageCode == 'en' ? 1:0;
+  int langValue = languageService.currentLanguage.languageCode == 'en' ? 1 : 0;
   String gameTypeValue = languageService.currentLanguage.languageCode == 'en'
       ? 'Public'
       : 'Publique';
@@ -132,16 +132,17 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
                                         .classicCreateMultiVpDifficultyLabel),
                                 onChanged: (String? value) {
                                   setState(() {
-                                    difficultyValue = difficulty.indexOf(value!);
+                                    difficultyValue =
+                                        difficulty.indexOf(value!);
                                   });
                                 },
                                 items: difficulty.map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                               ),
                             ),
                             SizedBox(
@@ -321,13 +322,13 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   }
 
   checkFormValues() {
-    if (langValue == null || difficultyValue == null || timeValue == null) return 'Erreur';
+    if (langValue == null || difficultyValue == null || timeValue == null)
+      return 'Erreur';
     String language = 'french';
     String level = 'débutant';
     if (langValue == 0) {
       language = 'french';
-    }
-    else if (langValue == 1) {
+    } else if (langValue == 1) {
       language = 'english';
     }
 
@@ -345,7 +346,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
           isObserver: false,
           roomName: gameService.room.roomInfo.name,
           timer: gameService.gameData.timerPerTurn,
-          botsLevel: gameService.room.botsLevel!,
+          botsLevel: gameService.room.botsLevel ?? '',
           players: gameService.room.players);
     })));
   }

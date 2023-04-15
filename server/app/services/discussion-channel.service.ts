@@ -85,11 +85,7 @@ export class DiscussionChannelService {
         const discussionChannels = this.getPlayerDiscussionChannels(account.email);
         for (const discussionChannel of discussionChannels) {
             discussionChannel.updatePlayerAccount(account);
-            SocketManager.instance.socketHandlerService.sendToEveryoneInRoom(
-                discussionChannel.name,
-                SocketEvent.ChannelMessage,
-                discussionChannel.messages,
-            );
         }
+        SocketManager.instance.socketHandlerService.sendToEveryone(SocketEvent.AvailableChannels, this.availableChannels);
     }
 }

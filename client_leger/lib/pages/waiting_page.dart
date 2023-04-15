@@ -11,7 +11,6 @@ import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 import '../classes/game.dart';
 import '../components/avatar.dart';
-import '../components/sidebar.dart';
 import '../services/init_service.dart';
 import '../services/link_service.dart';
 import 'chat_page.dart';
@@ -19,11 +18,11 @@ import 'chat_page.dart';
 class WaitingPage extends StatefulWidget {
   const WaitingPage(
       {super.key,
-        required this.isObserver,
-        required this.roomName,
-        required this.timer,
-        this.botsLevel,
-        required this.players});
+      required this.isObserver,
+      required this.roomName,
+      required this.timer,
+      this.botsLevel,
+      required this.players});
   final String roomName;
   final String timer;
   final String? botsLevel;
@@ -41,10 +40,10 @@ class WaitingPage extends StatefulWidget {
 class _WaitingPageState extends State<WaitingPage> {
   _WaitingPageState(
       {required this.isObserver,
-        required this.roomName,
-        required this.timer,
-        this.botsLevel,
-        required this.players});
+      required this.roomName,
+      required this.timer,
+      this.botsLevel,
+      required this.players});
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController textController = TextEditingController();
   final ScrollController _controller = ScrollController();
@@ -63,6 +62,7 @@ class _WaitingPageState extends State<WaitingPage> {
   @override
   void initState() {
     super.initState();
+    linkService.setInsideWaitingRoomBoolean(true);
     messages = chatService.getRoomChannel().messages;
     connect();
     gameService.configureBaseSocketFeatures();
@@ -70,176 +70,182 @@ class _WaitingPageState extends State<WaitingPage> {
     linkService.popChannel(chatService.getRoomChannel().name);
     Timer(
         Duration(milliseconds: 0),
-            () =>
-        {_controller.jumpTo(_controller.position.maxScrollExtent + 300.0)});
+        () =>
+            {_controller.jumpTo(_controller.position.maxScrollExtent + 300.0)});
   }
 
   connect() {
     socket.on(
         'channelMessage',
-            (data) => {
-          if (mounted)
-            {
-              setState((() => {
-                if ((data as List<dynamic>)[0]['channelName'] ==
-                    chatService.getRoomChannel().name)
-                  {
-                    messages = [],
-                    if (linkService.getCurrentOpenedChat() !=
-                        gameService.room.roomInfo.name)
-                      {
-                        linkService.pushNewChannel(
-                            gameService.room.roomInfo.name),
-                      },
-                    (data as List<dynamic>).forEach((message) => {
-                      messages.add(ChatMessage(
-                          channelName: message['channelName'],
-                          system: message['system'],
-                          sender: message['sender'],
-                          time: message['time'],
-                          avatarUrl: message['avatarUrl'],
-                          account: message['system'] ||
-                              message['avatarUrl']
-                                  .toString()
-                                  .contains('robot-avatar') ||
-                              message['avatarUrl']
-                                  .toString()
-                                  .contains('assets')
-                              ? null
-                              : Account.fromJson(
-                              message['account']),
-                          message: message['message'])),
-                    }),
-                    _scrollDown()
-                  }
-              })),
-            }
-        });
+        (message) => {
+              if (mounted)
+                {
+                  setState((() => {
+                        if (message['channelName'] ==
+                            chatService.getRoomChannel().name)
+                          {
+                            if (linkService.getCurrentOpenedChat() !=
+                                gameService.room.roomInfo.name)
+                              {
+                                linkService.pushNewChannel(
+                                    gameService.room.roomInfo.name),
+                              }
+                            else if (!linkService.getIsInAGame() ||
+                                (linkService.getIsInAGame() &&
+                                    linkService.getCurrentOpenedChat() ==
+                                        gameService.room.roomInfo.name))
+                              {
+                                messages.add(ChatMessage(
+                                    channelName: message['channelName'],
+                                    system: message['system'],
+                                    sender: message['sender'],
+                                    time: message['time'],
+                                    avatarUrl: message['avatarUrl'],
+                                    account: message['system'] ||
+                                            message['avatarUrl']
+                                                .toString()
+                                                .contains('robot-avatar') ||
+                                            message['avatarUrl']
+                                                .toString()
+                                                .contains('assets')
+                                        ? null
+                                        : Account.fromJson(message['account']),
+                                    message: message['message'])),
+                                _scrollDown(),
+                              }
+                          }
+                      })),
+                }
+            });
 
     socketService.on(
         "roomCreated",
-            (serverRoom) => {
-          gameService.room = gameService.decodeModel(serverRoom),
-          if (mounted)
-            {
-              setState(() => gameService.room.roomInfo.name),
-              linkService
-                  .setCurrentOpenedChat(gameService.room.roomInfo.name),
-            }
-        });
+        (serverRoom) => {
+              gameService.room = gameService.decodeModel(serverRoom),
+              if (mounted)
+                {
+                  setState(() => gameService.room.roomInfo.name),
+                  linkService
+                      .setCurrentOpenedChat(gameService.room.roomInfo.name),
+                }
+            });
 
     socketService.on(
         "playerFound",
-            (data) => {
-          myRoom = gameService.decodeModel(data['room']),
-          gameService.room.players
-              .add(gameService.decodePlayer(data['player'])),
-          showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(AppLocalizations.of(context)!.accessRequest),
-                  content: Text(
-                      "${AppLocalizations.of(context)!.accessMessagePartOne} ${gameService.room.players[gameService.room.players.length - 1].clientAccountInfo!.username} ${AppLocalizations.of(context)!.accessMessagePartTwo}"),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () => {
-                          gameService.rejectPlayer(gameService
-                              .room
-                              .players[
-                          gameService.room.players.length - 1]
-                              .clientAccountInfo!
-                              .username),
-                          Navigator.pop(context)
-                        },
-                        child: Text(AppLocalizations.of(context)!.no),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                          themeManager.themeMode == ThemeMode.light
-                              ? Color.fromARGB(255, 125, 175, 107)
-                              : Color.fromARGB(255, 121, 101, 220),
-                          textStyle: const TextStyle(fontSize: 20),
-                        )),
-                    ElevatedButton(
-                        onPressed: () => {
-                          Navigator.pop(context),
-                          gameService.acceptPlayer(gameService
-                              .room
-                              .players[
-                          gameService.room.players.length - 1]
-                              .clientAccountInfo!
-                              .username),
-                          noPlayers++,
-                          if (noPlayers > 1) canStart = true,
-                        },
-                        child: Text(AppLocalizations.of(context)!.yes),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          textStyle: const TextStyle(fontSize: 20),
-                        ))
-                  ],
-                );
-              })
-        });
+        (data) => {
+              myRoom = gameService.decodeModel(data['room']),
+              gameService.room.players
+                  .add(gameService.decodePlayer(data['player'])),
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(AppLocalizations.of(context)!.accessRequest),
+                      content: Text(
+                          "${AppLocalizations.of(context)!.accessMessagePartOne} ${gameService.room.players[gameService.room.players.length - 1].clientAccountInfo!.username} ${AppLocalizations.of(context)!.accessMessagePartTwo}"),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () => {
+                                  gameService.rejectPlayer(gameService
+                                      .room
+                                      .players[
+                                          gameService.room.players.length - 1]
+                                      .clientAccountInfo!
+                                      .username),
+                                  Navigator.pop(context)
+                                },
+                            child: Text(AppLocalizations.of(context)!.no),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  themeManager.themeMode == ThemeMode.light
+                                      ? Color.fromARGB(255, 125, 175, 107)
+                                      : Color.fromARGB(255, 121, 101, 220),
+                              textStyle: const TextStyle(fontSize: 20),
+                            )),
+                        ElevatedButton(
+                            onPressed: () => {
+                                  Navigator.pop(context),
+                                  gameService.acceptPlayer(gameService
+                                      .room
+                                      .players[
+                                          gameService.room.players.length - 1]
+                                      .clientAccountInfo!
+                                      .username),
+                                  noPlayers++,
+                                  if (noPlayers > 1) canStart = true,
+                                },
+                            child: Text(AppLocalizations.of(context)!.yes),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              textStyle: const TextStyle(fontSize: 20),
+                            ))
+                      ],
+                    );
+                  })
+            });
 
     socketService.on(
         "playerAccepted",
-            (data) => {
-          gameService.room = gameService.decodeModel(data['serverRoom']),
-          noPlayers = gameService.room.players.length,
-          setState(() => {
-            if (!isObserver && noPlayers > 1 && gameService.room.roomInfo.creatorName == authenticator.getCurrentUser().username)
-              {
-                canStart = true,
-              }
-          })
-        });
+        (data) => {
+              gameService.room = gameService.decodeModel(data['serverRoom']),
+              noPlayers = gameService.room.players.length,
+              setState(() => {
+                        canStart = !isObserver &&
+                            noPlayers > 1 &&
+                            gameService.room.roomInfo.creatorName ==
+                                authenticator.getCurrentUser().username,
+                  })
+            });
 
     socketService.on(
         "playerRejected",
-            (room) => {
-          room = gameService.decodeModel(room),
-          gameService.leaveRoomOther(),
-          linkService.setCurrentOpenedChat(''),
-          Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return MyHomePage(title: "polyscrabble");
-          }))),
-        });
+        (room) => {
+              room = gameService.decodeModel(room),
+              gameService.leaveRoomOther(),
+              linkService.setCurrentOpenedChat(''),
+              Navigator.pop(context),
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return MyHomePage(title: "polyscrabble");
+              }))),
+            });
 
     socketService.on(
         "playerLeft",
-            (player) => {
-          noPlayers = gameService.room.players.length -= 1,
-          if (mounted){
-            setState(() =>
-            {
-              gameService.room.players.removeWhere((element) =>
-              element.clientAccountInfo!.username ==
-                  player['clientAccountInfo']['username']),
-              if (noPlayers <= 1) canStart = false,
-            })
-          }
-        });
+        (player) => {
+              noPlayers = gameService.room.players.length -= 1,
+              if (mounted)
+                {
+                  setState(() => {
+                        gameService.room.players.removeWhere((element) =>
+                            element.clientAccountInfo!.username ==
+                            player['clientAccountInfo']['username']),
+                        if (noPlayers <= 1) canStart = false,
+                      })
+                }
+            });
 
     socketService.on(
         "gameStarted",
-            (data) => {
-          Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return const GamePageWidget();
-          }))),
-        });
+        (data) => {
+              chatService.saveRoomMessages(messages),
+              Navigator.pop(context),
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return const GamePageWidget();
+              }))),
+            });
 
     socketService.on(
         "roomCreatorLeft",
-            (data) => {
-          socketService.send(
-              "leaveRoomOther", gameService.room.roomInfo.name),
-          gameService.reinitializeRoom(),
-          Navigator.push(context, MaterialPageRoute(builder: ((context) {
-            return MyHomePage(title: 'PolyScrabble');
-          })))
-        });
+        (data) => {
+              socketService.send(
+                  "leaveRoomOther", gameService.room.roomInfo.name),
+              gameService.reinitializeRoom(),
+              Navigator.pop(context),
+              Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                return MyHomePage(title: 'PolyScrabble');
+              })))
+            });
   }
 
   void _scrollDown() {
@@ -255,15 +261,16 @@ class _WaitingPageState extends State<WaitingPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async { return false; },
-        child:
-        Scaffold(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
           key: scaffoldKey,
           drawer: ChatDrawer(),
           endDrawer: UserResume(),
           body: Row(children: <Widget>[
             //CollapsingNavigationDrawer(),
-            SizedBox(height:40),
+            SizedBox(height: 40),
             Container(
               width: MediaQuery.of(context).size.width * 0.937,
               height: MediaQuery.of(context).size.height,
@@ -298,77 +305,80 @@ class _WaitingPageState extends State<WaitingPage> {
                                 child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: gameService.room.players.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return
-                                        Container(
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    strokeAlign: StrokeAlign.center,
-                                                    width: 5,
-                                                    color: Colors.transparent)),
-                                            child :
-                                            Avatar(
-                                                insideChat: false,
-                                                url: gameService
-                                                    .room
-                                                    .players[index]
-                                                    .clientAccountInfo!
-                                                    .userSettings
-                                                    .avatarUrl));
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  strokeAlign:
+                                                      StrokeAlign.center,
+                                                  width: 5,
+                                                  color: Colors.transparent)),
+                                          child: Avatar(
+                                              insideChat: false,
+                                              url: gameService
+                                                  .room
+                                                  .players[index]
+                                                  .clientAccountInfo!
+                                                  .userSettings
+                                                  .avatarUrl));
                                     }))
                           ])),
                       linkService.getIsInAGame()
                           ? Padding(
-                          padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
-                          child: InkWell(
-                            onTap: () {
-                              linkService.setCurrentOpenedChat('');
-                              Navigator.pop(context);
-                            },
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.black,
-                              size: 60,
-                            ),
-                          ))
+                              padding: const EdgeInsets.fromLTRB(350, 15, 0, 0),
+                              child: InkWell(
+                                onTap: () {
+                                  linkService.setCurrentOpenedChat('');
+                                  Navigator.pop(context);
+                                },
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  color: Colors.black,
+                                  size: 60,
+                                ),
+                              ))
                           : Padding(
-                          padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
-                          child: Row(children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                minimumSize: Size(50, 40),
-                                textStyle: const TextStyle(fontSize: 20),
-                              ),
-                              child: Text(AppLocalizations.of(context)!.quit),
-                              onPressed: () {
-                                gameService.leave();
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: ((context) {
+                              padding: const EdgeInsets.fromLTRB(180, 15, 0, 0),
+                              child: Row(children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    minimumSize: Size(50, 40),
+                                    textStyle: const TextStyle(fontSize: 20),
+                                  ),
+                                  child:
+                                      Text(AppLocalizations.of(context)!.quit),
+                                  onPressed: () {
+                                    gameService.leave();
+                                    Navigator.pop(context);
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: ((context) {
                                       return MyHomePage(title: "polyscrabble");
                                     })));
-                              },
-                            ),
-                            SizedBox(width: 30),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                  themeManager.themeMode == ThemeMode.light
-                                      ? Color.fromARGB(255, 125, 175, 107)
-                                      : Color.fromARGB(255, 121, 101, 220),
-                                  minimumSize: Size(50, 40),
-                                  textStyle: const TextStyle(fontSize: 20),
+                                  },
                                 ),
-                                child:
-                                Text(AppLocalizations.of(context)!.start),
-                                onPressed: canStart
-                                    ? () => {
-                                  gameService.requestGameStart(),
-                                  linkService.setCurrentOpenedChat(''),
-                                }
-                                    : null),
-                          ])),
+                                SizedBox(width: 30),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: themeManager.themeMode ==
+                                              ThemeMode.light
+                                          ? Color.fromARGB(255, 125, 175, 107)
+                                          : Color.fromARGB(255, 121, 101, 220),
+                                      minimumSize: Size(50, 40),
+                                      textStyle: const TextStyle(fontSize: 20),
+                                    ),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.start),
+                                    onPressed: canStart
+                                        ? () => {
+                                              gameService.requestGameStart(),
+                                              linkService
+                                                  .setCurrentOpenedChat(''),
+                                            }
+                                        : null),
+                              ])),
                     ]),
                   ),
                   Column(children: [
@@ -382,7 +392,7 @@ class _WaitingPageState extends State<WaitingPage> {
                       child: ListView.builder(
                         controller: _controller,
                         itemBuilder: (BuildContext context, int index) =>
-                        messages[index],
+                            messages[index],
                         itemCount: messages.length,
                         reverse: false,
                         padding: EdgeInsets.all(6.0),
@@ -390,7 +400,8 @@ class _WaitingPageState extends State<WaitingPage> {
                   Divider(height: 1.0),
                   Container(
                     child: _buildComposer(),
-                    decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                    decoration:
+                        BoxDecoration(color: Theme.of(context).cardColor),
                   ),
                 ],
               ),
@@ -420,7 +431,7 @@ class _WaitingPageState extends State<WaitingPage> {
                   decoration: InputDecoration.collapsed(
                       hintStyle: TextStyle(fontSize: 18),
                       hintText:
-                      AppLocalizations.of(context)!.generalPagePlaceholder),
+                          AppLocalizations.of(context)!.generalPagePlaceholder),
                 ),
               ),
               Container(

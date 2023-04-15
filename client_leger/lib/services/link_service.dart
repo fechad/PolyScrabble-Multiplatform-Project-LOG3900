@@ -91,6 +91,9 @@ abstract class _LinkService with Store {
   @observable
   Observable<bool> insideChat = Observable<bool>(false);
 
+  @observable
+  Observable<bool> insideWaitingRoom = Observable<bool>(false);
+
   List<Placement> placementStack = [];
 
   Account getPlayerToShow() {
@@ -107,6 +110,10 @@ abstract class _LinkService with Store {
 
   bool getInsideChatBoolean() {
     return insideChat.value;
+  }
+
+  bool getInsideWaitingRoomBoolean() {
+    return insideWaitingRoom.value;
   }
 
   int getCurrentSelectedIndex() {
@@ -175,6 +182,11 @@ abstract class _LinkService with Store {
   @action
   setInsideChatBoolean(bool value) {
     insideChat.value = value;
+  }
+
+  @action
+  setInsideWaitingRoomBoolean(bool value) {
+    insideWaitingRoom.value = value;
   }
 
   @action

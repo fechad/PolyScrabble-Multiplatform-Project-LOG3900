@@ -54,39 +54,35 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
   void _configureSocket() async {
     socket.on(
         'channelMessage',
-        (data) => {
-              chatName = (data as List<dynamic>)[0]['channelName'],
-              chatService.getDiscussionChannelByName(chatName).messages = [],
-              (data).forEach((message) => {
-                    chatService
-                        .getDiscussionChannelByName(chatName)
-                        .messages
-                        .add(ChatMessage(
-                            channelName: message['channelName'],
-                            system: message['system'],
-                            sender: message['sender'],
-                            time: message['time'],
-                            avatarUrl: message['avatarUrl'],
-                            account: message['system'] ||
-                                    message['avatarUrl']
-                                        .toString()
-                                        .contains('robot-avatar') ||
-                                    message['avatarUrl']
-                                        .toString()
-                                        .contains('assets')
-                                ? null
-                                : Account.fromJson(message['account']),
-                            message: message['message'])),
-                  }),
+        (message) => {
+              if (!message['channelName'].toString().startsWith('Room') && linkService.getCurrentOpenedChat() == '') {
+              chatService
+                  .getDiscussionChannelByName(message['channelName'])
+                  .messages
+                  .add(ChatMessage(
+                      channelName: message['channelName'],
+                      system: message['system'],
+                      sender: message['sender'],
+                      time: message['time'],
+                      avatarUrl: message['avatarUrl'],
+                      account: message['system'] ||
+                              message['avatarUrl']
+                                  .toString()
+                                  .contains('robot-avatar') ||
+                              message['avatarUrl'].toString().contains('assets')
+                          ? null
+                          : Account.fromJson(message['account']),
+                      message: message['message'])),
               if (chatService
-                          .getDiscussionChannelByName(chatName)
+                          .getDiscussionChannelByName(message['channelName'])
                           .messages
                           .length >
                       2 &&
                   chatService
-                          .getDiscussionChannelByName(chatName)
+                          .getDiscussionChannelByName(message['channelName'])
                           .messages[chatService
-                                  .getDiscussionChannelByName(chatName)
+                                  .getDiscussionChannelByName(
+                                      message['channelName'])
                                   .messages
                                   .length -
                               1]
@@ -95,9 +91,10 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                 {
                   if (mounted)
                     {
-                      if (linkService.getCurrentOpenedChat() != chatName)
+                      if (linkService.getCurrentOpenedChat() !=
+                          message['channelName'])
                         {
-                          linkService.pushNewChannel(chatName),
+                          linkService.pushNewChannel(message['channelName']),
                           setState(() {
                             if (!linkService.getNewMessageBoolean())
                               linkService.newMessageChange();
@@ -105,14 +102,14 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                           FlutterRingtonePlayer.play(
                             android: AndroidSounds.notification,
                             ios: IosSounds.receivedMessage,
-                            looping: false, // Android only - API >= 28
-                            volume: 0.5, // Android only - API >= 28
-                            asAlarm: false, // Android only - all APIs
+                            looping: false,
+                            volume: 0.5,
+                            asAlarm: false,
                           ),
                         }
                     },
                 }
-            });
+            }});
 
     socket.on(
         'availableChannels',
@@ -174,6 +171,7 @@ class CollapsingNavigationDrawerState extends State<CollapsingNavigationDrawer>
                                 setState(() {
                                   linkService.setCurrentSelectedIndex(counter);
                                 });
+                                Navigator.pop(context);
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: ((context) {
                                   return ObserverPage();
