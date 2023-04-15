@@ -39,7 +39,7 @@ export class GameManager {
         this.turnPassedCounter = 0;
         this.hasTimeout = false;
         this.language = language && language === 'english' ? Language.English : Language.French;
-        this.goalManager = new GoalManager();
+        this.goalManager = new GoalManager(this.language);
         const tools: VirtualTools = {
             bank: this.letterBank,
             manipulator: this.boardManipulator,

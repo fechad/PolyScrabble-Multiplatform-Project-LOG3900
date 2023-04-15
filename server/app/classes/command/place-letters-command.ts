@@ -63,6 +63,10 @@ export class PlaceLettersCommand extends Command {
         if (message.score >= THIRTY_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.ThirtyPointer);
         if (this.placementArguments.word.length >= TILES_NEEDED_FOR_GOAL) Matcher.notifyGoalManager(this.commandSender, GoalTitle.AtLeastFive);
         if (this.checkNoChangeNoPass()) Matcher.notifyGoalManager(this.commandSender, GoalTitle.NoChangeNoPass);
+        if (this.commandSender.points >= TOTAL_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.FirstToHundredEn);
+        if (message.score >= THIRTY_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.ThirtyPointerEn);
+        if (this.placementArguments.word.length >= TILES_NEEDED_FOR_GOAL) Matcher.notifyGoalManager(this.commandSender, GoalTitle.AtLeastFiveEn);
+        if (this.checkNoChangeNoPass()) Matcher.notifyGoalManager(this.commandSender, GoalTitle.NoChangeNoPassEn);
     }
 
     private checkNoChangeNoPass(): boolean | undefined {

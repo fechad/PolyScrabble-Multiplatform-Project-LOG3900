@@ -7,4 +7,12 @@ export enum GoalDescription {
     ThirtyPointer = 'Faire un placement qui rapporte 30 points',
     NoChangeNoPass = 'Faire 3 placements sans passer son tour ni échanger ses lettres volontairement',
     NeedOr = "Former un mot avec la Syllabe 'OU'",
+    ThreeWordsAtOnceEn = 'Create three words at once',
+    AtLeastFiveEn = 'Create a word with at least five letters from your rack',
+    FirstToHundredEn = 'Be the first to reach 100 points',
+    ThirdTimeCharmEn = 'Place the same word three times in a row',
+    PalindromeEn = 'Create a palindrome with at least 3 letters',
+    ThirtyPointerEn = 'Make a placement with a score of at least 30 points',
+    NoChangeNoPassEn = 'Make three placements in a row without skipping a turn or changing letters',
+    NeedOrEn = "Create a word with the syllable 'OU'",
 }

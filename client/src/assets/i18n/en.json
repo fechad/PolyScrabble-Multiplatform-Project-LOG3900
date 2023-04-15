@@ -98,7 +98,11 @@
 
     },
     "GAME-PAGE": {
-        "OBJECTIVES": "Objectives",
+        "OBJECTIVES": {
+            "TITLE": "Objectives",
+            "PUBLIC": "public",
+            "REACHED": "reached"
+        },
         "RACK": "Racks",
         "HINT": {
             "TITLE": "Choose a hint to preview",

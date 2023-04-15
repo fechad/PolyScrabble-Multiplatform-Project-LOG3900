@@ -12,6 +12,7 @@ import {
     TARGET_GOAL_COUNT
 } from '@app/constants/goals-constants';
 import { GoalTitle } from '@app/enums/goal-titles';
+import { Language } from '@app/enums/language';
 import { Goal } from '@app/interfaces/goal';
 import { expect } from 'chai';
 import { assert } from 'console';
@@ -26,14 +27,14 @@ describe('GoalManager tests', () => {
     let secondPlayer: Player;
 
     it('Should have 4 goals by default after initialization', () => {
-        const manager = new GoalManager();
+        const manager = new GoalManager(Language.French);
         expect((manager as any).goals.length).to.equals(TARGET_GOAL_COUNT);
     });
 
     it('Should be able to create more than two GoalManagers', () => {
-        let manager = new GoalManager();
-        manager = new GoalManager();
-        manager = new GoalManager();
+        let manager = new GoalManager(Language.French);
+        manager = new GoalManager(Language.French);
+        manager = new GoalManager(Language.French);
         expect((manager as any).goals.length).to.equals(TARGET_GOAL_COUNT);
     });
 
@@ -41,7 +42,7 @@ describe('GoalManager tests', () => {
         let manager: GoalManager;
         beforeEach(() => {
             Matcher.goalManagers = [];
-            manager = new GoalManager();
+            manager = new GoalManager(Language.French);
             manager['goals'] = [
                 { ...AT_LEAST_5_GOAL },
                 { ...PALINDROME_GOAL },

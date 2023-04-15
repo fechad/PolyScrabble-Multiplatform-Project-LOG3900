@@ -97,7 +97,11 @@
         "NO-INFO" : "Aucune information pour le moment"
     },
     "GAME-PAGE": {
-        "OBJECTIVES": "Objectifs",
+        "OBJECTIVES": {
+            "TITLE": "Objectifs",
+            "PUBLIC": "publique",
+            "REACHED": "atteint"
+        },
         "RACK": "Chevalets",
         "HINT": {
             "TITLE": "Choisissez un indice à prévisualiser",

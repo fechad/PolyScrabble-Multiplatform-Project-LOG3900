@@ -7,4 +7,12 @@ export enum GoalTitle {
     ThirtyPointer = 'Trente-ception!',
     NoChangeNoPass = 'Sans relâche',
     NeedOr = 'ChOUette!',
+    ThreeWordsAtOnceEn = 'Three at once!',
+    AtLeastFiveEn = 'Bingo! well almost...',
+    FirstToHundredEn = 'Mister three digits',
+    ThirdTimeCharmEn = 'Repetitive but impressive still!',
+    PalindromeEn = 'Palindrome mania',
+    ThirtyPointerEn = 'Thirty-ception!',
+    NoChangeNoPassEn = 'No stopping!',
+    NeedOrEn = 'OUh interesting!',
 }
