@@ -11,7 +11,7 @@ export class DiscussionChannelService {
     availableChannels: DiscussionChannel[];
     roomChannels: DiscussionChannel[];
     constructor() {
-        this.availableChannels = [new DiscussionChannel('General Chat')];
+        this.availableChannels = [new DiscussionChannel('Principal')];
         this.roomChannels = [];
     }
 

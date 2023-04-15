@@ -57,7 +57,7 @@ describe('LeaderBoard', () => {
 
     const firstPlayer = new Player('socketId1', 'pseudo1', true);
     const secondPlayer = new Player('socketId2', 'pseudo2', false);
-    roomMock.roomInfo.name = 'Room0';
+    roomMock.roomInfo.name = 'R-0';
     roomMock['gameManager'].turnPassedCounter = 0;
     const socketMock = new SocketMock() as any;
 

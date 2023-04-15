@@ -84,7 +84,17 @@
         "PASSWORD": "Changer le mot de passe",
         "PASSWORD-MESSAGE": "Vous serez déconnecté pour continuer avec cette demande.",
         "SAVE": "Sauvegarder",
-        "EDIT": "editer"
+        "EDIT": "editer",
+        "STATISTICS":{
+            "TITLE": "Statistiques",
+            "PLAYED": "Parties jouées",
+             "WON": "Parties gagnées",
+             "AVG": "Score moyen",
+             "AVG-TIME": "Temps de jeu moyen"
+        },
+        "HISTORY" : "Historiques",
+        "CONNECTION" : "Connexions",
+        "NO-INFO" : "Aucune information pour le moment"
     },
     "GAME-PAGE": {
         "OBJECTIVES": "Objectifs",

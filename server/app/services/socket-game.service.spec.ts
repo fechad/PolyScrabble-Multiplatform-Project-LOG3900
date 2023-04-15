@@ -16,10 +16,10 @@ import { CommandResult } from '@app/interfaces/command-result';
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 import * as io from 'socket.io';
-import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { ChatMessageService } from './chat.message';
 import { DateService } from './date.service';
 import { DiscussionChannelService } from './discussion-channel.service';
+import { PlayerGameHistoryService } from './GameEndServices/player-game-history.service';
 import { GamesHistoryService } from './games.history.service';
 import { RoomService } from './room.service';
 import { ScoresService } from './score.service';
@@ -59,7 +59,7 @@ describe('socketGameService service tests', () => {
     );
     const firstPlayer = new Player('socketId1', 'pseudo1', true);
     const roomMock = new Room();
-    roomMock.roomInfo.name = 'Room0';
+    roomMock.roomInfo.name = 'R-0';
     roomMock.bots[0] = {
         playTurn: () => {
             return '' as any;

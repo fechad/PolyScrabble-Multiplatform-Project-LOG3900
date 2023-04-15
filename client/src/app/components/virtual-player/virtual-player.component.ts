@@ -81,7 +81,7 @@ export class VirtualPlayerComponent extends ComponentCommunicationManager implem
     }
     protected configureBaseSocketFeatures() {
         this.socketService.on(SocketEvent.RoomCreated, (serverRoom: Room) => {
-            if (!serverRoom.roomInfo.name.startsWith('Room')) return;
+            if (!serverRoom.roomInfo.name.startsWith('R-')) return;
             if (serverRoom.botsLevel !== this.botId) return;
             this.room.roomInfo.name = serverRoom.roomInfo.name;
             this.socketService.send(SocketEvent.CreateChatChannel, {

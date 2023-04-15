@@ -49,7 +49,7 @@ class _GameCardsState extends State<GameCards> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(languageService.currentLanguage.languageCode == 'en'
-                        ? "Duration: "
+                        ? "Duration: " + game.duration!
                         : "Durée: " + game.duration!),
                     Text("Score: " + game.score.toString()),
                   ],

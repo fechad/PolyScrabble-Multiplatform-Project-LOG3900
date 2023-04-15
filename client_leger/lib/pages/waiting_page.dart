@@ -191,10 +191,10 @@ class _WaitingPageState extends State<WaitingPage> {
               gameService.room = gameService.decodeModel(data['serverRoom']),
               noPlayers = gameService.room.players.length,
               setState(() => {
-                        canStart = !isObserver &&
-                            noPlayers > 1 &&
-                            gameService.room.roomInfo.creatorName ==
-                                authenticator.getCurrentUser().username,
+                    canStart = !isObserver &&
+                        noPlayers > 1 &&
+                        gameService.room.roomInfo.creatorName ==
+                            authenticator.getCurrentUser().username,
                   })
             });
 

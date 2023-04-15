@@ -25,7 +25,7 @@ describe('SocketManager service tests', () => {
     const socketManager = server.socketManager;
 
     const roomMock = new Room();
-    roomMock.roomInfo.name = 'Room0';
+    roomMock.roomInfo.name = 'R-0';
     const urlString = 'http://localhost:3000';
 
     const clientSocket = ioClient(urlString);
@@ -53,7 +53,7 @@ describe('SocketManager service tests', () => {
 
         it('should call handleReconnect on reconnect', (done) => {
             const stub = sinon.stub(socketManager['socketHandlerService'], 'handleReconnect');
-            const playerData: PlayerData = { socketId: '1', roomName: 'room0' };
+            const playerData: PlayerData = { socketId: '1', roomName: 'r-0' };
             clientSocket.emit('reconnect', playerData);
             setTimeout(() => {
                 assert(stub.called, 'did not call socketManager.socketHandlerService.handleReconnect on reconnect');

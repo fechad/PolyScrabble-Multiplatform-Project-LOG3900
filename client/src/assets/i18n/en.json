@@ -84,7 +84,18 @@
         "PASSWORD": "Change password",
         "PASSWORD-MESSAGE": "You will be logged out to continue with this request.",
         "SAVE": "Save",
-        "EDIT": "edit"
+        "EDIT": "edit",
+        "STATISTICS":{
+            "TITLE": "Statistics",
+            "PLAYED": "Games played",
+             "WON": "Games won",
+             "AVG": "Average score",
+             "AVG-TIME": "Average time per game"
+        },
+        "HISTORY" : "Histories",
+        "CONNECTION" : "Connections",
+        "NO-INFO" : "No info at this time"
+
     },
     "GAME-PAGE": {
         "OBJECTIVES": "Objectives",

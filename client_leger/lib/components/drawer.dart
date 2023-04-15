@@ -217,7 +217,7 @@ class _ChatDrawerWidgetState extends State<ChatDrawer> {
                                       if (value
                                           .toLowerCase()
                                           .trim()
-                                          .startsWith('room')) {
+                                          .startsWith('r-')) {
                                         return AppLocalizations.of(context)!
                                             .createChatErrorThree;
                                       }
