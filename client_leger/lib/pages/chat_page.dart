@@ -31,7 +31,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   final ScrollController _controller = ScrollController();
   final ChatModel chat;
   bool isWriting = false;
-  late List<ChatMessage> messages;
+  List<ChatMessage> messages = [];
   bool joined = false;
 
   @override
@@ -63,12 +63,51 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
   connect() {
     socket.on(
         'channelMessage',
+        (message) => {
+              if (mounted)
+                {
+                  setState(((() => {
+                        messages.
+                        add(ChatMessage(
+                                channelName: message['channelName'],
+                                system: message['system'],
+                                sender: message['sender'],
+                                time: message['time'],
+                                avatarUrl: message['avatarUrl'],
+                                account: message['system'] ||
+                                    message['avatarUrl']
+                                        .toString()
+                                        .contains('robot-avatar') ||
+                                    message['avatarUrl']
+                                        .toString()
+                                        .contains('assets')
+                                    ? null
+                                    : Account.fromJson(message['account']),
+                                message: message['message'])),
+                            _scrollDown(),
+
+                        if (linkService.currentOpenedChat != chat.name)
+                          {
+                            FlutterRingtonePlayer.play(
+                              android: AndroidSounds.notification,
+                              ios: IosSounds.receivedMessage,
+                              looping: false,
+                              volume: 0.5,
+                              asAlarm: false,
+                            ),
+                          },
+                      })))
+                }
+            });
+
+    socket.on(
+        'updateDiscussionChannel',
         (data) => {
               if (mounted)
                 {
+                  messages = [],
                   setState((() => {
-                        messages = [],
-                        (data as List<dynamic>).forEach((message) => {
+                        (data['messages']).forEach((message) => {
                               messages.add(ChatMessage(
                                   channelName: message['channelName'],
                                   system: message['system'],
@@ -88,9 +127,9 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                   FlutterRingtonePlayer.play(
                     android: AndroidSounds.notification,
                     ios: IosSounds.receivedMessage,
-                    looping: false, // Android only - API >= 28
-                    volume: 0.5, // Android only - API >= 28
-                    asAlarm: false, // Android only - all APIs
+                    looping: false,
+                    volume: 0.5,
+                    asAlarm: false,
                   ),
                 },
               _scrollDown()
@@ -110,6 +149,8 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
 
   @override
   Widget build(BuildContext context) {
+    linkService.setInsideWaitingRoomBoolean(false);
+
     return Scaffold(
       key: scaffoldKey,
       endDrawerEnableOpenDragGesture: false,
@@ -230,8 +271,12 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                                                   ),
                                                   onPressed: () {
                                                     leaveChannel();
-                                                    Navigator.pop(context);
-                                                    Navigator.push(context,
+                                                    if (linkService.getIsInAGame()) {
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    }
+                                                    else {
+                                                      Navigator.push(context,
                                                         MaterialPageRoute(
                                                             builder:
                                                                 ((context) {
@@ -239,6 +284,7 @@ class _GeneralChatWidgetState extends State<GeneralChatWidget> {
                                                           title:
                                                               'PolyScrabble');
                                                     })));
+                                                    }
                                                   },
                                                 ),
                                               ],

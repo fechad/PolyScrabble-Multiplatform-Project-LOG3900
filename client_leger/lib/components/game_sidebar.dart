@@ -9,6 +9,7 @@ import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import '../classes/game.dart';
 import '../main.dart';
 import '../pages/change_password_page.dart';
+import '../pages/chat_page.dart';
 import '../services/link_service.dart';
 
 class GameSidebar extends StatefulWidget {
@@ -29,6 +30,7 @@ class _GameSidebarState extends State<GameSidebar> {
   void initState() {
     super.initState();
     gameService.room.roomInfo.isGameOver = false;
+    linkService.setIsInAGame(true);
     _configure();
     musicPlayer = AudioCache(fixedPlayer: audioPlayer);
     if (backgroundService.currentVP != '') {
@@ -42,14 +44,43 @@ class _GameSidebarState extends State<GameSidebar> {
   _configure() {
     socketService.on(
         'channelMessage',
-            (data) => {
+            (message) => {
+              setState((() => {
 
+
+                if (message['channelName'] ==
+                    chatService.getRoomChannel().name && linkService.getIsInAGame() && linkService.getCurrentOpenedChat() == '')
+                  {
+                    if (linkService.getCurrentOpenedChat() !=
+                        gameService.room.roomInfo.name)
+                      {
+                        linkService.pushNewChannel(
+                            gameService.room.roomInfo.name),
+                      },
+                    chatService.getRoomChannel().messages.add(ChatMessage(
+                        channelName: message['channelName'],
+                        system: message['system'],
+                        sender: message['sender'],
+                        time: message['time'],
+                        avatarUrl: message['avatarUrl'],
+                        account: message['system'] ||
+                            message['avatarUrl']
+                                .toString()
+                                .contains('robot-avatar') ||
+                            message['avatarUrl']
+                                .toString()
+                                .contains('assets')
+                            ? null
+                            : Account.fromJson(message['account']),
+                        message: message['message'])),
+                  }
+              })),
                       FlutterRingtonePlayer.play(
                         android: AndroidSounds.notification,
                         ios: IosSounds.receivedMessage,
-                        looping: false, // Android only - API >= 28
-                        volume: 0.5, // Android only - API >= 28
-                        asAlarm: false, // Android only - all APIs
+                        looping: false,
+                        volume: 0.5,
+                        asAlarm: false,
                       ),
 
         });

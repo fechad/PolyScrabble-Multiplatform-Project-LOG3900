@@ -44,6 +44,7 @@ export class DiscussionChannel {
         }
         if (previousUserName === account.username) return;
 
+        if (this.owner?.username === previousUserName) this.owner.username = account.username;
         this.swapActiveUser(previousUserName, account.username);
         this.allTimeUsersMessage.set(account.email, userMessages);
     }

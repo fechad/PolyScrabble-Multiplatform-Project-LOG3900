@@ -133,9 +133,11 @@ describe('MenuComponent', () => {
                 playerService.discussionChannelService.availableChannels = [discussionChannel];
 
                 const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(discussionChannel);
-                socketHelper.peerSideEmit(SocketEvent.ChannelMessage, [channelMessage]);
+                socketHelper.peerSideEmit(SocketEvent.ChannelMessage, channelMessage);
                 expect(getDiscussionChannelSpy).toHaveBeenCalledWith(discussionChannelName);
-                expect(component.availableDiscussionChannels[0].messages).toEqual([channelMessage]);
+                expect(component.availableDiscussionChannels[0].messages[component.availableDiscussionChannels[0].messages.length - 1]).toEqual(
+                    channelMessage,
+                );
             });
 
             it('should not update the message of discussions channel on channelMessage if channel does not exist', () => {
@@ -144,9 +146,9 @@ describe('MenuComponent', () => {
                 playerService.discussionChannelService.availableChannels = [discussionChannel];
 
                 const getDiscussionChannelSpy = spyOn(component as any, 'getDiscussionChannelByName').and.returnValue(undefined);
-                socketHelper.peerSideEmit(SocketEvent.ChannelMessage, [channelMessage]);
+                socketHelper.peerSideEmit(SocketEvent.ChannelMessage, channelMessage);
                 expect(getDiscussionChannelSpy).toHaveBeenCalledWith(discussionChannelName);
-                expect(component.availableDiscussionChannels[0].messages).toEqual([]);
+                expect(component.availableDiscussionChannels[0].messages.length).toEqual(0);
             });
         });
 

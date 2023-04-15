@@ -52,6 +52,7 @@ class _GamePageWidgetState extends State<GamePageWidget> {
   @override
   void initState() {
     super.initState();
+    linkService.setInsideWaitingRoomBoolean(true);
     inGameService.configure();
     linkService.setIsInAGame(true);
     _configure();

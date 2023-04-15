@@ -52,18 +52,20 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
         "playerAccepted",
         (data) => {
               gameService.room = gameService.decodeModel(data['serverRoom']),
-              if(data['playerName'] == authenticator.getCurrentUser().username){
-                linkService.setCurrentOpenedChat(
-                    gameService.room.roomInfo.name),
-                Navigator.push(context, MaterialPageRoute(builder: ((context) {
-                  return WaitingPage(
-                      isObserver: false,
-                      roomName: gameService.room.roomInfo.name,
-                      timer: gameService.room.roomInfo.timerPerTurn,
-                      botsLevel: gameService.room.botsLevel!,
-                      players: gameService.room.players);
-                })))
-              }
+              if (data['playerName'] == authenticator.getCurrentUser().username)
+                {
+                  linkService
+                      .setCurrentOpenedChat(gameService.room.roomInfo.name),
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: ((context) {
+                    return WaitingPage(
+                        isObserver: false,
+                        roomName: gameService.room.roomInfo.name,
+                        timer: gameService.room.roomInfo.timerPerTurn,
+                        botsLevel: gameService.room.botsLevel!,
+                        players: gameService.room.players);
+                  })))
+                }
             });
 
     socketService.on(
@@ -136,7 +138,8 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
                           time: availableRooms[index].roomInfo.timerPerTurn,
                           password: availableRooms[index].roomInfo.password,
                           roomName: availableRooms[index].roomInfo.name,
-                          observersCount: availableRooms[index].observers?.length,
+                          observersCount:
+                              availableRooms[index].observers?.length,
                           isObserver: false,
                         );
                       })),

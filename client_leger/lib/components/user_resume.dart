@@ -211,7 +211,8 @@ class _UserResumeState extends State<UserResume> {
           SizedBox(
             height: 96,
           ),
-          if (linkService.getInsideChatBoolean())
+          if (!linkService.getInsideWaitingRoomBoolean() &&
+              linkService.getInsideChatBoolean())
             Container(
                 width: 250,
                 height: 48,

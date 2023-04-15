@@ -73,6 +73,7 @@ class _MenuPageState extends State<MenuPage> {
                   child:
                       Text(AppLocalizations.of(context)!.classicButtonSoloGame),
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
                       return const SoloPage();
@@ -91,6 +92,7 @@ class _MenuPageState extends State<MenuPage> {
                   child: Text(
                       AppLocalizations.of(context)!.classicButtonMultiGame),
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
                       return const MultiplayerPage();
@@ -108,6 +110,7 @@ class _MenuPageState extends State<MenuPage> {
                   ),
                   child: Text(AppLocalizations.of(context)!.classicButtonJoin),
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
                       return GamesRoomPage();
@@ -123,12 +126,14 @@ class _MenuPageState extends State<MenuPage> {
                     minimumSize: Size(310, 40),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  child: Text(AppLocalizations.of(context)!.classicButtonObserve),
+                  child:
+                      Text(AppLocalizations.of(context)!.classicButtonObserve),
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
-                          return ObserverPage();
-                        })));
+                      return ObserverPage();
+                    })));
                   },
                 ),
                 SizedBox(height: 100),

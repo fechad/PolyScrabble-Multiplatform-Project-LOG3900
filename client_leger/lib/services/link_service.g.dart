@@ -24,6 +24,12 @@ mixin _$LinkService on _LinkService, Store {
   }
 
   @override
+  Observable<bool> get InsideWaitingRoomBoolean {
+    _$valueAtom.reportRead();
+    return super.insideWaitingRoom;
+  }
+
+  @override
   ObservableList<Widget> get rows {
     _$valueAtom.reportRead();
     return super.rows;
@@ -150,6 +156,17 @@ mixin _$LinkService on _LinkService, Store {
         name: '_LinkService.setInsideChatBoolean');
     try {
       return super.setInsideChatBoolean(value);
+    } finally {
+      _$_LinkServiceActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setInsideWaitingRoomBoolean(value) {
+    final _$actionInfo = _$_LinkServiceActionController.startAction(
+        name: '_LinkService.setInsideWaitingRoomBoolean');
+    try {
+      return super.setInsideWaitingRoomBoolean(value);
     } finally {
       _$_LinkServiceActionController.endAction(_$actionInfo);
     }
