@@ -18,7 +18,7 @@ export class SocketRoomService extends SocketHandlerService {
         availableRoom.createVirtualPlayer(data.botName);
         this.roomService.setUnavailable(availableRoom.roomInfo.name);
         this.socketJoin(socket, availableRoom.roomInfo.name);
-        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
+        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, this.roomService.getLightRoom(availableRoom.roomInfo.name));
     }
 
     handleCreateRoom(socket: io.Socket, room: Room) {
@@ -26,7 +26,7 @@ export class SocketRoomService extends SocketHandlerService {
 
         const availableRoom = this.roomService.createRoom(room);
         this.socketJoin(socket, availableRoom.roomInfo.name);
-        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, availableRoom);
+        this.sendToEveryoneInRoom(socket.id, SocketEvent.RoomCreated, this.roomService.getLightRoom(availableRoom.roomInfo.name));
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
     }
@@ -92,7 +92,10 @@ export class SocketRoomService extends SocketHandlerService {
         const gameCreator = serverRoom.getPlayerByName(serverRoom.roomInfo.creatorName);
         if (!gameCreator) return;
         playerToAdd.rack = new Rack('');
-        this.socketEmitRoom(socket, gameCreator.socketId, SocketEvent.PlayerFound, { room: serverRoom, player: playerToAdd });
+        this.socketEmitRoom(socket, gameCreator.socketId, SocketEvent.PlayerFound, {
+            room: this.roomService.getLightRoom(serverRoom.roomInfo.name),
+            player: playerToAdd,
+        });
     }
 
     handleObserveRoomRequest(socket: io.Socket, observeRoomForm: ObserveRoomForm) {
@@ -104,7 +107,7 @@ export class SocketRoomService extends SocketHandlerService {
         this.socketJoin(socket, roomName);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         this.sendToEveryone(SocketEvent.UpdatePublicRooms, this.roomService.getRoomsPublic());
-        this.socketEmit(socket, SocketEvent.ObserverAccepted, serverRoom);
+        this.socketEmit(socket, SocketEvent.ObserverAccepted, this.roomService.getLightRoom(serverRoom.roomInfo.name));
         this.sendToEveryoneInRoom(roomName, SocketEvent.ObserversUpdated, serverRoom.observers);
     }
 
@@ -113,7 +116,10 @@ export class SocketRoomService extends SocketHandlerService {
         if (!serverRoom) return;
         const playerToAccept = serverRoom.getPlayerByName(data.playerName);
         if (!playerToAccept) return;
-        this.sendToEveryoneInRoom(data.roomName, SocketEvent.PlayerAccepted, { serverRoom, playerName: playerToAccept.pseudo });
+        this.sendToEveryoneInRoom(data.roomName, SocketEvent.PlayerAccepted, {
+            serverRoom: this.roomService.getLightRoom(serverRoom.roomInfo.name),
+            playerName: playerToAccept.pseudo,
+        });
     }
 
     handleRejectPlayer(socket: io.Socket, data: { roomName: string; playerName: string }) {
@@ -122,7 +128,7 @@ export class SocketRoomService extends SocketHandlerService {
         const playerToReject = serverRoom.getPlayerByName(data.playerName);
         if (!playerToReject) return;
 
-        this.socketEmitRoom(socket, playerToReject.socketId, SocketEvent.PlayerRejected, serverRoom);
+        this.socketEmitRoom(socket, playerToReject.socketId, SocketEvent.PlayerRejected, this.roomService.getLightRoom(serverRoom.roomInfo.name));
     }
 
     handleAvailableRooms(socket: io.Socket) {

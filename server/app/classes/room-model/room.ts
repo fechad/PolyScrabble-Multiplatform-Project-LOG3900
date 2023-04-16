@@ -41,7 +41,7 @@ export class Room {
     fillerNamesUsed: string[];
     botsLevel: GameLevel;
     leavers: Player[];
-    private placementsData: PlacementData[];
+    placementsData: PlacementData[];
     private isFirstGame: boolean;
     private gameManager: GameManager;
     constructor(clientRoom?: Room) {
