@@ -22,10 +22,6 @@ $rackTileBoxShadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
     padding: 10px;
 }
 
-.button-container .button {
-    height: 50px;
-}
-
 #mouse-position-display .button {
     max-width: 150px;
 }
@@ -59,6 +55,12 @@ $rackTileBoxShadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.15);
 
     &.exchange {
         border: 4px solid var(--accent);
+    }
+
+    &.empty {
+        border: 0px;
+        background-color: transparent;
+        box-shadow: 0px 0px rgba(0, 0, 0, 0);
     }
 }
 

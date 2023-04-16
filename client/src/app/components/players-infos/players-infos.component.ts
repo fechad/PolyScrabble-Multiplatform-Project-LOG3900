@@ -14,6 +14,7 @@ import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-
 import { AudioService } from '@app/services/audio.service';
 import { BackgroundService } from '@app/services/background-image.service';
 import { LanguageService } from '@app/services/language.service';
+import { OutgameObjectivesService } from '@app/services/outgame-objectives.service';
 import { PlayerService } from '@app/services/player.service';
 import { SessionStorageService } from '@app/services/session-storage.service';
 import { SocketClientService } from '@app/services/socket-client.service';
@@ -44,6 +45,7 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         private audioService: AudioService,
         protected languageService: LanguageService,
         protected backgroundService: BackgroundService,
+        public objService: OutgameObjectivesService,
     ) {
         super(socketService);
         this.room.roomInfo.isGameOver = false;
@@ -81,6 +83,9 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
     ngOnInit() {
         this.connectSocket();
         this.remainingTime = 0;
+        if (!this.playerService.isObserver) return;
+        this.currentPlayerTurnPseudo = this.room.players.find((player) => player.isItsTurn)?.clientAccountInfo.username || '';
+        this.resetTimer(this.room.elapsedTime);
     }
 
     launchConfetti() {
@@ -157,15 +162,24 @@ export class PlayersInfosComponent extends ComponentCommunicationManager impleme
         this.socketService.send(SocketEvent.Message, '!passer');
     }
 
-    showSummary(player: Player) {
+    async showSummary(player: Player) {
         if (player.avatarUrl.includes('assets')) return;
         if (player.avatarUrl.includes('robot-avatar')) return;
-        this.playerService.setPlayerToShow(player.clientAccountInfo);
+        await this.playerService.setPlayerToShow(player.clientAccountInfo);
+        this.showTarget();
         this.inputSideNav.toggle();
     }
 
-    resetTimer() {
+    showTarget() {
+        const playerToShow = this.playerService.playerToShow;
+        this.objService.objectives = [];
+        if (!playerToShow || !this.playerService.playerToShowStat) return;
+        this.objService.generateObjectives(this.playerService.playerToShowStat, playerToShow);
+    }
+
+    resetTimer(elapsedTime?: number) {
         this.remainingTime = +this.room.roomInfo.timerPerTurn;
+        if (elapsedTime) this.remainingTime -= elapsedTime;
 
         clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => {

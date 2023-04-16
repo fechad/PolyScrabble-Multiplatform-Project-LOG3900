@@ -36,6 +36,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   List<Player> winningPlayers = [];
   List<String> winner = [];
   final bool isObserver;
+  bool alreadyStartedAsObserver = false;
+
 
   @override
   void initState() {
@@ -102,7 +104,11 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
             timerFormat = Duration(minutes: minutes, seconds: seconds)
                 .toString()
                 .substring(2, 7);
-            --timeChosen;
+            if (!alreadyStartedAsObserver && isObserver) {
+              timeChosen = timeChosen - gameService.room.elapsedTime;
+              alreadyStartedAsObserver = true;
+            } else --timeChosen;
+
           });
         }
       },

@@ -24,7 +24,7 @@ class _MultiplayerPageState extends State<MultiplayerPage> {
   bool gameIsPublic = true;
   int difficultyValue = 2;
   List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
-      ? <String>['Beginner', 'Expert', 'Adaptable']
+      ? <String>['Beginner', 'Expert', 'Adaptive']
       : <String>['Débutant', 'Expert', 'Adaptatif'];
   List<String> language = <String>['Français', 'English'];
   int langValue = languageService.currentLanguage.languageCode == 'en' ? 1 : 0;

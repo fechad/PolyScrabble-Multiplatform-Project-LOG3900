@@ -11,6 +11,7 @@ import { PlayerService } from '@app/services/player.service';
 })
 export class UserSummaryComponent {
     @Input() isGamePage: boolean;
+    @Input() isWaitMultiPage: boolean;
     playerToShow: ClientAccountInfo | undefined;
     rank: string;
     constructor(

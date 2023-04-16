@@ -2,6 +2,7 @@ import { DirectionHandler } from '@app/classes/board-model/handlers/direction-ha
 import { Matcher } from '@app/classes/goals/matcher';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room-model/room';
+import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
 import {
     DEFAULT_PLACEMENT_DIRECTION,
     MINIMUM_WORD_LENGTH,
@@ -58,6 +59,7 @@ export class PlaceLettersCommand extends Command {
     }
 
     private verifyGoalsAchievement(message: BoardMessage) {
+        if (this.commandSender instanceof VirtualPlayer === true) return;
         if (!message.score) return;
         if (this.commandSender.points >= TOTAL_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.FirstToHundred);
         if (message.score >= THIRTY_POINTS_NEEDED_FOR_REWARD) Matcher.notifyGoalManager(this.commandSender, GoalTitle.ThirtyPointer);

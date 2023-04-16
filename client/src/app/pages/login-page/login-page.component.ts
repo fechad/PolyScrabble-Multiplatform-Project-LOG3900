@@ -10,6 +10,7 @@ import { PlayerService } from '@app/services/player.service';
 import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
 
+const SAFE_GUARD_TIMEOUT = 3000;
 @Component({
     selector: 'app-login-page',
     templateUrl: './login-page.component.html',
@@ -21,6 +22,7 @@ export class LoginPageComponent implements AfterViewInit {
     loginError: string;
     emailSent: boolean;
     usernames: string[];
+    isProcessing: boolean;
     protected loginForm: FormGroup;
     constructor(
         private formBuilder: FormBuilder,
@@ -37,6 +39,7 @@ export class LoginPageComponent implements AfterViewInit {
             password: ['', [Validators.required]],
             confirmPassword: ['', [Validators.required]],
         });
+        this.isProcessing = false;
         this.isLoginForm = true;
         this.isLoginInfoValid = true;
         this.loginError = '';
@@ -92,7 +95,7 @@ export class LoginPageComponent implements AfterViewInit {
     }
 
     get invalidLoginInfo(): string {
-        if (this.isLoginInfoValid) return '';
+        if (this.isLoginInfoValid && !this.loginError) return '';
         return this.loginError;
     }
 
@@ -128,11 +131,17 @@ export class LoginPageComponent implements AfterViewInit {
 
     async submitConnection() {
         if (!this.isLoginForm) return;
+        this.isProcessing = true;
+        setTimeout(() => {
+            this.isProcessing = false;
+        }, SAFE_GUARD_TIMEOUT);
+
         // const loginResult = await lastValueFrom(this.httpService.loginUser(this.username));
         const userConnectedInfo = await lastValueFrom(this.httpService.isAlreadyLoggedIn(this.loginForm.controls.email.value));
         if (userConnectedInfo?.isAlreadyLoggedIn) {
             this.isLoginInfoValid = false;
             this.loginError = 'Cet utilisateur est déja connecté';
+            this.isProcessing = false;
             return;
         }
 
@@ -153,6 +162,7 @@ export class LoginPageComponent implements AfterViewInit {
                 this.router.navigate(['/main']);
             })
             .catch((error) => {
+                this.isProcessing = false;
                 const errorCode: string = error.code;
                 if (errorCode) {
                     this.isLoginInfoValid = false;
@@ -168,31 +178,41 @@ export class LoginPageComponent implements AfterViewInit {
 
     async submitRegistration() {
         if (this.isLoginForm) return;
+        this.isProcessing = true;
+        setTimeout(() => {
+            this.isProcessing = false;
+        }, SAFE_GUARD_TIMEOUT);
+
         const signUpResult: HttpResponse<{ email: string; username: string }> = await lastValueFrom(
             this.httpService.signUpUser(this.loginForm.controls.email.value, this.loginForm.value.username),
         );
 
         const statusCode = 201;
-        if (signUpResult.status === statusCode) {
-            const userCredential = await this.authService.signUp(this.loginForm.controls.email.value, this.loginForm.controls.password.value);
-            const user = userCredential.user;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const loginResult = await lastValueFrom(this.httpService.loginUser(user?.email!));
-            // eslint-disable-next-line no-console
-            console.log(loginResult);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.playerService.player.pseudo = (loginResult as any).username;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.playerService.player.email = (loginResult as any).email;
-            this.playerService.setUserInfo();
-            this.router.navigate(['/main']);
+        if (signUpResult?.status === statusCode) {
+            try {
+                const userCredential = await this.authService.signUp(this.loginForm.controls.email.value, this.loginForm.controls.password.value);
+                const user = userCredential.user;
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const loginResult = await lastValueFrom(this.httpService.loginUser(user?.email!));
+                // eslint-disable-next-line no-console
+                console.log(loginResult);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.playerService.player.pseudo = (loginResult as any).username;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                this.playerService.player.email = (loginResult as any).email;
+                this.playerService.setUserInfo();
+                this.router.navigate(['/main']);
+            } catch (error) {
+                this.isProcessing = false;
+                this.loginError = "Erreur lors de l'inscription. Votre email ou pseudonyme est déja pris.";
+            }
         } else {
-            this.loginError = 'Error: could not create account';
-            this.clearInputFields();
+            this.isProcessing = false;
+            this.loginError = "Erreur lors de l'inscription. Votre email ou pseudonyme est déja pris.";
         }
     }
 
-    private clearInputFields() {
+    clearInputFields() {
         this.loginForm.controls.username.setValue('');
         this.loginForm.controls.email.setValue('');
         this.loginForm.controls.password.setValue('');

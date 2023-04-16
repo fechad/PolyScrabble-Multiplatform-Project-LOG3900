@@ -81,8 +81,12 @@
                     <!--<button (click)="submitConnection()" [disabled]="!isPseudoValid" class="button">Se Connecter</button> -->
                     <div class="simple-input-error-msg">{{ invalidLoginInfo }}</div>
 
-                    <button *ngIf="isLoginForm" [disabled]="!areLoginInfoValid" (click)="submitConnection()" class="button">Se Connecter</button>
-                    <button *ngIf="!isLoginForm" [disabled]="!areSignInInfoValid" (click)="submitRegistration()" class="button">S'inscrire</button>
+                    <button *ngIf="isLoginForm" [disabled]="!areLoginInfoValid || isProcessing" (click)="submitConnection()" class="button">
+                        Se Connecter
+                    </button>
+                    <button *ngIf="!isLoginForm" [disabled]="!areSignInInfoValid || isProcessing" (click)="submitRegistration()" class="button">
+                        S'inscrire
+                    </button>
                 </form>
                 <div *ngIf="isLoginForm" class="info-text-container sign-in">
                     <div class="info-text">Pas encore inscrit?</div>

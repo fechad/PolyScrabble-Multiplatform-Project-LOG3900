@@ -362,7 +362,7 @@ export class MenuComponent extends ComponentCommunicationManager implements OnIn
                 (channel) => channel.name === this.selectedDiscussionChannel.name,
             );
             if (this.selectedDiscussionChannel.name && !newSelectedDiscussionChannel) {
-                if (this.isWaitMultiPage) {
+                if (this.isWaitMultiPage || this.selectedDiscussionChannel.name.toLocaleLowerCase().startsWith('r-')) {
                     this.showRoomChatChannel();
                     return;
                 }

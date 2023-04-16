@@ -1,7 +1,7 @@
 h2 {
     font-family: 'Nunito';
     font-weight: bold;
-    margin: 60px 0;
+    margin: 10px 0;
     text-align: center;
     font-size: 32px;
 }
@@ -13,15 +13,15 @@ h2 {
     min-width: 720px;
 }
 
-h3{
+h3 {
     font-weight: 500;
-    font-family: "Nunito";
+    font-family: 'Nunito';
     text-align: center;
     font-size: 20px;
 }
 
 .historic-section {
-    width: 70vw;
+    width: 80vw;
 }
 
 .stat {
@@ -65,7 +65,7 @@ h3{
 
 .log {
     font-style: italic;
-    font-family: "Nunito";
+    font-family: 'Nunito';
     margin: 8px;
 }
 
@@ -100,10 +100,9 @@ p {
 
 .crown {
     font-size: 28px;
-    
 }
 
 .disabled {
-    color: transparent;  
+    color: transparent;
     text-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
 }

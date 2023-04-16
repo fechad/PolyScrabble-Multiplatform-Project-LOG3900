@@ -165,6 +165,8 @@ export class GeneralChatComponent {
 
     async showSummary(accountInfo?: ClientAccountInfo) {
         if (!accountInfo) return;
+        if (accountInfo.userSettings.avatarUrl.includes('assets')) return;
+        if (accountInfo.userSettings.avatarUrl.includes('robot-avatar')) return;
         await this.playerService.setPlayerToShow(accountInfo);
         this.showTarget();
         this.inputSideNav.toggle();

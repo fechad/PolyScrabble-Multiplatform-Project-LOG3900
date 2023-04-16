@@ -35,7 +35,7 @@ class _SoloPageState extends State<SoloPage> {
   int langValue = languageService.currentLanguage.languageCode == 'en' ? 1:0;
   String timeValue = '60';
   List<String> difficulty = languageService.currentLanguage.languageCode == 'en'
-      ? <String>['Beginner', 'Expert', 'Adaptable']
+      ? <String>['Beginner', 'Expert', 'Adaptive']
       : <String>['Débutant', 'Expert', 'Adaptatif'];
   @override
   void initState() {

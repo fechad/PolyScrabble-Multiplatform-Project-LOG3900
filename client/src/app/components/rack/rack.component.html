@@ -27,14 +27,15 @@
             #rackLetter
             [class.placement]="tile.typeOfSelection === selectionType.PLACEMENT"
             [class.exchange]="tile.typeOfSelection === selectionType.EXCHANGE"
+            [class.empty]="!tile.content || tile.content === ' '"
             class="rack-letter"
         >
             <div *ngIf="tile.content && tile.content !== ' '" class="tile-content">{{ tile.content.toUpperCase() }}</div>
             <div *ngIf="tile.content && tile.content !== ' '" class="tile-point">{{ tile.points }}</div>
         </div>
     </div>
-    <div class="button-container">
-        <button *ngIf="areTilesSelectedForExchange()" class="button" (click)="cancelExchange()">Annuler</button>
-        <button *ngIf="areTilesSelectedForExchange()" class="button" (click)="exchangeLetters()" [disabled]="!isExchangeAllowed()">Echanger</button>
+    <div *ngIf="areTilesSelectedForExchange()" class="button-container">
+        <button class="button" (click)="cancelExchange()">Annuler</button>
+        <button class="button" (click)="exchangeLetters()" [disabled]="!isExchangeAllowed()">Echanger</button>
     </div>
 </div>

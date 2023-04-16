@@ -10,6 +10,7 @@ import { POINTS } from '@app/constants/rack-constants';
 import { SocketEvent } from '@app/enums/socket-event';
 import { BackgroundService } from '@app/services/background-image.service';
 import { BoardService } from '@app/services/board.service';
+import { CommandInvokerService } from '@app/services/command-invoker.service';
 import { FocusHandlerService } from '@app/services/focus-handler.service';
 import { HintService } from '@app/services/hint.service';
 import { PlayerService } from '@app/services/player.service';
@@ -36,6 +37,7 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         private boardService: BoardService,
         protected themeService: ThemeService,
         protected backgroundService: BackgroundService,
+        protected commandInvoker: CommandInvokerService,
     ) {
         super(socketService);
 
@@ -110,6 +112,21 @@ export class GamePageComponent extends PageCommunicationManager implements OnIni
         const normalLetter = letter;
         if (normalLetter.toLowerCase() !== normalLetter) return 0;
         return POINTS[letter.charCodeAt(0) - A_ASCII];
+    }
+
+    canPlaceLetter(): boolean {
+        if (!this.playerService.player.isItsTurn) return false;
+        if (this.commandInvoker.isCancelStackEmpty()) return false;
+        return true;
+    }
+
+    confirmPlacement() {
+        if (this.commandInvoker.commandMessage.length === 0) return;
+        this.focusHandlerService.clientChatMessage.next(this.commandInvoker.commandMessage);
+        this.socketService.send(SocketEvent.Message, this.commandInvoker.commandMessage);
+
+        if (this.commandInvoker.commandMessage.length === 0) return;
+        this.boardService.removeAllViewLetters(true);
     }
 
     protected configureBaseSocketFeatures() {

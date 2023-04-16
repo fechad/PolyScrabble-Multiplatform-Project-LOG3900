@@ -45,9 +45,8 @@ class _GameSidebarState extends State<GameSidebar> {
     socketService.on(
         'channelMessage',
             (message) => {
+          if (mounted){
               setState((() => {
-
-
                 if (message['channelName'] ==
                     chatService.getRoomChannel().name && linkService.getIsInAGame() && linkService.getCurrentOpenedChat() == '')
                   {
@@ -74,7 +73,7 @@ class _GameSidebarState extends State<GameSidebar> {
                             : Account.fromJson(message['account']),
                         message: message['message'])),
                   }
-              })),
+              }))},
                       FlutterRingtonePlayer.play(
                         android: AndroidSounds.notification,
                         ios: IosSounds.receivedMessage,
@@ -119,7 +118,7 @@ class _GameSidebarState extends State<GameSidebar> {
     socketService.on(
         "playerTurnChanged",
         (pseudo) => {
-              setState(() {}),
+              if (mounted) setState(() {}),
             });
   }
 
@@ -187,7 +186,6 @@ class _GameSidebarState extends State<GameSidebar> {
                         gameService.reinitializeRoom();
                         leaveGame();
                         linkService.setIsInAGame(false);
-                        Navigator.pop(context);
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: ((context) {
                           return const MyHomePage(title: 'PolyScrabble');

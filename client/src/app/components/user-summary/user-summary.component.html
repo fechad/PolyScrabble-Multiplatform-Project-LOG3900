@@ -1,7 +1,7 @@
 <div class="user-container">
-    <div class = "image-container">
+    <div class="image-container">
         <img class="user" [src]="playerService.playerToShow?.userSettings?.avatarUrl" />
-        <img *ngIf = "objService.currentLevel >= 10" class="border" [src]="playerService.getBorder(10)" alt="SantaBadge" />
+        <img *ngIf="objService.currentLevel >= 10" class="border" [src]="playerService.getBorder(10)" alt="SantaBadge" />
     </div>
 </div>
 <div class="name">
@@ -28,24 +28,22 @@
                 ></progress>
             </div>
             <div class="fraction">
-                {{ objService.totalXP - objService.currentLevelXp }}/{{
-                    objService.xpForNextLevel + objService.totalXP - objService.currentLevelXp
-                }}
+                {{ objService.totalXP - objService.currentLevelXp }}/{{ objService.xpForNextLevel + objService.totalXP - objService.currentLevelXp }}
             </div>
         </div>
     </div>
 </div>
 <div class="high-scores">
-    <div style="display: flex; flex-direction: column; gap: 5px; width: 30%;">
+    <div style="display: flex; flex-direction: column; gap: 5px; width: 30%">
         <H3 [translate]="'USER-PAGE.VICTORIES'"></H3>
         <h3>{{ playerService.playerToShow?.gamesWon }}</h3>
     </div>
     <i class="fa fa-trophy fa-4x"></i>
-    <div style="display: flex; flex-direction: column; gap: 5px; width: 30%;">
-        <H3 >Highest score</H3>
-        <h3>{{ objService.highScore }}</h3>     
+    <div style="display: flex; flex-direction: column; gap: 5px; width: 30%">
+        <H3 [translate]="'USER-PAGE.HIGHEST-SCORE'"></H3>
+        <h3>{{ objService.highScore }}</h3>
     </div>
 </div>
-<div class="button-container" *ngIf="!isGamePage">
-    <button class="button" routerLink="/other-user">Voir profil</button>
+<div class="button-container" *ngIf="!isGamePage && !isWaitMultiPage">
+    <button class="button" routerLink="/other-user" [translate]="'USER-PAGE.SEE-PROFILE'"></button>
 </div>
