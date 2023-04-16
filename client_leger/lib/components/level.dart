@@ -41,7 +41,6 @@ class _LevelState extends State<Level> {
   Widget build(BuildContext context) {
     ObjectivesService objService = new ObjectivesService();
     objService.generateObjectives(authenticator.stats, authenticator.currentUser);
-    print(objService.currentLevel);
     return Container(
         width: 1000,
         child: Column(

@@ -85,7 +85,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                             children: [
                               Center(
                                 child: Text(
-                                  'Signup',
+                                  'Inscription',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyText1
                                       .override(
@@ -102,8 +102,8 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   maxLength: 10,
                                   style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
-                                    hintText: 'Choose a username',
-                                    labelText: 'username',
+                                    hintText: 'Choisissez un pseudo',
+                                    labelText: 'Pseudo',
                                     hintStyle: TextStyle(
                                       color: const Color(0xFF101213),
                                       fontFamily: 'Nunito',
@@ -124,7 +124,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter a valid email address';
+                                      return 'Entrez un pseudo non vide';
                                     }
                                   },
                                 ),
@@ -135,8 +135,8 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   controller: emailController,
                                   style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
-                                    hintText: 'Enter your email address',
-                                    labelText: 'Email address',
+                                    hintText: 'Entrez votre adresse courriel',
+                                    labelText: 'Courriel',
                                     hintStyle: TextStyle(
                                       color: const Color(0xFF101213),
                                       fontFamily: 'Nunito',
@@ -157,7 +157,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter a valid email address';
+                                      return 'Entrez une adresse courriel valide';
                                     }
                                     return null;
                                   },
@@ -170,8 +170,8 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   controller: passwordController,
                                   style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
-                                    hintText: 'Enter your password',
-                                    labelText: 'Password',
+                                    hintText: 'Entrez un mot de passe',
+                                    labelText: 'Mot de passe',
                                     hintStyle: TextStyle(
                                       color: const Color(0xFF101213),
                                       fontFamily: 'Nunito',
@@ -192,7 +192,10 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   // The validator receives the text that the user has entered.
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter a valid password';
+                                      return 'Entrez un mot de passe valide';
+                                    }
+                                    if (value.length < 6) {
+                                      return 'Votre mot de passe doit contenir au moins 6 caractères';
                                     }
                                     return null;
                                   },
@@ -206,8 +209,8 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                   controller: confirmPasswordController,
                                   style: TextStyle(color: Colors.black),
                                   decoration: const InputDecoration(
-                                    hintText: 'Enter your password',
-                                    labelText: 'Confirm Password',
+                                    hintText: 'Confirmez le mot de passe',
+                                    labelText: 'Confirmez le mot de passe',
                                     hintStyle: TextStyle(
                                       color: const Color(0xFF101213),
                                       fontFamily: 'Nunito',
@@ -230,7 +233,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                     if (value == null ||
                                         value.isEmpty ||
                                         value != passwordController.text) {
-                                      return 'The passwords do not match';
+                                      return 'Les mots de passe ne correspondent pas';
                                     }
                                     return null;
                                   },
@@ -253,10 +256,20 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                               passwordController.text,
                                               usernameController.text
                                                   .toLowerCase())
-                                          .then((value) => Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) => MyHomePage(
-                                                      title: 'PolyScrabble'))))
+                                          .then((value) => {
+                                                httpService.loginUserLogs(
+                                                    authenticator
+                                                        .getCurrentUser()
+                                                        .email),
+                                                chatService.joinDiscussion(
+                                                    'Principal'),
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MyHomePage(
+                                                                title:
+                                                                    'PolyScrabble')))
+                                              })
                                           .catchError((error) =>
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
@@ -291,7 +304,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                           const MaterialStatePropertyAll<Color>(
                                               Palette.mainColor)),
                                   child: Text(
-                                    'Signup',
+                                    "S'inscrire",
                                     style: FlutterFlowTheme.of(context)
                                         .bodyText1
                                         .override(
@@ -310,7 +323,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Already registered?',
+                                        'Déjà inscrit ?',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyText1
                                             .override(
@@ -329,7 +342,7 @@ class _SignupPageWidgetState extends State<SignupPageWidget> {
                                                       const ConnexionPageWidget()));
                                         },
                                         child: Text(
-                                          'Login',
+                                          'Connectez-vous',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyText1
                                               .override(

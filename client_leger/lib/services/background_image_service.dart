@@ -10,7 +10,7 @@ class BackgroundService {
     currentBackground = '';
     backgroundList = {
       "santa": [
-        'assets/images/theme-backgrounds/santa-happy.png',
+        'assets/images/theme-backgrounds/santa-happy.jpg',
         'assets/images/theme-backgrounds/santa-angry.jpg'
       ],
       "einstein": [
@@ -27,17 +27,21 @@ class BackgroundService {
       ],
       "trump": [
         'assets/images/theme-backgrounds/trump-happy.jpg',
-        'assets/images/theme-backgrounds/trump-angry.webp'
+        'assets/images/theme-backgrounds/trump-angry.jpg'
       ],
     };
+  }
+
+  switchAvatar(){
+
   }
 
   setBackground(String bot) {
     currentVP = bot.toLowerCase();
     if (currentVP == '') {
       currentBackground = '';
-    }
-    else currentBackground = backgroundList[currentVP][0] as String;
+    } else
+      currentBackground = backgroundList[currentVP][0] as String;
     linkService.setCurrentBackground(currentBackground);
   }
 
@@ -47,6 +51,5 @@ class BackgroundService {
         : backgroundList[currentVP][0];
 
     linkService.switchBackground(currentBackground);
-
   }
 }

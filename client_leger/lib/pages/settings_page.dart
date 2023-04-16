@@ -528,7 +528,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     .settingsPagePassword),
                                 content: Form(
                                     child: Container(
-                                        height: 120,
+                                        height: 136,
                                         width: 400,
                                         child: Column(children: [
                                           Text(AppLocalizations.of(context)!
@@ -600,7 +600,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                                             121, 101, 220)),
                                                 child: Text(
                                                   AppLocalizations.of(context)!
-                                                      .save,
+                                                      .confirm,
                                                   style:
                                                       TextStyle(fontSize: 18),
                                                 ),

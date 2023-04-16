@@ -8,6 +8,7 @@ import 'package:shake/shake.dart';
 import '../config/colors.dart';
 import '../main.dart';
 import '../pages/game_page.dart';
+import '../services/link_service.dart';
 
 final List<int> POINTS = [
   1,
@@ -76,6 +77,12 @@ class _TileState extends State<Tile> {
   @override
   void initState() {
     super.initState();
+
+    socketService.on(
+        "playerTurnChanged",
+            (pseudo) => {
+          if (mounted) setState(() {}),
+        });
 
     _detector = ShakeDetector.autoStart(onPhoneShake: () {
       if (!linkService.getWantToExchange() && placementValidator.letters.isEmpty) {

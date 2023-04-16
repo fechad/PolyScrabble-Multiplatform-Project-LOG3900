@@ -63,16 +63,15 @@ class ObserverPageState extends State<ObserverPage> {
           'user': authenticator.getCurrentUser().username,
           'isRoomChannel': true,
         }),
-        Navigator.pop(context),
         if (gameService.room.elapsedTime > 0)
           {
-            Navigator.push(context, MaterialPageRoute(builder: ((context) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) {
               return GamePageWidget();
             })))
           }
         else
           {
-            Navigator.push(context, MaterialPageRoute(builder: ((context) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) {
               return WaitingPage(
                   isObserver: true,
                   roomName: gameService.room.roomInfo.name,

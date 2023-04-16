@@ -213,7 +213,7 @@ class _WaitingPageState extends State<WaitingPage> {
     socketService.on(
         "playerLeft",
         (player) => {
-              noPlayers = gameService.room.players.length -= 1,
+              noPlayers = gameService.room.players.length - 1,
               if (mounted)
                 {
                   setState(() => {

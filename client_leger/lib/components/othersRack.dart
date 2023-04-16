@@ -114,7 +114,8 @@ class OthersRackState extends State<OthersRack> {
                                     child: Text( isObserver ?
                                         rightPlayer.rackLetters[index].toUpperCase() : '',
                                         style: TextStyle(
-                                            fontSize: 24
+                                            fontSize: 24,
+                                          color: Colors.black,
                                         )
                                     ))
                             );

@@ -217,20 +217,19 @@ class _ForgotPasswordPagePageWidgetState
     if (emailController.text.isEmpty) return;
     //textController.clear();
 
-    httpService.resetUserPassword(emailController.text).then((value) => value
-                .statusCode ==
-            202
-        ? navigate()
-        : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Colors.red[300],
-            duration: const Duration(milliseconds: 1000),
-            content:
-                Text('Une erreur est survenue: ${value.body.toString()}'))));
+    httpService.resetUserPassword(emailController.text.trim()).then((value) =>
+        value.statusCode == 202
+            ? navigate()
+            : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.red[300],
+                duration: const Duration(milliseconds: 1000),
+                content: Text(
+                    'Une erreur est survenue: ${value.body.toString()}'))));
   }
 
   void navigate() {
     Navigator.push(context, MaterialPageRoute(builder: ((context) {
-      return ChangePasswordPageWidget(email: emailController.text);
+      return ChangePasswordPageWidget(email: emailController.text.trim());
     })));
   }
 }
