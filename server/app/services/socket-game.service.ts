@@ -226,7 +226,7 @@ export class SocketGameService extends SocketHandlerService {
     }
 
     async handleChangeTurn(socket: io.Socket, roomName: string) {
-        const room = this.roomService.getRoom(roomName);
+        const room = this.roomService.getLightRoom(roomName);
         if (!room) return;
         this.changeTurn(socket, room);
     }

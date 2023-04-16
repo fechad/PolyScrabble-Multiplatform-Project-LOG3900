@@ -67,13 +67,14 @@ export class SocketHandlerService {
     handleReconnect(socket: io.Socket, playerData: PlayerData) {
         if (!playerData.roomName) return;
         const room = this.roomService.getRoom(playerData.roomName);
+        const lightRoom = this.roomService.getLightRoom(playerData.roomName);
         if (!room) return;
         const player = room.getPlayer(playerData.socketId);
         if (!player) return;
 
         player.socketId = socket.id;
         this.socketJoin(socket, playerData.roomName);
-        this.socketEmit(socket, SocketEvent.Reconnected, { room, player });
+        this.socketEmit(socket, SocketEvent.Reconnected, { lightRoom, player });
     }
 
     handleChatWindowSocket(socket: io.Socket) {

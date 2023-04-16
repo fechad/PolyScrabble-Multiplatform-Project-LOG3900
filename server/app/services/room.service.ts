@@ -19,15 +19,15 @@ export class RoomService {
         const publicUnavailableRoom = this.roomsUnavailable.filter((room) => !room.isSolo && room.roomInfo.isPublic);
         const publicAvailableRoom = this.roomsAvailable.filter((room) => !room.isSolo && room.roomInfo.isPublic);
 
-        return publicUnavailableRoom.concat(publicAvailableRoom);
+        return publicUnavailableRoom.concat(publicAvailableRoom).map((room) => this.getLightVersionRoom(room));
     }
 
     getRoomsAvailable(): Room[] {
-        return this.roomsAvailable;
+        return this.roomsAvailable.map((room) => this.getLightVersionRoom(room));
     }
 
     getRoomsUnavailable(): Room[] {
-        return this.roomsUnavailable;
+        return this.roomsUnavailable.map((room) => this.getLightVersionRoom(room));
     }
 
     isRoomNameValid(roomName: string | undefined): boolean {
@@ -89,6 +89,23 @@ export class RoomService {
             return roomUnavailable;
         }
         return undefined;
+    }
+
+    getLightRoom(roomName: string): Room | undefined {
+        const wantedRoom = this.getRoom(roomName);
+        return wantedRoom ? this.getLightVersionRoom(wantedRoom) : undefined;
+    }
+
+    private getLightVersionRoom(room: Room): Room {
+        const copy = {
+            elapsedTime: room.elapsedTime,
+            players: room.players,
+            observers: room.observers,
+            roomInfo: room.roomInfo,
+            botsLevel: room.botsLevel,
+            placementsData: room.placementsData,
+        };
+        return copy as unknown as Room;
     }
 
     private convertToServerRoom(clientRoom: Room): Room {

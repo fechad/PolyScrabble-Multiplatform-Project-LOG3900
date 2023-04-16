@@ -3,6 +3,8 @@ import { RoomService } from '@app/services/room.service';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
+/* eslint-disable dot-notation */
+
 describe('Room service tests', () => {
     const roomMock: Room = new Room();
     roomMock.roomInfo.name = 'R-0';
@@ -126,13 +128,13 @@ describe('Room service tests', () => {
 
     describe('get Rooms(Un)Available tests', () => {
         it('should return the available rooms when getAvailableRooms is called', () => {
-            roomService.roomsAvailable = [roomMock];
-            expect(roomService.roomsAvailable).to.equals(roomService.getRoomsAvailable());
+            roomService.roomsAvailable = [roomService['getLightVersionRoom'](roomMock)];
+            expect(roomService.roomsAvailable).to.deep.equal(roomService.getRoomsAvailable());
         });
 
         it('should return the unavailable rooms when getUnavailableRooms is called', () => {
-            roomService.roomsUnavailable = [roomMock];
-            expect(roomService.roomsUnavailable).to.equals(roomService.getRoomsUnavailable());
+            roomService.roomsUnavailable = [roomService['getLightVersionRoom'](roomMock)];
+            expect(roomService.roomsUnavailable).to.deep.equal(roomService.getRoomsUnavailable());
         });
     });
 
