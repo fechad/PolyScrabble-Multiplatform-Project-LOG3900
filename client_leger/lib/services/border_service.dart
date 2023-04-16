@@ -6,9 +6,9 @@ class BorderService {
     String path = '';
     if (level >= 2)
        path = "assets/images/borders/bronze.png";
-    if (level >= 5)
+    if (level >= 6)
       path = "assets/images/borders/silver.png";
-    if (level >= 10)
+    if (level >= 25)
       path = "assets/images/borders/gold.png";
     return path;
   }

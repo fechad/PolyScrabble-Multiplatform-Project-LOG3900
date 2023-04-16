@@ -116,8 +116,8 @@ progress[value]::-webkit-progress-value {
 
 .border {
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 255px;
+    height: 255px;
 }
 .image-container {
     display: flex;
@@ -126,6 +126,8 @@ progress[value]::-webkit-progress-value {
     width: 100%;
     align-items: center;
     justify-content: center;
+    margin-bottom: 40px;
+
 }
 
 H3 {

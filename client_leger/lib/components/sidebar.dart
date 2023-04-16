@@ -16,6 +16,7 @@ import '../pages/home_page.dart';
 import '../pages/observer_page.dart';
 import '../services/chat_service.dart';
 import '../services/init_service.dart';
+import '../services/objectives_service.dart';
 
 final ChatService chat = chatService;
 

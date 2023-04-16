@@ -68,7 +68,7 @@ class _OtherUserPageState extends State<OtherUserPage> {
                               ))),
                       UserLevel(),
                       HighScores(highScore: objService.highScore, victories: player.gamesWon),
-                      OutObj(),
+                      OutObj(objectives: objService.objectives),
                     ],
                   ),
                 )),
