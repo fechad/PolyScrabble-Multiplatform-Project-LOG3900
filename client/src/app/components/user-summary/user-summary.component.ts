@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
 import { HttpService } from '@app/services/http.service';
 import { OutgameObjectivesService } from '@app/services/outgame-objectives.service';
@@ -19,5 +20,10 @@ export class UserSummaryComponent {
         protected objectiveService: OutgameObjectivesService,
         protected httpService: HttpService,
         public objService: OutgameObjectivesService,
+        private router: Router,
     ) {}
+
+    goToOtherProfilePage() {
+        this.router.navigateByUrl('/other-user');
+    }
 }

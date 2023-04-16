@@ -30,7 +30,7 @@ export class OutgameObjectivesService {
     }
 
     generateObjectives(stats: PlayerGameStats, player: ClientAccountInfo) {
-        this.isEnglish = player.userSettings.defaultLanguage === 'english';
+        this.isEnglish = this.playerService.player.clientAccountInfo.userSettings.defaultLanguage === 'english';
         this.generateThemedObjectives(player);
         this.generateLossObjectives(stats);
         this.generateTimeObjectives(stats);

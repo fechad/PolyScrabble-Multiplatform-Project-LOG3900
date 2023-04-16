@@ -62,10 +62,10 @@
     },
     "USER-PAGE": {
         "LEVEL": "niv",
-        "VICTORIES": "victoires",
+        "VICTORIES": "Victoires",
         "OBJECTIVES": "Objectifs",
         "TOGGLE": "Afficher complétés",
-        "HIGHEST-SCORE": "Highest score",
+        "HIGHEST-SCORE": "Meilleur score",
         "SEE-PROFILE": "Voir le profil"
     },
     "SETTINGS-PAGE": {

@@ -45,5 +45,5 @@
     </div>
 </div>
 <div class="button-container" *ngIf="!isGamePage && !isWaitMultiPage">
-    <button class="button" routerLink="/other-user" [translate]="'USER-PAGE.SEE-PROFILE'"></button>
+    <button class="button" (click)="goToOtherProfilePage()" [translate]="'USER-PAGE.SEE-PROFILE'"></button>
 </div>
