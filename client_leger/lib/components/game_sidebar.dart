@@ -95,7 +95,6 @@ class _GameSidebarState extends State<GameSidebar> {
                   .isNotEmpty)
                 {
                   // TODO: this.toggleAvatar(bot.clientAccountInfo),
-                  // TODO: this.toggleBotMusic(bot.clientAccountInfo),
                   backgroundService.switchToAngry(),
                 },
               musicPlayer.loop("audios/Better.mp3"),
@@ -188,7 +187,8 @@ class _GameSidebarState extends State<GameSidebar> {
                         gameService.reinitializeRoom();
                         leaveGame();
                         linkService.setIsInAGame(false);
-                        Navigator.push(context,
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: ((context) {
                           return const MyHomePage(title: 'PolyScrabble');
                         })));
@@ -240,12 +240,14 @@ class _GameSidebarState extends State<GameSidebar> {
                                       onPressed: () {
                                         audioPlayer.stop();
                                         backgroundService.setBackground('');
+                                        authenticator.setUser(authenticator.currentUser.email);
                                         authenticator.setStats(
                                             authenticator.currentUser.email);
                                         inGameService.confirmLeaving();
                                         linkService.setIsInAGame(false);
                                         linkService.getRows().clear();
-                                        Navigator.push(
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
@@ -270,6 +272,7 @@ class _GameSidebarState extends State<GameSidebar> {
 
   leaveGame() {
     socketService.send("leaveGame");
+    authenticator.setUser(authenticator.currentUser.email);
     authenticator.setStats(authenticator.currentUser.email);
   }
 }

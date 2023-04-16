@@ -86,13 +86,12 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
-        if (timeChosen == 0) {
+        if (timeChosen <= 0) {
           setState(() {
             seconds = timeChosen % 60;
             //check if timer reaches 0 and its my turn, then skip turn
             timerFormat = Duration(seconds: seconds).toString().substring(2, 7);
             timer.cancel();
-            if (linkService.getMyTurn()) inGameService.changePlayerTurn();
             setTimer();
           });
         } else {
@@ -109,6 +108,13 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
       },
     );
   }
+
+  @override
+  dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {

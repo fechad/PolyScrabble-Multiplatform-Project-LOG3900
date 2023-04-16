@@ -75,16 +75,6 @@ class _GamesRoomPageState extends State<GamesRoomPage> {
               socketService.send("leaveRoomOther", myRoom.roomInfo.name),
               linkService.buttonChange(),
             });
-
-    socketService.on(
-        "playerLeft",
-        (player) => {
-              //remove player from room info
-              // TODO: wtf is suppose to be here ??
-              //setState(() => pressed = false)
-              print('player left event'),
-              print(player)
-            });
   }
 
   @override

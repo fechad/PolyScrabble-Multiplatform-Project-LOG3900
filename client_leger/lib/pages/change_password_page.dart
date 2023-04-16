@@ -140,7 +140,7 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
                               decoration: const InputDecoration(
                                 hintText:
                                     'Confirmez votre nouveau mot de passe',
-                                labelText: 'Confirmet le nouveau mot de passe',
+                                labelText: 'Confirmez le nouveau mot de passe',
                               ),
                               // The validator receives the text that the user has entered.
                               validator: (value) {
@@ -164,8 +164,8 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
                                   try {
                                     await authenticator.changeUserPassword(
                                         widget.email,
-                                        temporaryPasswordController.text,
-                                        newPasswordController.text);
+                                        temporaryPasswordController.text.trim(),
+                                        newPasswordController.text.trim());
                                   } catch (error) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
@@ -188,6 +188,8 @@ class _ChangePasswordPageWidgetState extends State<ChangePasswordPageWidget> {
                                         authenticator.getCurrentUser().email);
                                     authenticator.setStats(
                                         authenticator.getCurrentUser().email);
+                                    chatService.joinDiscussion('Principal');
+
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
