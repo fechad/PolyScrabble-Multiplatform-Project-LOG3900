@@ -31,9 +31,9 @@ class _UserLevelState extends State<UserLevel> {
           color: Colors.grey,
         ),
         child: Image.asset(
-          'assets/images/avatars/' +
+          'assets/images/badges/' +
               badge.id +
-              'Avatar.png', // replace with your image file name
+              'Badge.png', // replace with your image file name
         ),
       ));
     });

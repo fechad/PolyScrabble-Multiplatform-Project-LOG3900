@@ -31,7 +31,7 @@ class _UserResumeState extends State<UserResume> {
         badges.add(CircleAvatar(
             radius: 18,
             backgroundImage: AssetImage(
-                'assets/images/avatars/${linkService.getPlayerToShow().badges[i].id}Avatar.png')));
+                'assets/images/badges/${linkService.getPlayerToShow().badges[i].id}Badge.png')));
         badges.add(SizedBox(
           width: 5,
         ));
