@@ -8,21 +8,21 @@ import '../classes/objective.dart';
 import '../services/objectives_service.dart';
 
 class OutObj extends StatefulWidget {
+  List<Objective> objectives;
+  OutObj({required this.objectives});
   @override
   _OutObjState createState() => _OutObjState();
 }
 
 class _OutObjState extends State<OutObj> {
   @override
-  ObjectivesService objService = new ObjectivesService();
   List<Widget> firstColumn = [];
   List<Widget> secondColumn = [];
   int center = 0;
   void initState() {
     super.initState();
-    objService.generateObjectives(authenticator.stats, authenticator.currentUser);
-    objService.objectives.forEach((objective) {
-      if(objService.objectives.indexOf(objective) % 2 == 0)
+    widget.objectives.forEach((objective) {
+      if(widget.objectives.indexOf(objective) % 2 == 0)
       firstColumn.add(
           Achievement(title: objective.name, current: objective.progression, total: objective.target)
       );

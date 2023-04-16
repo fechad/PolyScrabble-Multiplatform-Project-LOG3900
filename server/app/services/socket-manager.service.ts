@@ -163,6 +163,7 @@ export class SocketManager {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             socket.on(SocketEvent.ChatChannelMessage, (data: any) => {
+                if (typeof data.account.badges === 'string') data.account.badges = JSON.parse(data.account.badges);
                 this.socketChannelService.handleChatChannelMessage(data.channelName, data);
             });
 

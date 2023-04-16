@@ -3,7 +3,7 @@
         <div class="name">
             <div class="image-container">
                 <img class="avatar" [src]="userInfo.userSettings.avatarUrl" alt="SantaBadge" />
-                <img *ngIf="objService.currentLevel >= 10" class="border" [src]="border" alt="SantaBadge" />
+                <img *ngIf="objService.currentLevel >= 2" class="border" [src]="border" alt="SantaBadge" />
             </div>
 
             <H1 class="username">{{ userInfo.username }}</H1>

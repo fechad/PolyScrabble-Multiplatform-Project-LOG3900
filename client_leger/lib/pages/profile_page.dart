@@ -70,7 +70,7 @@ class _UserPageState extends State<UserPage> {
                               ))),
                       Level(),
                       HighScores(highScore: objService.highScore, victories: authenticator.currentUser.gamesWon),
-                      OutObj(),
+                      OutObj(objectives: objService.objectives),
                     ],
                   ),
                 )),

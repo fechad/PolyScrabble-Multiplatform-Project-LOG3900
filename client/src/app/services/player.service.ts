@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { DiscussionChannelService } from '@app/classes/discussion-channel-service';
 import { Player } from '@app/classes/player';
 import { Room } from '@app/classes/room';
+import { DEFAULT_ACCOUNT } from '@app/constants/default-user-settings';
 import { PlayerGameStats } from '@app/constants/player-stats';
 import { Account } from '@app/interfaces/account';
 import { ClientAccountInfo } from '@app/interfaces/serveur info exchange/client-account-info';
@@ -27,7 +28,7 @@ export class PlayerService {
         this.isNewChatWindowOpen = false;
         this.room = new Room();
         this.player = new Player();
-        this.playerToShow = undefined;
+        this.playerToShow = { ...DEFAULT_ACCOUNT };
         this.discussionChannelService = new DiscussionChannelService();
         this.isObserver = false;
     }
@@ -103,9 +104,9 @@ export class PlayerService {
     getBorder(level: number) {
         let path = '';
         const borders: { [key: string]: number } = {
-            'bronze.png': 10,
-            'silver.png': 25,
-            'gold.png': 50,
+            'bronze.png': 2,
+            'silver.png': 6,
+            'gold.png': 25,
         };
         for (const key in borders) {
             if (level >= borders[key]) path = key;

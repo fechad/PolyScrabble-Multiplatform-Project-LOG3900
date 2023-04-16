@@ -3,7 +3,7 @@
         <div class="name">
             <div class = "image-container">
                 <img class="avatar" [src]="playerToShow?.userSettings?.avatarUrl" alt="SantaBadge" />
-                <img *ngIf = "objService.currentLevel >= 10" class="border" [src]="rank" alt="SantaBadge" />
+                <img *ngIf = "objService.currentLevel >= 2" class="border" [src]="rank" alt="SantaBadge" />
             </div>
             <H1>{{ playerToShow?.username }}</H1>
         </div>
