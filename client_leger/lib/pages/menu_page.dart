@@ -129,7 +129,6 @@ class _MenuPageState extends State<MenuPage> {
                   child:
                       Text(AppLocalizations.of(context)!.classicButtonObserve),
                   onPressed: () {
-                    Navigator.pop(context);
                     Navigator.push(context,
                         MaterialPageRoute(builder: ((context) {
                       return ObserverPage();

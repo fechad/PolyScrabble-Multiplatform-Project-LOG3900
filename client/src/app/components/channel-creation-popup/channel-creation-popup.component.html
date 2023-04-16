@@ -14,6 +14,7 @@
             (focus)="setPlaceholderAsLabel(channelNameLabel)"
             (input)="setPlaceholderAsLabel(channelNameLabel)"
             (blur)="setLabelAsPlaceholder(channelNameLabel, 'name')"
+            (keyup.enter)="submitChannel()"
             [class.invalid]="isChannelNameInvalid"
             formControlName="name"
             name="name"

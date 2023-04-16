@@ -57,6 +57,7 @@
     height: 100px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
     border-radius: 4px;
+    margin-top: 10px;
 }
 
 .level-container {
@@ -93,7 +94,7 @@
 
 progress[value] {
     width: 90%;
-    background-color: #7daf6b;
+    background-color: var(--accent);
     height: 30%;
     border-radius: 20px;
 }
@@ -104,7 +105,7 @@ progress[value]::-webkit-progress-bar {
 }
 
 progress[value]::-webkit-progress-value {
-    background-color: #7daf6b;
+    background-color: var(--accent);
     border-radius: 100px;
     background-size: 35px 20px, 100% 100%, 100% 100%;
 }
@@ -112,7 +113,7 @@ progress[value]::-webkit-progress-value {
 .fraction {
     float: right;
     padding-right: 5%;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--basic-font-color);
 }
 
 .high-scores {

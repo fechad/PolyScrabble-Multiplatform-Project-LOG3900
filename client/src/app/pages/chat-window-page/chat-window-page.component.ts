@@ -83,9 +83,12 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
         this.themeService.verifyTheme();
         this.languageService.verifyLanguage();
 
-        const channelToShowIndex = this.availableDiscussionChannels.find((discussionChannel) => discussionChannel.name === channelToShowName);
-        // eslint-disable-next-line no-unused-expressions, @typescript-eslint/no-unused-expressions
-        channelToShowIndex ? this.showChatChannel(this.availableDiscussionChannels.indexOf(channelToShowIndex)) : this.showChatChannel(0);
+        if (channelToShowName === this.playerService.discussionChannelService.roomChannel.name) this.showRoomChatChannel();
+        else {
+            const channelToShowIndex = this.availableDiscussionChannels.find((discussionChannel) => discussionChannel.name === channelToShowName);
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions, no-unused-expressions
+            channelToShowIndex ? this.showChatChannel(this.availableDiscussionChannels.indexOf(channelToShowIndex)) : this.showChatChannel(0);
+        }
         this.connectSocket();
         this.socketService.send(SocketEvent.ChatWindowSocket);
     }
@@ -176,7 +179,7 @@ export class ChatWindowPageComponent extends PageCommunicationManager implements
                 (channel) => channel.name === this.selectedDiscussionChannel.name,
             );
             if (this.selectedDiscussionChannel.name && !newSelectedDiscussionChannel) {
-                if (this.isWaitMultiPage) {
+                if (this.isWaitMultiPage || this.selectedDiscussionChannel.name.toLocaleLowerCase().startsWith('r-')) {
                     this.showRoomChatChannel();
                     return;
                 }

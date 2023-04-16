@@ -64,7 +64,9 @@
         "LEVEL": "niv",
         "VICTORIES": "victoires",
         "OBJECTIVES": "Objectifs",
-        "TOGGLE": "Afficher complétés"
+        "TOGGLE": "Afficher complétés",
+        "HIGHEST-SCORE": "Highest score",
+        "SEE-PROFILE": "Voir le profil"
     },
     "SETTINGS-PAGE": {
         "TITLE": "Paramètres",
@@ -85,16 +87,16 @@
         "PASSWORD-MESSAGE": "Vous serez déconnecté pour continuer avec cette demande.",
         "SAVE": "Sauvegarder",
         "EDIT": "editer",
-        "STATISTICS":{
+        "STATISTICS": {
             "TITLE": "Statistiques",
             "PLAYED": "Parties jouées",
-             "WON": "Parties gagnées",
-             "AVG": "Score moyen",
-             "AVG-TIME": "Temps de jeu moyen"
+            "WON": "Parties gagnées",
+            "AVG": "Score moyen",
+            "AVG-TIME": "Temps de jeu moyen"
         },
-        "HISTORY" : "Historiques",
-        "CONNECTION" : "Connexions",
-        "NO-INFO" : "Aucune information pour le moment"
+        "HISTORY": "Historiques",
+        "CONNECTION": "Connexions",
+        "NO-INFO": "Aucune information pour le moment"
     },
     "GAME-PAGE": {
         "OBJECTIVES": {

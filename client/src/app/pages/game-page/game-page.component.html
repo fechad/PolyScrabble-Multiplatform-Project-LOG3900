@@ -36,7 +36,11 @@
                                         <div *ngFor="let playerRack of playersRack" class="player-rack-container">
                                             <img class="avatar" [src]="playerRack.player.clientAccountInfo.userSettings.avatarUrl" />
                                             <div class="rack-container">
-                                                <div class="rack-tile" *ngFor="let letter of playerRack.rackLetters.split('')">
+                                                <div
+                                                    class="rack-tile"
+                                                    [class.empty]="!letter || letter === ' '"
+                                                    *ngFor="let letter of playerRack.rackLetters.split('')"
+                                                >
                                                     <div class="rack-letter">{{ letter.toUpperCase() }}</div>
                                                     <div class="letter-point">{{ getTileScore(letter) }}</div>
                                                 </div>
@@ -45,6 +49,13 @@
                                     </div>
                                     <app-goals-container *ngIf="mustShowGoals"></app-goals-container>
                                     <app-rack *ngIf="!playerService.isObserver" id="rack"></app-rack>
+                                    <button
+                                        *ngIf="!playerService.isObserver"
+                                        (click)="confirmPlacement()"
+                                        [disabled]="!canPlaceLetter()"
+                                        class="button place"
+                                        [translate]="'OTHER.CONFIRM'"
+                                    ></button>
                                 </div>
                             </div>
                         </div>

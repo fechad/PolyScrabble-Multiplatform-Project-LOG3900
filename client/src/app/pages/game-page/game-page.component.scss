@@ -11,11 +11,17 @@ app-goals-container {
 }
 
 app-rack {
+    margin-top: 30px;
     width: 100%;
 }
 
 .body-main-container {
     width: 100%;
+}
+
+.mat-drawer {
+    background-color: var(--app-background) !important;
+    color: var(--basic-font-color);
 }
 
 .mat-drawer-content {
@@ -135,7 +141,6 @@ app-rack {
 .bottom-content {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     padding: 5%;
     min-width: 370px;
     height: 500px;
@@ -158,6 +163,12 @@ app-rack {
 .side-container {
     max-width: 300px;
     gap: 20px;
+}
+
+.button.place {
+    margin-top: 20px;
+    align-self: center;
+    width: fit-content;
 }
 
 .button.quit-button {
@@ -257,6 +268,12 @@ app-rack {
 
     &:last-of-type {
         margin-right: 5px;
+    }
+
+    &.empty {
+        border: 0px;
+        background-color: transparent;
+        box-shadow: 0px 0px rgba(0, 0, 0, 0);
     }
 }
 
