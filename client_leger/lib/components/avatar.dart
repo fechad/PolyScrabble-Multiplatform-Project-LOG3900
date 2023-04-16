@@ -43,14 +43,18 @@ class _AvatarWidgetState extends State<Avatar> {
       child: GestureDetector(
         onTap: () async {
           if (widget.previewData != null) {
-          linkService.setPlayerToShow(widget.previewData);
-          await authenticator.getOtherStats(linkService.getPlayerToShow().email);
-          setState(() {
-
+            if (widget.previewData!.userSettings.avatarUrl
+                    .contains('robot-avatar') ||
+                widget.previewData!.userSettings.avatarUrl.contains('assets'))
+              return;
+            linkService.setPlayerToShow(widget.previewData);
+            await authenticator
+                .getOtherStats(linkService.getPlayerToShow().email);
+            setState(() {
               linkService.setInsideChatBoolean(widget.insideChat);
               Scaffold.of(context).openEndDrawer();
-
-          });}
+            });
+          }
         },
         child: Container(
             width: 45,

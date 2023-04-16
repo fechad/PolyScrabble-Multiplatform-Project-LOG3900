@@ -112,10 +112,12 @@ class _BoardState extends State<Board> {
   removeTile(int x, int y) {
     for (Placement p in linkService.placementStack){
       if (p.x == x && p.y == y) {
-        setState(() {
-          final previous = p.previousSquare;
-          (linkService.rows[y] as Row).children[x] = previous;
-        });
+        if (mounted) {
+          setState(() {
+            final previous = p.previousSquare;
+            (linkService.rows[y] as Row).children[x] = previous;
+          });
+        }
       }
     }
   }
@@ -213,9 +215,10 @@ class _BoardState extends State<Board> {
         : Color.fromARGB(255, 64, 64, 64)),
       }
       else if (data == null){
+        if (mounted) {
         setState(() {
           linkService.cancelPlacements();
-        }),
+        })},
       }
     });
 
