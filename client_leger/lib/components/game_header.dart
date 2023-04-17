@@ -38,7 +38,6 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
   final bool isObserver;
   bool alreadyStartedAsObserver = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -59,11 +58,11 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
               _timer.cancel(),
               currentPlayer = currentPlayerTurnPseudo,
               setTimer(),
-          if (!alreadyReceived)
-            socketService.send(
-                'getRackInfos', gameService.room.roomInfo.name),
-          alreadyReceived = true,
-        });
+              if (!alreadyReceived)
+                socketService.send(
+                    'getRackInfos', gameService.room.roomInfo.name),
+              alreadyReceived = true,
+            });
 
     socketService.on(
         "gameIsOver",
@@ -107,8 +106,8 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
             if (!alreadyStartedAsObserver && isObserver) {
               timeChosen = timeChosen - gameService.room.elapsedTime;
               alreadyStartedAsObserver = true;
-            } else --timeChosen;
-
+            } else
+              --timeChosen;
           });
         }
       },
@@ -121,10 +120,9 @@ class _GameHeaderWidgetState extends State<GameHeaderWidget> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    opponentsInfo = gameService.room.players;
+    opponentsInfo = List<Player>.of(gameService.room.players);
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(' ${linkService.getLetterBankCount()}',
