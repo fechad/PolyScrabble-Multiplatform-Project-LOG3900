@@ -61,7 +61,11 @@ export class SocketHandlerService {
         bot.points = player.points;
         bot.replaceRack(player.rack);
 
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotJoinedRoom, room.players);
+        this.sendToEveryoneInRoom(
+            room.roomInfo.name,
+            SocketEvent.BotJoinedRoom,
+            room.players.map((roomPlayer) => this.getLightPlayer(roomPlayer) as Player),
+        );
     }
 
     handleReconnect(socket: io.Socket, playerData: PlayerData) {
@@ -69,7 +73,7 @@ export class SocketHandlerService {
         const room = this.roomService.getRoom(playerData.roomName);
         const lightRoom = this.roomService.getLightRoom(playerData.roomName);
         if (!room) return;
-        const player = room.getPlayer(playerData.socketId);
+        const player = room.getPlayer(playerData.socketId) as Player;
         if (!player) return;
 
         player.socketId = socket.id;
@@ -161,6 +165,19 @@ export class SocketHandlerService {
             };
             this.scoreService.updateBestScore(score);
         }
+    }
+
+    protected getLightPlayer(player?: Player): Player | undefined {
+        if (!player) return;
+        const lightPlayer = new Player(player.socketId, player.clientAccountInfo.username, player.isCreator, player.clientAccountInfo);
+        lightPlayer.rack = player.rack;
+        lightPlayer.managerId = player.managerId;
+        lightPlayer.accountID = player.accountID;
+        lightPlayer.gaveUpUnfairly = player.gaveUpUnfairly;
+        lightPlayer.points = player.points;
+        lightPlayer.isItsTurn = player.isItsTurn;
+        lightPlayer.lastThreeCommands = player.lastThreeCommands;
+        return lightPlayer;
     }
 
     protected async updateGame(room: Room) {

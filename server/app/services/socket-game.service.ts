@@ -92,7 +92,8 @@ export class SocketGameService extends SocketHandlerService {
 
     handleGetRackInfo(socket: io.Socket, roomName: string) {
         if (!this.isRoomAndPlayerValid(socket, roomName)) return;
-        const player = (this.roomService.getRoom(roomName) as Room).getPlayer(socket.id) as Player;
+        const player = (this.roomService.getRoom(roomName) as Room).getPlayer(socket.id);
+        if (!player) return;
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
     }
 
@@ -122,7 +123,8 @@ export class SocketGameService extends SocketHandlerService {
         const room = this.getSocketRoom(socket);
         if (!room) return;
 
-        const commandSender = room.getPlayer(socket.id) as Player;
+        const commandSender = room.getPlayer(socket.id);
+        if (!commandSender) return;
         this.handleCommand(socket, room, message, commandSender);
     }
 
@@ -148,7 +150,11 @@ export class SocketGameService extends SocketHandlerService {
 
         if (room.hasTimer()) return;
         room.fillWithVirtualPlayers();
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.BotJoinedRoom, room.players);
+        this.sendToEveryoneInRoom(
+            room.roomInfo.name,
+            SocketEvent.BotJoinedRoom,
+            room.players.map((roomPlayer) => this.getLightPlayer(roomPlayer)),
+        );
         this.setTimer(socket, room);
         room.fillPlayersRack();
         this.roomService.setUnavailable(room.roomInfo.name);
@@ -294,7 +300,7 @@ export class SocketGameService extends SocketHandlerService {
             case CommandVerbs.PLACE:
                 room.addPlacementData(report.commandData as PlacementData);
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.DrawBoard, report.commandData);
-                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, sender);
+                this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.UpdatePlayerScore, this.getLightPlayer(sender) as Player);
                 this.sendToEveryoneInRoom(sender.socketId, SocketEvent.DrawRack, sender.rack.getLetters());
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
                 this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
@@ -413,7 +419,7 @@ export class SocketGameService extends SocketHandlerService {
         room.elapsedTime = END_TIMER_VALUE; // to clear the interval
         this.updateLeaderboard(room);
         this.updateGame(room);
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, [winner]);
+        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, [this.getLightPlayer(winner) as Player]);
         this.displayGameResume(room);
     }
 
@@ -425,14 +431,18 @@ export class SocketGameService extends SocketHandlerService {
         this.updateLeaderboard(room);
         this.updateGame(room);
         room.elapsedTime = END_TIMER_VALUE; // to clear the interval
-        this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.GameIsOver, room.getWinner());
+        this.sendToEveryoneInRoom(
+            room.roomInfo.name,
+            SocketEvent.GameIsOver,
+            room.getWinner().map((player) => this.getLightPlayer(player)),
+        );
         this.displayGameResume(room);
     }
 
     private updatePlayerView(socket: io.Socket, roomName: string) {
         const room = this.roomService.getRoom(roomName);
         if (!room) return;
-        const player = room.getPlayer(socket.id);
+        const player = this.getLightPlayer(room.getPlayer(socket.id));
         if (!player) return;
 
         this.socketEmit(socket, SocketEvent.UpdatePlayerScore, player);
