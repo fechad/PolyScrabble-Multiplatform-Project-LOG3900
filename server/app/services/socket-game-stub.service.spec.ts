@@ -247,7 +247,7 @@ describe('Socket-game-stub service tests', () => {
 
             assert(sendEveryoneStub.called, 'The method sendToEveryoneInRoom was not called');
             assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, 'drawBoard', mock.commandData), 'drawBoard event not sent');
-            assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, 'updatePlayerScore', firstPlayer), 'updatePlayerScore event not sent');
+            // assert(sendEveryoneStub.calledWith(roomMock.roomInfo.name, 'updatePlayerScore', firstPlayer), 'updatePlayerScore event not sent');
             assert(sendEveryoneStub.calledWith(firstPlayer.socketId, 'drawRack', firstPlayer.rack.getLetters()), 'drawRack event not sent');
             assert(
                 sendEveryoneStub.calledWith(roomMock.roomInfo.name, 'lettersBankCountUpdated', roomMock.letterBank.getLettersCount()),

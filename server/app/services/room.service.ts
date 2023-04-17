@@ -99,7 +99,17 @@ export class RoomService {
     private getLightVersionRoom(room: Room): Room {
         const copy = {
             elapsedTime: room.elapsedTime,
-            players: room.players,
+            players: room.players.map((player) => {
+                const lightPlayer = new Player(player.socketId, player.clientAccountInfo.username, player.isCreator, player.clientAccountInfo);
+                lightPlayer.rack = player.rack;
+                lightPlayer.managerId = player.managerId;
+                lightPlayer.accountID = player.accountID;
+                lightPlayer.gaveUpUnfairly = player.gaveUpUnfairly;
+                lightPlayer.points = player.points;
+                lightPlayer.isItsTurn = player.isItsTurn;
+                lightPlayer.lastThreeCommands = player.lastThreeCommands;
+                return lightPlayer;
+            }),
             observers: room.observers,
             roomInfo: room.roomInfo,
             botsLevel: room.botsLevel,

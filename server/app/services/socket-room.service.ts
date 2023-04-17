@@ -56,9 +56,10 @@ export class SocketRoomService extends SocketHandlerService {
         }
 
         const player = serverRoom.getPlayer(socket.id);
+        const lightPlayer = super.getLightPlayer(serverRoom.getPlayer(socket.id));
         if (!player) return observer ? observer.username : undefined;
         serverRoom.removePlayer(player);
-        this.socketEmitRoom(socket, roomName, SocketEvent.PlayerLeft, player);
+        this.socketEmitRoom(socket, roomName, SocketEvent.PlayerLeft, lightPlayer);
         this.sendToEveryone(SocketEvent.UpdateAvailableRoom, this.roomService.getRoomsAvailable());
         return player.pseudo;
     }
