@@ -47,7 +47,7 @@ export class UserInfoController {
                 bestGames: clientAccount.bestGames,
             };
         const currentData = promiseResult as Account;
-        clientAccount.userSettings.avatarUrl = clientAccount.userSettings.avatarUrl.startsWith('https://res.cloudinary.com')
+        clientAccount.userSettings.avatarUrl = clientAccount.userSettings.avatarUrl.includes('res.cloudinary.com')
             ? clientAccount.userSettings.avatarUrl
             : 'https://res.cloudinary.com/dejrgre8q/image/upload/v1678651584/samples/people/kitchen-bar.jpg';
         return {
