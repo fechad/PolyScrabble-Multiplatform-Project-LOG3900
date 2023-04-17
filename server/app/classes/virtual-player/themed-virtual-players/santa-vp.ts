@@ -1,7 +1,7 @@
 import { BoardManipulator } from '@app/classes/board-model/board-manipulator';
 import { LetterBank } from '@app/classes/letter-bank/letter-bank';
 import { VirtualPlayer } from '@app/classes/virtual-player/virtual-player';
-import { BIG_SCORE, EXTREME_SCORE, MAX_GAP_SANTA, SCALES } from '@app/constants/virtual-player-constants';
+import { MAX_GAP_SANTA, SCALES } from '@app/constants/virtual-player-constants';
 import { FullCommandVerbs } from '@app/enums/full-command-verbs';
 import { Language } from '@app/enums/language';
 import { santaEnglishQuotes, santaFrenchQuotes } from '@app/enums/themed-quotes/santa-quotes';
@@ -49,6 +49,8 @@ export class SantaVirtualPlayer extends VirtualPlayer {
         if (filtered.length === 0) return this.switchLettersAction();
 
         const chosenPlacement = filtered[Math.floor(Math.random() * filtered.length)];
+        const EXTREME_SCORE = 20;
+        const BIG_SCORE = 5;
         if (chosenPlacement.points >= EXTREME_SCORE) this.sendMessage(this.quotes.extremeScore);
         else if (chosenPlacement.points > BIG_SCORE) this.sendMessage(this.quotes.bigScore);
 

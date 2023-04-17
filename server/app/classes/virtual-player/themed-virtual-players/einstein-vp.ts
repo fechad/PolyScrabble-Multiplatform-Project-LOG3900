@@ -61,7 +61,7 @@ export class EinsteinVirtualPlayer extends VirtualPlayer {
         return `${FullCommandVerbs.PLACE} ${placement.row}${placement.col}${placement.direction} ${placement.letters}`;
     }
     private sendToggleSignal() {
-        this.sendMessage(this.quotes.extremeScore, TOGGLE_PREFIX + this.pseudo);
+        this.sendMessage(this.quotes.angryAnnouncement, TOGGLE_PREFIX + this.pseudo);
         this.needToToggle = false;
         this.isAngry = !this.isAngry;
     }
