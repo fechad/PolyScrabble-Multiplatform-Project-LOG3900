@@ -90,9 +90,10 @@
         "STATISTICS": {
             "TITLE": "Statistiques",
             "PLAYED": "Parties jouées",
-            "WON": "Parties gagnées",
-            "AVG": "Score moyen",
-            "AVG-TIME": "Temps de jeu moyen"
+            "DURATION": "durée:  ",
+             "WON": "Parties gagnées",
+             "AVG": "Score moyen",
+             "AVG-TIME": "Temps de jeu moyen"
         },
         "HISTORY": "Historiques",
         "CONNECTION": "Connexions",
