@@ -92,7 +92,7 @@
                     type="submit"
                     value="{{ 'SETTINGS-PAGE.SAVE' | translate }}"
                     (click)="sendData()"
-                    [disabled]="!changed"
+                    [disabled]="!changed && !isInProcess"
                 />
             </div>
         </form>

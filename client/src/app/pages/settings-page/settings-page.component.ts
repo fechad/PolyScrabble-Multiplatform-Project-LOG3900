@@ -17,6 +17,8 @@ import { SocketClientService } from '@app/services/socket-client.service';
 import { ThemeService } from '@app/services/theme.service';
 import { lastValueFrom } from 'rxjs';
 
+const SAFE_GUARD_TIMEOUT = 3000;
+
 @Component({
     selector: 'app-settings-page',
     templateUrl: './settings-page.component.html',
@@ -31,6 +33,7 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
     invalidUsernameMessage: string;
     musicOptions: { key: string; value: string }[];
     avatarChanged: boolean;
+    isInProcess: boolean;
     protected settingsForm: FormGroup;
     constructor(
         protected socketService: SocketClientService,
@@ -44,6 +47,7 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
         super(socketService);
         this.userSettings = this.playerService.account.userSettings;
         this.avatarChanged = false;
+        this.isInProcess = false;
         this.musicOptions = Object.entries(VICTORY_MUSIC).map(([key, value]) => ({ key, value }));
         this.settingsForm = this.formBuilder.group({
             avatarUrl: [this.userSettings.avatarUrl || DEFAULT_USER_IMAGE, [Validators.required]],
@@ -62,6 +66,7 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
     get avatarURL(): string {
         return this.settingsForm.controls.avatarUrl.value;
     }
+
     get changed(): boolean {
         return this.settingsForm.controls.username.value !== this.playerService.account.username || this.settingsForm.dirty || this.avatarChanged;
     }
@@ -70,16 +75,24 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
     }
 
     async sendData() {
+        this.isInProcess = true;
+
+        setTimeout(() => {
+            this.isInProcess = false;
+        }, SAFE_GUARD_TIMEOUT);
+
         if (this.currentAvatar) {
             await this.uploadFile();
             await this.updateUserInfo();
             this.settingsForm.markAsPristine();
             this.avatarChanged = false;
+            this.isInProcess = false;
             return;
         }
         this.settingsForm.markAsPristine();
-        this.avatarChanged = false;
         await this.updateUserInfo();
+        this.avatarChanged = false;
+        this.isInProcess = false;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onMusicSelectionChange(event: any) {
@@ -139,7 +152,6 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
 
     private async uploadFile() {
         if (!this.currentAvatar) return;
-
         const signature = await lastValueFrom(this.httpService.getCloudinarySignature());
         if (this.httpService.anErrorOccurred()) {
             this.openErrorDialog();
@@ -158,8 +170,7 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
             return;
         }
         if (!response) return;
-
-        this.settingsForm.value.avatarUrl = response.url;
+        this.settingsForm.controls.avatarUrl.setValue(response.url);
     }
 
     private async updateUserInfo() {
