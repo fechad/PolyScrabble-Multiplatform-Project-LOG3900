@@ -38,8 +38,11 @@
                             <p class = "crown" [class.disabled] = "!game.won">👑</p>
                         </div>
                         <div class = "line">
-                            <p>Durée: {{game.duration}}</p>
-                            <p>Score: {{game.score}}</p>
+                            <div style="display: flex; flex-direction: row;">
+                                <p [translate]="'SETTINGS-PAGE.STATISTICS.DURATION'"> </p>
+                                <p>{{game.duration}}</p>
+                            </div>
+                            <p >Score: {{game.score}}</p>
                         </div>
                 </div>
                 <p class = "log" *ngIf = "!gameStat || gameStat.playedGames.length === 0" [translate]="'SETTINGS-PAGE.NO-INFO'"></p>
