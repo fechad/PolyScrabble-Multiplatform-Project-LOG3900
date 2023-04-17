@@ -664,11 +664,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                             account)
                                         .then((response) {
                                       if (response.statusCode == 200) {
-                                        authenticator.currentUser.userSettings =
-                                            settings;
-                                        authenticator.currentUser.username =
-                                            usernameController.text
-                                                .toLowerCase();
+                                        authenticator.setUser(
+                                            authenticator.currentUser.email);
+                                        // authenticator.currentUser.userSettings =
+                                        //     settings;
+                                        // authenticator.currentUser.username =
+                                        //     usernameController.text
+                                        //         .toLowerCase();
                                       } else if (response.statusCode == 500) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(

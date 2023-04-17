@@ -147,14 +147,14 @@ export class SocketGameService extends SocketHandlerService {
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.LettersBankCountUpdated, room.letterBank.getLettersCount());
         this.socketEmit(socket, SocketEvent.DrawRack, player.rack.getLetters());
         this.sendToEveryoneInRoom(room.roomInfo.name, SocketEvent.PlayersRackUpdated, room.getPlayersRack());
-
-        if (room.hasTimer()) return;
-        room.fillWithVirtualPlayers();
         this.sendToEveryoneInRoom(
             room.roomInfo.name,
             SocketEvent.BotJoinedRoom,
             room.players.map((roomPlayer) => this.getLightPlayer(roomPlayer)),
         );
+        if (room.hasTimer()) return;
+        room.fillWithVirtualPlayers();
+
         this.setTimer(socket, room);
         room.fillPlayersRack();
         this.roomService.setUnavailable(room.roomInfo.name);

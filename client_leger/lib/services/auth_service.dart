@@ -189,32 +189,33 @@ class AuthService {
     List<PlayedGame> playedGames = [];
     List<Log> logs = [];
     await httpService.getStatsInfo(email.toLowerCase()).then((value) => {
-      if (value.statusCode != 404)
-        {
-          playedGamesJson = jsonDecode(value.body)['playedGames'],
-          playedGames =
-          playedGamesJson.length == 1 && playedGamesJson[0] == ""
-              ? []
-              : playedGamesJson
-              .map((gameJson) => PlayedGame.fromJson(gameJson))
-              .toList(),
-          logsJson = jsonDecode(value.body)['logs'],
-          logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
-          otherStats = Stats(
-            playedGamesCount:
-            int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
-            gamesWonCount:
-            int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
-            averagePointsByGame: double.parse(
-                '${jsonDecode(value.body)['averagePointsByGame']}'),
-            averageGameDuration:
-            '${jsonDecode(value.body)['averageGameDuration']}',
-            playedGames: playedGames,
-            logs: logs,
-          ),
-        },
-  });
-  return stats;}
+          if (value.statusCode != 404)
+            {
+              playedGamesJson = jsonDecode(value.body)['playedGames'],
+              playedGames =
+                  playedGamesJson.length == 1 && playedGamesJson[0] == ""
+                      ? []
+                      : playedGamesJson
+                          .map((gameJson) => PlayedGame.fromJson(gameJson))
+                          .toList(),
+              logsJson = jsonDecode(value.body)['logs'],
+              logs = logsJson.map((logJson) => Log.fromJson(logJson)).toList(),
+              otherStats = Stats(
+                playedGamesCount:
+                    int.parse('${jsonDecode(value.body)['playedGamesCount']}'),
+                gamesWonCount:
+                    int.parse('${jsonDecode(value.body)['gamesWonCount']}'),
+                averagePointsByGame: double.parse(
+                    '${jsonDecode(value.body)['averagePointsByGame']}'),
+                averageGameDuration:
+                    '${jsonDecode(value.body)['averageGameDuration']}',
+                playedGames: playedGames,
+                logs: logs,
+              ),
+            },
+        });
+    return stats;
+  }
 
   void setDefaultUser() {
     if (accountSet) return;
