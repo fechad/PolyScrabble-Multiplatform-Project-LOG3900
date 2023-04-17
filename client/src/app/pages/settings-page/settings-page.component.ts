@@ -139,7 +139,6 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
 
     private async uploadFile() {
         if (!this.currentAvatar) return;
-
         const signature = await lastValueFrom(this.httpService.getCloudinarySignature());
         if (this.httpService.anErrorOccurred()) {
             this.openErrorDialog();
@@ -158,8 +157,7 @@ export class SettingsPageComponent extends PageCommunicationManager implements O
             return;
         }
         if (!response) return;
-
-        this.settingsForm.value.avatarUrl = response.url;
+        this.settingsForm.controls.avatarUrl.setValue(response.url);
     }
 
     private async updateUserInfo() {
