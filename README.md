@@ -1,9 +1,6 @@
-# Commandes npm
+This is a copy of my third year integrator project at Polytechnique Montreal for the course LOG3900.
+This is a multiplatform online multiplayer Scrabble game developped for 2 systems: Windows 10 and Android 11.0.
 
-Les commandes commençant par `npm` devront être exécutées dans les dossiers `client` et `server`. Les scripts non standard doivent être lancés en lançant `npm run myScript`.
+The code for the windows app is located in "client" folder. The code for the android app is located in "client_leger" folder. 
 
-## Installation des dépendances de l'application
-
-1. Installer `npm`. `npm` vient avec `Node` que vous pouvez télécharger [ici](https://nodejs.org/en/download/)
-
-2. Lancer `npm ci` (Continuous Integration) pour installer les versions exactes des dépendances du projet. Ceci est possiblement seulement si le fichier `package-lock.json` existe. Ce fichier vous est fourni dans le code de départ.
+Note: The deployed AWS server has been taken down along with firebase api services due to budgetary restricitons.
