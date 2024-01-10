@@ -3,4 +3,15 @@ This is a multiplatform online multiplayer Scrabble game developed for 2 systems
 
 The code for the windows app is located in "client" folder. The code for the android app is located in "client_leger" folder. 
 
+
+**Team members:**
+- Fedwin Chatelier (Me)
+- Anna Go
+- Etienne Aumais Boucher
+- François Tourigny
+- Mohamed Aymen Chebbi 
+- Homer Nde Tsakou
+
+
 Note: The deployed AWS server has been taken down along with firebase api services due to budgetary restricitons.
+
